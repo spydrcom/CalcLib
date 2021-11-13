@@ -1,0 +1,17 @@
+
+LIBRARY Debye net.myorb.math.specialfunctions.Debye
+
+!+ D1_IMPORT(x) = Debye.D1
+!+ D2_IMPORT(x) = Debye.D2
+!+ D3_IMPORT(x) = Debye.D3
+!+ D4_IMPORT(x) = Debye.D4
+!+ D5_IMPORT(x) = Debye.D5
+
+!! D1(x) = D1_IMPORT x
+!! D2(x) = D2_IMPORT x
+!! D3(x) = D3_IMPORT x
+!! D4(x) = D4_IMPORT x
+!! D5(x) = D5_IMPORT x
+
+GRAPH  LIM 5  [  0 <=    x    <= 5  <>  0.01  ]   ( D1(x), D2(x), D3(x), D4(x), D5(x) )
+ENTITLED Debye D1 - D5

@@ -1,0 +1,38 @@
+
+
+LIBRARY Euler net.myorb.math.specialfunctions.Euler
+
+!+ evalE(n,x) = Euler.evalPolyN
+!+ numberE(x) = Euler.numberN
+
+!! E1(x) = evalE (1,x)
+!! E2(x) = evalE (2,x)
+!! E3(x) = evalE (3,x)
+!! E4(x) = evalE (4,x)
+!! E5(x) = evalE (5,x)
+
+graph [-1 <= x <= 2 <> 0.01] ( E1(x), E2(x), E3(x), E4(x), E5(x) )
+
+
+LIBRARY Bernoulli net.myorb.math.specialfunctions.Bernoulli
+
+!+ evalB(n,x) = Bernoulli.evalPolyN
+!+ numberB(x) = Bernoulli.numberN
+
+!! B1(x) = evalB (1,x)
+!! B2(x) = evalB (2,x)
+!! B3(x) = evalB (3,x)
+!! B4(x) = evalB (4,x)
+!! B5(x) = evalB (5,x)
+!! B6(x) = evalB (6,x)
+
+graph [0 <= x <= 1 <> 0.01] ( B1(x), B2(x), B3(x), B4(x), B5(x), B6(x) )
+
+
+LIBRARY Second net.myorb.mpmath.functions.zeta.SecondZeta
+
+!+ zeta2 (s, a) = Second.Z2 (s, a)
+
+!+ zeta (s) = Second.Z1 (s)
+
+calc zeta2 (3+i,2+2*i)

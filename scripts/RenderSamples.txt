@@ -1,0 +1,64 @@
+
+RENDER "Samples of CalcLib RENDER displays" CENTER red
+
+READ QuadraticRender.txt
+
+RENDER "Order 2 polynomial and the Quadratic equation" TOP
+
+RENDER sinsq x + cossq x = 1 
+
+RENDER cos x = sqrt (1 - sinsq x)
+
+RENDER "Core trigonometric identities using sinsq and cossq for elegant render" TOP
+
+RENDER SIGMA [0 <= n <= INFINITY] (x^n/n!)
+
+RENDER "The SIGMA notation for series of terms (Taylor series for e^x)" TOP
+
+render SIGMA [0 <= x <= 1 <> 0.1] ( sqrt (1-x^2) )
+
+RENDER "An added convention for non-standard increment (delta other than standard 1 default)" TOP
+
+render PI [j+1 <= i <= n+1] (x#i)
+
+RENDER "The PI notation for series of factors" TOP
+
+render n ## k = n! / ( k! * (n-k) ! ) 
+
+render SIGMA [0<=k<=n] ( k * (n##k) * p^k * (1-p)^(n-k) ) 
+
+RENDER "Use of Binomial Coefficient expressed as N choose K" TOP
+
+render INTEGRALI (asin(theta) * <*> theta)
+
+render INTEGRALD (y * asin(x) * <*> x * <*> y)
+
+RENDER "Simple indefinite integrals" TOP
+
+render INTEGRAL [-1 <= x <= 1 <> dx] (asin(x) * <*> x)
+
+RENDER "Simple definite integral" TOP
+
+render INTEGRALC (e^(i*t*z) / (z^2+1) * <*> z)
+
+RENDER "Cauchy's Formula" TOP
+
+render (1 - x^2) * Tn''(x) - x * Tn'(x) + n^2 * Tn(x) = 0
+
+render (1 - x^2) * Un''(x) - 3 * x * Un'(x) + n*(n+2) * Un(x) = 0
+
+RENDER "Differential Equations (in this case Chebyshev first and second order)" TOP
+
+READ DerivativeIdentities.txt
+
+RENDERF GAMMA'
+
+RENDER "Derivative of the Gamma function" TOP
+
+RENDERF zeta'
+
+RENDER "Derivative of the Zeta function" TOP
+
+READ ComputePi.txt
+
+

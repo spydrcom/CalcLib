@@ -1,0 +1,37 @@
+
+
+// VC31 interpolation of Exponential Integral first approximated using AD Spline
+READ VC31Prep.txt	
+
+
+// access to AD Spline in the Special Functions Library class
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+
+!+ EI_IMPORT(x) = SpecFunc.ei
+!! EiIn(x) = EI_IMPORT x
+
+
+// 500 data points used to build VC matrix
+jVals  = [-2.5 <= x <= 2.5 <> 0.01] ( EiIn(x) )
+
+
+EiC = VC31 jVals
+//												;	//	VC31 operator builds the spline, EiC becomes the spline coefficient repository matrix
+!! Ei10(x) = EVALSPLINE (EiC, -2, x)
+//												;	//	EVALSPLINE builds the local version of the Ei function
+!! Ei(x) = Ei10( (x+2.5)*10 - 2.5 )
+//												;	//	coordinate translation for use of 0.01 delta
+!! Ei'(x) = exp(x) / x
+//												;	//	derivative for Newton root approximation
+!! li (x) = Ei ( ln x )
+//												;	//	li(x) using Ei spline directly
+
+
+// a plot of the spline
+PLOTF  LIM 2  Ei  [  -2 <=    x    <= 2  <>  0.01  ]  
+
+
+// run suite of tests for Exponential Integral
+READ ExpIntTesting.sub
+

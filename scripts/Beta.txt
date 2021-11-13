@@ -1,0 +1,22 @@
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA(x) = GAMMA_IMPORT x
+
+
+// BETA function
+
+!! BETA(x,y) = GAMMA(x) * GAMMA(y) / GAMMA (x + y)
+
+// plot3d func x y edge [mult]
+// plot3d BETA ( -0.9, -0.9 ) 1.9
+// plot3d BETA ( 0.005, 0.005 ) 0.01 
+// plot3d BETA ( -2.9, -2.9 ) 0.8
+plot3d BETA ( -1.9, -1.9 ) 3.8 10
+
+RENDER B(x,y) = GAMMA(x) * GAMMA(y) / GAMMA (x + y)
+
+RENDER "BETA Function (computed using GAMMA)" TOP
+
+

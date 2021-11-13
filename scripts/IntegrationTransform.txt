@@ -1,0 +1,26 @@
+
+
+READ DiffRules.txt
+
+
+!^ k(x) = g
+
+
+!% l(x) ^= k LAPLACE KER 0 1 0.01
+
+
+graph [-2<x<2<>0.02](l(x))
+
+
+
+// !% l(x) ^= k MELLIN KER 0 1 0.01
+
+
+
+// graph [1<x<2<>0.02](l(x))
+
+
+
+// graph [-2<x<0<>0.02](l(x))
+
+

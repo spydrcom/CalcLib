@@ -1,0 +1,36 @@
+
+
+// equation for a unit circle
+
+!! f(x) = 2\ (1 - x^2)
+
+// 45DEG is 1/8 of circle, sin=cos=sqrt(2)/2
+
+r2o2 = 2\2 / 2
+
+
+!! crust (x) = f(x) - r2o2
+
+
+// map out the slice to be interpolated
+
+c00  = [-0.20 <= x <= 0.8 <> 0.06] ( crust (x) ) 
+c00poly = CHEBINTERP c00 
+
+
+// the interpolated Chebyshev polynomial
+
+!! P(x) = c00poly @*^ x
+
+areaCrust= CLENQUAD (c00poly, 0, r2o2)
+
+PRETTYPRINT areaCrust
+// 0.14269908178583002
+
+calc areaCrust * 8
+// 1.1415926542866401
+
+calc areaCrust * 8  + 2
+// 3.14159265428664
+
+

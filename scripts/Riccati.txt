@@ -1,0 +1,23 @@
+
+// Riccati Equations
+
+// y' = y^2 + x * u(x) * y + u(x)
+!! RODE(Tn,Yn) = Yn^2 + Tn * u(Tn) * Yn + u(Tn)
+!! riccatiODE(x) = y'(x) - y(x)^2 - x * u(x) * y(x) - u(x)
+DIFEQ riccatiODE RODE "Riccati Equation, case 3"
+
+// y' = a * y^2 + b * x^n
+!! RSODE(Tn,Yn) = a * Yn^2 + b * Tn^n
+!! riccatiSpecialODE(x) = y'(x) - a * y(x)^2 - b * x^n
+DIFEQ riccatiSpecialODE RSODE "Riccati Special Equation"
+
+// y' = u(x) * y^2 + v(x) * y + w(x)
+!! RGODE(Tn,Yn) = u(Tn) * Yn^2 + v(Tn) * Yn + w(Tn)
+!! riccatiGeneralODE(x) = y'(x) - u(x) * y(x)^2 - v(x) * y(x) - w(x)
+DIFEQ riccatiGeneralODE RGODE "Riccati General Equation"
+
+SELECT "Differential Equations"
+
+RENDERD riccatiODE ; RENDER "Riccati Ordinary Differential Equation" TOP
+RENDERD riccatiSpecialODE ; RENDER "Riccati Special Ordinary Differential Equation" TOP
+RENDERD riccatiGeneralODE ; RENDER "Riccati General Ordinary Differential Equation" TOP

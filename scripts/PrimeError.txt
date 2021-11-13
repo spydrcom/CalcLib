@@ -1,0 +1,13 @@
+
+LIBRARY ExpInt net.myorb.math.specialfunctions.ExponentialIntegral 
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library 
+
+!+ LI_IMPORT(x) = SpecFunc.li 
+
+!! li(x) = LI_IMPORT x 
+
+A070769 = 1.4513692348833810502839684 
+
+A276709Calc = li'(A070769 <> 1E-5) 
+

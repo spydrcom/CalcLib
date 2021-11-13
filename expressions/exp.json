@@ -1,0 +1,50 @@
+{
+   "Name": "exp",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Euler exponential function ",
+   "Expression": 
+   {
+      "Hi": 
+      {
+         "Operator": null,
+         "Symbol": "AssignedVariableStorage",
+         "NodeType": "Identifier",
+         "Kind": "Variable",
+         "Name": "terms"
+      },
+      "Target": 
+      {
+         "OpName": "taylor",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": 
+         [
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            },
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "n"
+            }
+         ]
+      },
+      "Hbnd": "<",
+      "Variable": "n",
+      "Lo": 0.0,
+      "Consumer": "SummationConsumer",
+      "Delta": 1,
+      "NodeType": "Range",
+      "Lbnd": "<="
+   },
+   "NodeType": "Profile"
+}

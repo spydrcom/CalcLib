@@ -1,0 +1,60 @@
+
+READ legendre-init.sub
+
+READ legendre-script.sub
+P2 = pn
+
+READ legendre-script.sub
+P3 = pn
+
+READ legendre-script.sub
+P4 = pn
+
+READ legendre-script.sub
+P5 = pn
+
+READ legendre-script.sub
+P6 = pn
+
+READ legendre-script.sub
+P7 = pn
+
+READ legendre-script.sub
+P8 = pn
+
+READ legendre-script.sub
+P9 = pn
+
+READ legendre-script.sub
+P10 = pn
+
+READ legendre-script.sub
+P11 = pn
+
+READ legendre-script.sub
+P12 = pn
+
+READ legendre-script.sub
+P13 = pn
+
+READ legendre-script.sub
+P14 = pn
+
+READ legendre-script.sub
+P15 = pn
+
+READ legendre-script.sub
+P16 = pn
+
+READ legendre-script.sub
+P17 = pn
+
+READ legendre-script.sub
+P18 = pn
+
+READ legendre-script.sub
+P19 = pn
+
+READ legendre-script.sub
+P20 = pn
+

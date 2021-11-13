@@ -1,0 +1,11 @@
+
+a = x#2; b = x#1; c = x#0
+
+quad_common = -b / (2 * a)
+
+quad_d = b^2 - 4*a*c; quad_sqrt = 2\quad_d
+
+quad_roots = quad_common +|- quad_sqrt  / (2 * a)
+
+PRETTYPRINT quad_roots 
+

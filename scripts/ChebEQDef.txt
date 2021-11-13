@@ -1,0 +1,22 @@
+
+
+// Chebyshev equations
+
+
+// define differiential equation using Tn function and derivative functions
+!! chebeq1(x) = (1-x^2) * Tn''(x) - x * Tn'(x) + n^2 * Tn(x)
+DIFEQ  chebeq1  "Chebyshev Differential Equation of First Kind (Tn Solution Set)"
+
+
+// define differiential equation using Un function and derivative functions
+!! chebeq2(x) = (1-x^2) * Un''(x) - 3 * x * Un'(x) + n*(n+2) * Un(x)
+DIFEQ  chebeq2  "Chebyshev Differential Equation of Second Kind (Un Solution Set)"
+
+
+SELECT "Differential Equations"
+
+RENDERD chebeq1
+RENDERD chebeq2
+
+RENDER "Chebyshev First (Tn) and Second (Un) Kind Differential Equations" TOP
+

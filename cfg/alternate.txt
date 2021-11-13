@@ -1,0 +1,11 @@
+L,net.myorb.math.libraries.AltLibrary
+O,arithmetic,Arithmetic addition operator,Addition,+,7
+O,arithmetic,Arithmetic subtraction operator,Subtraction,-,7
+O,arithmetic,Arithmetic multiplication operator,Multiplication,*,8
+O,arithmetic,Arithmetic division operator,Division,/,8
+F,power,Distance in multi-dimensional space,Hypot,HYPOT
+O,power,Exponentiation operator,Exponentiation,^,9
+O,power,Root operator,Root,\,9
+O,power,Log operator,Log,ln,10
+O,power,Exp operator,Exp,exp,10
+F,power,Decimal Shift,Dsh,*10^

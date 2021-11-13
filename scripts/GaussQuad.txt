@@ -1,0 +1,41 @@
+
+
+// Gauss Quadrature
+
+
+// Lagrange interpolation polynomials integrated using common polynomial calculus
+
+// normalize domain [-1,1] with 0 at -0.5 and interest over [-0.5,0.5]
+// !! f(x) = EXP (- (x + 0.5) * 2.0) * (2.0 + SIN (20 * (x + 0.5)))
+exactAnswer = 9.1082396073230
+
+d = (-0.6, -0.55, -0.5, -0.45, -0.4, -0.35, -0.3, -0.25, -0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6)
+r = (1.3321871312075066, 1.2803725753371336, 2, 2.571069269317672, 2.381931273192825, 1.586180714636936, 0.8333402085765815, 0.631444346499375, 0.9442767954714728, 1.3194204972944739, 1.343205244330558, 0.9806941917987504, 0.5356247000834361, 0.33287434365415997, 0.44077576665383267, 0.6595724619881776, 0.737474694255791, 0.5913591502136937, 0.34566635883552144, 0.1897355662734515, 0.20646041948322477, 0.3215541657474993, 0.3942242705599693, 0.3473667176788075, 0.2206255636996491)
+
+!% ev (x) +*^= GAUSSQUAD (d, r) 
+!! area (lo, hi) = 10 * ev || (lo, hi) 
+
+areaUsingGauss = area (-0.5, 0.5)
+PRETTYPRINT areaUsingGauss
+
+error = abs (exactAnswer - areaUsingGauss)
+PRETTYPRINT error
+
+
+
+READ regress_data.txt
+
+// GAUSSQUAD provides polynomial coefficients of integrated interpolation
+//   ev(x) = evaluation of the anti-derivative at the X parameter
+// area(lo,hi) = the area under the curve between lo and hi
+
+!% ev (x) +*^= GAUSSQUAD (x_all, y_poly)
+!! area (lo, hi) = ev || (lo, hi)
+
+!! gaussPoly (x) = ev (x)
+PLOTF gaussPoly  [  -1 <=    x    <= 2  <>  0.01  ]  
+
+areaUsingGauss = area (-1, 2)
+PRETTYPRINT areaUsingGauss
+// 20.589107142857138
+

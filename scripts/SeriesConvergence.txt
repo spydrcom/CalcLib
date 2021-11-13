@@ -1,0 +1,47 @@
+
+
+// Taylor term for exp(x)
+
+!! taylorExp (x,i) = x^i / i!
+
+// compute e using Taylor series
+//  0..20 => 14 digits with 18 terms
+
+!! taylorExp1 (i) = taylorExp (1,i)
+
+// =================================
+
+// James Gregory atan series : atan x = x - x^3/3 + x^5/5 - x^7/7 + ...
+
+!! atanTerm (x, i) = ( (x ^ (4*i - 3) / (4*i - 3) ) - (x ^ (4*i - 1) / (4*i - 1) ) )
+
+// =================================
+
+// Arc Tangent series of Leonhard Euler: pi = 20 * atan (1 / 7) + 8 * atan (3 / 79)
+//  0..10 => 16 digits with 5 terms
+
+!! eulerAtan (i) = 20 * atanTerm (1/7, i) + 8 * atanTerm (3/79, i)
+
+// =================================
+
+// simple atan computing PI (from sqrt (3))
+//  0..20 => 15 digits with 15 terms
+
+!! PiAtan (i) = 6 * atanTerm (2\3/3, i)
+
+// =================================
+
+// arc sin series
+
+!! asinTerm (x, i) = ( (2*i)! * x ^ (2*i + 1) ) / (2^(2*i) * (i!)^2 * (2*i + 1) )
+
+// =================================
+
+// simple asin computing PI (from 1/2)
+//  0..20 => 14 digits with 20 terms
+
+!! PiAsin (i) = 6 * asinTerm (1/2, i)
+
+//RENDERF atanTerm
+//RENDERF eulerAtan
+//RENDERF asinTerm

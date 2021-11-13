@@ -1,0 +1,33 @@
+
+// Clenshaw Quadrature
+
+// Chebyshev interpolation polynomials integrated using Chebyshev specific calculus
+
+READ regress_data.txt
+
+// x/y interpolation using Vandermonde with Chebyshev T series polynomials
+
+coef = CHEBYSHEV (x_all, y_poly)
+
+// Chebyshev Interpolation
+
+//	 Y = 6.75647 * T[0](x) + 4.90565 * T[1](x) - 1.975 * T[2](x) - 0.22708 * T[3](x) + 0.03996 * T[4](x)
+
+// r^2 = 1.0
+// COV = 3.88369398059508E-15
+// MSE = 4.996119066399741E-29
+// SSE = 1.4988357199199224E-28
+// STD = 7.068323044683047E-15
+// SSR = 584.7879999999998
+// SST = 584.788
+
+!% chebTrns (x) @*^= coef
+!! chebPoly (x) = chebTrns (x)
+PLOTF chebPoly  [  -1 <=    x    <= 2  <>  0.01  ]  
+
+// evaluate integral using Chebyshev specific calculus
+areaUsingClenshaw = CLENQUAD (coef, -1, 2)
+
+PRETTYPRINT areaUsingClenshaw
+// 20.589107142857166
+

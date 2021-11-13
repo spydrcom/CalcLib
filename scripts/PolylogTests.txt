@@ -1,0 +1,20 @@
+
+
+phi = (1+sqrt(5))/2
+
+calc phi
+1.618033988749895
+
+A242599 = 0.42640880616209618209
+A242599_Approx = polylog (2, 2-phi) 
+prettyprint A242599_Approx
+error = A242599_Approx - A242599
+prettyprint error
+
+A242600 = -0.5421912164506
+A242600_Approx = polylog (2, 1-phi) 
+prettyprint A242600_Approx
+error = A242600_Approx - A242600
+prettyprint error
+
+graph [-0.8<x<0.8 <> 0.1] (polylog(2,x))   

@@ -1,0 +1,61 @@
+
+
+READ DemoStats.txt
+Reading... C:\workspace\MathFields\scripts\DemoStats.txt
+
+
+
+SCRIPTPRINT DemoStats.txt
+
+
+data = (1,2,3,4)
+
+inline_computed_average = SIGMA (data) / LENGTH data
+PRETTYPRINT inline_computed_average
+
+data_mean = MEAN data
+PRETTYPRINT data_mean
+
+data_median = MEDIAN data
+PRETTYPRINT data_median
+
+data_var = VAR data
+PRETTYPRINT data_var
+
+data_cov = COV data
+PRETTYPRINT data_cov
+
+data_stdev = STDEV data
+PRETTYPRINT data_stdev
+
+
+inline_computed_average = 
+
+	2.5
+
+
+data_mean = 
+
+	2.5
+
+
+data_median = 
+
+	3
+
+
+data_var = 
+
+	1.25
+
+
+data_cov = 
+
+	0.447213595499958
+
+
+data_stdev = 
+
+	1.118033988749895
+
+

@@ -1,0 +1,15 @@
+
+!! GammaFactor (t,n) = n / (t+n) * (n / (n-1))^t
+!! F (x) = 1 / ( x * (x+1) )
+
+// 1/3
+// READ GammaA073005.txt
+
+// 2/3
+// READ GammaA073006.txt
+
+// 1/4
+// READ GammaA068466.txt
+
+// 1/7
+READ GammaA220086.txt

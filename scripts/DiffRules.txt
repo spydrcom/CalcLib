@@ -1,0 +1,42 @@
+
+
+
+// f(x) = exp (-0.1 * x)
+!% f(x) *^#= (1,-0.1)
+
+// g(x) = cos x
+!% g(x) +#*= (1,0) 
+
+
+!! h(x) = f(x) * g(x)
+
+
+// apply product rule
+!% d(x) <>= PRODUCT f g
+
+
+// graph f(x) * g(x)
+graph [0<x<20<>0.01](h(x))
+
+
+// graph with transformed derivative
+graph [0<x<20<>0.01](d(x), d'(x))
+
+
+// graph with approximated derivative
+graph [0<x<20<>0.01](h(x), h'(x<>0.00001))
+
+
+
+!! k(x) = 1 / g(x)
+
+// apply reciprocal rule
+!% r(x) <>= RECIPROCAL g
+
+// approximation of derivative
+graph [0<x<1<>0.01](k(x), k'(x<>0.00001))
+
+
+// graph with transformed derivative
+graph [0<x<1<>0.01](r(x), r'(x))   
+

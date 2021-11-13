@@ -1,0 +1,30 @@
+
+// compute polynomial value
+
+f = sqrt_polynomial +*^ sqrtx
+
+// compute derivative value
+
+fprime = sqrt_poly_derivative +*^ sqrtx
+
+// iteration contribution computed
+
+sqrt_iteration = f/fprime 
+
+// new value for this iteration
+
+sqrtx = sqrtx - sqrt_iteration 
+
+// check status of result
+
+sqrtx_squared = sqrtx ^ 2
+
+// display intermediate results
+
+PRETTYPRINT sqrt_iteration 
+PRETTYPRINT sqrtx_squared
+PRETTYPRINT sqrtx 
+
+// look for convergence
+
+ASSERT "Convergence Complete" TOLERANCE >|| sqrt_iteration 

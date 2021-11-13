@@ -1,0 +1,46 @@
+
+
+X = [-1 <= xi <= 1 <> 0.1] (xi)
+
+VC21 = VANCHE X
+
+READ ColtLib.txt
+
+READ BesselFunctions.txt
+
+jVals = [-1<=x<=1<>0.1](J0(x))
+
+mj = MATRIX(jVals,21,1)  
+
+j0coef = SolveWithLUD(VC21,mj) 
+
+j0c = j0coef|#1
+
+!! j0lcl(x) = j0c @*^ x
+
+
+// // // //
+
+
+alpha=0
+
+dx = 0.00001
+
+!! besFun (x) = x^2 * J0''(x <> dx) + x * J0'(x <> dx) + (x^2 - alpha^2)* J0(x)
+
+GRAPH [-1<x<1<>0.01](besFun(x))
+
+err = [-1 < x < 1 <> 0.01] (abs(besFun(x)))
+
+CALC MAX err
+// 2.455309003113193E-6
+
+!! besFunL (x) = x^2 * j0lcl''(x <> dx) + x * j0lcl'(x <> dx) + (x^2 - alpha^2)* j0lcl(x)
+
+GRAPH [-1<x<1<>0.01](besFunL(x))
+
+errL = [-1 < x < 1 <> 0.01] (abs(besFunL(x)))
+
+CALC MAX errL
+// 2.0533536184697E-6
+

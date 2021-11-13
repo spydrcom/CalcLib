@@ -1,0 +1,20 @@
+
+P = -1/e
+
+!! W0 (x,y) = OMEGA ( x + y*i, 0 ) 
+!! W0r (x,y) = Re ( OMEGA ( x + y*i, 0 ) )
+!! W0i (x,y) = Im ( OMEGA ( x + y*i, 0 ) )
+
+!! W1 (x,y) = OMEGA ( x + y*i, 1 ) 
+
+graph [P < x < 6 <> 0.01] ( W0 (x, 0) )
+
+graph [P < x < 0 <> 0.01] ( W1 (x, 0) ) 
+
+
+// plotc   W0  (-1, -1)   2  100 
+
+// plot3d  W0   (-10, -10)   20 20
+// plot3d  W0r  (-10, -10)   20 20
+// plot3d  W0i  (-10, -10)   20 20
+

@@ -1,0 +1,62 @@
+
+SCRIPTPRINT FloatDemoRungeSegmented.txt
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3.2 <= t <= 3.5 <> dt] ( exp ( - t ^ 2 ) ) 
+
+
+
+// select segment domains and collect samples
+
+
+seg1 = [-3.1 <= t <= -2.6 <> 0.1] ( curve @# t )
+seg2 = [-3.0 <= t <= -2.0 <> 0.2] ( curve @# t )
+seg3 = [-2.6 <= t <= -2.1 <> 0.1] ( curve @# t ) 
+seg4 = [-2.5 <= t <= -1.5 <> 0.2] ( curve @# t )
+seg5 = [-2.0 <= t <= -1.4 <> 0.1] ( curve @# t )
+seg6 = [-1.8 <= t <= -0.8 <> 0.2] ( curve @# t )
+seg7 = [-1.3 <= t <=  0.4 <> 0.2] ( curve @# t )
+seg8 = [-0.4 <= t <=  1.3 <> 0.2] ( curve @# t )
+seg9 = [ 0.8 <= t <=  1.8 <> 0.2] ( curve @# t )
+seg10 = [1.4 <= t <=  2.0 <> 0.1] ( curve @# t )
+seg11 = [1.5 <= t <=  2.5 <> 0.2] ( curve @# t )
+seg14 = [1.9 <= t <=  2.95 <> 0.2] ( curve @# t )
+seg15 = [2.5 <= t <=  3.0 <> 0.1] ( curve @# t )
+seg16 = [2.7 <= t <=  3.2 <> 0.1] ( curve @# t )
+
+
+s1poly = CHEBINTERP seg1
+s2poly = CHEBINTERP seg2
+s3poly = CHEBINTERP seg3
+s4poly = CHEBINTERP seg4
+s5poly = CHEBINTERP seg5
+s6poly = CHEBINTERP seg6
+s7poly = CHEBINTERP seg7
+s8poly = CHEBINTERP seg8
+s9poly = CHEBINTERP seg9
+s10poly = CHEBINTERP seg10
+s11poly = CHEBINTERP seg11
+s14poly = CHEBINTERP seg14
+s15poly = CHEBINTERP seg15
+s16poly = CHEBINTERP seg16
+
+
+
+!$ BellC(x) = (s1poly, s2poly, s3poly, s4poly, s5poly, s6poly, s7poly, s8poly, s9poly, s10poly, s11poly, s14poly, s15poly, s16poly)
+
+GRAPH [-3 <= x <= 3 <> 0.001] (BellC (x))
+
+// evaluation of the error curve
+
+!! P(x) = BellC(x)
+!! f(x) = curve @# x
+
+err = [-3 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+

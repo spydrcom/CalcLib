@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="testing"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/orsoncharts-1.4-eval-nofx.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/orsonpdf-1.6-eval.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/swtgraphics2d.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ChartProviders"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SimpleHttpd"/>
+	<classpathentry kind="lib" path="/Mpmath/bin" sourcepath="/Mpmath/src"/>
+	<classpathentry kind="lib" path="/Colt/bin" sourcepath="/Colt/src"/>
+	<classpathentry kind="lib" path="/Anaconda/bin" sourcepath="/Anaconda/src"/>
+	<classpathentry kind="lib" path="lib/jmtex-0224.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/IOLIB"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,39 @@
+
+
+
+T0c#0 = 1
+U0c#0 = 1
+
+T1c#1 = 1
+U1c = 2 * T1c
+
+T2c#2 = 1
+U2c = 2*T2c + APPEND(U0c,0,0)
+
+T3c#3 = 1
+U3c = 2*T3c + APPEND(U1c,0,0)  
+
+
+T4c#4 = 1
+U4c = 2*T4c + APPEND(U2c,0,0)  
+
+
+T5c#5 = 1
+U5c = 2*T5c + APPEND(U3c,0,0)  
+
+
+T6c#6 = 1
+U6c = 2*T6c + APPEND(U4c,0,0)  
+
+
+T7c#7 = 1
+U7c = 2*T7c + APPEND(U5c,0,0)  
+
+
+T8c#8 = 1
+U8c = 2*T8c + APPEND(U6c,0,0)  
+
+
+T9c#9 = 1
+U9c = 2*T9c + APPEND(U7c,0,0)  
+

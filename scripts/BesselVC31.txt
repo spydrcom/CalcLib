@@ -1,0 +1,25 @@
+
+
+READ ColtLib.txt
+
+READ VanChe31X.txt
+
+READ BesselFunctions.txt
+
+
+jVals = [-1.5<=x<=1.51<>0.1](J0(x))
+
+mj = MATRIX(jVals,31,1)  
+
+j0coef = SolveWithLUD(VC31x,mj) 
+
+j0c = j0coef|#1
+
+!! j0lcl(x) = j0c @*^ x
+
+
+
+lo = -1.5 ; hi = 1.5
+READ BesselSplineCompare.sub
+
+

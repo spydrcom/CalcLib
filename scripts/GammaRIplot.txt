@@ -1,0 +1,16 @@
+
+
+graph LIM 5 [-5<x<5<>0.01] (GAMMA (x))
+
+!! crit(x) = 0.5+i*x
+
+graph LIM 5 [-5<x<5<>0.01] (abs (GAMMA (crit(x))))  
+
+!! loggamma (x) = ln (GAMMA (x))
+
+graph LIM 5 [-5<x<5<>0.01] (abs (loggamma (x)))  
+
+!! loggammaCrit (x) = loggamma(crit(x))
+
+plotri loggammaCrit [-5 < x < 5 <> 0.01]  
+

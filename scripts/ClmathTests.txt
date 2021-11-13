@@ -1,0 +1,38 @@
+
+
+INFINITY = 1E4
+dx = 1/INFINITY
+
+!! zeta (s, a) = SIGMA [ 1 <= n <= INFINITY ] ( 1 / ( n + a ) ^ s )
+RENDERF zeta
+RENDER "The Hurwitz zeta function generalizes the Riemann zeta function" TOP
+
+dx = 1 / INFINITY
+!! zeta (s, a) = 1/( GAMMA s ) * INTEGRAL [ 0 <= x <= INFINITY <> dx ] ( ( ( x^(s-1) * exp (-a*x) ) / (1 - exp (-x) ) ) * <*> x )  
+RENDERF zeta
+!! zeta (s, a) = 1/( GAMMA s ) * INTEGRAL [ 0 <= x <= INFINITY <> dx ] ( ( ( x^(s-1) * exp ((1-a)*x) ) / (exp (x) - 1 ) ) * <*> x )  
+RENDERF zeta
+RENDER "The Hurwitz zeta function represented as an integral" TOP
+
+A = 1.2824271291
+// per https://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
+loggammaIntegralExpected = -1/2 -7/24*ln 2 + 1/4* ln pi + 3/2*ln A
+prettyprint loggammaIntegralExpected
+
+!! loggammaIntegralx(x) = INTEGRAL [ 0 < x < 1 <> dx ] ( loggamma (x) * <*> x )
+!! loggammaIntegral(x) = INTEGRAL [ 0 <= x <= 0.5 <> dx ] ( loggamma (x+1) * <*> x )
+RENDERF  loggammaIntegralx
+RENDERF  loggammaIntegral
+RENDER "Log Gamma identity integrals (per https://mathworld.wolfram.com/LogGammaFunction.html)" TOP
+
+lgixhalf = loggammaIntegral ()
+prettyprint lgixhalf
+error = lgixhalf - loggammaIntegralExpected
+prettyprint error
+
+lgix1 = loggammaIntegralx ()
+prettyprint lgix1
+lgix1Expected = ln (2*pi) / 2
+error = lgix1 - lgix1Expected
+prettyprint error
+

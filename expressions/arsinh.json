@@ -1,0 +1,57 @@
+{
+   "Name": "arsinh",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Hyperbolic inverse sine function ",
+   "Expression": 
+   {
+      "OpName": "ln",
+      "PostFix": false,
+      "NodeType": "UnaryOP",
+      "Parameter": 
+      {
+         "OpName": "+",
+         "Left": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "sqrt",
+            "PostFix": false,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "OpName": "+",
+               "Left": 
+               {
+                  "OpName": "^",
+                  "Left": 
+                  {
+                     "Operator": null,
+                     "Symbol": null,
+                     "NodeType": "Identifier",
+                     "Kind": "Unknown",
+                     "Name": "x"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 2.0,
+                  "OpType": "Binary"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 1.0,
+               "OpType": "Binary"
+            }
+         },
+         "OpType": "Binary"
+      }
+   },
+   "NodeType": "Profile"
+}

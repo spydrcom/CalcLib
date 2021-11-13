@@ -1,0 +1,305 @@
+
+
+
+
+READ DemoRoots.txt
+Reading... C:\workspace\MathFields\scripts\DemoRoots.txt
+Reading... C:\workspace\MathFields\scripts\DemoRoots.TXT
+
+
+SCRIPTPRINT DemoRoots.TXT
+
+
+x = 5
+SCRIPTPRINT sqrtCompute.txt
+SCRIPTPRINT sqrtIteration.txt
+READ sqrtCompute.txt
+
+
+
+x=(1, 1, -1)
+SCRIPTPRINT QUADRATIC.txt
+READ QUADRATIC.txt
+
+calc ROOTS x
+
+
+x=(2,-3,4,-5)
+SCRIPTPRINT CUBIC.txt
+READ CUBIC.txt
+
+calc ROOTS x
+
+
+x=(2,-3,4,-5,1)
+SCRIPTPRINT QUARTIC.txt
+READ QUARTIC.txt
+
+calc ROOTS x
+
+
+
+Reading... C:\workspace\MathFields\scripts\sqrtCompute.txt
+
+// looking for 10 decimal places of precision
+
+TOLERANCE = 10^(-10)
+
+// polynomial solutions "c - x^2 = 0" gives sqrt(c) as a solution
+
+sqrt_polynomial = (x,0,-1)
+
+polyprint sqrt_polynomial 
+
+// Newton's methods uses the first derivative for the solution
+
+sqrt_poly_derivative = POLYDER sqrt_polynomial 
+
+polyprint sqrt_poly_derivative 
+
+// initial approximation
+
+sqrtx = 1
+
+ITERATE 10 SqrtIteration.txt
+
+Reading... C:\workspace\MathFields\scripts\sqrtIteration.txt
+
+// compute polynomial value
+
+f = sqrt_polynomial +*^ sqrtx
+
+// compute derivative value
+
+fprime = sqrt_poly_derivative +*^ sqrtx
+
+// iteration contribution computed
+
+sqrt_iteration = f/fprime 
+
+// new value for this iteration
+
+sqrtx = sqrtx - sqrt_iteration 
+
+// check status of result
+
+sqrtx_squared = sqrtx ^ 2
+
+// display intermediate results
+
+PRETTYPRINT sqrt_iteration 
+PRETTYPRINT sqrtx_squared
+PRETTYPRINT sqrtx 
+
+// look for convergence
+
+ASSERT "Convergence Complete" TOLERANCE >|| sqrt_iteration 
+
+
+
+sqrt_polynomial = 
+
+	5 - x^2
+
+
+sqrt_poly_derivative = 
+
+	 - 2*x
+
+Reading... C:\workspace\MathFields\scripts\SqrtIteration.txt
+
+sqrt_iteration = 
+
+	-2
+
+
+sqrtx_squared = 
+
+	9
+
+
+sqrtx = 
+
+	3
+
+
+sqrt_iteration = 
+
+	0.6666666666666666
+
+
+sqrtx_squared = 
+
+	5.4444444444444455
+
+
+sqrtx = 
+
+	2.3333333333333335
+
+
+sqrt_iteration = 
+
+	0.09523809523809545
+
+
+sqrtx_squared = 
+
+	5.009070294784581
+
+
+sqrtx = 
+
+	2.238095238095238
+
+
+sqrt_iteration = 
+
+	0.002026342451874501
+
+
+sqrtx_squared = 
+
+	5.000004106063731
+
+
+sqrtx = 
+
+	2.2360688956433634
+
+
+sqrt_iteration = 
+
+	9.181433852065489E-7
+
+
+sqrtx_squared = 
+
+	5.000000000000843
+
+
+sqrtx = 
+
+	2.236067977499978
+
+
+sqrt_iteration = 
+
+	1.8847399291451707E-13
+
+
+sqrtx_squared = 
+
+	5.000000000000001
+
+
+sqrtx = 
+
+	2.23606797749979
+
+
+Script interrupted in iteration 6
+Assertion "Convergence Complete" has been validated, TOLERANCE >|| sqrt_iteration 
+*** Script has terminated
+
+
+
+Reading... C:\workspace\MathFields\scripts\QUADRATIC.txt
+
+a = x#2; b = x#1; c = x#0
+
+quad_common = -b / (2 * a)
+
+quad_d = b^2 - 4*a*c; quad_sqrt = 2\quad_d
+
+quad_roots = quad_common +|- quad_sqrt  / (2 * a)
+
+PRETTYPRINT quad_roots 
+
+
+quad_roots = 
+
+[
+	-0.6180339887498949
+	1.618033988749895
+]
+
+(-0.6180339887498949, 1.618033988749895)
+
+
+
+Reading... C:\workspace\MathFields\scripts\CUBIC.txt
+
+delta#3 = 0
+
+a = x#3; b = x#2; c = x#1; d = x#0
+
+delta#0 = b^2 - 3*a*c; delta#1 = 2*b^3 - 9*a*b*c + 27*a^2*d
+
+delta#3 = delta#1 ^ 2  - 4 * delta#0 ^ 3
+
+C = 3\( ( delta#1 + 2\delta#3 ) / 2 )
+
+unity1 = (1, (-1 +!* 2\3) / 2, (-1 -!* 2\3) / 2)
+unity2 = APPEND (-1/2 +|- i*2\3 / 2, 1)
+u = unity1
+
+cubic_roots = [0 <= k <= 2] (- (b + u#k * C + delta#0 / (u#k * C)) / (3*a) )
+
+PRETTYPRINT cubic_roots 
+
+
+cubic_roots = 
+
+[
+	0.7293231430114581
+	(0.03533842849427097 - 0.7397330112915744*i)
+	(0.03533842849427097 + 0.7397330112915744*i)
+]
+
+(0.7293231430114581)
+
+
+
+Reading... C:\workspace\MathFields\scripts\QUARTIC.txt
+
+delta#3 = 0
+
+a = x#4; b = x#3; c = x#2; d = x#1; e = x#0
+
+delta#0 = c^2 - 3*b*d + 12*a*e
+
+delta#1 = 2*c^3 - 9*b*c*d + 27*b^2*e + 27*a*d^2 - 72*a*c*e
+
+delta#3 = delta#1 ^ 2  - 4 * delta#0 ^ 3
+
+p = (8*a*c - 3*b^2) / (8*a^2)
+
+q = (b^3 - 4*a*b*c + 8*a^2*d) / (8*a^3)
+ 
+Q = 3\( (delta#1 + 2\(delta#3)) / 2)
+
+S = 2\( (Q + delta#0 / Q) / (3*a) - 2*p/3 ) / 2
+
+common = -b / (4*a)
+
+// quartic_roots_12 = common - S +|- 2\(q/S - 4*S^2 - 2*p) /2
+// quartic_roots_34 = common + S +|- 2\(-q/S - 4*S^2 - 2*p) /2
+// quartic_roots = APPEND (quartic_roots_12, quartic_roots_34)
+
+CMPS = common -|+ S
+quartic_roots = APPEND ( CMPS#0 +|- 2\(q/S - 4*S^2 - 2*p) /2 , CMPS#1 +|- 2\(-q/S - 4*S^2 - 2*p) /2 )
+PRETTYPRINT quartic_roots
+
+
+quartic_roots = 
+
+[
+	(0.004423084318876391 + 0.7714190717315003*i)
+	(0.004423084318876391 - 0.7714190717315003*i)
+	4.188847029536467
+	0.8023068018257802
+]
+
+(0.8023068018257804, 4.188847029536467)
+

@@ -1,0 +1,14 @@
+
+
+a1 = ((-3 - 2*i), (-2 + 3*i), (3 - 2*i))
+a2 = ((4 + 1*i), (5 + 2*i), -6)
+IMPORT m m.TDF
+IMPORT mx mx.TDF
+IMPORT mx2 mx2.TDF
+IMPORT mx2_ADJ mx2_ADJ.TDF
+mx2_CHARACTERISTIC = ((-369 + 108*i), (237 - 72*i), (-35 + 12*i), -1)
+IMPORT mx2_COMATRIX mx2_COMATRIX.TDF
+mx2_DET = (-369 + 108*i)
+IMPORT mx2_INV mx2_INV.TDF
+mx2_TR = (-35 + 12*i)
+IMPORT mx2_TRANSPOSE mx2_TRANSPOSE.TDF

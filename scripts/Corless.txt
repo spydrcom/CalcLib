@@ -1,0 +1,15 @@
+
+
+!! cp3(x) = cp(x,3) 
+
+!! cp5(x) = cp(x,5)
+
+!! cp7(x) = cp(x,7)
+
+!! cp9(x) = cp(x,9)  
+
+!! cp11(x) = cp(x,11)  
+
+
+graph LIM 5  [-10 < x < 10 <> 0.01] (cp3 x, cp5 x, cp7 x, cp9 x, cp11 x)
+

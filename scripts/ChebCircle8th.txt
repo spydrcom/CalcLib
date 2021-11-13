@@ -1,0 +1,64 @@
+
+
+
+// equation for a unit circle
+
+!! f(x) = 2\ (1 - x^2)
+
+
+
+// 45DEG is 1/8 of circle, sin=cos=sqrt(2)/2
+
+r2o2 = 2\2 / 2
+
+
+
+// area of the shared portion of the slice 0 - pi/4
+
+excessArea = r2o2 ^ 2 / 2
+
+
+// map out the slice to be interpolated
+
+c00  = [-0.20 <= x <= 0.8 <> 0.06] ( f (x) ) 
+
+c00poly = CHEBINTERP c00 
+
+
+// the interpolated Chebyshev polynomial
+
+!! P(x) = c00poly @*^ x
+
+
+// the error calculated at 1000 points
+
+err = [0 <= x <= r2o2 <> 0.001] (abs (P(x) - f(x))) 
+maxError = MAX err 
+
+
+// maximum error found
+
+PRETTYPRINT maxError 
+
+
+
+// use Clenshaw quadrature to formulate the anti-derivative and calculate the area
+
+area= CLENQUAD (c00poly, 0, r2o2)
+calculatedArea = area - excessArea
+
+PRETTYPRINT calculatedArea 
+
+
+// this should be pi / 8 since area of full unit circle = pi r^2 = pi
+
+approximationOfPi = 8 * calculatedArea 
+
+PRETTYPRINT approximationOfPi 
+
+// plots of interpolation and error curve
+
+GRAPH [0 <= x <= r2o2 <> 0.01] (P(x))
+
+GRAPH err
+

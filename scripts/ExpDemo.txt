@@ -1,0 +1,60 @@
+
+
+// !! cons() = 2*\2 / 9801
+// !! series(n) = SUMMATION [0 <= k <= n] ( (4*k)! * (1103 + 26390*k) / ((k!)^4 * 396 ^ (4*k)) )
+LOADJSON series
+LOADJSON cons
+
+computedTerms = [0 <= k <= 5] ( (4*k)! * (1103 + 26390*k) / ((k!)^4 * 396 ^ (4*k)) )
+PRETTYPRINT computedTerms
+
+!! computeApproximation(terms) = 1 / ( cons() * series(terms) )
+EXPRESS computeApproximation
+
+piApproximation0 = computeApproximation (0)
+PRETTYPRINT piApproximation0
+
+piApproximation1 = computeApproximation (1)
+PRETTYPRINT piApproximation1
+
+piApproximation2 = computeApproximation (2)
+PRETTYPRINT piApproximation2
+
+piApproximation = computeApproximation (3)
+PRETTYPRINT piApproximation
+
+// EXPRESS series
+// SAVEJSON series
+
+
+INFINITY = 100000
+
+ loadjson ex
+// !! ex(x) = SIGMA [0 <= i <= 25] ( x^i / i! )
+// EXPRESS ex
+
+loadjson it
+// !! it(t) = INTEGRAL  [ 0 <= x <= t <> 1/INFINITY ]  ( ex x * <*>x )
+// EXPRESS it
+
+it1 = it 1
+PRETTYPRINT it1
+err1 = exp 1 - 1 - it1
+PRETTYPRINT err1
+
+it2 = it 2
+PRETTYPRINT it2
+err2 = exp 2 - 1 - it2
+PRETTYPRINT err2
+
+ta = ex $% (0, 2, 1/INFINITY)
+PRETTYPRINT ta
+
+err3 = err2 + ta
+PRETTYPRINT err3
+
+it2Adj = it2 + ta
+PRETTYPRINT it2Adj
+
+// SAVEJSON ex
+// SAVEJSON it

@@ -1,0 +1,134 @@
+
+
+READ DemoRegression.txt
+Reading... C:\workspace\MathFields\scripts\DemoRegression.txt
+
+
+SCRIPTPRINT DemoRegression.txt
+READ regress_data.txt
+
+
+PRETTYPRINT y_line
+line_coefficients = FITLINE (x,y_line)
+
+
+PRETTYPRINT y_exp
+exp_coefficients = FITEXP (x,y_exp)
+
+
+PRETTYPRINT y_poly
+poly_coefficients = FITPOLY (x,y_poly)
+
+
+PRETTYPRINT y_har
+har_coefficients = FITHARMONIC (x_har,y_har,0.1)
+PRETTYPRINT har_coefficients 
+
+
+
+Reading... C:\workspace\MathFields\scripts\regress_data.txt
+
+
+
+y_line = 
+
+[
+	4
+	7.1
+	9.5
+	13.5
+	16.2
+]
+
+
+Linear regression
+
+	 Y = 8.700000000000001 + 1.36*x
+
+r^2 = 0.9700834976712961
+STD = 0.9750213672872332
+COV = 0.0969206130504208
+MSE = 0.9506666666666657
+SSR = 92.48
+SSE = 2.851999999999997
+SST = 95.332
+PC  = 0.9849281687876015
+
+
+
+y_exp = 
+
+[
+	0.1
+	0.3
+	6
+	23.5
+	66.2
+]
+
+
+
+
+Non-Linear regression
+
+	 Ln Y = 0.3456968531967063 + 0.7812796380035235*x
+
+r^2 = 0.9795614356940878
+STD = 0.46072336115906243
+COV = 0.40881363964246686
+MSE = 0.21226601551770388
+SSR = 30.519893637945838
+SSE = 0.6367980465531117
+SST = 31.15669168449896
+PC  = 0.9897279600344046
+
+
+
+y_poly = 
+
+[
+	4
+	-7.1
+	9.5
+	-13.5
+	16.2
+]
+
+
+Polynomial regression
+
+	 Y = 8.771428571428572 + 5.586904761904762*x - 4.269642857142857*x^2 - 0.9083333333333333*x^3 + 0.3196428571428571*x^4
+
+r^2 = 1.0
+STD = 1.1659632469897484E-14
+COV = 6.4063914669766386E-15
+MSE = 1.3594702933308769E-28
+SSR = 584.7879999999997
+SSE = 4.078410879992631E-28
+SST = 584.788
+PC  = 0.1731041511270584
+
+
+
+y_har = 
+
+[
+	4
+	-7.1
+	9.5
+	-13.5
+	16.2
+]
+
+
+har_coefficients = 
+
+[
+	510461.2340641936
+	-1215404.4917130603
+	1098328.6886200758
+	-478250.9996191938
+	84890.2593673543
+]
+
+

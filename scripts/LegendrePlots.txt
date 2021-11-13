@@ -1,0 +1,35 @@
+
+FAMILY Legendre 20 First
+
+graph [  -1 <=   x  <  1.02  <>  0.01  ]  ( P5(x), P4(x), P3(x), P2(x), P1(x), P0(x) )
+ENTITLED Legendre Polynomial Family Pn(x), 0 <= n <= 5, -1 <= x <= 1
+
+
+FAMILY Gegenbauer 10 0.5
+
+GRAPH   [  -1 <=   x  <  1.02  <>  0.01  ]   ( C5(x), C4(x), C3(x), C2(x), C1(x), C0(x) )
+ENTITLED Gegenbauer Family Plots [lambda=0.5] Cn(x), 0 <= n <= 5, -1 <= x <= 1
+
+
+GRAPH  [  0 <=    x    <= 1  <>  0.01  ]   ( P4(x), P3(x), P2(x), P1(x) )
+ENTITLED Legendre Polynomials Pn(x), 1 <= n <= 4, 0 <= x <= 1
+
+
+!! l10(x) = ln x / ln 10
+GRAPH LIM 3  [  1 <=    x    <= 10  <>  0.01  ]   ( l10 (P1(x)), l10 (P2(x)), l10 (P3(x)), l10 (P4(x)) )   
+ENTITLED Legendre Polynomials Pn(x), 1 <= n <= 4, 1 <= x <= 10, log scale
+
+
+GRAPH  [  0 <=    theta    <= pi/2  <>  0.01  ]   ( P1(cos theta), P2(cos theta), P3(cos theta), P4(cos theta) ) 
+ENTITLED Legendre Polynomials Pn(cos theta), 1 <= n <= 4, 0 <= theta <= pi/2
+
+
+GRAPH LIM 4 [  0 <=    x    <= 1  <>  0.0001  ]   ( P3'(x<>0.0001), P4'(x<>0.0001), P5'(x<>0.0001) )     
+ENTITLED Legendre Polynomial derivatives Pn'(x), 3 <= n <= 5, 0 <= x <= 1
+
+
+n=3
+// run DiffEQ error
+PREPARE P3 Pn 0.001 ; READ LegendreDE.txt
+PLOTF legendreDE  [  -1 <=    x    <= 1  <>  0.01  ]  
+ENTITLED Error plot for P3(x) as solution to Legendre Differential Equation

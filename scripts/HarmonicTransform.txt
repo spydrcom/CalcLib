@@ -1,0 +1,20 @@
+
+
+
+cosco = (1,2,3)
+sinco = (4,5,6)
+omega = 2
+
+
+!% f(x) +#*= (cosco, sinco, omega)
+
+graph [-4<=x<=4<>0.01] (f(x), f'(x))
+
+
+err = [0<=x<=4<>0.01] (abs (f'(x) - f'(x <> 0.000001)))
+maxErr = MAX err; PRETTYPRINT maxErr
+
+
+graph err
+
+

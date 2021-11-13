@@ -1,0 +1,28 @@
+
+IMPORT  bessel bessel.TDF
+
+bessel1 = bessel|#1
+bessel2 = bessel|#2
+
+x = [0 <= i <= 9](bessel1#(5*i))
+y = [0 <= i <= 9](bessel2#(5*i))
+
+
+x_LAGRANGE_y = LAGRANGE(x,y)
+
+!! J0(x) = x_LAGRANGE_y +*^ x
+
+
+LIBRARY Bessel cern.jet.math.Bessel
+
+!+ J0c(x)    = Bessel.j0
+
+x7 = x#7
+y7 = y#7
+
+j07 = J0(x7)
+j0c7 = J0c(x7)
+
+
+graph [0 <= i <= 50]  (J0(bessel1#i), J0c(bessel1#i), bessel2#i)
+

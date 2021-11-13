@@ -1,0 +1,43 @@
+
+
+x = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+
+jx = (0.997501, 0.990024, 0.9776262, 0.960398, 0.938469, 0.9120048, 0.8812008, 0.84628, 0.8075237)
+
+
+
+x_LAGRANGE_jx = LAGRANGE(x,jx)
+
+!! lf(x) = x_LAGRANGE_jx +*^ x
+
+
+
+vc = VANCHE x  
+
+vcInv = INV vc
+
+jm = MATRIX(jx,9,1)
+
+vcInv_MATMUL_jm = MATMUL(vcInv,jm)
+
+jxc = vcInv_MATMUL_jm|#1
+
+!! cf(x) = jxc @*^ x
+
+
+
+!! P(x) = cf(x)
+!! f(x) = lf(x)
+!! err(x) = abs ( P(x) - f(x) )
+
+
+erf = [0 < x < 1 <> 0.01] (err(x))
+
+maxErf = MAX erf
+
+PRETTYPRINT maxErf
+
+GRAPH erf
+
+
+

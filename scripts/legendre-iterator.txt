@@ -1,0 +1,14 @@
+
+x = (0,1)
+
+p0 = (1)
+
+p1 = x
+
+n = 1
+
+pn = p1
+
+pnm1 = p0
+
+ITERATE 5 legendre-script.sub

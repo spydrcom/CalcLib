@@ -1,0 +1,15 @@
+
+
+// Legendre Equation
+
+// (1 - x^2) * y''(x) - 2 * x * y'(x) + n * (n + 1) * y(x) = 0
+
+!! legendreDE(x) = (1 - x^2) * Pn''(x) - 2 * x * Pn'(x) + n * (n + 1) * Pn(x)
+DIFEQ  legendreDE  "Legendre Differential Equation"
+
+
+SELECT "Differential Equations"
+
+RENDERD legendreDE
+
+RENDER "Legendre Differential Equation" TOP

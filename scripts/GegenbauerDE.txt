@@ -1,0 +1,9 @@
+
+!! gegenbauer (x) = (1 - x^2) * f''(x) - (2*lambda + 1) * x * f'(x) + n * (n+2*lambda) * f(x)
+DIFEQ  gegenbauer  "Gegenbauer Differential Equation"
+
+SELECT "Differential Equations"
+
+RENDERD gegenbauer
+
+RENDER "Gegenbauer Differential Equation" TOP

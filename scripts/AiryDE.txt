@@ -1,0 +1,13 @@
+
+// Airy Equation
+
+// f''(x) - x * f(x) = 0
+
+!! airyDE(x) = f''(x) - x * f(x)
+DIFEQ airyDE "Airy Differential Equation"
+
+SELECT "Differential Equations"
+
+RENDERD airyDE
+
+RENDER "Airy Differential Equation" TOP

@@ -1,0 +1,16 @@
+
+
+READ ChebEQGen.txt
+
+
+n = 7
+
+!% T7(x) @*^= T7c
+!% U7(x) @*^= U7c
+
+PREPARE T7 Tn 0.00001
+PREPARE U7 Un 0.00001
+
+READ ChebEQExec.txt
+
+

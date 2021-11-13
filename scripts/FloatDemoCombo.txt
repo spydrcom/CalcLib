@@ -1,0 +1,29 @@
+
+// Bernoulli numbers are notoriously difficult to calculate.
+// brute force calculation is beyond basic capabilities of most computers
+
+
+SCRIPTPRINT FloatDemoCombo.TXT
+
+
+n=1
+SCRIPTPRINT ComputeNthBernoulli.txt
+ITERATE 10 ComputeNthBernoulli.txt
+
+// note the odd numbered values which should be 0 as evidence that even 
+// the low numbered results introduce error quickly, higher ones become impossible.
+
+// in a later demo script the Bernoulli sequence is computed using prime fractions.
+// the first 30 values are computed precisely as can be verified with online sites.
+
+
+// the GAMMA function evaluated at positive integers GAMMA(n) = (n-1)!
+
+x = 6
+SCRIPTPRINT GammaCompute.txt
+SCRIPTPRINT GammaIteration.txt
+READ GammaCompute.txt
+
+// the correct value of GAMMA(6) = 5! = 120, so this approximation is off by 2%
+
+

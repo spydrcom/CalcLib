@@ -1,0 +1,28 @@
+
+!! A (z) = Re(z)^2 + Im(z)^2  
+
+// !! Z(x,y) = A (zeta (x+i*y) )
+!! Z(x,y) = modSq (zeta (x+i*y) )
+// !! Zhalf(z) = Z (1/2,Re (z)) )
+!! zz(z) = Z (0.5,z)
+!! zzz(z) = zeta (0.5+i*z)
+
+//aa = [0<x<2 <> 0.1] (Zhalf (x))
+//aa = [0<x<2 <> 0.1] (Z (0.5,x))
+//calc aa
+
+//plotri zzz [14<x<20 <> 0.05]
+//plotri zzz [1.5<x<9.0 <> 0.01]
+//plotc Z (0, -2)  4  100
+//plot3d Z (0, -1)  2  100
+
+
+plotri zzz [14<x<20 <> 0.05]
+
+plotri zzz [19<x<26 <> 0.05] 
+
+plotri zzz [29<x<39 <> 0.05]  
+
+
+plotri zzz [32.85<x<32.95 <> 0.0005]   
+

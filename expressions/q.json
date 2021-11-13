@@ -1,0 +1,109 @@
+{
+   "Name": "q",
+   "Parameters": 
+   [
+      "a",
+      "b",
+      "c"
+   ],
+   "Description": "Quadratic Equation ",
+   "Expression": 
+   {
+      "OpName": "/",
+      "Left": 
+      {
+         "OpName": "+|-",
+         "Left": 
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "b"
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "sqrt",
+            "PostFix": false,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "OpName": "-",
+               "Left": 
+               {
+                  "OpName": "^",
+                  "Left": 
+                  {
+                     "Operator": null,
+                     "Symbol": null,
+                     "NodeType": "Identifier",
+                     "Kind": "Unknown",
+                     "Name": "b"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 2.0,
+                  "OpType": "Binary"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "OpName": "*",
+                  "Left": 
+                  {
+                     "OpName": "*",
+                     "Left": 4.0,
+                     "NodeType": "BinaryOP",
+                     "Right": 
+                     {
+                        "Operator": null,
+                        "Symbol": null,
+                        "NodeType": "Identifier",
+                        "Kind": "Unknown",
+                        "Name": "a"
+                     },
+                     "OpType": "Binary"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "Operator": null,
+                     "Symbol": null,
+                     "NodeType": "Identifier",
+                     "Kind": "Unknown",
+                     "Name": "c"
+                  },
+                  "OpType": "Binary"
+               },
+               "OpType": "Binary"
+            }
+         },
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "*",
+         "Left": 2.0,
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "a"
+         },
+         "OpType": "Binary"
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

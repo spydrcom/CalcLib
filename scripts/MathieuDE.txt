@@ -1,0 +1,19 @@
+
+
+// Mathieu Differential Equations
+
+// y'' + (a - 2*q*cos(2*x)) * y = 0
+!! mathieuDE(x) = y''(x) + (a - 2*q*cos(2*x)) * y(x)
+DIFEQ  mathieuDE  "Mathieu Differential Equation"
+
+// y'' - (a - 2*q*cosh(2*x)) * y = 0
+!! mathieuModDE(x) = y''(x) - (a - 2*q*cosh(2*x)) * y(x)
+DIFEQ  mathieuModDE  "Mathieu Modified Differential Equation"
+
+
+SELECT "Differential Equations"
+
+RENDERD mathieuDE
+RENDERD mathieuModDE
+
+RENDER "Mathieu Differential Equations" TOP

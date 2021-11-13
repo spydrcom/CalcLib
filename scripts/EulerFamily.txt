@@ -1,0 +1,23 @@
+
+E#0 = 1 ; E#1 = 1
+
+!!Ek(k) = SIGMA [0 <= l <= k] ( (-1)^l * ((2*k)##(2*l)) * E#l ) 
+
+!!EK(x, n, j) = SIGMA [0 <= k <= n] ( (-1)^k * n##k * (x+k)^j )
+!!Ej(x, j) = SIGMA [0 <= n <= j] ( 1/2^n * EK (x, n, j) )
+
+!!En(x, n) = SIGMA [0 <= k <= n/2] ( (-1)^k * E#k / 2^(2*k) * n##(2*k) * (x-1/2) ^ (n-2*k) )
+!!Em(x, m) = SIGMA [0 <= k <= m] ( m##k * E#k / 2^k * (x-1/2) ^ (m-k) )
+
+RENDERF Ek
+RENDER "Euler number recurrence formula" TOP
+
+RENDERF EK
+RENDERF Ej
+RENDERF En
+RENDERF Em
+RENDER "Euler polynomial equations" TOP
+
+E#2 = Ek(2)
+
+calc E

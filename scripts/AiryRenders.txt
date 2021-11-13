@@ -1,0 +1,18 @@
+
+SELECT "Airy Equations"
+
+RENDER f''(x) - x * f(x) = 0
+RENDER " Airy / Stokes differential equation " TOP
+
+RENDER Ai(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY] ( cos ( t^3 / 3 + x*t ) * <*> t )
+RENDER Bi(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY] ( ( e^( -t^3 / 3 + x*t ) + sin ( t^3 / 3 + x*t ) ) * <*> t )
+RENDER " Airy Ai and Bi equations " TOP
+
+RENDER Ai(x) = exp ( - 2/3 * x^(3/2) ) / ( 2 * 2\pi * x^(1/4))
+RENDER Ai(-x) = sin ( 2/3 * x^(3/2) + pi/4 ) / ( 2\pi * x^(1/4))
+RENDER " Stokes approximations for Ai equation " TOP
+
+RENDER Ai (x) = 1/pi * sqrt(x/3) * K ( 2/3 * x ^ (3/2) )
+RENDER Bi (x) = sqrt (x/3) * ( Ip ( 2/3 * x ^ (3/2) ) + In ( 2/3 * x ^ (3/2) ) )
+RENDER Ai(-x) = sqrt (x/9) * ( Jp ( 2/3 * x ^ (3/2) ) + Jn ( 2/3 * x ^ (3/2) ) )
+RENDER " Airy / Bessel Identity Equations " TOP

@@ -1,0 +1,130 @@
+{
+   "Parameters": 
+   [
+      "n"
+   ],
+   "Expression": 
+   {
+      "Hi": 
+      {
+         "Operator": null,
+         "Symbol": "AssignedVariableStorage",
+         "NodeType": "Identifier",
+         "Kind": "Variable",
+         "Name": "n"
+      },
+      "Target": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "OpName": "*",
+            "Left": 
+            {
+               "OpName": "!",
+               "PostFix": true,
+               "NodeType": "UnaryOP",
+               "Parameter": 
+               {
+                  "OpName": "*",
+                  "Left": 4.0,
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "k"
+                  },
+                  "OpType": "Binary"
+               }
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "+",
+               "Left": 1103.0,
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "OpName": "*",
+                  "Left": 26390.0,
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "k"
+                  },
+                  "OpType": "Binary"
+               },
+               "OpType": "Binary"
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "*",
+            "Left": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "OpName": "!",
+                  "PostFix": true,
+                  "NodeType": "UnaryOP",
+                  "Parameter": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "k"
+                  }
+               },
+               "NodeType": "BinaryOP",
+               "Right": 4.0,
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "^",
+               "Left": 396.0,
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "OpName": "*",
+                  "Left": 4.0,
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "k"
+                  },
+                  "OpType": "Binary"
+               },
+               "OpType": "Binary"
+            },
+            "OpType": "Binary"
+         },
+         "OpType": "Binary"
+      },
+      "Hbnd": "<=",
+      "Variable": "k",
+      "Lo": 0.0,
+      "Consumer": "SummationConsumer",
+      "Delta": 1,
+      "NodeType": "Range",
+      "Lbnd": "<="
+   },
+   "NodeType": "Profile",
+   "Name": "series"
+}

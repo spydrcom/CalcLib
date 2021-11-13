@@ -1,0 +1,22 @@
+
+
+// test POLYHG function (special case: empty set)
+
+alpha = 5/4 ; dx = 0.001
+
+family Bessel 3 Jp,1.25
+!! ref(x) = JP1_25(x)
+
+NULL = () ; polyTerms = 25
+jpolyh = POLYHG (NULL, alpha+1, polyTerms)
+
+!! halfSq(x) = -(x/2)^2
+!! JpolyEval(x) = jpolyh +*^ x
+!! f(x) = (x#/#2)^alpha / GAMMA(alpha+1) * JpolyEval (halfSq(x))
+!! error (x) = x^2 * f''(x <> dx) + x * f'(x <> dx) + (x^2 - alpha^2) * f(x)
+!! differences(x) = f(x) - ref(x)
+
+PLOTF f            [  0.1 <=    x    <= 8  <>  0.01  ]  
+PLOTF differences  [  0.1 <=    x    <= 8  <>  0.01  ]
+PLOTF error        [  0.1 <=    x    <= 8  <>  0.01  ]
+

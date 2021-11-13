@@ -1,0 +1,23 @@
+
+
+
+IMPORT simple simple.TDF
+
+READ ColtLib.txt
+
+calc MatRpt simple
+
+
+D = GetEvdD()
+V = GetEvdV() 
+Dr = GetEvdDreal() 
+Di = GetEvdDimag() 
+
+
+PRETTYPRINT D 5
+PRETTYPRINT V 5
+
+eigenvalues = Dr + i * Di
+
+PRETTYPRINT eigenvalues  5
+

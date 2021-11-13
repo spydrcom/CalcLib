@@ -1,0 +1,8 @@
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA(x) = SpecFunc.gamma
+
+!! PSI(x) = GAMMA'(x <> 0.0001)/GAMMA(x)
+
+GRAPH  LIMIT 20  [  -3.5 <=    x    <= 6  <>  0.01  ]   ( GAMMA(x), PSI(x) )

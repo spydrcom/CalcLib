@@ -1,0 +1,28 @@
+
+READ AiryDeclarations.txt
+READ AiryDE.txt
+
+domain = [-1.0 <= x <= 1.0 <> 0.1] (x)  
+dl = LENGTH domain
+
+// prepare domain for spline
+vals = [ 0 <= i < dl ] ( Ai (domain#i) )  
+
+// Lagrange polynomial spline
+aic = LAGRANGE (domain, vals)
+
+// treat as DE solution
+PREPPOLY aic f
+
+// DiffEQ solution test initialization
+TDES airyDE
+
+// fold constants on function for improved efficiency
+OPTIMIZE f ; OPTIMIZE f' ; OPTIMIZE f''
+
+// plot f and derivatives
+GRAPH  [  -1 <=    x    <= 1  <>  0.01  ]   ( f(x), f'(x), f''(x) )
+
+// plot error function
+PLOTF airyDE  [  -1 <=    x    <= 1  <>  0.01  ]  
+ENTITLED Error plot for Ai(x) polynomial interpolation as solution to Differential Equation

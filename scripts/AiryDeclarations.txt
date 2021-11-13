@@ -1,0 +1,17 @@
+
+LIBRARY AiFunc net.myorb.math.specialfunctions.AiryFunctions
+
+!+ AI_IMPORT(x) = AiFunc.Ai
+!! Ai(x) = AI_IMPORT x
+
+!+ AIJ_IMPORT(x) = AiFunc.AiJ
+!! AiJ(x) = AIJ_IMPORT x
+
+!+ BI_IMPORT(x) = AiFunc.Bi
+!! Bi(x) = BI_IMPORT x
+
+!! Ai2(x) = Ai''(x <> 0.001)
+!! Bi2(x) = Bi''(x <> 0.001)
+
+!! err(x) = abs ( Ai2(x) - x * Ai(x) )
+!! errB(x) = abs ( Bi2(x) - x * Bi(x) )

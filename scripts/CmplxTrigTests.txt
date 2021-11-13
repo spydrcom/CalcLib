@@ -1,0 +1,157 @@
+
+
+totalError = 0
+
+
+//	 * cos(ix) = cosh(x)
+//	 * sin(ix) = i sinh(x)
+//	 * 
+//	 * cos(x+y) = cos x cos y - sin x sin y
+//	 * sin(x+y) = sin x cos y + cos x sin y
+//	 * 
+//	 * cos(a+bi) = cos a cos bi - sin a sin bi
+//	 * 			 = cos a cosh b - i sinh b sin a
+//	 * 
+//	 * sin(a+bi) = sin a cos bi + cos a sin bi
+//	 *           = sin a cosh b + i sinh b cos a 
+
+
+!! acos(z) = -i * ln ( z + i*sqrt( 1 - z^2 ) )
+!! inv(z) = acos(z)
+!! f(z) = cos z
+
+z = 1+i
+READ CmplxTrigTest.sub
+
+z = 1+i*2
+READ CmplxTrigTest.sub
+
+z = 1-i
+READ CmplxTrigTest.sub
+
+z = 0.5+i
+READ CmplxTrigTest.sub
+
+z = 0.3+i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.3-i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.2-i*0.7
+READ CmplxTrigTest.sub
+
+z = 1+i*0.6
+READ CmplxTrigTest.sub
+
+z = 1-i*0.2
+READ CmplxTrigTest.sub
+
+SPLOT [-1 < x < 1 <> 0.05] ( cos (x+0.7*i), cos (x+0.3*i), cos (x+0.1*i), cos (x+0.9*i) )
+
+!! asin(z) = -i * ln ( i*z + sqrt( 1 - z^2 ) )
+!! inv(z) = asin(z)
+!! f(z) = sin z
+
+z = 1+i
+READ CmplxTrigTest.sub
+
+z = 1+i*2
+READ CmplxTrigTest.sub
+
+z = -1+i
+READ CmplxTrigTest.sub
+
+z = 1-i
+READ CmplxTrigTest.sub
+
+z = -1-i
+READ CmplxTrigTest.sub
+
+z = 0.5+i
+READ CmplxTrigTest.sub
+
+z = 0.3+i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.3-i*0.8
+READ CmplxTrigTest.sub
+
+z = -0.2-i*0.7
+READ CmplxTrigTest.sub
+
+
+// !! cosh(z) = cos(i*z)
+!! arcosh(z) = ln ( z + sqrt(z^2-1) )
+!! inv(z) = arcosh(z)
+!! f(z) = cosh z
+
+z = 1+i
+READ CmplxTrigTest.sub
+
+z = 1+i*0.2
+READ CmplxTrigTest.sub
+
+z = 1-i
+READ CmplxTrigTest.sub
+
+z = 0.5+i
+READ CmplxTrigTest.sub
+
+z = 0.3+i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.3-i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.2-i*0.7
+READ CmplxTrigTest.sub
+
+z = 1+i*0.6
+READ CmplxTrigTest.sub
+
+z = 1-i*0.2
+READ CmplxTrigTest.sub
+
+SPLOT [0 < x < 1 <> 0.05] ( cosh (0.7+x*i), cosh (0.3+x*i), cosh (0.1+x*i), cosh (0.9+x*i) )
+SPLOT [-1 < x < 1 <> 0.05] ( cosh (x+0.7*i), cosh (x+0.3*i), cosh (x+0.1*i), cosh (x+0.9*i) )
+
+
+!! arsinh(z) = ln ( z + sqrt(z^2+1) )
+// !! sinh(z) = - i * sin (i*z)
+!! inv(z) = arsinh(z)
+!! f(z) = sinh z
+
+z = 1+i
+READ CmplxTrigTest.sub
+
+z = 1+i*0.2
+READ CmplxTrigTest.sub
+
+z = -1+i
+READ CmplxTrigTest.sub
+
+z = 1-i
+READ CmplxTrigTest.sub
+
+z = -1-i
+READ CmplxTrigTest.sub
+
+z = 0.5+i
+READ CmplxTrigTest.sub
+
+z = 0.3+i*0.8
+READ CmplxTrigTest.sub
+
+z = 0.3-i*0.8
+READ CmplxTrigTest.sub
+
+z = -0.2-i*0.7
+READ CmplxTrigTest.sub
+
+
+PRETTYPRINT totalError
+
+
+SPLOT [-2 < x < 2 <> 0.05] (cosh (x) + i * sinh (x), cosh (x) - i * sinh (x))  
+

@@ -1,0 +1,34 @@
+
+
+!% rate(x) +*^= (0, -0.1)
+
+
+// apply RECIPROCAL rule
+!% r(x) <>= RECIPROCAL { 1 / rate }
+
+
+// apply INVERSE rule
+!% inv(x) <>= INVERSE { inf ^-1= f }
+
+
+// apply CHAIN rule
+!% decay(x) <>= CHAIN { exp (rate()) }
+
+
+// apply PRODUCT rule
+!% decayingCycle(x) <>= PRODUCT { decay() *  cos() }
+
+
+// apply QUOTIENT rule
+!% q(x) <>= QUOTIENT { decay() /  cos() }
+
+
+
+// apply POWER rule
+!% p(x) <>= POWER { decay() ^  cos() }
+
+
+
+// apply SUM rule
+!% abcd(x) <>= SUM { - a'() + b''() - c() + d() }
+

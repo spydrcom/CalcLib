@@ -1,0 +1,45 @@
+
+
+READ VC31Prep.txt
+READ BesselFunctions.txt
+
+
+// x-axis scaling allows more of the curve per segment
+// increment of 0.2 requires 1/2 as many samples
+jVals2 = [0.0 <= x <= 15 <> 0.2] ( J0(x) )
+
+
+// combined sub-expressions reduce the spline generation to:
+j0co2 = VC31 ( APPEND (GENKNOT jVals2, jVals2) )
+
+
+// evaluation done on x/2 scales the function back
+!! j0x(x) = EVALSPLINE (j0co2, 0, abs(x/2))
+
+
+graph [-10 < x < 10 <> 0.1] (J0(x), j0x(x))
+
+
+
+
+dx = 0.000001 ; alpha = 0
+
+
+!! besFun (x) = x^2 * J0''(x <> dx) + x * J0'(x <> dx) + (x^2 - alpha^2)* J0(x)
+!! besFunLx (x) = x^2 * j0x''(x <> dx) + x * j0x'(x <> dx) + (x^2 - alpha^2)* j0x(x)
+
+err  =  [-10 < x < 10 <> 0.01] (abs(besFun(x)))
+
+
+errL =  [-10 < x < 10 <> 0.01] (abs(besFunLx(x)))
+
+
+calc MAX err;     // 48421.425216669435
+
+calc MAX errL;    //  3.717317628925164
+
+
+
+graph LIM 0.5 [-10 < x < 10 <> 0.01] (besFun(x),  besFunLx(x))     
+
+

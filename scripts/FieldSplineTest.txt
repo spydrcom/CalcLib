@@ -1,0 +1,22 @@
+
+// unit test for spline coded as net.myorb.math.specialfunctions.FieldOdeSolution
+
+a = 9.8 ; b = 0.196
+
+!! f (Tn, Yn) = a - b * Yn
+
+LIBRARY FieldFunc net.myorb.math.specialfunctions.FieldOdeSolution
+
+!+ Y_IMPORT(x) = FieldFunc.y
+!! y(x) = Y_IMPORT x
+
+!+ YP_IMPORT(x) = FieldFunc.yPrime
+!! y'(x) = YP_IMPORT x
+
+!!testError (x) = y' (x) - f ( x, y(x) )
+
+// function plots
+GRAPH  [  0 <=    x    <= 7  <>  0.01  ]   ( y(x), y'(x) )
+
+// error plots
+PLOTF testError  [  0 <=    x    <= 7  <>  0.01  ]  

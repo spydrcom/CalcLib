@@ -1,0 +1,98 @@
+
+
+READ DemoCombo.txt
+Reading... C:\workspace\MathFields\scripts\DemoCombo.txt
+Reading... C:\workspace\MathFields\scripts\DemoCombo.TXT
+
+
+SCRIPTPRINT DemoCombo.TXT
+
+
+n=1
+SCRIPTPRINT BERNOULLI.txt
+ITERATE 10 BERNOULLI.txt
+
+
+x = 6
+SCRIPTPRINT GammaCompute.txt
+READ GammaCompute.txt
+Reading... C:\workspace\MathFields\scripts\BERNOULLI.txt
+bn = BERNOULLI(n)
+PRETTYPRINT bn
+n = n + 1
+
+bn = 
+
+	0.5
+
+
+bn = 
+
+	0.16666666666666663
+
+
+bn = 
+
+	-2.220446049250313E-16
+
+
+bn = 
+
+	-0.03333333333333399
+
+
+bn = 
+
+	1.7763568394002505E-15
+
+
+bn = 
+
+	0.02380952380956758
+
+
+bn = 
+
+	3.794742298168785E-13
+
+
+bn = 
+
+	-0.03333333333154209
+
+
+bn = 
+
+	-1.0449863196981823E-11
+
+
+bn = 
+
+	0.07575757526731397
+
+
+Iteration 10 has completed
+*** Maximum iteration count exceeded
+Reading... C:\workspace\MathFields\scripts\GammaCompute.txt
+
+!! GammaFactor (t,n) = n * n^t / ( (n-1)^t * (t+n) )
+
+g = x^2 + x
+
+g = 1 / g
+
+n = 2
+
+ITERATE 1000 GammaIteration.txt
+PRETTYPRINT g 
+
+Reading... C:\workspace\MathFields\scripts\GammaIteration.txt
+
+Iteration 1000 has completed
+*** Maximum iteration count exceeded
+
+g = 
+
+	117.51405987584397
+
+

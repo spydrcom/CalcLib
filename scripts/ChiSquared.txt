@@ -1,0 +1,49 @@
+
+SELECT "Chi Squared Equations"
+RENDER chi^2 = SIGMA [1 <= i <= n] ( (O#i - E#i) ^ 2 / E#i )
+RENDER "Chi squared Distribution of n Observations (O) having Expected Frequency (E)" TOP
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+!+ GAMMAINC_IMPORT(s,x) = SpecFunc.gammaIncompleteLower
+!! gamma (s, x) = GAMMAINC_IMPORT (s, x)
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA (x) = GAMMA_IMPORT x
+
+// Probability Density
+!! PDF(x,k) = x ^ (k/2 - 1) * exp (-x / 2) / ( 2 ^ (k/2) * GAMMA (k/2) )
+
+!! PDF1 (x) = PDF (x,1)
+!! PDF2 (x) = PDF (x,2)
+!! PDF3 (x) = PDF (x,3)
+!! PDF4 (x) = PDF (x,4)
+!! PDF5 (x) = PDF (x,5)
+!! PDF6 (x) = PDF (x,6)
+!! PDF7 (x) = PDF (x,7)
+!! PDF8 (x) = PDF (x,8)
+!! PDF9 (x) = PDF (x,9)
+
+GRAPH  [  0.5 <=    x    <= 8  <>  0.01  ]   ( PDF1(x), PDF2(x), PDF3(x), PDF4(x), PDF5(x), PDF6(x), PDF7(x) )
+entitled Chi Squared Probability Density Function - 1 to 7 Degrees of Freedom
+
+RENDERF PDF
+
+// cumulative distribution
+!! CDF(x,k) = gamma (k/2, x/2) / GAMMA (k/2)
+
+!! CDF1 (x) = CDF (x,1)
+!! CDF2 (x) = CDF (x,2)
+!! CDF3 (x) = CDF (x,3)
+!! CDF4 (x) = CDF (x,4)
+!! CDF5 (x) = CDF (x,5)
+!! CDF6 (x) = CDF (x,6)
+!! CDF7 (x) = CDF (x,7)
+!! CDF8 (x) = CDF (x,8)
+!! CDF9 (x) = CDF (x,9)
+
+GRAPH  [  0.5 <=    x    <= 8  <>  0.01  ]   ( CDF1(x), CDF2(x), CDF3(x), CDF4(x), CDF5(x), CDF6(x), CDF7(x) )
+entitled Chi Squared Cumulative Distribution Function - 1 to 7 Degrees of Freedom
+
+RENDERF CDF
+
+RENDER "Probability Density and Cumulative Distribution Functions for Chi squared Distribution" TOP
+

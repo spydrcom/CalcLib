@@ -1,0 +1,9 @@
+
+
+!! OCTOPUS (x,y) = cos (y * exp (x-y) / x) 
+
+plot3d OCTOPUS (-0.51, -0.51) 1 1
+plot3d OCTOPUS (-1.9,-1.9) 3.8 3.8
+plotc OCTOPUS (-1.9,-1.9) 3.8 100
+
+RENDER cos (y * exp (x-y) / x)

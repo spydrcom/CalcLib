@@ -1,0 +1,8 @@
+
+G(k,n) = 
+	(1/k)*
+	(
+	    ( gamma - sum(p^(-1),p=1..n-1) )* G(k-1,n) +
+		sum ((Zeta(k-i) - sum(p^(-(k-i)),p=1..n-1)) * G(i,n), i=0..k-2) 
+	) 
+with G(0,n) = 1 for k => 0 and n => 1.

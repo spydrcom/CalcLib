@@ -1,0 +1,9 @@
+
+
+x = 1/4
+A068466 = 3.62560990822190831193
+gammaPart = F (x); n = 2; ITERATE 12000 GammaIteration.sub
+A068466computed = gammaPart ; prettyprint A068466computed
+errA068466 = abs ( A068466 - A068466computed )
+prettyprint errA068466
+

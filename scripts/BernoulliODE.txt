@@ -1,0 +1,7 @@
+
+// Bernoulli Equation
+
+// y' = q(t) * y^b - p(t) * y
+!! BODE(Tn,Yn) = q(Tn) * Yn^b - p(Tn) * Yn
+!! bernoulliODE(x) = y'(x) - q(t) * y(x)^b + p(t) * y(x)
+DIFEQ bernoulliODE BODE "Bernoulli Equation"

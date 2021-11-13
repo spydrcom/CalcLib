@@ -1,0 +1,84 @@
+
+// testing of Exponential Integral realized using AD Spline
+
+LIBRARY ExpInt net.myorb.math.specialfunctions.ExponentialIntegral
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+
+// function Et(t) = exp(t) / t supplied by ExpInt class
+!+ ET_IMPORT(x) = ExpInt.EiPrime
+!! Ei'(x) = ET_IMPORT x
+!! Et(x) = ET_IMPORT x
+
+!+ EI_IMPORT(x) = SpecFunc.ei
+!! Ei(x) = EI_IMPORT x
+
+!+ E1_IMPORT(x) = SpecFunc.e1
+!! E1(x) = E1_IMPORT x
+
+!+ LI_IMPORT(x) = SpecFunc.li
+!! li(x) = LI_IMPORT x
+
+
+// plots of functions
+PLOTF  LIM 3  Ei  [  -3 <=    x    <= 3  <>  0.01  ]  
+PLOTF  LIM 3  li  [   0 <=    x    <= 3  <>  0.01  ]  
+
+GRAPH  LIM 3  [   -3 <=    x    <= 3  <>  0.01  ]  ( Ei(x), li(x), E1(x) )
+ENTITLED Exponential Integrals Ei, E1, and li
+
+
+// run suite of tests for Exponential Integral
+READ ExpIntTesting.sub
+
+
+// additional test for Ei defined over larger domain
+!! rho(x) = exp (x-1) / ( (Ei (x-1))^2 + pi^2 )
+PLOTF rho  [  1 <=    x    <= 20  <>  0.01  ]
+approxDelta = 1E-3
+
+// derivatives
+!! r(x) = rho(x)
+!! r'(x) = rho'(x <> approxDelta)
+!! r''(x) = rho''(x <> approxDelta)
+
+
+// local max
+RhoPrimeZero = 3
+MAXMINOF rho RhoPrimeZero
+PRETTYPRINT RhoPrimeZero
+
+RhoPrimeZeroError = abs ( r'(RhoPrimeZero) )
+PRETTYPRINT RhoPrimeZeroError
+
+RhoMax = rho(RhoPrimeZero)
+PRETTYPRINT RhoMax
+
+
+// integral of rho
+!! Ri(x) = rho(x) $| (1, x, 1E-3)
+PLOTF Ri  [  1 <=    x    <= 10  <>  0.1  ]  
+
+
+EiCrossesLiNear = 0.5
+!! crossEiLi(x) = Ei(x) - li(x)
+ROOTOF crossEiLi EiCrossesLiNear
+PRETTYPRINT EiCrossesLiNear
+
+
+E1CrossesLiNear = 1.5
+!! crossE1Li(x) = E1(x) - li(x) 
+ROOTOF crossE1Li E1CrossesLiNear 
+PRETTYPRINT E1CrossesLiNear
+
+
+A187848 = 1
+A187848Calc = Ri(30)
+// NOTE: this is an integral of rho which calls Ei and exp...
+//			in the absence of spline use the calc time cost would be VERY painful
+A187848Error = abs ( A187848Calc - A187848 )
+PRETTYPRINT A187848Error
+
+// constants taken from http://www.oeis.org
+// A187848 : a(n) is the moment of order n for the probability density function
+

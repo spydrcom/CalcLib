@@ -1,0 +1,49 @@
+
+
+// Bessel Equation
+
+// x^2 * Jn''(x) + x * Jn'(x) + (x^2 - n^2) * Jn(x) = 0
+// x^2 * Yn''(x) + x * Yn'(x) + (x^2 - n^2) * Yn(x) = 0
+
+!! BesDE (x) = x^2 * f''(x) + x * f'(x) + (x^2 - alpha^2) * f(x)
+!! BesJnDE (x) = x^2 * Jn''(x) + x * Jn'(x) + (x^2 - n^2) * Jn(x)
+!! BesYnDE (x) = x^2 * Yn''(x) + x * Yn'(x) + (x^2 - n^2) * Yn(x)
+
+DIFEQ  BesDE  "Bessel Ordinary Differential Equation"
+DIFEQ BesJnDE "Bessel Ordinary Differential Equation (Jn solution set)"
+DIFEQ BesYnDE "Bessel Ordinary Differential Equation (Yn solution set)"
+
+
+// Modified Bessel Equation
+
+// x^2 * Kn''(x) + x * Kn'(x) - (x^2 + n^2) * Kn(x) = 0
+// x^2 * In''(x) + x * In'(x) - (x^2 + n^2) * In(x) = 0
+
+!! BesModDE (x) = x^2 * f''(x) + x * f'(x) - (x^2 + alpha^2) * f(x)
+!! BesModKnDE (x) = x^2 * Kn''(x) + x * Kn'(x) - (x^2 + n^2) * Kn(x)
+!! BesModInDE (x) = x^2 * In''(x) + x * In'(x) - (x^2 + n^2) * In(x)
+
+DIFEQ  BesModDE  "Bessel Modified Differential Equation"
+DIFEQ BesModKnDE "Bessel Modified Differential Equation (Kn solution set)"
+DIFEQ BesModInDE "Bessel Modified Differential Equation (In solution set)"
+
+
+// Spherical Bessel Equation
+
+// x^2 * Jl''(x) + 2 * x * Jl'(x) + (x^2 - l^2 - l) * Jl(x) = 0
+
+!! BesSphDE (x) = x^2 * f''(x) + 2 * x * f'(x) + (x^2 - l^2 - l) * f(x)
+!! BesSphJlDE (x) = x^2 * Jl''(x) + 2 * x * Jl'(x) + (x^2 - l^2 - l) * Jl(x)
+
+DIFEQ  BesSphDE  "Bessel Spherical Differential Equation"
+DIFEQ BesSphJlDE "Bessel Spherical Differential Equation (Jl solution set)"
+
+
+SELECT "Differential Equations"
+
+RENDERD BesDE
+RENDERD BesModDE
+RENDERD BesSphDE
+
+RENDER "Bessel Ordinary, Modified, and Spherical Differential Equations" TOP
+

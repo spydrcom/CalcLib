@@ -1,0 +1,15 @@
+
+
+FAMILY Chebyshev 7 First
+
+//GRAPH [-1 <= x <= 1 <> 0.01] (t3 +*^ x, t4 +*^ x, t5 +*^ x, t6 +*^ x) 
+
+GRAPH [-1 <= x <= 1 <> 0.01] (T3(x), T4(x), T5(x), T6(x) ) 
+
+
+n = 6.0
+Tn = t6
+Tnm1 = t5
+Tnp1 = t6
+x = (0.0, 1.0)
+

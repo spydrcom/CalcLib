@@ -1,0 +1,20 @@
+
+n = 0
+
+pocharray = (1,0,0,0,0,0,0,0,0,0)
+
+ITERATE 9 PochRow.sub
+
+pochmat = MATRIX (pocharray,10,10)
+
+l = TRIL pochmat
+u = TRIU pochmat
+
+prettyprint l
+prettyprint u
+
+// A265609 as a square array
+
+A265609 = TRANSPOSE (pochmat)
+
+prettyprint A265609

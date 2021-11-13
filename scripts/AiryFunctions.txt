@@ -1,0 +1,12 @@
+
+
+READ AiryDeclarations.txt
+
+READ AiryRenders.txt
+READ AiryErrorPlots.txt
+READ AiryCalcTests.txt
+
+
+GRAPH LIM 1   [  -10 <=    x    <= 2  <>  0.01  ]   ( Ai(x), Bi(x) ) 
+ENTITLED Airy (Ai / Bi) Spline Function Plots
+

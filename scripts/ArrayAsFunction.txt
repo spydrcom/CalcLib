@@ -1,0 +1,65 @@
+
+READ JavaMath.txt
+
+// function being interpolated
+!! expSin (x) = EXP (-x / 5.0) * ( 2.0 + SIN (2.0 * x) )
+exactArea = 9.1082396073230
+
+// collect data and meta-data
+a = [ -1 <= x <= 11 <> 0.1 ] ( expSin x )
+
+// declare function based on interpolation
+!! interpolatedFunction(x) = a @# x
+
+// plot interpolated values
+PLOTF interpolatedFunction  [  0 <= x <= 10  <>  0.01  ]  
+
+// compute derivative function
+derivativeArray =  ARRAYDER (a) 
+!! derivative(x) = derivativeArray @# x
+PLOTF derivative  [  0 <= x <= 10  <>  0.01  ]  
+
+// compute area over [0,10]
+integratedArray =  ARRAYINT (a, 0, 10) 
+
+// establish antiDerivative
+!! antiDerivative(x) = integratedArray @# x
+PLOTF antiDerivative  [  0 <= x <= 10  <>  0.01  ]  
+
+// brute force computation
+bruteForceArea = integratedArray#100
+PRETTYPRINT bruteForceArea
+
+// compute trap adjustment
+lstSlice = bruteForceArea - integratedArray#99
+adj = ( lstSlice + integratedArray#0 ) / 2
+
+adjustedArea = bruteForceArea - adj
+PRETTYPRINT adjustedArea
+//9.106931554258587
+
+// compute error in integral computation
+error = abs ( exactArea - adjustedArea )
+PRETTYPRINT error
+
+// TSQ of interpolated function
+approx = interpolatedFunction $| (0,10,1)
+PRETTYPRINT approx
+
+error = abs (exactArea - approx)
+PRETTYPRINT error
+
+
+// evaluate interval [7,9] using 3 methods
+
+antiD79 = antiDerivative || (7,9)
+PRETTYPRINT antiD79
+// 0.76754
+
+tsqInterp79 = interpolatedFunction $| (7,9,1)
+PRETTYPRINT tsqInterp79
+// 0.793963244737
+
+tsqExpSin79 = expSin $| (7,9,1) 
+PRETTYPRINT tsqExpSin79
+// 0.7938773654598066

@@ -1,0 +1,24 @@
+
+
+// Hermite Differential Equation
+
+// y''(x) - 2*x*y'(x) + 2*n*y(x) = 0
+
+!! hermiteDE(x) = f''(x) - 2*x*f'(x) + 2*n*f(x)
+DIFEQ  hermiteDE  "Hermite Differential Equation"
+
+
+// Weber-Hermite Differential Equation
+
+// y''(x) + (lambda - x^2) * f(x) = 0
+
+!! weberHermiteDE(x) = f''(x) + (lambda - x^2) * f(x)
+DIFEQ  weberHermiteDE  "Weber-Hermite Differential Equation"
+
+
+SELECT "Differential Equations"
+
+RENDERD hermiteDE
+RENDERD weberHermiteDE
+
+RENDER "Hermite and Weber Differential Equations" TOP

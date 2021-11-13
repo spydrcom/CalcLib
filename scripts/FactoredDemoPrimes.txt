@@ -1,0 +1,14 @@
+
+SCRIPTPRINT FactoredDemoPrimes.TXT
+
+
+x = 7
+SCRIPTPRINT sqrtCompute.txt
+SCRIPTPRINT sqrtIteration.txt
+READ sqrtCompute.txt
+
+
+n=1
+SCRIPTPRINT ComputeNthBernoulli.txt
+ITERATE 30 ComputeNthBernoulli.txt
+

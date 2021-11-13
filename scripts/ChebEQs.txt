@@ -1,0 +1,32 @@
+
+
+// use Chebyshev T5 as test function
+T5 = (0,   0,   0,   0,   0,  1)
+n  = 5
+
+// use Chebyshev series calculus
+T5d1 = (5,   0,  10,   0,  10)
+T5d2 = (0, 120,   0,  80)
+
+
+// T5, T5', & T5''
+!! t5x(x)   = T5 @*^ x
+!! t5xd1(x) = T5d1 @*^ x
+!! t5xd2(x) = T5d2 @*^ x
+
+
+// display of plots of T5, T5', & T5''
+GRAPH [-1 <= x <= 1 <> 0.01] (t5x(x), t5xd1(x), t5xd2(x))
+
+
+// define differiential equation using T5 function and derivative functions
+!! chebeq(x) = (1-x*x) * t5xd2(x) - x * t5xd1(x) + n*n * t5x(x)
+
+
+// display MAX error and graph of error
+
+GRAPH [-1 <= x <= 1 <> 0.01] (chebeq(x))
+
+err = [-1 <= x <= 1 <> 0.001] (chebeq(x))
+
+calc MAX err

@@ -1,0 +1,15 @@
+
+
+READ VC31Prep.txt
+READ BesselFunctions.txt
+
+
+
+n=10
+// x-axis scaling allows more of the curve per segment
+// increment of 0.2 requires 1/2 as many samples
+jVals2 = [-15*n <= x <= 15*n <> n] ( J0(x/10) )
+j0c = VC31 jVals2
+
+
+

@@ -1,0 +1,68 @@
+
+
+READ ChebEQGen.txt
+
+
+// first kind Chebyshev equation
+
+n = 5
+
+!% T5(x) @*^= T5c
+
+!% T5d1(x) <>= T5
+
+!% T5d2(x) <>= T5d1
+
+
+
+
+// display of plots of T5, T5', & T5''
+GRAPH [-1 <= x <= 1 <> 0.01] (T5(x), T5d1(x), T5d2(x))
+
+
+// define differiential equation using T5 function and derivative functions
+!! chebeq1(x) = (1-x*x) * T5d2(x) - x * T5d1(x) + n*n * T5(x)
+
+
+// display MAX error and graph of error
+
+GRAPH [-1 <= x <= 1 <> 0.01] (chebeq1(x))
+
+err = [-1 <= x <= 1 <> 0.001] (chebeq1(x))
+
+calc MAX err
+
+
+
+
+// second kind Chebyshev equation
+
+n = 6
+
+!% U6(x) @*^= U6c
+
+!% U6d1(x) <>= U6
+
+!% U6d2(x) <>= U6d1
+
+
+
+
+// display of plots of U6, U6', & U6''
+GRAPH [-1 <= x <= 1 <> 0.01] (U6(x), U6d1(x), U6d2(x))
+
+
+// define differiential equation using U6 function and derivative functions
+!! chebeq2(x) = (1-x*x) * U6d2(x) - 3 * x * U6d1(x) + n*(n+2) * U6(x)
+
+
+// display MAX error and graph of error
+
+GRAPH [-1 <= x <= 1 <> 0.01] (chebeq2(x))
+
+err = [-1 <= x <= 1 <> 0.001] (chebeq2(x))
+
+calc MAX err
+
+
+

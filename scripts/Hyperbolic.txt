@@ -1,0 +1,5 @@
+
+READ TrigIdentities.txt
+
+GRAPH  [  -2 <=    x    <= 2  <>  0.01  ]   ( sinh x, cosh x, tanh x ) 
+

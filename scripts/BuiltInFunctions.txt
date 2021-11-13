@@ -1,0 +1,26 @@
+
+
+!! FIB(n) = ( phi^n - (1-phi)^n ) / 2\5
+
+!! NEGATE(x)   = 0 - x
+!! INVERTED(x) = 1 / x
+!! SQUARED(x)  = x * x
+!! CUBED(x)    = x ^ 3
+!! NROOT(x,n)  = n\ x
+!! CROOT(x)    = 3\ x
+
+!! LogB(x,b)   = ln x / ln b
+!! Log10(x)    = LogB(x,10)
+!! Log2(x)     = LogB(x,2)
+
+!! TwoToX(x)   = 2 ^ x
+!! TenToX(x)   = 10 ^ x
+
+LIBRARY BIF java.lang.Math
+
+!+ CEIL(x)  = BIF.ceil
+!+ FLOOR(x) = BIF.floor
+!+ RANDOM() = BIF.random
+!+ ROUND(x) = BIF.round
+!+ RINT(x)  = BIF.rint
+

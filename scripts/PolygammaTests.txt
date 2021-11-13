@@ -1,0 +1,44 @@
+
+!! lg(x) = loggamma x ; !! dg(x) = digamma x ; !! tg(x) = trigamma x
+!! Loggam(x) = Re (lg x) ; !! Digam(x) = Re (dg x) ; !! Trigam(x) = Re (tg x) ;
+
+!! crit (x) = 0.5 + x*i
+
+// graph LIM 5 [0<x<10<>0.01]( lg x, lg'(x <> 0.001) )
+graph LIM 5 [0<x<10<>0.01]( Loggam x, Digam x, Trigam x )
+
+graph [0<x<10<>0.1] (lg(crit(x)))
+graph [10<x<30<>0.1] (lg(crit(x))) 
+
+plotri lg [ 20<x<30<>0.1]
+
+!! lgc (x) = lg(crit(x))
+plotri lgc [ 20<x<30<>0.1] 
+
+!! dgc (x) = dg(crit(x)) 
+plotri dgc [ 20<x<30<>0.1]  
+plotri dgc [ 23<x<25<>0.01]   
+
+
+// Loggamma
+!! lg2(x,y) = loggamma(x+i*y)
+plotc lg2 (-5, -5)  10  100
+plot3d lg2 (-5,-5)  10 10
+
+// Digamma
+!! dg2(x,y) =digamma(x+i*y) 
+plotc dg2 (-10, -10)  20  100 
+plot3d dg2 (-10, -10)  20 20
+
+// THETA
+graph [0<x<10<>0.01](THETA x) 
+
+!! tcrit (x) = THETA (crit (x))
+graph [ 0 < x < 10 <> 0.01 ] ( THETA (crit (x)) )
+graph [ 0 < x < 40 <> 0.01 ] (tcrit x, tcrit'(x <> 0.001) )
+plotri  tcrit [ 0 < x < 40 <> 0.1 ]
+
+!! t2(x,y) = THETA (x+i*y)
+plotc t2 (-10, -10)  20  100 
+plot3d t2 (-10,-10)  20 20 
+

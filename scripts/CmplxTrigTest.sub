@@ -1,0 +1,21 @@
+
+VERIFY z
+
+PRETTYPRINT z
+
+test = z
+
+fval = f ( test )
+PRETTYPRINT fval
+
+testResult = inv ( fval )
+
+error = testResult - test
+
+errorMag = error * conj error
+
+PRETTYPRINT error
+
+PRETTYPRINT errorMag
+
+totalError = totalError + errorMag

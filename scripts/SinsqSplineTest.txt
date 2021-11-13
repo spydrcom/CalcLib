@@ -1,0 +1,21 @@
+
+// unit test for spline coded as net.myorb.math.specialfunctions.SsqOdeSolution
+
+!! f (Tn, Yn) = sinsq (Tn) * Yn
+
+LIBRARY SsqFunc net.myorb.math.specialfunctions.SsqOdeSolution
+
+!+ Y_IMPORT(x) = SsqFunc.y
+!! y(x) = Y_IMPORT x
+
+!+ YP_IMPORT(x) = SsqFunc.yPrime
+!! y'(x) = YP_IMPORT x
+
+!!testError (x) = y' (x) - f ( x, y(x) )
+
+// function plots
+GRAPH  [  0 <=    x    <= 3  <>  0.01  ]   ( y(x), y'(x) )
+
+// error plots
+PLOTF testError  [  0 <=    x    <= 2.0  <>  0.01  ]  
+PLOTF testError  [  0 <=    x    <= 2.5  <>  0.01  ]  

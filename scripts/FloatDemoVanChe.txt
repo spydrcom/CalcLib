@@ -1,0 +1,36 @@
+
+// Bessel J0(x) over interval [0 < x < 1]
+x = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+jx = (0.997501, 0.990024, 0.9776262, 0.960398, 0.9384, 0.912, 0.8812008, 0.84628, 0.8075237)
+
+// LaGrange interpolation produces
+x_LAGRANGE_jx  =  LAGRANGE (x, jx)
+!! lf(x) = x_LAGRANGE_jx +*^ x
+
+
+// Vandermonde matrix of Chebyshev polynomials
+vc = VANCHE x;  vcInv = INV vc
+jm = MATRIX(jx,9,1)
+
+// solve for the coefficient vector
+vcInv_MATMUL_jm = MATMUL (vcInv, jm)
+jxc = vcInv_MATMUL_jm|#1
+
+// producing the Chebyshev polynomial interpolation of jx
+// using the Clenshaw operator allows an efficient function to be defined
+!! cf(x) = jxc @*^ x
+
+// look at the error function between LaGrange and Chebyshev
+!! P(x) = cf(x); !! f(x) = lf(x)
+!! err(x) = abs ( P(x) - f(x) )
+
+// evaluate the error function across the interval
+erf = [0 < x < 1 <> 0.01] (err(x))
+
+// query maximum value of error
+maxErf = MAX erf;  PRETTYPRINT maxErf
+
+// show the plot
+GRAPH erf
+
+

@@ -1,0 +1,35 @@
+
+
+PDEL CHART GRAL_LEGEND
+PSET CHART GRAL_LEGEND 0 0 VERTICAL
+PSET CHART KEY_MARKER_STYLE diamond 18
+
+SCRIPTPRINT FloatDemoRegression.txt
+READ regress_data.txt
+
+
+PRETTYPRINT y_line
+line_coefficients = FITLINE (x_all, y_line)
+!% line(x) +*^= line_coefficients
+PRETTYPRINT line_coefficients 
+
+
+PRETTYPRINT y_exp
+exp_coefficients = FITEXP (x_all, y_exp)
+!! aebx(x) = exp_coefficients *^# x
+PRETTYPRINT exp_coefficients 
+
+
+PRETTYPRINT y_poly
+poly_coefficients = FITPOLY (x_all, y_poly)
+!% poly(x) +*^= poly_coefficients
+PRETTYPRINT poly_coefficients 
+
+
+PRETTYPRINT y_har
+har_coefficients = FITHARMONIC (x_har,y_har,0.1)
+!! har(x) = har_coefficients +#* x
+PRETTYPRINT har_coefficients 
+
+SHOW Functions
+

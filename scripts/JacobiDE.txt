@@ -1,0 +1,9 @@
+
+!! jacobi (x) = (1 - x^2) * f''(x) + ( beta - alpha - (beta+alpha+2)*x ) * f'(x) + n * (n+beta+alpha+1) * f(x)
+DIFEQ  jacobi  "Jacobi Differential Equation"
+
+SELECT "Differential Equations"
+
+RENDERD jacobi
+
+RENDER "Jacobi Differential Equation" TOP

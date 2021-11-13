@@ -1,0 +1,9 @@
+
+VERIFY n
+
+pn = 2^n * [0 <= k <= n] ( (n##k) * (((n+k-1)/2)##n) )
+
+POLYPRINT pn
+
+n=n+1
+

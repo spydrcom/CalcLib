@@ -1,0 +1,8 @@
+
+// simple sin^2 test
+
+// y' = y * sin^2 t
+!! SODE(Tn,Yn) = sinsq (Tn) * Yn
+!! ssqODE(x) = y'(x) - y(x) * sinsq(x)
+DIFEQ ssqODE SODE "Sin SQ Ordinary Differential Equation"
+

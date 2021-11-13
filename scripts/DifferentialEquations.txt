@@ -1,0 +1,14 @@
+
+
+READ AiryDE.txt
+READ BesselDE.txt
+READ ChebEQDef.txt
+READ EulerDE.txt
+READ HermiteDE.txt
+READ LaguerreDE.txt
+READ LegendreDE.txt
+READ MathieuDE.txt
+READ GegenbauerDE.txt
+READ JacobiDE.txt
+READ HyperGeometricDE.txt
+

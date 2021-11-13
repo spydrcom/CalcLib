@@ -1,0 +1,30 @@
+
+LIBRARY RiemannSecond net.myorb.math.specialfunctions.mpmath.zeta.SecondZeta
+
+!+ zeta2 (s, a) = RiemannSecond.Z2 (s, a)
+!+ zeta (s) = RiemannSecond.Z1 (s)
+
+// zeta(2) = 0.023104993115419
+calc zeta 2
+
+//        >>> secondzeta(0.5 + 40j, error=True, verbose=True)
+//        main term = (-30190318549.138656312556 - 13964804384.624622876523j)
+//            computed using 19 zeros of zeta
+//        prime term = (132717176.89212754625045 + 188980555.17563978290601j)
+//            computed using 9 values of the von Mangoldt function
+//        exponential term = (542447428666.07179812536 + 362434922978.80192435203j)
+//        singular term = (512124392939.98154322355 + 348281138038.65531023921j)
+//        ((0.059471043 + 0.3463514534j), 1.455191523e-11)
+
+calc  zeta (0.5 + 40*i) 
+
+//        >>> secondzeta(0.5 + 40j, a=0.04, error=True, verbose=True)
+//        main term = (-151962888.19606243907725 - 217930683.90210294051982j)
+//            computed using 9 zeros of zeta
+//        prime term = (2476659342.3038722372461 + 28711581821.921627163136j)
+//            computed using 37 values of the von Mangoldt function
+//        exponential term = (178506047114.7838188264 + 819674143244.45677330576j)
+//        singular term = (175877424884.22441310708 + 790744630738.28669174871j)
+//        ((0.059471043 + 0.3463514534j), 1.455191523e-11)
+
+calc  zeta2 (0.5 + 40*i, 0.04) 

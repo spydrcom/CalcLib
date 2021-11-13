@@ -1,0 +1,32 @@
+
+
+n = 6
+
+TnCoef#n = 1
+
+!% Tn(x) @*^= TnCoef
+
+PRETTYPRINT Tn
+// T[6](x)
+
+
+// define differiential equation using Tn function and derivative functions
+!! chebeq1(x) = (1-x*x) * Tn''(x) - x * Tn'(x) + n*n * Tn(x)
+
+
+// calc chebeq1(0)
+// calc chebeq1(0.1250321)
+// calc chebeq1(0.5123)
+
+
+// calc Tn(0.12345)
+// calc Tn'(0.12345)
+// calc Tn''(0.12345)
+
+
+GRAPH [-1 <= x <= 1 <> 0.01] (Tn(x), Tn'(x), Tn''(x))
+
+
+GRAPH [-1 <= x <= 1 <> 0.01] (abs(chebeq1(x)))
+
+

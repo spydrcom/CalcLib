@@ -1,0 +1,13 @@
+
+!! hypergeo (x) = x * (1 - x) * f''(x) + ( gamma - (alpha+beta+1) * x ) * f'(x) - alpha * beta * f(x)
+DIFEQ  hypergeo  "Hyper Geometric Differential Equation"
+
+!! conhypergeo (x) = x^2 * f''(x) + (beta - x) * f'(x) - x * f(x)
+DIFEQ  conhypergeo  "Confluent Hyper Geometric Differential Equation"
+
+SELECT "Differential Equations"
+
+RENDERD hypergeo
+RENDERD conhypergeo
+
+RENDER "Hyper Geometric and Confluent HG Differential Equations" TOP

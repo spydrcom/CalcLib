@@ -1,0 +1,42 @@
+
+
+LIBRARY Bessel cern.jet.math.Bessel
+
+
+LIBRARY  INTRP  a.sample.library.BesselInterp
+
+
+
+ !+ K0c(x)    = Bessel.k0
+
+
+
+ !+ K0s(x)    = INTRP.k0
+ !+ knot(x)   = INTRP.setKnot
+
+
+
+graph [0<x<0.2<>0.01](K0c(x),K0s(x))
+
+
+
+
+
+
+dx=0.001
+
+
+
+!! besFunKc (x) = x^2 * K0c''(x <> dx) + x * K0c'(x <> dx) - (x^2)* K0c(x)      
+
+!! besFunKs (x) = x^2 * K0s''(x <> dx) + x * K0s'(x <> dx) - (x^2)* K0s(x)  
+
+GRAPH [0.01<x<0.15<>0.001](besFunKc(x), besFunKs(x)) 
+
+
+err = [0.01<x<0.15<>0.001](besFunKs(x))
+
+maxErr = MAX err
+
+PRETTYPRINT maxErr
+

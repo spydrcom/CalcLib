@@ -1,0 +1,34 @@
+<PLOTS>
+<ITEM PointsSize='5' TransformIdentity='Dendrite' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.7205882' X='-0.16176468133926392' Y='-0.5882352590560913' Title='Julia Dendrite : c= + i' PlotParent='-1' PlotNumber='1000' />
+<ITEM PointsSize='5' TransformIdentity='Dragon' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.4264706' X='-0.4411764442920685' Y='-0.8529411554336548' Title='Julia Dragon : c=(-0.8 + 0.156*i)' PlotParent='-1' PlotNumber='1001' />
+<ITEM PointsSize='5' TransformIdentity='Drunkard' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.9558823' X='-0.6911764740943909' Y='-1.1176470518112183' Title='Julia Drunkard : c=(0.285 + 0.01*i)' PlotParent='-1' PlotNumber='1002' />
+<ITEM PointsSize='5' TransformIdentity='Marco' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.32352942' X='-0.19117645919322968' Y='-1.0' Title='Julia Marco : c=-0.75' PlotParent='-1' PlotNumber='1003' />
+<ITEM PointsSize='5' TransformIdentity='Phi' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.8529412' X='-0.7058823108673096' Y='-0.2499999850988388' Title='Julia Phi : c=(-0.4 + 0.6*i)' PlotParent='-1' PlotNumber='1004' />
+<ITEM PointsSize='5' TransformIdentity='Rabbit' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.7647059' X='-0.8088235259056091' Y='-0.8382352590560913' Title='Julia Rabbit : c=(-0.123 + 0.745*i)' PlotParent='-1' PlotNumber='1005' />
+<ITEM PointsSize='5' TransformIdentity='Siegel' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.011764705' X='-0.09359859675168991' Y='-0.9944636225700378' Title='Julia Siegel : c=(-0.391 - 0.587*i)' PlotParent='-1' PlotNumber='1006' />
+<ITEM PointsSize='5' TransformIdentity='SimpleIminusOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=(-1 + i)' PlotParent='-1' PlotNumber='1007' />
+<ITEM PointsSize='5' TransformIdentity='SimpleNegOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=-1' PlotParent='-1' PlotNumber='1008' />
+<ITEM PointsSize='5' TransformIdentity='SimpleNegTwo' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=-2' PlotParent='-1' PlotNumber='1009' />
+<ITEM PointsSize='5' TransformIdentity='SimpleOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=1' PlotParent='-1' PlotNumber='1010' />
+<ITEM PointsSize='5' TransformIdentity='SimpleTwo' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=2' PlotParent='-1' PlotNumber='1011' />
+<ITEM PointsSize='5' TransformIdentity='SimpleThree' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=3' PlotParent='-1' PlotNumber='1012' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' MaxResult='3000' PointsPerAxis='200' EdgeSize='5.0' X='-2.5' Y='-2.5' Title='Mandelbrot : (-2.5,-2.5) - 5.0' PlotParent='-1' PlotNumber='1013' />
+<ITEM PointsSize='5' TransformIdentity='Zsquared' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^2-1, a=1+i' PlotParent='-1' PlotNumber='1014' />
+<ITEM PointsSize='5' TransformIdentity='HalfZcubed' MaxResult='40' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=0.5' PlotParent='-1' PlotNumber='1015' />
+<ITEM PointsSize='5' TransformIdentity='Zcubed' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=1' PlotParent='-1' PlotNumber='1016' />
+<ITEM PointsSize='5' TransformIdentity='TwoZcubed' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=2' PlotParent='-1' PlotNumber='1017' />
+<ITEM PointsSize='5' TransformIdentity='TwoZcubed' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=2' PlotParent='-1' PlotNumber='1018' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' MaxResult='3000' PointsPerAxis='200' EdgeSize='5.0' X='-2.5' Y='-2.5' Title='Mandelbrot : (-2.5,-2.5) - 5.0' PlotParent='-1' PlotNumber='1019' />
+<ITEM PointsSize='5' TransformIdentity='SimpleTwo' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=2' PlotParent='-1' PlotNumber='1020' />
+<ITEM PointsSize='5' TransformIdentity='SimpleTwo' PointsPerAxis='200' EdgeSize='2.6617646' X='-1.191176414489746' Y='-2.088235378265381' Title='SimpleTwo : (-1.191176414489746,-2.088235378265381) - 2.6617646' PlotParent='1020' PlotNumber='1021' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' MaxResult='3000' PointsPerAxis='200' EdgeSize='5.0' X='-2.5' Y='-2.5' Title='Mandelbrot : (-2.5,-2.5) - 5.0' PlotParent='-1' PlotNumber='1022' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' PointsPerAxis='200' EdgeSize='0.38235295' X='-1.7573529481887817' Y='-0.2720588147640228' Title='Mandelbrot : (-1.7573529481887817,-0.2720588147640228) - 0.38235295' PlotParent='1022' PlotNumber='1023' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' PointsPerAxis='200' EdgeSize='0.05116782' X='-1.644896149635315' Y='-0.029714524745941162' Title='Mandelbrot : (-1.644896149635315,-0.029714524745941162) - 0.05116782' PlotParent='1023' PlotNumber='1024' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' PointsPerAxis='200' EdgeSize='0.018285036' X='-1.635791301727295' Y='-0.009397889487445354' Title='Mandelbrot : (-1.635791301727295,-0.009397889487445354) - 0.018285036' PlotParent='1024' PlotNumber='1025' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' PointsPerAxis='200' EdgeSize='0.009949211' X='-1.6308436393737793' Y='-0.004450174048542976' Title='Mandelbrot : (-1.6308436393737793,-0.004450174048542976) - 0.009949211' PlotParent='1025' PlotNumber='1026' />
+<ITEM PointsSize='5' TransformIdentity='HalfZcubed' MaxResult='40' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=0.5' PlotParent='-1' PlotNumber='1027' />
+<ITEM PointsSize='5' TransformIdentity='HalfZcubed' PointsPerAxis='200' EdgeSize='2.8235295' X='-0.8382352590560913' Y='-1.6176470518112183' Title='HalfZcubed : (-0.8382352590560913,-1.6176470518112183) - 2.8235295' PlotParent='1027' PlotNumber='1028' />
+<ITEM PointsSize='5' TransformIdentity='HalfZcubed' PointsPerAxis='200' EdgeSize='0.7474048' X='-0.02024218998849392' Y='-0.7830449938774109' Title='HalfZcubed : (-0.02024218998849392,-0.7830449938774109) - 0.7474048' PlotParent='1028' PlotNumber='1029' />
+<ITEM PointsSize='5' TransformIdentity='SimpleIminusOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=(-1 + i)' PlotParent='-1' PlotNumber='1030' />
+<ITEM PointsSize='5' TransformIdentity='SimpleIminusOne' PointsPerAxis='200' EdgeSize='4.3235292' X='-2.2647058963775635' Y='-1.5' Title='SimpleIminusOne : (-2.2647058963775635,-1.5) - 4.3235292' PlotParent='1030' PlotNumber='1031' />
+</PLOTS>

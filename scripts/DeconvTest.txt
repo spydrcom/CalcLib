@@ -1,0 +1,28 @@
+
+R#3 = 0
+
+xp1 = (1,1)
+xp2 = (2,1)
+xm1 = (-1,1)
+
+xp1xp2 = CONV(xp1,xp2)
+xp1xm1 = CONV(xp1,xm1)
+x4 = CONV(xp1xp2,xp1xm1)
+
+Q = DECONV(x4,xp1)
+
+POLYPRINT xp1xp2
+POLYPRINT xp1xm1
+POLYPRINT x4
+POLYPRINT Q
+
+Q2 = DECONV(x4,xm1,R)
+POLYPRINT Q2
+POLYPRINT R
+
+
+Q3 = DECONV(Q2,xm1,R)
+POLYPRINT Q3
+POLYPRINT R
+
+

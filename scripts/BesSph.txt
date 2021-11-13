@@ -1,0 +1,6 @@
+family Bessel 2 Jp,2.5
+
+!! j3(x) = 2\(pi/(2*x)) * JP3_50(x)
+
+GRAPH  [  0.1 <=    x    <= 10  <>  0.01  ]   ( JP2_50(x), JP3_50(x), j3(x) )
+

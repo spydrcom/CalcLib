@@ -1,0 +1,30 @@
+
+INFINITY = 200
+
+!! E1p(x) = exp(-x)/x
+!! E1'(x) = E1p(x)
+
+PLOTF E1'  [  0.1 <=    x    <= 10  <>  0.01  ]  
+
+!! E1(x) = E1p $| (x, INFINITY, 0.1)
+// !! E1(x) = INTEGRAL [ x <= t <= INFINITY <> 0.1 ] ( E1p(t) * <*> t )
+!! Ei(x) = - E1 ( -x )
+
+PLOTF E1  [  0.1 <=    x    <= 10  <>  0.05  ]  
+
+GRAPH  [  0.1 <=    x    <= 10  <>  0.01  ]   ( E1(x), E1'(x) )
+
+// !! li(x) = - E1 ( - ln x )
+
+!! li2(x) = ln (- x) + SIGMA [1 <= n <= 20] ( x^n / (n*n!) )
+!! li(x) = li2 (ln x)
+
+GRAPH  [  0.05 <=    x    <= 0.95  <>  0.01  ]   ( li(x) )
+
+!! lip(x) = 1 / (ln x)
+GRAPH  [  0.05 <=    x    <= 0.95  <>  0.01  ]   ( lip(x) )
+
+
+// run suite of tests for Exponential Integral
+READ ExpIntTesting.sub
+

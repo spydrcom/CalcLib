@@ -1,0 +1,51 @@
+
+
+READ BesselSpline.txt
+READ VC31Prep.txt
+
+dx = 1E-4
+
+jVals = [2.5<=x<=5.51<>0.1](J0(x))
+
+// j0c3 = LUXB(VC31L, VC31U, jVals, VC31P)  
+j0c3 = VC31INTERP (jVals)
+
+!! j0lcl3(x) = j0c3 @*^ (x-4)
+
+!! besFunL3 (x) = x^2 * j0lcl3''(x <> dx) + x * j0lcl3'(x <> dx) + (x^2 - alpha^2)* j0lcl3(x)
+graph [3<x<5<>0.01] (besFun (x), besFunL3 (x)) 
+
+err = [3 < x < 5 <> 0.01] (abs(besFun(x)))
+ColtMaxErr = MAX err
+
+err = [3 < x < 5 <> 0.01] (abs(besFunL3(x)))
+SplineMaxErr = MAX err
+
+// computed MAX error
+PRETTYPRINT ColtMaxErr
+PRETTYPRINT SplineMaxErr
+
+// the function implementing the knot
+!! j3x(x) = (x>3)? j0lcl3(x) : j0x(x)
+
+
+// a graph of the overlay
+graph [-1 < x < 5 <> 0.01] (J0(x),  j3x(x))  
+
+
+!! besFunLx (x) = x^2 * j3x''(x <> dx) + x * j3x'(x <> dx) + (x^2 - alpha^2)* j3x(x)    
+
+
+
+err = [-1 < x < 5 <> 0.01] (abs(besFun(x)))
+ColtMaxErr = MAX err
+
+err = [-1 < x < 5 <> 0.01] (abs(besFunLx(x)))
+SplineMaxErr = MAX err
+
+PRETTYPRINT ColtMaxErr
+PRETTYPRINT SplineMaxErr
+
+graph [-1 < x < 5 <> 0.01] (besFun(x),  besFunLx(x))     
+
+

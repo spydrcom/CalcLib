@@ -1,0 +1,163 @@
+
+//PSET CHART PALETTE [NAVY, PURPLE, DEEP_PINK, TOMATO, DARK_ORANGE, SALMON, MEDIUM_SEA_GREEN, SIENNA, INDIAN_RED, CRIMSON]
+PSET CHART PALETTE [NAVY, PURPLE, DEEP_PINK, DARK_GREEN, CHOCOLATE, CRIMSON, DARK_RED, ORANGE_RED, AQUA, INDIAN_RED]
+SELECT "Special Functions"
+
+// Schrodinger
+
+render delta^2 * PSI / (delta*z^2) + 8*m*pi^2/h^2 * (V(z) - E) * PSI = 0
+
+RENDER "Schrodinger Wave Equation" TOP
+
+render delta^2 * PSI / (delta*x^2) + (lambda - x^2) * PSI(x) = 0
+
+render y''(x) - 2*x*y'(x) + (lambda-1)*y(x) = 0
+
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+
+// ERF spline
+
+!+ ERF_IMPORT(x) = SpecFunc.erf
+
+!! erf(x) = ERF_IMPORT x
+
+!! erfc(x) = 1 - ERF_IMPORT x
+
+
+// GAMMA spline
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+
+!! GAMMA(x) = GAMMA_IMPORT x
+
+!+ GAMMAINC_IMPORT(s,x) = SpecFunc.gammaIncompleteLower
+
+!! gamma(s,x) = GAMMAINC_IMPORT (s,x)
+
+!! psi(x) = GAMMA'(x <> 0.0001)/GAMMA(x)
+
+RENDERF psi
+
+RENDER "Digamma Function" TOP
+
+PLOTF  LIM 20   GAMMA  [  -4.9 <=    x    <= 4  <>  0.01  ]  
+
+GRAPH  LIM 20   [  -2.9 <=    x    <= 5  <>  0.01  ]   ( GAMMA(x), psi(x) )
+ENTITLED Gamma VS PSI
+
+!! rho(a,n) = GAMMA(a + n)/GAMMA(a)
+
+RENDERF rho
+
+RENDER "Pochhammer Function" TOP
+
+render rho(1,n) = n!
+render rho(a,n) * (a+n) = a * rho(a+1,n)
+render (-a) ## n = -1^n / n! * rho(a,n)
+render rho(a,n+k) = rho(a,k) * rho(a+k,n) = rho(a,n) * rho(a+n,k)
+render rho(a,k-n) = -1^n * rho(a,k) / rho(1-a-k,n)
+render rho(a,2*n) = 2^(2*n) * rho(a/2,n) * rho((a+1)/2,n)
+render rho(a,-n) = -1^n / rho(1-a,n)
+
+RENDER "Pochhammer Identities"
+
+
+// Elliptic Integrals
+RENDER INTEGRAL [ 0 <= t <= x <> dt ] ( 1 / sqrt ( (1-t^2) * (1-k^2*t^2) ) * <*> t ) 
+RENDER INTEGRAL [ 0 <= THETA <= pi/2 <> dt ] ( 1 / sqrt ( 1 - k^2 * sinsq THETA ) * <*> THETA ) 
+RENDER "Elliptic Integrals of the first kind" TOP
+
+
+// Hermite Polynomials
+
+!! Hermite(x,n) = SIGMA [ 0 <= k <= n/2 ] ( (-1)^k * n! / ( k! * (n - 2*k)! ) * (2*x)^(n - 2*k) )
+
+RENDER H#(n+1) = 2*x*H#n - 2*n*H#(n-1)
+
+RENDERF Hermite
+
+render y''(x) - 2*x*y'(x) + 2*n*y(x) = 0
+
+family Hermite 10
+
+GRAPH  [  -1 <=    x    <= 1  <>  0.01  ]   ( H4(x), H5(x), H6(x) )
+ENTITLED Hermite Functions H4 - H6
+
+RENDER "Hermite Polynomial Family" TOP
+
+
+// Laguerre Polynomials
+
+!! Laguerre(x,n) = SIGMA [ 0 <= k <= n ] ( (-1)^k * n! * x^k / ( (k!)^2 * (n-k)! ) )
+
+RENDER L#(n+1) = ( (2*n+1)*L#n - x*L#n - n*L#(n-1) ) / (n+1)
+
+RENDERF Laguerre
+
+render x*y''(x) + (alpha + 1 - x)*y'(x) + n*y(x) = 0
+
+family Laguerre 6
+
+GRAPH  LIM 10  [  -5 <=    x    <= 5  <>  0.01  ]   ( L0(x), L1(x), L2(x), L3(x), L4(x), L5(x) ) 
+ENTITLED Laguerre Polynomials L0 - L5
+
+RENDER "Laguerre Polynomial Family" TOP
+
+
+// Jacobi Polynomials
+
+!! Jacobi(a,b,n) = SIGMA [ 0 <= k <= n ] ( (-1)^(n-k) * ((n+a)##(n-k)) * ((n+k+a+b)##k) * ((x+1)/2)^k )
+
+RENDERF Jacobi 
+
+RENDER "Jacobi Polynomial of order 'n' built from (a,b) specification values" TOP
+
+
+// Legendre Polynomials
+
+RENDER P#(n+1) = ( (2*n+1)*x*P#n - n*P#(n-1) ) / (n+1)
+
+RENDER "Legendre Polynomial Family recurrence formula" TOP
+
+RENDER (1 - x^2) * y''(x) - 2 * x * y'(x) + n * (n + 1) * y(x) = 0
+
+RENDER "Legendre differential equation" TOP
+
+
+//  Gegenbauer Polynomials
+
+RENDER C#(n+1) * (n+1) - C#n * (lambda + n) * 2 * x + C#(n-1) * (2 * lambda + n - 1) = 0
+
+RENDER "Gegenbauer Polynomial Family coefficients equation" TOP
+
+RENDER (1 - x^2) * y''(x) - (2 * lambda + 1) * x * y'(x) + n * (n + 2 * lambda) * y(x) = 0
+
+RENDER "Gegenbauer differential equation" TOP
+
+// C[lambda,n] = [ GAMMA (lambda+1/2) / GAMMA (2*lambda) ] * [GAMMA (n+2*lambda) / GAMMA (n+lambda+1/2)] * P[lambda-1/2,lambda-1/2,n]
+
+RENDER C(lambda,n) = ( GAMMA (lambda+1/2) / GAMMA (2*lambda) ) * (GAMMA (n+2*lambda) / GAMMA (n+lambda+1/2)) * P(lambda-1/2,lambda-1/2,n)
+
+RENDER "Gegenbauer coefficients in relation to Jacobi coefficients built from Gegenbauer lambda value [ a=b=lambda-1/2 ]" TOP
+
+
+// Bessell Functions
+
+
+RENDER (2 * p) / x * J#p = J#(p-1) + J#(p+1)
+
+RENDER J#p = SUMMATION [ 0 <= k <= INFINITY ] ( (-1)^k * (x/2)^(2*k+p) / ( k! * GAMMA(k+p+1) ) )
+
+RENDER Y#p = ( (cos (p*pi) * J#p - J#(-p) ) / sin (p*pi)
+
+RENDER "Bessel Functions First and Second kind" TOP
+
+
+RENDER x^2 * f''(x) + x * f'(x) + (x^2 - alpha^2) * f(x) = 0
+RENDER x^2 * f''(x) + x * f'(x) - (x^2 + alpha^2) * f(x) = 0
+
+RENDER "Bessel's Differential Equations (ordinary and modified)" TOP
+
+

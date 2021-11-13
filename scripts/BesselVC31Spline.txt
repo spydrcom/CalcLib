@@ -1,0 +1,25 @@
+
+//
+// use spline tools to build large complete spline
+// delta of 0.1 gives 10 points per unit, so -1.5<=x<=10 is 115 points
+// VC31 will take first 31 points [-1.5,1.5] as the lo end of the spline
+// each additional 2 units will append with a 5 point knot
+// so knots will be seen at 1, 3, 5, 7, 9
+//
+
+//											;	//	BesselFunctions links the Colt library definition of J0 as reference function
+//											;	//	VC31Prep loads the VanChe constant triangle matricies that provide the LUxB interpolations
+READ BesselFunctions.txt	
+READ VC31Prep.txt	
+
+jVals  = [-1.5 <= x <= 15 <> 0.1] ( J0(x) )	;	//	Colt J0 function values are used as interpolation source, HI of 15 is over-kill, [-1,10] is the domain
+
+j0co = VC31 jVals 							;	//	VC31 operator builds the spline, j0co becomes the spline coefficient repository matrix
+
+!! j0lcl(x) = EVALSPLINE (j0co, -1, x)		;	//	EVALSPLINE builds the local version of the J0 function
+
+
+lo = -1 ; hi = 10
+//											;	//	subroutine is called to show comparison with Colt
+READ BesselSplineCompare.sub	
+

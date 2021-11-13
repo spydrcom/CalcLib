@@ -1,0 +1,34 @@
+
+
+// compare locally built spline to J0 from Colt Library
+
+
+alpha=0
+
+dx = 0.00001
+
+
+// Bessel J0 supplied by Colt
+!! besFun (x) = x^2 * J0''(x <> dx) + x * J0'(x <> dx) + (x^2 - alpha^2)* J0(x)
+
+// Bessel J0 built as local spline
+!! besFunL (x) = x^2 * j0lcl''(x <> dx) + x * j0lcl'(x <> dx) + (x^2 - alpha^2)* j0lcl(x)
+
+
+err = [lo < x < hi <> 0.01] (abs(besFun(x)))
+ColtMaxErr = MAX err
+
+err = [lo < x < hi <> 0.01] (abs(besFunL(x)))
+SplineMaxErr = MAX err
+
+// computed MAX error
+PRETTYPRINT ColtMaxErr
+PRETTYPRINT SplineMaxErr
+
+
+// plots of functions and errors
+
+graph [lo < x < hi <> 0.01] (J0(x),  j0lcl(x)) 
+
+graph LIM 0.5 [lo < x < hi <> 0.01] (besFun(x),  besFunL(x)) 
+

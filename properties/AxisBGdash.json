@@ -1,0 +1,12 @@
+{
+	"paints": 
+	[
+		"0xEEEEEE",
+		"0xFFFFFF"
+	],
+	"line": "0xCCCCCC",
+	"dash":
+	[
+		6, 2, 2, 2
+	]
+}

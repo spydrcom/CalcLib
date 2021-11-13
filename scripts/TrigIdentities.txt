@@ -1,0 +1,136 @@
+
+
+// coordinate translations
+
+//    radians/degrees
+
+!! radians2Degrees(x) = x * 180 / pi
+!! degrees2Radians(x) = x * pi / 180
+!! RTD(x) = radians2Degrees(x)
+!! DTR(x) = degrees2Radians(x) 
+// ===
+
+//    radians/grads
+
+!! radians2Gradians(x) = x * 200 / pi
+!! gradians2Radians(x) = x * pi / 200
+!! RTG(x) = radians2Gradians(x) 
+!! GTR(x) = gradians2Radians(x) 
+// ===
+
+// geometric formulas
+
+!! circle(x) = sqrt ( 1 - x ^ 2 )
+DESCRIBE circle First quadrant circle function
+express circle First quadrant circle function
+savejson circle First quadrant circle function
+
+!! hyperbola(x) = sqrt ( x ^ 2 - 1 )
+DESCRIBE hyperbola First quadrant hyperbola function
+express hyperbola First quadrant hyperbola function
+savejson hyperbola First quadrant hyperbola function
+// ===
+
+// circular trigonometric identities:
+
+!! cot(x) = 1 / tan x 
+!! csc(x) = 1 / sin x 
+!! sec(x) = 1 / cos x 
+!! acos(x) = pi / 2 - asin x 
+!! acot(x) = pi / 2 - atan x 
+!! asec(x) = acos ( 1 / x ) 
+!! acsc(x) = pi / 2 - asec x 
+
+DESCRIBE cot Trigonometric cotangent function
+DESCRIBE csc Trigonometric cosecant function
+DESCRIBE sec Trigonometric secant function
+DESCRIBE acos Trigonometric inverse cosine function
+DESCRIBE acot Trigonometric inverse cotangent function
+DESCRIBE asec Trigonometric inverse secant function
+DESCRIBE acsc Trigonometric inverse cosecant function
+
+express cot Trigonometric cotangent function
+express csc Trigonometric cosecant function
+express sec Trigonometric secant function
+express acos Trigonometric inverse cosine function
+express acot Trigonometric inverse cotangent function
+express asec Trigonometric inverse secant function
+express acsc Trigonometric inverse cosecant function
+
+savejson cot Trigonometric cotangent function
+savejson csc Trigonometric cosecant function
+savejson sec Trigonometric secant function
+savejson acos Trigonometric inverse cosine function
+savejson acot Trigonometric inverse cotangent function
+savejson asec Trigonometric inverse secant function
+savejson acsc Trigonometric inverse cosecant function
+
+// built-in functions: sin, cos, tan, asin, atan
+// ===
+
+// hyperbolic identities:
+
+!! coth(x) = 1 / tanh x
+!! csch(x) = 1 / sinh x 
+!! sech(x) = 1 / cosh x 
+!! tanh(x) = sinh ( x ) / cosh ( x ) 
+!! cosh(x) = ( exp ( x ) + exp ( - x ) ) / 2 
+!! sinh(x) = ( exp ( x ) - exp ( - x ) ) / 2 
+!! artanh(x) = 1/2 * ln ( (1 + x) / (1 - x) )
+!! arcoth(x) = 1/2 * ln ( (x + 1) / (x - 1) ) 
+!! arcsch(x) = ln ( 1 / x + sqrt ( 1 / x^2 + 1 ) )
+!! arsech(x) = ln ( (1 + circle ( x ) ) / x )
+!! arsinh(x) = ln ( x + sqrt ( x ^ 2 + 1 ) ) 
+!! arcosh(x) = ln ( x + hyperbola ( x ) ) 
+
+DESCRIBE coth Hyperbolic cotangent function
+DESCRIBE csch Hyperbolic cosecant function
+DESCRIBE sech Hyperbolic secant function
+DESCRIBE tanh Hyperbolic tangent function
+DESCRIBE cosh Hyperbolic cosine function
+DESCRIBE sinh Hyperbolic sine function
+DESCRIBE arcosh Hyperbolic inverse cosine function
+DESCRIBE arcoth Hyperbolic inverse cotangent function
+DESCRIBE arsech Hyperbolic inverse secant function
+DESCRIBE arcsch Hyperbolic inverse cosecant function
+DESCRIBE artanh Hyperbolic inverse tangent function
+DESCRIBE arsinh Hyperbolic inverse sine function
+
+express coth Hyperbolic cotangent function
+express csch Hyperbolic cosecant function
+express sech Hyperbolic secant function
+express tanh Hyperbolic tangent function
+express cosh Hyperbolic cosine function
+express sinh Hyperbolic sine function
+express arcosh Hyperbolic inverse cosine function
+express arcoth Hyperbolic inverse cotangent function
+express arsech Hyperbolic inverse secant function
+express arcsch Hyperbolic inverse cosecant function
+express artanh Hyperbolic inverse tangent function
+express arsinh Hyperbolic inverse sine function
+
+savejson coth Hyperbolic cotangent function
+savejson csch Hyperbolic cosecant function
+savejson sech Hyperbolic secant function
+savejson tanh Hyperbolic tangent function
+savejson cosh Hyperbolic cosine function
+savejson sinh Hyperbolic sine function
+savejson arcosh Hyperbolic inverse cosine function
+savejson arcoth Hyperbolic inverse cotangent function
+savejson arsech Hyperbolic inverse secant function
+savejson arcsch Hyperbolic inverse cosecant function
+savejson artanh Hyperbolic inverse tangent function
+savejson arsinh Hyperbolic inverse sine function
+
+// ===
+
+// matrix of operations:
+
+//		sin	cos	tan	cot	sec	csc
+//		x	x	x	x	x	x
+//arc	x	x	x	x	x	x
+//hyp	x	x	x	x	x	x
+//ar	x	x	x	x	x	x
+// ===
+
+

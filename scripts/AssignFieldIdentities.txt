@@ -1,0 +1,10 @@
+
+// establish field
+
+AdditiveIdentity = 0
+MultiplicitiveIdentity = 1
+
+!! AdditiveInverse(x) = -x
+!! MultiplicitiveInverse(x) = 1 / x
+
+

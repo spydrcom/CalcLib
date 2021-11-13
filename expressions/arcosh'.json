@@ -1,0 +1,44 @@
+{
+   "Name": "arcosh'",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "First derivative of inverse hyperbolic Cosine function ",
+   "Expression": 
+   {
+      "OpName": "/",
+      "Left": 1.0,
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "sqrt",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": 
+         {
+            "OpName": "-",
+            "Left": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "Operator": null,
+                  "Symbol": null,
+                  "NodeType": "Identifier",
+                  "Kind": "Unknown",
+                  "Name": "x"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 2.0,
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 1.0,
+            "OpType": "Binary"
+         }
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

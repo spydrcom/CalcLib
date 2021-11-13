@@ -1,0 +1,42 @@
+
+A002410 = (14, 21, 25, 30, 33, 38, 41, 43, 48, 50, 53, 56, 59, 61, 65, 67, 70)
+
+!! msq (z) = Re(z)^2 + Im(z)^2
+
+!! Z (x) = ep (0.50 + i*x)
+
+!! Z25 (x) =  ep (0.25 + i*x) 
+!! Z50 (x) =  ep (0.50 + i*x) 
+!! Z75 (x) =  ep (0.75 + i*x) 
+
+// graph [-10 < x < 0.5 <> 0.2] (zeta x)
+
+graph LIM 10 [12 < x < 40 <> 0.2] (msq ( Z25 x ) )
+graph LIM 10 [12 < x < 40 <> 0.2] (msq ( Z50 x ) )
+graph LIM 10 [12 < x < 40 <> 0.2] (msq ( Z75 x ) )
+
+//graph LIM 10 [12 < x < 40 <> 0.2] (msq (Z x))
+
+
+plotri Z25 [12 < x < 40 <> 0.2]
+plotri Z50 [12 < x < 40 <> 0.2]
+plotri Z75 [12 < x < 40 <> 0.2]
+
+
+calc 0.5
+calc Z50 14.13472
+calc Z50 21.02204
+calc Z50 25.010858
+calc Z50 32.9
+
+calc 0.75
+calc Z75 14.13472
+calc Z75 21.02204
+calc Z75 25.010858
+calc Z75 32.9
+
+calc 0.25
+calc Z25 14.13472
+calc Z25 21.02204
+calc Z25 25.010858
+calc Z25 32.9

@@ -1,0 +1,17 @@
+
+VERIFY x
+
+// James Gregory atan series
+// atan x = x - x^3/3 + x^5/5 - x^7/7 + ...
+
+atanSeries = x - x^3 / 3
+
+n = 3
+
+ITERATE 10 AtanIterator.sub
+
+PRETTYPRINT atanSeries
+
+factorsOfPi = pi / atanSeries
+
+PRETTYPRINT factorsOfPi

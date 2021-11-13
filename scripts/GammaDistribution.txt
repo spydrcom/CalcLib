@@ -1,0 +1,80 @@
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+!+ GAMMAINC_IMPORT(s,x) = SpecFunc.gammaIncompleteLower
+!! gamma (s, x) = GAMMAINC_IMPORT (s, x)
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA (x) = GAMMA_IMPORT x
+
+select "Gamma Equations"
+!! GammaIntegrand (s,t) = t^(s-1) * exp (-t)
+render GAMMA (s) = INTEGRAL [0 <= t <= INFINITY] ( t^(s-1) * e^(-t) * <*> t )
+RENDER "GAMMA as an integral" TOP
+
+RENDER gamma(n) = SIGMA [1 <= m <= n] ( 1/m - ln n ) ; // 0.57721 56649 01532
+RENDER "Euler-Masheroni gamma constant formula LIM n -> INFINITY" TOP
+
+RENDER 1/GAMMA(z) = ( z * e ^ ( z * gamma() ) ) * ( PI [ 1 <= n <= INFINITY ] ( (n + z) / n * e ^ (- z / n) ) )
+RENDER "Weierstrass Infinite Product Expression" TOP
+
+RENDER GAMMA(z) = 1/z * PI [ 1 <= n <= INFINITY ] ( (n / (n+z)) * ((n+1) / n)^z )
+RENDER "Euler Infinite Product Expression" TOP
+
+render gamma (s,x) = INTEGRAL [0 <= t <= x] ( t^(s-1) * e^(-t) * <*> t )
+RENDER "Lower incomplete gamma as an integral" TOP
+
+render GAMMA (s+1, x) = s * GAMMA (s, x) + x^s * e^(-x)
+render gamma (s+1, x) = s * gamma (s, x) - x^s * e^(-x)
+render gamma (s, x) = GAMMA (s) - GAMMA (s, x)
+RENDER "GAMMA identities" TOP
+
+render Gstar (s, z) = e^(-z) * SIGMA [0 <= k <= INFINITY] ( z^k / GAMMA (s+k+1) )
+RENDER "gamma* limiting function" TOP
+
+render gamma (s, z) = z^s * GAMMA (s) * Gstar (s, z)
+RENDER "Lower incomplete gamma as an infinite series" TOP
+
+RENDER E(X) = k * theta
+RENDER E(ln(X)) = psi (k) + ln (theta)
+RENDER "Gamma Distribution of random variable X, with shape k and scale theta" TOP
+
+// Probability Density
+!! PDF(x,k,theta) = x ^ (k-1) * exp (-x / theta) / ( GAMMA (k) * theta^k)
+
+!! PDF1 (x) = PDF (x,1,2)
+!! PDF2 (x) = PDF (x,2,2)
+!! PDF3 (x) = PDF (x,3,2)
+!! PDF5 (x) = PDF (x,5,1)
+!! PDF75 (x) = PDF (x,7.5,1)
+!! PDF9 (x) = PDF (x,9,0.5)
+
+GRAPH  [  0.5 <=    x    <= 20  <>  0.05  ]   ( PDF1(x), PDF2(x), PDF3(x), PDF5(x), PDF75(x), PDF9(x) )
+entitled Gamma Distribution Probability Density Function - shape between 1 and 9 
+
+RENDERF PDF
+
+// cumulative distribution
+!! CDF(x,k,theta) = gamma (k, x/theta) / GAMMA (k)
+
+!! CDF1 (x) = CDF (x,1,2)
+!! CDF2 (x) = CDF (x,2,2)
+!! CDF3 (x) = CDF (x,3,2)
+!! CDF5 (x) = CDF (x,5,1)
+!! CDF75 (x) = CDF (x,7.5,1)
+!! CDF9 (x) = CDF (x,9,0.5)
+
+GRAPH  [  0.5 <=    x    <= 10  <>  0.05  ]   ( CDF1(x), CDF2(x), CDF3(x), CDF5(x), CDF75(x), CDF9(x) )
+entitled Gamma Distribution Cumulative Distribution Function - shape between 1 and 9 
+
+RENDERF CDF
+
+RENDER "Probability Density and Cumulative Distribution Functions for Gamma Distribution" TOP
+
+
+// sample of behavior of the equations
+
+!! g(t) = GammaIntegrand (5,t) 
+PLOTF g  [  0 <=    t    <= 9  <>  0.01  ] 
+
+!! ig(t) = g $| (0,t,0.001) 
+PLOTF ig  [  0 <=    t    <= 10 <>  0.01  ]  
+

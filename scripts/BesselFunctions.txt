@@ -1,0 +1,84 @@
+
+
+LIBRARY Bessel cern.jet.math.Bessel
+
+
+// first kind
+
+!+ J0(x)    = Bessel.j0
+!+ J1(x)    = Bessel.j1
+!+ Jn(n,x)  = Bessel.jn
+
+// second kind
+
+!+ Y0(x)    = Bessel.y0
+!+ Y1(x)    = Bessel.y1
+!+ Yn(n,x)  = Bessel.yn
+
+// modified first kind
+
+!+ I0(x)    = Bessel.i0
+!+ I0e(x)   = Bessel.i0e
+!+ I1(x)    = Bessel.i1
+!+ I1e(x)   = Bessel.i1e
+
+// modified second kind
+
+!+ K0(x)    = Bessel.k0
+!+ K0e(x)   = Bessel.k0e
+!+ K1(x)    = Bessel.k1
+!+ K1e(x)   = Bessel.k1e
+!+ Kn(n,x)  = Bessel.kn
+
+// Hankel first kind
+
+!! H1n(n,x) = Jn(n,x) + i * Yn(n,x)
+
+// Hankel second kind
+
+!! H2n(n,x) = Jn(n,x) - i * Yn(n,x)
+
+
+
+// spherical Bessel functions first kind
+
+!! j0(x) = sin x / x
+!! j1(x) = sin x / x^2 - cos x / x
+!! j2(x) = (3/x^2 - 1) * sin x / x - 3 * cos x / x^2
+!! j3(x) = (15/x^3 - 6/x) * sin x / x - (15/x^2 - 1) * cos x / x
+
+// spherical Bessel functions second kind
+
+!! y0(x) = - cos x / x
+!! y1(x) = - cos x / x^2 - sin x / x
+!! y2(x) = (1 - 3/x^2) * cos x / x - 3 * sin x / x^2
+!! y3(x) = (6/x - 15/x^3) * cos x / x - (15/x^2 - 1) * sin x / x
+
+
+// modified Bessel Ialpha and Kalpha
+
+!! Ialpha(alpha,x) = SIGMA [0<=m<=INFINITY] ( POW (x/2,2*m+alpha) / ( m! * GAMMA (m+alpha+1) ) )
+!! Kalpha(alpha,x) = pi/2 * ( Ialpha(-alpha,x) - Ialpha(alpha,x) ) / sin (pi*alpha)
+
+// modified Bessel Jalpha and Yalpha
+
+!! Jalpha(alpha,x) = SIGMA [0<=m<=INFINITY] ( (-1)^m * POW (x/2,2*m+alpha) / ( m! * GAMMA (m+alpha+1) ) )
+!! Yalpha(alpha,x) = ( Jalpha(alpha,x) * COS (alpha*pi) - Jalpha(-alpha,x) ) / (SIN (alpha*pi))
+
+
+// Airy
+
+!! Ai(x) = 1/pi * 2\(x/3) * Kalpha( 1/3, 2/3 * POW(x,3/2) )
+!! Bi(x) = 2\(x/3) * ( Ialpha( 1/3, 2/3 * POW(x,3/2) ) + Ialpha( -1/3, 2/3 * POW(x,3/2) ) )
+
+
+// Bessel equation 
+
+dx = 0.000001 ; alpha = 0
+
+!! besFun (x) = x^2 * J0''(x <> dx) + x * J0'(x <> dx) + (x^2 - alpha^2) * J0(x)
+// evaluate equation over interval as metric of function precision
+
+!! besFunErr(x)  =  [0 < x < 20 <> 0.01] (abs(besFun(x)))
+
+

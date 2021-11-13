@@ -1,0 +1,50 @@
+{
+   "Name": "arsech",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Hyperbolic inverse secant function ",
+   "Expression": 
+   {
+      "OpName": "ln",
+      "PostFix": false,
+      "NodeType": "UnaryOP",
+      "Parameter": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "OpName": "+",
+            "Left": 1.0,
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "circle",
+               "PostFix": false,
+               "NodeType": "UnaryOP",
+               "Parameter": 
+               {
+                  "Operator": null,
+                  "Symbol": null,
+                  "NodeType": "Identifier",
+                  "Kind": "Unknown",
+                  "Name": "x"
+               }
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         },
+         "OpType": "Binary"
+      }
+   },
+   "NodeType": "Profile"
+}

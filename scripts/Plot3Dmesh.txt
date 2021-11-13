@@ -1,0 +1,6 @@
+
+
+!! Sample (x,y) = sin (x) * sin (y)
+
+plot3d Sample (-5, -5)  10 10
+

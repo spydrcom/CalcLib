@@ -1,0 +1,44 @@
+{
+   "Name": "arsech'",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "First derivative of inverse hyperbolic Secant function ",
+   "Expression": 
+   {
+      "OpName": "-",
+      "Left": 0,
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "Operator": "'",
+            "Function": "asin",
+            "Parameters": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            },
+            "NodeType": "Calculus"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         },
+         "OpType": "Binary"
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

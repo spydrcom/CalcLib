@@ -1,0 +1,23 @@
+
+terms = 25
+
+loadjson taylor
+renderf taylor
+
+loadjson cos
+renderf cos
+
+loadjson sin
+renderf sin
+
+loadjson exp
+renderf exp
+
+calc cos 1
+
+PSET CHART PALETTE ORANGE TEAL
+//PSET CHART TITLE_STYLE Default 24 GREEN LEFT
+PSET CHART LINE_STYLE BLACK 2
+
+GRAPH  [  -pi <=    x    <= 2*pi  <>  0.01  ]   ( cos(x), sin(x) )
+ENTITLED Sin and Cos as computed using Taylor (25 terms)

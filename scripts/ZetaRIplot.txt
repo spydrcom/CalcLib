@@ -1,0 +1,23 @@
+
+
+!! ZetaC (z) = zeta ( 0.5 + i*z )
+// !! ZetaC (z) = ep ( 0.5 + i*z )
+
+//plotri ZetaC [28 < x < 72 <> 0.1]
+// plotri ZetaC [10 < x < 39 <> 0.1]
+
+
+P = 0.5 - 30*i
+
+E = P + 60*i
+
+d = 0.5*i
+
+plotri zeta [ P <= x <= E <> d ] 
+
+plotri zeta [ 0.5 <= x <= 0.5+40*i <> 0.2*i ]   
+
+plotri zeta [ 0.2+28.6*i <= x <= 0.3+28.6*i <> 0.0005 ] 
+
+//plotri zeta [ -1-20*i <= x <= -1-15*i <> 0.05*i ] 
+

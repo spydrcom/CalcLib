@@ -1,0 +1,145 @@
+-
+- configuration of algorithms for prime factor ratio number space
+-
+-      allocation of 4M entry prime factors table
+-
+L,net.myorb.math.libraries.FactorizationLibrary,4000000
+R,net.myorb.math.expressions.gui.rendering.MmlDisplayFormatter,IEXPLORE XML Display
+-
+- factorization library
+-
+F,factorization,Adjust blob factor to reduce representation size,Fudge,FUDGE
+F,factorization,Get an array of all prime factors of the parameter,Factors,FACTORS
+F,factorization,Get an array of all primes less than parameter,Primes,PRIMES
+F,factorization,Greatest common factor of two integers,Gcf,gcf
+F,factorization,Least common multiple of two integers,Lcm,lcm
+-
+- boolean library
+-
+V,boolean,Logical TRUE,True,TRUE
+V,boolean,Logical FALSE,False,FALSE
+O,boolean,Choice based on condition code,Choose,:,7
+O,boolean,Logical condition code set,ConditionCode,?,10
+O,boolean,Logical NOT implied by,NimpliedBy,~<<=,10
+O,boolean,Logical implied by,ImpliedBy,<<=,10
+O,boolean,Logical NOT implies,Nimplies,~=>>,10
+O,boolean,Logical implies,Implies,=>>,10
+O,boolean,Logical NOT XOR,Nxor,~|~,10
+O,boolean,Logical XOR,Xor,|~,10
+O,boolean,Logical NOR,Nor,~|,10
+O,boolean,Logical NAND,Nand,~&,10
+O,boolean,Logical OR,Or,|,7
+O,boolean,Logical AND,And,&,8
+O,boolean,Logical NOT,Not,~,9
+O,boolean,Equal to,Eq,==,9
+O,boolean,Not equal to,Ne,~=,9
+O,boolean,Greater than or equal to,Ge,>=,9
+O,boolean,Greater than absolute value of,GtAbs,>||,9
+O,boolean,Greater than,Gt,>,9
+O,boolean,Less than or equal to,Le,<=,9
+O,boolean,Less than absolute value of,LtAbs,<||,9
+O,boolean,Less than,Lt,<,9
+-
+- algebraic library
+-
+C,epsilon,2.718281828459,Epsilon base of natural log
+V,algebraic,Symbol for the irrational value of e; Epsilon base of natural log,E,e
+V,algebraic,Symbol for the irrational value of pi; Trigonometric ratio of circle diameter to perimeter,Pi,pi
+O,algebraic,Sign SGN function value of parameter,Sgn,sgn,10
+O,algebraic,Absolute value of parameter,Abs,abs,10
+O,algebraic,Plus or Minus operator,PlusMinus,+|-,7
+O,algebraic,Minus or Plus operator,MinusPlus,-|+,7
+-
+- arithmetic library
+-
+O,arithmetic,Arithmetic addition operator,Addition,+,7
+O,arithmetic,Arithmetic subtraction operator,Subtraction,-,7
+O,arithmetic,Arithmetic multiplication operator,Multiplication,*,8
+O,arithmetic,Arithmetic division operator,Division,/,8
+-
+- vector library
+-
+O,vector,Dot product of two arrays; lengths of arrays must match,Dot,.,10
+O,vector,Array indexing operation implemented as a binary operator,Indexing,#,12
+F,vector,Sum of items of an array; traditional capital SIGMA notation,Summation,SIGMA
+F,vector,Sum of items of an array constructed based on delta terms; using traditional INTEGRAL notation,Summation,INTEGRAL
+F,vector,Sum of items of an array; summation functionality using SIGMA notation,Summation,SUMMATION
+F,vector,Product of items of an array; traditional capital PI notation,Pi,PI
+F,vector,Compute Pearson regression coefficient for X/Y data set pair,Pearson,PEARSON
+F,vector,Apply least squares regression to find line of best fit,Fitline,FITLINE
+F,vector,Apply non-linear (logarithmic) regression to find curve of best fit,Fitexp,FITEXP
+F,vector,Apply Vandermonde matrix to solve for polynomial coefficients to find curve of best fit,Fitpoly,FITPOLY
+F,vector,Apply harmonic series regression to find curve of best fit,Fitharmonic,FITHARMONIC
+F,vector,Apply Lagrange series to derive interpolation polynomial as curve of best fit,Lagrange,LAGRANGE
+F,vector,Apply Vandermonde matrix to solve for Chebyshev interpolation polynomial as curve of best fit,Chebyshev,CHEBYSHEV
+F,vector,Dot product of two arrays; lengths of arrays must match,Dot,DOT
+F,vector,Select sub-list of elements for interval lo-hi,Interval,INTERVAL
+F,vector,Length of an array treated as a unary function,Length,LENGTH
+F,vector,Append a series of arrays into one long array,Append,APPEND
+F,vector,Compute dyadic product of 2 arrays,Dyadic,DYADIC
+F,vector,Maximum value found in array,Max,MAX
+F,vector,Minimum value found in array,Min,MIN
+-
+- power library
+-
+F,power,Decimal Shift,Dsh,*10^
+O,power,Left shift operator,Lsh,<<,8
+O,power,Right shift operator,Rsh,>>,8
+O,power,Unary conventional SQRT function,Sqrt,sqrt,10
+O,power,Unary conventional factorial operator,Factorial,!,10
+O,power,Binary conventional remainder operator n%m; integer only,Rem,%,8
+O,power,Binary conventional exponentiation operator x**y,Exponentiation,**,9
+F,power,Distance in multi-dimensional space; SQRT of sum of squares of array elements,Hypot,HYPOT
+O,power,Binary conventional exponentiation operator x^n; intended for small integer exponents,Pow,^,9
+O,power,Binary conventional root operator n\\x; intended for small integer roots,Root,\,9
+O,power,Unary conventional natural logarithm function,Log,ln,10
+O,power,Unary conventional EXP function e^x,Exp,exp,10
+-
+- polynomial library
+-
+O,polynomial,Evaluate function defined by array at X,ArrayEval,@#,10
+O,polynomial,Evaluate an exponential ( a * exp (b * x) ) defined by an array containing (a : b),ExpEval,*^#,10
+O,polynomial,Evaluate a polynomial defined by an array of coefficients ( c0 + c1*x + c2*x^2 + ... ),PolyEval,+*^,10
+O,polynomial,Evaluate a Chebyshev polynomial using Clenshaw's special case defined by an array of coefficients ( c0 + c1*T[1](x) + c2*T[2](x) + ... ),ClenshawEval,@*^,10
+O,polynomial,Evaluate a harmonic series defined by an array of coefficients ( c0 + c1*cos(x) + c2*cos(2x) + ... ),HarEval,+#*,10
+F,polynomial,Generate Lagrange interpolation polynomial for function described by array,Interpolate,INTERPOLATE
+F,polynomial,Generate Chebyshev interpolation polynomial for function described by array,ChebInterp,CHEBINTERP
+F,polynomial,Compute integral of function described by Chebyshev polynomial,ClenQuad,CLENQUAD
+F,polynomial,Compute derivative of function described by array,ArrayDer,ARRAYDER
+F,polynomial,Compute integral of function described by array,ArrayInt,ARRAYINT
+F,polynomial,Compute derivative of polynomial,PolyDer,POLYDER
+F,polynomial,Compute integral of polynomial,PolyInt,POLYINT
+F,polynomial,Compute quotient of polynomials,Deconv,DECONV
+F,polynomial,Compute product of polynomials,Conv,CONV
+F,polynomial,Compute roots of polynomial,Roots,ROOTS
+-
+- combinatorics library
+-
+O,combinatorics,Factorial rising operator,Fris,/#,9
+O,combinatorics,Factorial falling operator,Ffal,#/,9
+O,combinatorics,Harmonic function H(x),Harmonic,HARMONIC,10
+O,combinatorics,Bernoulli function B(m) for second (n=1) Bernoulli numbers,Bernoulli,BERNOULLI,10
+O,combinatorics,Binomial coefficient operator (n ## k),BC,##,10
+O,combinatorics,LogGamma function,LogGamma,LOGGAMMA,10
+O,combinatorics,Gamma function,Gamma,GAMMA,10
+O,combinatorics,Zeta function,Zeta,zeta,10
+-
+- calculus library
+-
+O,calculus,Mark function call for interval evaluation,Interval,||,11
+O,calculus,Mark function call for first derivative approximation,Prime,',11
+O,calculus,Mark function call for second derivative approximation,DPrime,'',11
+O,calculus,Mark function call for Tanh-Sinh integral approximation,TSQuad,$|,11
+O,calculus,Mark function call for Clenshaw-Curtis integral approximation,DCTQuad,$@,11
+O,calculus,Derivative approximation evaluated at left parameter using delta value in right parameter,Delta,<>,8
+-
+- trig library
+-
+F,trig,Trigonometric ARC TAN function,Atan,atan
+O,trig,Trigonometric ARC SIN function,Asin,asin,10
+O,trig,Trigonometric SIN function,Sin,sin,10
+O,trig,Trigonometric COS function,Cos,cos,10
+O,trig,Trigonometric TAN function,Tan,tan,10
+-
+-
+-

@@ -1,0 +1,37 @@
+
+
+!! f(x) = 2\ (1 - x^2)
+
+c00  = [-0.20 <= x <= 1 <> 0.10] ( f (x) )
+c90  = [ 0.80 <= x <= 1 <> 0.02] ( f (x) )
+c95  = [ 0.95 <= x <= 1 <> 0.01] ( f (x) )
+
+c00poly = CHEBINTERP c00
+c90poly = CHEBINTERP c90
+c95poly = CHEBINTERP c95
+
+!$ cx (x) = (c00poly, c90poly, c95poly)
+
+// the error curve
+
+!! P(x) = cx (abs(x))
+
+// 1000 points between -1 and 1
+
+err = [-1 < x < 1 <> 0.01] (abs (P(x) - f(x)))
+
+// locate maximum
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+
+GRAPH [-1 <= x <= 1 <> 0.01] (P (x))
+
+cq09 = CLENQUAD (c00poly, 0.9)
+cq95 = CLENQUAD (c90poly, 0.95) - CLENQUAD (c90poly, 0.9)
+cq99 = CLENQUAD (c95poly, 0.99) - CLENQUAD (c95poly, 0.95)
+
+fullArea = 4 * (cq09 + cq95 + cq99)
+
+PRETTYPRINT fullArea 
+

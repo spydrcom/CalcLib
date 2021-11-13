@@ -1,0 +1,40 @@
+
+
+// Euler-Mascheroni constant
+A001620 = 0.57721566490153286060651209
+A073004 = 1.7810724179901979852365
+
+
+!! ReciprocalSum (n) = SIGMA [ 1 <= i <= n ] ( 1/i )
+!! A001620Func (n) = ReciprocalSum (n) - ln n
+// LIM n -> INFINITY
+
+
+A001620Calc = A001620Func (INFINITY)
+PRETTYPRINT A001620Calc
+PRETTYPRINT A001620
+
+A001620Error = abs ( A001620Calc - A001620 )
+PRETTYPRINT A001620Error
+
+
+A073004calc = exp A001620Calc
+PRETTYPRINT A073004calc
+PRETTYPRINT A073004
+
+A073004err = abs ( A073004 - A073004calc )
+PRETTYPRINT A073004err
+
+gammaHalf = GAMMA 0.5 ; sqrtPi = sqrt pi
+gammaHalfErr = abs ( gammaHalf - sqrtPi )
+PRETTYPRINT gammaHalf ; PRETTYPRINT sqrtPi
+PRETTYPRINT gammaHalfErr
+
+expGamma = exp (-A001620Calc) 
+A080130 = 0.56145948356688516982414321479
+expGammaErr = abs ( A080130 - expGamma )
+PRETTYPRINT expGamma ; PRETTYPRINT A080130
+PRETTYPRINT expGammaErr
+
+
+

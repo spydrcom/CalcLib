@@ -1,0 +1,15 @@
+
+INFINITY = 100
+
+dt = 1 / INFINITY 
+
+// ellipj ellipke
+
+!! K(k) = INTEGRAL [0 < t < 1 <> dt] ( 1 / sqrt ((1-t^2) * (1-k^2*t^2)) * dt )
+
+!! E(k) = INTEGRAL [0 < t < 1 <> dt] ( sqrt ((1-k^2*t^2) / (1-t^2)) * dt )
+
+
+graph [0 < x < 1 <> dt] (E(x))
+graph [0 < x < 1 <> dt] (K(x))
+

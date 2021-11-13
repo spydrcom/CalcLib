@@ -1,0 +1,30 @@
+
+
+// Field Equation
+
+// v' = a - b * v
+!! FODE(Tn,Yn) = a - b * Yn
+!! fieldODE(x) = y'(x) + b * y(x) - a
+DIFEQ fieldODE FODE "Field Equation"
+
+// exercise from lamar.edu
+// ------------------------
+// a differential equation along with 
+// a sufficient number of initial conditions 
+// is called an Initial Value Problem (IVP).
+// -----------------------------------------
+//
+// generic solution is:
+//
+//		v(t) = 50 + c * exp ( - b * t )
+//
+// each value of c provides a different solution
+//
+//		example used a = 9.8, b = 0.196
+//
+// solutions ( with T0 = 0 ) :
+//
+//		c = +40 => Y0 = 90
+//		c = -40 => Y0 = 10
+//
+

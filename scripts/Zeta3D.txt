@@ -1,0 +1,11 @@
+
+// plott /workspace/ZetaRE.txt
+// plott /workspace/ZetaIM.txt
+
+plot3d LIM 2 zeta (-10,-10)  20 20
+
+plot3d  zeta (0.25, 20)  0.5 5
+plot3d  zeta (0.25, 29)  0.5 5
+
+
+//plot3d  zeta (-2.1,-0.8)  2 1.6

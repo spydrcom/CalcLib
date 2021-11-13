@@ -1,0 +1,6 @@
+
+!!f(x)=sinSq(2*x) - cos(pi/4*x) * secCb(x/4)
+
+graph [0<x<pi<>0.01](f(x))
+
+renderf f

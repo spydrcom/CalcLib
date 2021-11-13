@@ -1,0 +1,16 @@
+
+
+A068466 = 3.62560990822190831193
+quarter = 1/4 ; g14 = GAMMA quarter
+errA068466 = abs ( A068466 - g14 )
+prettyprint errA068466
+
+A073005 = 2.67893853470774763365569294
+third = 1/3 ; g13 = GAMMA third
+errA073005 = abs ( A073005 - g13 )
+prettyprint errA073005
+
+A220086 = 6.548062940247824437714
+seventh = 1/7 ; g17 = GAMMA seventh
+errA220086 = abs ( A220086 - g17 )
+prettyprint errA220086

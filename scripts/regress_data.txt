@@ -1,0 +1,22 @@
+
+x_all = (-3,-2,1,4,5)
+
+y_poly = (4, -7.1, 9.5, -13.5, 16.2)
+
+y_line = (4,7.1,9.5,13.5,16.2)
+
+y_exp = (0.1, 0.3, 6, 23.5, 66.2)
+
+y_har = (4, -7.1, 9.5, -13.5, 16.2)
+
+x_har = (1.1, 3.3, 3.9, 5.1, 6.3)
+
+
+omega = pi / 250
+
+y_fft = [0 <= x <= 127](cos(x*omega) + 8*cos(2*x*omega) + 3*cos(3*x*omega))
+
+
+omega = pi / 50
+
+y_long = [0 <= x <= 24](cos(x*omega) + 8*cos(2*x*omega) + 3*cos(3*x*omega) + 2*sin(x*omega) + 3*sin(3*x*omega) + 2*sin(5*x*omega))

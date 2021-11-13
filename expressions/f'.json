@@ -1,0 +1,106 @@
+{
+   "Name": "f'",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": null,
+   "Expression": 
+   {
+      "OpName": "+*^",
+      "Left": 
+      [
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 0.2588194037928063,
+            "OpType": "Binary"
+         },
+         1.0891528598336395E-13,
+         0.17751402694326063,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 0.08627313461917609,
+            "OpType": "Binary"
+         },
+         2.170324770595089E-10,
+         0.011834267237459346,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 0.003594707100907979,
+            "OpType": "Binary"
+         },
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 2.9581667893019414E-8,
+            "OpType": "Binary"
+         },
+         2.466116440857924E-4,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 5.711472337743828E-5,
+            "OpType": "Binary"
+         },
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 6.839296240457315E-8,
+            "OpType": "Binary"
+         },
+         2.912622138140364E-6,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 1.7781016747875356E-6,
+            "OpType": "Binary"
+         },
+         2.316327758933312E-6,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 2.037882449457129E-6,
+            "OpType": "Binary"
+         },
+         5.130623890181596E-7,
+         4.150467525221302E-7,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 3.229988756459079E-7,
+            "OpType": "Binary"
+         },
+         1.0740142819543053E-7,
+         {
+            "OpName": "-",
+            "Left": 0,
+            "NodeType": "BinaryOP",
+            "Right": 1.2578666996887478E-8,
+            "OpType": "Binary"
+         }
+      ],
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "Operator": null,
+         "Symbol": "AssignedVariableStorage",
+         "NodeType": "Identifier",
+         "Kind": "Variable",
+         "Name": "x"
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

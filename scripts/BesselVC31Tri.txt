@@ -1,0 +1,13 @@
+
+
+READ VC31Prep.txt
+READ BesselFunctions.txt
+
+jVals  = [-1.5<=x<=1.51<>0.1](J0(x))
+j0coef = VC31INTERP (jVals)
+PRETTYPRINT j0coef
+
+!! j0lcl(x) = j0coef @*^ x
+
+lo = -1 ; hi = 1
+READ BesselSplineCompare.sub

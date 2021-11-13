@@ -1,0 +1,38 @@
+
+
+
+graph [-1 < x < 1 <> 0.01] (exp(-x^2))
+
+
+
+xaxis = [-1 < x < 1 <> 0.2](x)
+
+bell = [-1 < x < 1 <> 0.2] (exp(-x^2))
+
+xaxis_LAGRANGE_bell = LAGRANGE (xaxis, bell)
+
+
+
+vc = VANCHE (xaxis);  vcInv = INV vc
+PRETTYPRINT vcInv 
+
+
+bm = MATRIX (bell, 9, 1) 
+mm = MATMUL (vcInv, bm)
+bcpc = mm|#1
+
+
+!! bf(x) = bcpc @*^ x
+
+
+graph [-1 < x < 1 <> 0.01](bf(x))
+
+
+!! P(x) = bcpc @*^ x   ;  !! f(x) = exp (-x^2)
+!! err(x) = abs ( P(x) - f(x) )
+
+
+erf = [-1 < x < 1 <> 0.01] (err(x)) 
+maxErf = MAX erf;  PRETTYPRINT maxErf 
+GRAPH INTERVAL (erf, -0.5, 0.5)
+

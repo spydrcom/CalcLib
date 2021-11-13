@@ -1,0 +1,27 @@
+
+
+LIBRARY ColtLinalg cern.colt.library.Linalg
+
+
+!+ MatRpt(m) = ColtLinalg.report
+
+!+ GetSvdS() = ColtLinalg.getSvdS
+!+ GetSvdV() = ColtLinalg.getSvdV
+!+ GetSvdU() = ColtLinalg.getSvdU
+
+!+ GetEvdD() = ColtLinalg.getEvdD
+!+ GetEvdDreal() = ColtLinalg.getEvdDreal
+!+ GetEvdDimag() = ColtLinalg.getEvdDimag
+!+ GetEvdV() = ColtLinalg.getEvdV
+
+!+ GetQrdH() = ColtLinalg.getQrdH
+!+ GetQrdQ() = ColtLinalg.getQrdQ
+!+ GetQrdR() = ColtLinalg.getQrdR
+!+ GetQrdSolution(m) = ColtLinalg.getQrdSolution
+!+ SolveWithQRD(A,b) = ColtLinalg.solveWithQRD
+
+!+ GetLudL() = ColtLinalg.getLudL
+!+ GetLudU() = ColtLinalg.getLudU
+!+ GetLudSolution(m) = ColtLinalg.getLudSolution
+!+ SolveWithLUD(A,b) = ColtLinalg.solveWithLUD
+

@@ -1,0 +1,694 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+            "cwd": "/users/michael/workspace/calclib"
+        },
+        {
+            "type": "java",
+            "name": "Launch CubicEquation",
+            "request": "launch",
+            "mainClass": "net.myorb.math.complexnumbers.CubicEquation",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FunctionDerivativesTable",
+            "request": "launch",
+            "mainClass": "net.myorb.math.complexnumbers.FunctionDerivativesTable",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch OptimizedCubicEquation",
+            "request": "launch",
+            "mainClass": "net.myorb.math.complexnumbers.OptimizedCubicEquation",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch QuarticEquation",
+            "request": "launch",
+            "mainClass": "net.myorb.math.complexnumbers.QuarticEquation",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch GLQuadrature",
+            "request": "launch",
+            "mainClass": "net.myorb.math.computational.GLQuadrature",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch IterativeRootApproximationOverDomain",
+            "request": "launch",
+            "mainClass": "net.myorb.math.computational.IterativeRootApproximationOverDomain",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch PolynomialEvaluation",
+            "request": "launch",
+            "mainClass": "net.myorb.math.computational.PolynomialEvaluation",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Tracking",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.charting.Tracking",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ContourColorSchemeRequest",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.charting.colormappings.ContourColorSchemeRequest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Julia",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.charting.fractals.Julia",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Mandelbrot",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.charting.fractals.Mandelbrot",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Newton",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.charting.fractals.Newton",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ConfiguredControl",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.controls.ConfiguredControl",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SelectableControl",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.controls.SelectableControl",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestComplexControlObject",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.controls.TestComplexControlObject",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestControlObject",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.controls.TestControlObject",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestFactorizedControlObject",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.controls.TestFactorizedControlObject",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch DisplayIO",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.DisplayIO",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch DisplayModeForm",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.DisplayModeForm",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch DisplayTests",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.DisplayTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch IntervalForm",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.IntervalForm",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SegmentConfig",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.SegmentConfig",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SequenceForm",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.SequenceForm",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestPrepForm",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.TestPrepForm",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TextEditor",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.TextEditor",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch MultiPanel",
+            "request": "launch",
+            "mainClass": "net.myorb.math.expressions.gui.rpn.MultiPanel",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch BernoulliPolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.BernoulliPolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch BesselPolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.BesselPolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ChebyshevPolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.ChebyshevPolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch GegenbauerPolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.GegenbauerPolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch HermitePolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.HermitePolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch JacobiPolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.JacobiPolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch LaguerrePolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.LaguerrePolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch LegendrePolynomial",
+            "request": "launch",
+            "mainClass": "net.myorb.math.polynomial.families.LegendrePolynomial",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FactorizationManager",
+            "request": "launch",
+            "mainClass": "net.myorb.math.primenumbers.FactorizationManager",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch GenerationMonitorReport",
+            "request": "launch",
+            "mainClass": "net.myorb.math.primenumbers.GenerationMonitorReport",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch QuadTest",
+            "request": "launch",
+            "mainClass": "net.myorb.test.QuadTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch AsinSeries",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.AsinSeries",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Beta3Dtest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.Beta3Dtest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch CharacteristicTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.CharacteristicTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch CombinatoricsTesting",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.CombinatoricsTesting",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ComplexLibTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.ComplexLibTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Cos3Dtest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.Cos3Dtest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch DCTtest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.DCTtest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExecTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.ExecTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExternalFunction",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.ExternalFunction",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FactoredExponentiationLib",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FactoredExponentiationLib",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FactoredTrigTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FactoredTrigTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FactorizationManagerTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FactorizationManagerTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FactorizationOfBigInt",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FactorizationOfBigInt",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FloatingLibraryTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FloatingLibraryTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FourierTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FourierTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FractionLibraryTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FractionLibraryTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FractionReductionTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FractionReductionTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FunctionChacterization",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FunctionChacterization",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FunctionDump",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FunctionDump",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FunctionDumpComplex",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FunctionDumpComplex",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch FunctionRootsTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.FunctionRootsTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch GaussQuadratureTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.GaussQuadratureTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch HouseholderTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.HouseholderTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch IntegrationRefined",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.IntegrationRefined",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch IntegrationRefinedOriginal",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.IntegrationRefinedOriginal",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch IntegrationTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.IntegrationTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Mangoldt",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.Mangoldt",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch MatrixTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.MatrixTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch PolyMulTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.PolyMulTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch PolyTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.PolyTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch PrimeNumberReports",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.PrimeNumberReports",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch RK_Test",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.RK_Test",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch RegressionTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.RegressionTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch RootsTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.RootsTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SimpleExpressionTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.SimpleExpressionTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SqrtSeries",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.SqrtSeries",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TaylorTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.TaylorTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ThreadingTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.ThreadingTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TimeSeriesTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.TimeSeriesTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TransformPolarTesting",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.TransformPolarTesting",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TriMat",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.TriMat",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TrigTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.TrigTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch UnicodeTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.UnicodeTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch VonMisesTests",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.VonMisesTests",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ZetaTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.ZetaTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Debye",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.Debye",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExpADSpline",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.ExpADSpline",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExpInt",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.ExpInt",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Gamma",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.Gamma",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch NDimIntegral",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.NDimIntegral",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch TwoDimSpline",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.anal.TwoDimSpline",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch OpTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.eqrep.OpTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ParserTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.eqrep.ParserTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch PrecTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.eqrep.PrecTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ReduceTest",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.eqrep.ReduceTest",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch LUD",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.linalg.LUD",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch SqrtAlgorithmComparisons",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.squareRoot.SqrtAlgorithmComparisons",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Airy",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.vc31.Airy",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch ExpInt(1)",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.vc31.ExpInt",
+            "projectName": "CalcLib"
+        },
+        {
+            "type": "java",
+            "name": "Launch Gamma(1)",
+            "request": "launch",
+            "mainClass": "net.myorb.testing.vc31.Gamma",
+            "projectName": "CalcLib"
+        }
+    ]
+}

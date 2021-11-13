@@ -1,0 +1,44 @@
+{
+   "Name": "acot",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Trigonometric inverse cotangent function ",
+   "Expression": 
+   {
+      "OpName": "-",
+      "Left": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "Operator": null,
+            "Symbol": "",
+            "NodeType": "Identifier",
+            "Kind": "Variable",
+            "Name": "pi"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 2.0,
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "atan",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         }
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

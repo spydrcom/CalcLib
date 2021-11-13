@@ -1,0 +1,52 @@
+
+
+// equation for a unit circle
+!! f(x) = 2\ (1 - x^2) 
+
+// 45DEG is 1/8 of circle, sin=cos=sqrt(2)/2 
+r2 = 2\2 ; r2o2 = r2 / 2 
+
+crustLineSlope = 1 - r2
+!! crustLine(x) = 1 + crustLineSlope * x
+
+// subtract off the crust line leaving 2 triangles below
+!! crust (x) = f(x) - crustLine(x)
+
+// interpolation of the crust curve
+crustPoints  = [-0.20 <= x <= 0.8 <> 0.06] ( crust (x) )  
+crustPoly = CHEBINTERP crustPoints  
+
+// area under the crust curve
+areaCrust= CLENQUAD (crustPoly, 0, r2o2)
+PRETTYPRINT areaCrust
+
+// areaCrust =  0.03914
+
+LowTriArea = (r2 /2) ^ 2 / 2 
+HiTriArea = ( (1 - r2) * r2 / 2 ) / 2
+CombinedAreaOfTriangles = (r2 - 1) / 4 + 1 / 4
+
+// should be sqrt(2) / 4
+calc ( CombinedAreaOfTriangles * 4 ) ^ 2
+
+sliceArea = areaCrust + CombinedAreaOfTriangles
+PRETTYPRINT  sliceArea 
+
+ApproximationOfPi = 8 * sliceArea 
+PRETTYPRINT  ApproximationOfPi 
+calc ApproximationOfPi - pi
+
+// use tanh-sinh as alternative
+areaCrust = crust $| (0, r2o2, 1E-8)
+sliceArea = areaCrust + CombinedAreaOfTriangles
+PRETTYPRINT  sliceArea 
+
+ApproximationOfPi = 8 * sliceArea 
+PRETTYPRINT  ApproximationOfPi 
+calc ApproximationOfPi - pi
+
+fullSlice = f $| (0, r2o2, 1E-8)
+ApproximationOfPi = 8 * (fullSlice - 0.25) 
+PRETTYPRINT  ApproximationOfPi 
+calc ApproximationOfPi - pi
+

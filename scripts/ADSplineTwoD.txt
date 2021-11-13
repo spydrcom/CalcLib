@@ -1,0 +1,33 @@
+
+
+// contour plot of AntiDerivativeSplineMultiDimensional function
+
+
+// import spline of integral
+LIBRARY ANAL net.myorb.testing.anal.TwoDimSpline
+
+!+ D2_IMPORT(x,y) = ANAL.twod 
+!! twod(x,y) = D2_IMPORT(x,y)
+
+!! forPlot(x,y) = twod(x,y)
+
+!! f (u, v) = 16 - u^2 - 2*v^2
+plot3d  f   ( 0, 0 )  2  100
+// entitled Contour plot of test function 16 - u^2 - 2*v^2
+
+
+// view line plots of partials
+
+!! twodx1 (y) = twod (1, y)
+!! twodx15 (y) = twod (1.5, y)
+!! twodx2 (y) = twod (2, y)
+
+!! twody1 (x) = twod (x, 1)
+!! twody15 (x) = twod (x, 1.5)
+!! twody2 (x) = twod (x, 2)
+
+GRAPH  [  0 <=    x    <= 2  <>  0.01  ]   ( twodx1(x), twodx15(x), twodx2(x), twody1(x), twody15(x), twody2(x) )
+
+plot3d  forPlot   ( 0, 0 )  2  100
+// entitled Contour plot of anti-derivative spline of function
+

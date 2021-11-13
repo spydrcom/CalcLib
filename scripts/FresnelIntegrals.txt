@@ -1,0 +1,13 @@
+
+
+!! S(x) = INTEGRAL [0 <= t <= x <> 0.01] ( sin (pi / 2 * t^2 ) * <*> t )
+
+!! C(x) = INTEGRAL [0 <= t <= x <> 0.01] ( cos (pi / 2 * t^2 ) * <*> t )
+
+RENDERF  S
+RENDERF  C
+
+GRAPH  [  0 <=    x    <= 4  <>  0.01  ]   ( C(x), S(x) )
+
+GRAPH  [  0 <=    x    <= 4  <>  0.01] ( sin ( pi/2 * x^2 ) )
+

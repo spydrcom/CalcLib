@@ -1,0 +1,30 @@
+{
+   "Name": "acot'",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "First derivative of inverse Cotangent function ",
+   "Expression": 
+   {
+      "OpName": "-",
+      "Left": 0,
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "atan",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         }
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

@@ -1,0 +1,15 @@
+
+PLOTF LIM 1.0 err  [ -20  <=   x    <= -2  <>  0.01  ]  
+ENTITLED Error in approximation of Ai(x) as solution of DE for -20 <= x <= -2 using Stokes equations
+
+PLOTF LIM 0.1 err  [ -2.5 <    x    <=  2  <>  0.01  ]  
+ENTITLED Error in computation of Ai(x) as solution of DE for -2 <= x <= 2 using Bessel identities
+
+PLOTF LIM 0.1 errB  [ -1 <=    x    <=  2  <>  0.01  ]  
+ENTITLED Error in computation of Bi(x) as solution of DE for -1 <= x <= 2 using Bessel identities
+
+e = [ -2 <= x <= 2 <> 0.01 ] ( err(x) )
+max_err = MAX e ; min_err = MIN e
+
+PRETTYPRINT max_err
+PRETTYPRINT min_err

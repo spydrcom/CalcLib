@@ -1,0 +1,11 @@
+
+INFINITY = 100
+
+dt = 1 / INFINITY 
+
+
+// beta / beta incomplete / inv / ln
+
+!! B(x,y) = INTEGRAL [0 < t < 1 <> dt] ( t^(x-1) * (1-t)^(y-1) * dt )
+
+graph [20 <= x <= 70 <> 0.5] (B(x,5))

@@ -1,0 +1,14 @@
+
+// Laguerre Differential Equation
+
+// x*y''(x) + (alpha + 1 - x)*y'(x) + n*y(x) = 0
+
+!!laguerre(x) = x*y''(x) + (alpha + 1 - x)*y'(x) + n*y(x)
+DIFEQ  laguerre  "Laguerre Differential Equation"
+
+
+SELECT "Differential Equations"
+
+RENDERD laguerre
+
+RENDER "Laguerre Differential Equation" TOP

@@ -1,0 +1,15 @@
+
+
+family Bernoulli 10
+
+GRAPH  [  0 <=    x    <= 1  <>  0.01  ]   ( B3(x), B4(x), B5(x), B6(x) )
+
+
+
+domain = [0<=n<=12] (n)
+
+range = [0<=n<=12] (BERNOULLI(0,n))
+
+domain_LAGRANGE_range = LAGRANGE(domain,range)
+
+

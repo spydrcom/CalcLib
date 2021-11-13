@@ -1,0 +1,43 @@
+
+SCRIPTPRINT FloatDemoChebyshevSegmented.txt
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3 <= t <= 3.5 <> dt] ( exp ( - t ^ 2 ) ) 
+
+// select segment domains and collect samples
+
+seg1 = [-0.2 <= t <= 1.2 <> 0.2] ( curve @# t )
+seg2 = [0.8 <= t <= 2.4 <> 0.2] ( curve @# t )
+seg3 = [1.8 <= t <= 3.4 <> 0.2] ( curve @# t )
+
+s1poly = CHEBINTERP seg1
+s2poly = CHEBINTERP seg2
+s3poly = CHEBINTERP seg3
+
+!$ BellC(x) = (s1poly, s2poly, s3poly)
+
+GRAPH [0 <= x <= 3 <> 0.001] (BellC (x))
+
+// evaluation of the error curve
+
+!! P(x) = BellC(x)
+!! f(x) = curve @# x
+
+err = [0 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+
+encode BellC
+
+LIBRARY XPF a.sample.library.ExportedFunctions
+
+!+ BELLCX(x) = XPF.bellc
+
+GRAPH [0 <= x <= 3 <> 0.001] ( BELLCX(x) )
+
+

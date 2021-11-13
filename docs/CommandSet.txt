@@ -1,0 +1,155 @@
+
+
+HELP
+
+===
+=  Operator help
+===
+
+	!	Unary conventional factorial operator
+	#	Array indexing operation implemented as a binary operator
+	##	Binomial coefficient operator (n ## k)
+	#/	Factorial falling operator
+	%	Binary conventional remainder operator n%m, integer only
+	&	Logical AND
+	'	Mark function call for first derivative approximation
+	''	Mark function call for second derivative approximation
+	*	Arithmetic multiplication operator
+	**	Binary conventional exponentiation operator x^y
+	+	Arithmetic addition operator
+	+#*	Evaluate a harmonic series defined by an array of coefficients
+	+*^	Evaluate a polynomial defined by an array of coefficients
+	+|-	Plus or Minus operator
+	-	Arithmetic subtraction operator
+	-#	Matrix indexing operation selecting row vector
+	-|+	Minus or Plus operator
+	.	Dot product of two arrays, lengths of arrays must match
+	/	Arithmetic division operator
+	/#	Factorial rising operator
+	:	Choice based on condition code
+	<	Less than
+	<<	Left shift operator
+	<<=	Logical implied by
+	<=	Less than or equal to
+	<>	Derivative approximation evaluated at left parameter using delta value in right parameter
+	<||	Less than absolute value of
+	==	Equal to
+	=>>	Logical implies
+	>	Greater than
+	>=	Greater than or equal to
+	>>	Right shift operator
+	>||	Greater than  absolute value of
+	?	Logical condition code set
+	ADJ	Compute adjugate of matrix
+	APPEND	Append a series of arrays into one long array
+	AUGMENTED	Construct augmented matrix from source matrix and additional column
+	BERNOULLI	Bernoulli function B(m) for second (n=1) Bernoulli numbers
+	CHARACTERISTIC	Compute characteristic polynomial for matrix
+	COFACTOR	Compute cofactor matrix from source
+	COL	Read column vector from matrix
+	COMATRIX	Compute comatrix matrix from source
+	CONV	Compute product of polynomials
+	COV	Computed covariance of an array of values
+	DECONV	Compute quotient of polynomials
+	DET	Compute determinant of matrix
+	DOT	Dot product of two arrays, lengths of arrays must match
+	DYADIC	Compute dyadic product of 2 arrays
+	EIG	Compute Von Mises dominant eigen-pair
+	FACTORS	Get an array of all prime factors of the parameter
+	FITEXP	Apply non-linear (logarithmic) regression to find curve of best fit
+	FITHARMONIC	Apply harmonic series regression to find curve of best fit
+	FITLINE	Apply least squares regression to find line of best fit
+	FITPOLY	Apply polynomial regression to find curve of best fit
+	GAUSSIAN	Solve linear equations with Gaussian elimination
+	HARMONIC	Harmonic function H(x)
+	HYPOT	SQRT of sum of squares of array elements
+	IDENTITY	Compute identity matrix with specified size
+	INV	Compute inverse of matrix
+	LENGTH	Length of an array treated as a unary function
+	LOGGAMMA	LogGamma function
+	MATADD	Compute sum of two matrices
+	MATMUL	Compute product of two matrices
+	MATRIX	Construct matrix from array with dimensions
+	MAX	Maximum value found in array
+	MEAN	Mean of an array of values
+	MEDIAN	Median of an array of values
+	MIN	Minimum value found in array
+	MINOR	Compute minor of matrix
+	MODE	Mode of an array of values
+	PEARSON	Compute Pearson regression coefficient for X/Y data set pair
+	PI	Product of items of an array, traditional capital PI notation
+	POLYDER	Compute derivative of polynomial
+	POLYINT	Compute integral of polynomial
+	PRIMES	Get an array of all primes less than parameter
+	ROOTS	Compute roots of polynomial
+	ROW	Read row vector from matrix
+	SIGMA	Sum of items of an array, traditional capital SIGMA notation
+	SOLVE	Solve linear equations with column substitution
+	STDEV	Standard deviation of an array of values
+	TR	Compute trace of matrix
+	TRANSPOSE	Compute transpose of matrix
+	TRIL	Compute lower triangular matrix from source
+	TRIU	Compute upper triangular matrix from source
+	VAR	Computed variance of an array of values
+	ZETA	Zeta function
+	\	Binary conventional root operator n\x, intended for small integer roots
+	^	Binary conventional exponentiation operator x^n, intended for small integer exponents
+	abs	Absolute value function of parameter
+	asin	Trigonometric ARC SIN function
+	atan	Trigonometric ARC TAN function
+	cos	Trigonometric COS function
+	e	Symbol for the irrational value of e
+	exp	Unary conventional EXP function e^x
+	false	Symbol for logical FALSE, translated to 0
+	gcf	Greatest common factor of two integers
+	lcm	Least common multiple of two integers
+	ln	Unary conventional natural logarithm function
+	pi	Symbol for the irrational value of pi
+	sgn	Sign (SGN) function of parameter
+	sin	Trigonometric SIN function
+	sqrt	Unary conventional SQRT function
+	tan	Trigonometric TAN function
+	true	Symbol for logical TRUE, translated to 1
+	|	Logical OR
+	|#	Matrix indexing operation selecting column vector
+	|^	Gamma function
+	|~	Logical XOR
+	~	Logical NOT
+	~&	Logical NAND
+	~<<=	Logical NOT implied by
+	~=	Not equal to
+	~=>>	Logical NOT implies
+	~|	Logical NOR
+	~|~	Logical NOT XOR
+
+
+===
+=  Keyword help
+===
+
+	!!	Define a user function
+	//	Add a comment to the output stream
+	ASSERT	Make a conditional assertion
+	CALC	Calculate and show value for an expression
+	CALCULATE	Calculate and show value for an expression
+	DEFINE	Define a user function
+	DERIVE	Plot derivatives of a polynomial
+	EXPORT	Export data to a file from specified matrix
+	FFT	Compute and display a fast Fourier transform
+	GRAPH	Display a graph of an array of data points
+	HELP	Show the HELP table
+	IMPORT	Import data from a file into specified matrix
+	ITERATE	Read a script file and iterate
+	MANDELBROT	Display a plot of the Mandelbrot set
+	POLY	Analyze a polynomial and tabulate key points
+	POLYNOMIAL	Analyze a polynomial and tabulate key points
+	POLYPRINT	Format an array as a polynomial
+	PRETTYPRINT	Show the formatted value of a symbol
+	RADIX	Calculate and show value for an expression in specified radix
+	READ	Read a workspace storage file
+	RUNSIEVE	Run a sieve to populate the primes table
+	SAVE	Save a workspace storage file
+	SCATTER	Produce an X/Y scatter plot
+	SCRIPTPRINT	Display the contents of a script file
+	SHOW	Show symbol table contents Symbols|Functions|ALL
+

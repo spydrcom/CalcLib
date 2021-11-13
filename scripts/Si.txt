@@ -1,0 +1,17 @@
+
+LIBRARY SiFunc net.myorb.math.specialfunctions.Si
+
+!+ SI_IMPORT(x) = SiFunc.si
+!+ SINC_IMPORT(x) = SiFunc.sinc
+!! sinc(x) = SINC_IMPORT x
+!! Si(x) = SI_IMPORT x
+
+A099281Calc = Si 1
+A099281 = 0.94608307036718301494135331
+A099281Error = abs ( A099281Calc - A099281 )
+PRETTYPRINT A099281Error
+
+GRAPH  [  0.001 <=    x    <= 13  <>  0.01  ]   ( Si(x), sinc(x) )
+
+// constants taken from http://www.oeis.org
+// A099281 : Decimal expansion of the sine integral at 1.

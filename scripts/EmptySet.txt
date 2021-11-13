@@ -1,0 +1,30 @@
+
+
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA(x) = GAMMA_IMPORT x
+
+NULL = ()
+!! Jm(a,x) = (x#/#2)^a / GAMMA(a+1) * M (NULL, a+1, -(x/2)^2)
+RENDERF Jm
+
+!! halfSq(x) = -(x/2)^2
+!! Jpoly(a) = POLYHG(NULL,(a+1))
+!! JpolyEval(a,x) = Jpoly(a) +*^ x
+!! J(a,x) = (x#/#2)^a / GAMMA(a+1) * JpolyEval (a, halfSq(x))
+
+!! Jhalf(x) = J(1/2,x)
+
+PLOTF Jhalf  [  0.1 <=    x    <= 1  <>  0.01  ]  
+
+family Bessel 3 Jp,0.5
+!! Jh(x) = JP0_50(x)
+
+ 
+family Bessel 3 Jp,0.5
+!! differences(x) = Jhalf(x) - JP0_50(x)
+PLOTF differences  [  0.1 <=    x    <= 8  <>  0.01  ]
+
+ 

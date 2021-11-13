@@ -1,0 +1,31 @@
+
+SCRIPTPRINT CmplxDemoRoots.TXT
+
+
+x = 5
+SCRIPTPRINT sqrtCompute.txt
+SCRIPTPRINT sqrtIteration.txt
+READ sqrtCompute.txt
+
+
+
+x=(1, 1, -1)
+SCRIPTPRINT QUADRATIC.txt
+READ QUADRATIC.txt
+
+calc ROOTS x
+
+
+x=(2,-3,4,-5)
+SCRIPTPRINT CUBIC.txt
+READ CUBIC.txt
+
+calc ROOTS x
+
+
+x=(2,-3,4,-5,1)
+SCRIPTPRINT QUARTIC.txt
+READ QUARTIC.txt
+
+calc ROOTS x
+

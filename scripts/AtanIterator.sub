@@ -1,0 +1,17 @@
+
+
+VERIFY x
+VERIFY n
+
+
+n = n + 2
+
+atanSeries = atanSeries + x^n / n 
+
+
+n = n + 2
+
+atanSeries = atanSeries - x^n / n
+
+
+

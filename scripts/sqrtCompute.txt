@@ -1,0 +1,23 @@
+
+// looking for 10 decimal places of precision
+
+TOLERANCE = 10^(-25)
+
+// polynomial solutions "c - x^2 = 0" gives sqrt(c) as a solution
+
+sqrt_polynomial = (x,0,-1)
+
+polyprint sqrt_polynomial 
+
+// Newton's methods uses the first derivative for the solution
+
+sqrt_poly_derivative = POLYDER sqrt_polynomial 
+
+polyprint sqrt_poly_derivative 
+
+// initial approximation
+
+sqrtx = 1
+
+ITERATE 25 SqrtIteration.txt
+

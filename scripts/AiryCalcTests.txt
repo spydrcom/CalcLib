@@ -1,0 +1,56 @@
+
+// Ai(0)
+A284867 = 0.35502805388781723926
+aiAtZero = Ai 0 ; aiAtZeroErr = abs ( aiAtZero - A284867 )
+PRETTYPRINT aiAtZero
+PRETTYPRINT aiAtZeroErr
+
+// Ai'(0)
+A284868 = -0.2588194037928
+aiPrimeAtZero = Ai'(0 <> 0.0001)
+aiPrimeAtZeroErr = abs ( aiPrimeAtZero - A284868 )
+PRETTYPRINT aiPrimeAtZero
+PRETTYPRINT aiPrimeAtZeroErr
+
+// Ai max occurs at
+A269892 = -1.018792971647471
+
+// Ai max value is
+A269893 = 0.535656656
+
+aiPrimeZero = -1
+MAXMINOF Ai aiPrimeZero
+PRETTYPRINT aiPrimeZero
+aiMax = Ai (aiPrimeZero)
+PRETTYPRINT aiMax
+
+aiPrimeZeroErr = abs ( aiPrimeZero - A269892 )
+aiMaxErr = abs ( aiMax - A269893 )
+PRETTYPRINT aiPrimeZeroErr
+PRETTYPRINT aiMaxErr
+
+biPrimeZero = -2 
+MAXMINOF Bi biPrimeZero 
+PRETTYPRINT biPrimeZero
+biMin = Bi biPrimeZero
+PRETTYPRINT biMin
+
+aiPrimeZero2 = -3 
+MAXMINOF Ai aiPrimeZero2
+PRETTYPRINT aiPrimeZero2
+aiMin = Ai aiPrimeZero2
+PRETTYPRINT aiMin
+
+// root of Ai
+A096714 = -2.33810741 ; AiZero = -2
+ROOTOF Ai AiZero
+PRETTYPRINT AiZero
+AiZeroErr = abs ( AiZero - A096714 )
+PRETTYPRINT AiZeroErr
+
+// root of Bi
+A096715 = -1.17371322 ; BiZero = -1
+ROOTOF Bi BiZero
+PRETTYPRINT BiZero
+BiZeroErr = abs ( BiZero - A096715 )
+PRETTYPRINT BiZeroErr

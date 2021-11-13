@@ -1,0 +1,275 @@
+-
+- configuration of algorithms for complex number space
+-
+L,net.myorb.math.libraries.CmplxLibrary
+G,net.myorb.math.expressions.charting.implementations.JfreeChartLib,JFreeChart Charting Library to be used for all charts,MeshPlotEdgeSize=50;ContourPlotEdgeSize=400
+R,net.myorb.math.expressions.gui.rendering.implementations.JmtexRenderLib,JMTeX Math Markup Language rendering library
+T,complexTracking.xml
+-
+- software version
+-
+-C,VERSION,2019.0415,software release version
+-C,VERSION,2019.0501,software development updates 2019
+C,VERSION,2021.1001,software development version
+-
+- boolean library
+-
+V,boolean,Logical TRUE,True,TRUE
+V,boolean,Logical FALSE,False,FALSE
+O,boolean,Choice based on condition code,Choose,:,7
+O,boolean,Logical condition code set,ConditionCode,?,10
+O,boolean,Logical NOT implied by,NimpliedBy,~<<=,10
+O,boolean,Logical implied by,ImpliedBy,<<=,10
+O,boolean,Logical NOT implies,Nimplies,~=>>,10
+O,boolean,Logical implies,Implies,=>>,10
+O,boolean,Logical NOT XOR,Nxor,~|~,10
+O,boolean,Logical XOR,Xor,|~,10
+O,boolean,Logical NOR,Nor,~|,10
+O,boolean,Logical NAND,Nand,~&,10
+O,boolean,Logical OR,Or,|,7
+O,boolean,Logical AND,And,&,8
+O,boolean,Logical NOT,Not,~,9
+O,boolean,Equal to,Eq,==,9
+O,boolean,Not equal to,Ne,~=,9
+O,boolean,Greater than or equal to,Ge,>=,9
+O,boolean,Greater than absolute value of,GtAbs,>||,9
+O,boolean,Greater than,Gt,>,9
+O,boolean,Less than or equal to,Le,<=,9
+O,boolean,Less than absolute value of,LtAbs,<||,9
+O,boolean,Less than,Lt,<,9
+-
+- algebraic library
+-
+V,algebraic,Symbol for the irrational value of e; Epsilon base of natural log,E,e
+V,algebraic,Symbol for the irrational value of pi; Trigonometric ratio of circle diameter to perimeter,Pi,pi
+O,algebraic,Sign SGN function value of parameter,Sgn,sgn,10
+O,algebraic,Plus or Minus operator,PlusMinus,+|-,7
+O,algebraic,Minus or Plus operator,MinusPlus,-|+,7
+-
+- arithmetic library
+-
+O,arithmetic,Arithmetic addition operator,Addition,+,7
+O,arithmetic,Arithmetic subtraction operator,Subtraction,-,7
+O,arithmetic,Arithmetic subtraction operator,Subtraction,MINUS,7,-
+O,arithmetic,Arithmetic multiplication operator,Multiplication,*,8,&#183;
+O,arithmetic,Arithmetic division operator (expressed as fraction),Fraction,#/#,8
+O,arithmetic,Arithmetic division operator,Division,/,8,&#x00F7;
+O,arithmetic,Arithmetic negate operator,Negate,NEGATE,8,-
+
+-
+- vector library
+-
+F,vector,Maximum value found in array,Max,MAX
+F,vector,Minimum value found in array,Min,MIN
+F,vector,Length of an array treated as a unary function,Length,LENGTH
+F,vector,Select sub-list of elements for interval lo-hi,Interval,INTERVAL
+F,vector,Append a series of arrays into one long array,Append,APPEND
+F,vector,Sum of items of an array; traditional capital SIGMA notation,Summation,SIGMA
+F,vector,Sum of items of an array constructed based on delta terms; using traditional INTEGRAL notation,Summation,INTEGRAL
+F,vector,Sum of items of an array; summation functionality using SIGMA notation,Summation,SUMMATION
+F,vector,Product of items of an array; traditional capital PI notation,Pi,PI
+F,vector,Compute Pearson regression coefficient for X/Y data set pair,Pearson,PEARSON
+F,vector,Apply least squares regression to find line of best fit,Fitline,FITLINE
+F,vector,Apply non-linear (logarithmic) regression to find curve of best fit,Fitexp,FITEXP
+F,vector,Apply Vandermonde matrix to solve for polynomial coefficients to find curve of best fit,Fitpoly,FITPOLY
+F,vector,Apply harmonic series regression to find curve of best fit,Fitharmonic,FITHARMONIC
+F,vector,Apply Lagrange series to derive interpolation polynomial as curve of best fit,Lagrange,LAGRANGE
+F,vector,Apply Vandermonde matrix to solve for Chebyshev interpolation polynomial as curve of best fit,Chebyshev,CHEBYSHEV
+F,vector,Compute dyadic product of 2 arrays,Dyadic,DYADIC
+F,vector,Dot product of two arrays; lengths of arrays must match,Dot,DOT
+O,vector,Dot product of two arrays; lengths of arrays must match,Dot,.,10
+O,vector,Array indexing operation implemented as a binary operator,Indexing,#,12
+-
+- matrix library
+-
+F,matrix,Read row vector from matrix,Row,ROW
+F,matrix,Read column vector from matrix,Column,COL
+F,matrix,Compute sum of two matrices,MatAdd,MATADD
+F,matrix,Compute product of two matrices,MatMul,MATMUL
+O,matrix,Matrix indexing operation selecting row vector,Row,-#,10
+O,matrix,Matrix indexing operation selecting column vector,Col,|#,10
+O,matrix,Matrix indexing operation selecting diag vector,Diag,\#,10
+O,matrix,Compute tensor product of two matrices,Tensor,*^*,10
+F,matrix,Construct matrix from array with dimensions,Matrix,MATRIX
+F,matrix,Compute determinant of matrix,Det,DET
+F,matrix,Compute trace of matrix,Trace,TR
+F,matrix,Compute inverse of matrix,Inv,INV
+F,matrix,Compute minor of matrix,Minor,MINOR
+F,matrix,Compute adjugate of matrix,Adj,ADJ
+F,matrix,Compute cofactor matrix from source,Cofactor,COFACTOR
+F,matrix,Compute comatrix matrix from source,Comatrix,COMATRIX
+F,matrix,Compute upper triangular matrix from source,Triu,TRIU
+F,matrix,Compute transpose of matrix,Transpose,TRANSPOSE
+F,matrix,Compute Von Mises dominant eigen-pair,Eig,EIG
+F,matrix,Compute identity matrix with specified size,Identity,IDENTITY
+F,matrix,Solve LUx=b using VC31LU to produce Chebyshev spline for function values,Vc31,VC31
+F,matrix,Compute characteristic polynomial for matrix,Characteristic,CHARACTERISTIC
+F,matrix,Solve LUx=b general case from assignment array=LUXB(L;U;b),Luxb,LUXB
+F,matrix,Solve linear equations with Gaussian elimination,Gaussian,GAUSSIAN
+F,matrix,Solve linear equations with column substitution,Solve,SOLVE
+F,matrix,Reorder a vector to a specified pattern,Pivot,PIVOT
+F,matrix,Construct a zero knot for odd or even functions,Genknot,GENKNOT
+F,matrix,Evaluate a VC31 spline function at specified parameter,Evalspline,EVALSPLINE
+F,matrix,Construct augmented matrix from source matrix and additional column,Augmented,AUGMENTED
+F,matrix,Construct Vandermonde matrix for a Chebyshev interpolation,Vanche,VANCHE
+-
+- power library
+-
+F,power,Decimal Shift,Dsh,*10^
+O,power,Left shift operator,Lsh,<<,8
+O,power,Right shift operator,Rsh,>>,8
+O,power,Unary conventional SQRT function,Sqrt,sqrt,10
+O,power,Unary conventional factorial operator,Factorial,!,10
+O,power,Binary conventional remainder operator n%m; integer only,Rem,%,8
+O,power,Binary conventional exponentiation operator x**y,Exponentiation,**,9
+F,power,Distance in multi-dimensional space; SQRT of sum of squares of array elements,Hypot,HYPOT
+O,power,Binary conventional exponentiation operator x^n; intended for small integer exponents,Pow,^,9
+O,power,Binary conventional root operator n\\x; intended for small integer roots,Root,\,9
+O,power,Unary conventional natural logarithm function,Log,ln,10
+-O,power,Unary conventional EXP function e^x,Exp,exp,10
+-
+- polynomial library
+-
+O,polynomial,Evaluate function defined by array at X,ArrayEval,@#,10
+O,polynomial,Evaluate an exponential ( a * exp (b * x) ) defined by an array containing (a : b),ExpEval,*^#,10
+O,polynomial,Evaluate a polynomial defined by an array of coefficients ( c0 + c1*x + c2*x^2 + ... ),PolyEval,+*^,10
+O,polynomial,Evaluate a Chebyshev polynomial using Clenshaw's special case defined by an array of coefficients ( c0 + c1*T[1](x) + c2*T[2](x) + ... ),ClenshawEval,@*^,10
+O,polynomial,Evaluate a harmonic series defined by an array of coefficients ( c0 + c1*cos(x) + c2*cos(2x) + ... ),HarEval,+#*,10
+F,polynomial,Generate Lagrange interpolation polynomial for function described by array,Interpolate,INTERPOLATE
+F,polynomial,Generate Chebyshev interpolation polynomial for function described by array,ChebInterp,CHEBINTERP
+F,polynomial,Compute integral of function described by Chebyshev polynomial,ClenQuad,CLENQUAD
+F,polynomial,Compute derivative of function described by array,ArrayDer,ARRAYDER
+F,polynomial,Compute integral of function described by array,ArrayInt,ARRAYINT
+F,polynomial,Compute derivative of polynomial,PolyDer,POLYDER
+F,polynomial,Compute integral of polynomial,PolyInt,POLYINT
+F,polynomial,Compute quotient of polynomials,Deconv,DECONV
+F,polynomial,Compute product of polynomials,Conv,CONV
+F,polynomial,Compute roots of polynomial,Roots,ROOTS
+-
+- trig library
+-
+F,trig,Trigonometric ARC TAN function,Atan,atan
+O,trig,Trigonometric ARC SIN function,Asin,asin,10
+O,trig,Trigonometric TAN function,Tan,tan,10
+-
+-  use TrigPow library for full operator access
+-
+E,trigpow,net.myorb.math.expressions.algorithms.TrigPowCmplxPrimitive
+O,trigpow,Trigonometric SIN function,TrigPow,sin,10,,op=sin
+O,trigpow,Trigonometric SIN Squared function,TrigPow,sinSq,10,,op=sin;pow=2
+O,trigpow,Trigonometric SIN Cubed function,TrigPow,sinCb,10,,op=sin;pow=3
+O,trigpow,Trigonometric COS function,TrigPow,cos,10,,op=cos
+O,trigpow,Trigonometric COS Squared function,TrigPow,cosSq,10,,op=cos;pow=2
+O,trigpow,Trigonometric COS Cubed function,TrigPow,cosCb,10,,op=cos;pow=3
+O,trigpow,Trigonometric TAN function,TrigPow,tan,10,,op=tan
+O,trigpow,Trigonometric TAN Squared function,TrigPow,tanSq,10,,op=tan;pow=2
+O,trigpow,Trigonometric TAN Cubed function,TrigPow,tanCb,10,,op=tan;pow=3
+O,trigpow,Trigonometric COT function,TrigPow,cot,10,,op=cot
+O,trigpow,Trigonometric COT Squared function,TrigPow,cotSq,10,,op=cot;pow=2
+O,trigpow,Trigonometric COT Cubed function,TrigPow,cotCb,10,,op=cot;pow=3
+O,trigpow,Trigonometric SEC function,TrigPow,sec,10,,op=sec
+O,trigpow,Trigonometric SEC Squared function,TrigPow,secSq,10,,op=sec;pow=2
+O,trigpow,Trigonometric SEC Cubed function,TrigPow,secCb,10,,op=sec;pow=3
+O,trigpow,Trigonometric CSC function,TrigPow,csc,10,,op=csc
+O,trigpow,Trigonometric CSC Squared function,TrigPow,cscSq,10,,op=csc;pow=2
+O,trigpow,Trigonometric CSC Cubed function,TrigPow,cscCb,10,,op=csc;pow=3
+-
+- hyperbolic
+-
+O,trigpow,Trigonometric SECH function,TrigPow,sech,10,,op=sech
+O,trigpow,Trigonometric SECH Squared function,TrigPow,sechsq,10,,op=sech;pow=2
+O,trigpow,Trigonometric CSCH function,TrigPow,csch,10,,op=csch
+O,trigpow,Trigonometric CSCH Squared function,TrigPow,cschsq,10,,op=csch;pow=2
+-
+- combinatorics library
+-
+O,combinatorics,Factorial rising operator,Fris,/#,9
+O,combinatorics,Factorial falling operator,Ffal,#/,9
+O,combinatorics,Harmonic function H(x),Harmonic,HARMONIC,10
+O,combinatorics,Bernoulli function B(m) for second (n=1) Bernoulli numbers,Bernoulli,BERNOULLI,10
+O,combinatorics,Binomial coefficient operator (n ## k),BC,##,10
+O,combinatorics,LogGamma function,LogGamma,LOGGAMMA,10
+-O,combinatorics,Gamma function,Gamma,GAMMA,10
+-O,combinatorics,Zeta function,Zeta,zeta,10
+-
+- calculus library
+-
+O,calculus,Mark function call for interval evaluation,Interval,||,11
+O,calculus,Mark function call for first derivative approximation,Prime,',11
+O,calculus,Mark function call for second derivative approximation,DPrime,'',11
+O,calculus,Mark function call for Tanh-Sinh integral approximation,TSQuad,$|,11
+O,calculus,Mark function call for Clenshaw-Curtis integral approximation,DCTQuad,$@,11
+O,calculus,Derivative approximation evaluated at left parameter using delta value in right parameter,Delta,<>,8
+-
+- complex library
+-
+V,complex,Imaginary root of -1,I,i
+O,complex,Real part of complex value,Re,Re,10,&#024C;
+O,complex,Imaginary part of complex value,Im,Im,10,&#0249;
+O,complex,Complex conjugate operator,Conj,conj,10
+O,complex,Phase angle of a complex value,Arg,arg,10
+O,complex,Complex ARC SIN function,Asin,asin,10
+O,complex,Complex ARC COS function,Acos,acos,10
+O,complex,Complex sin function of parameter,Sin,sin,10
+O,complex,Complex cos function of parameter,Cos,cos,10
+O,complex,Complex ARC SINH function,Arsinh,arsinh,10
+O,complex,Complex ARC COSH function,Arcosh,arcosh,10
+O,complex,Complex sinh function of parameter,Sinh,sinh,10
+O,complex,Complex cosh function of parameter,Cosh,cosh,10
+O,complex,Complex CIS (cos x + i * sin x) function operator,Cis,cis,10
+O,complex,Complex value (left + i * right) as a binary operator,Cmplx,+!*,10
+O,complex,Complex value (left - i * right) as a binary operator,CmplxConj,-!*,10
+O,complex,Complex value (left * CIS right) as a binary (polar) operator,Polar,@!#,10
+O,complex,Modulus (distance from origin) squared of parameter,ModSquared,modSq,10
+O,complex,Absolute value (distance from origin) of parameter,Abs,abs,10
+O,complex,Unary conventional EXP function e^x,NativeExp,exp,10
+-O,complex,Unary conventional EXP function e^x,Exp,exp,10
+-
+- CLMATH extended library
+-
+-  use version from CALCLIB original SF implementation
+E,clmath,net.myorb.math.expressions.algorithms.CLmathComplexImplementations
+F,clmath,Unary conventional EXP function e^x,Exp,exp
+-O,clmath,Zeta function,ZetaAnalytic,zeta,10,&#03B6;,100000
+-O,clmath,Gamma function,Gamma,GAMMA,10,&#0393;,1000
+F,clmath,Loggamma function,Loggamma,loggamma,,1000
+-F,clmath,Incomplete Gamma function,IncompleteGamma,gammainc
+O,clmath,Euler Product function,EulerProduct,ep,10,&#03B6;,1000
+O,clmath,Zeta function,Zeta,zeta,10,&#03B6;,10000
+-
+- MPMATH extended library
+-
+-  use MPMATH project version directly without reference to library
+E,mpmath,net.myorb.mpmath.algorithms.ComplexMpmathPrimitives
+-O,mpmath,Euler Product function,EulerProduct,ep,10,&#03B6;,1000
+-O,complex,Zeta function,ZetaAnalytic,zeta,10,&#03B6;,100000
+-O,mpmath,Riemann Zeta function,Zeta,zeta,10,&#03B6;,1000
+-F,mpmath,Jonquiere polylog function,Polylog,polylog
+-F,mpmath,Lambert W (omega) function,LambertW,omega,&#03A9;,N/A
+O,mpmath,Siegel Theta function,SiegelTheta,THETA,10,&#0398;,N/A
+-F,mpmath,Polygamma (PSI) function,Polygamma,PSI,&#03A8;,N/A
+-O,mpmath,Loggamma function,Loggamma,loggamma,10,,N/A
+O,mpmath,Trigamma function,Trigamma,trigamma,10,,N/A
+O,mpmath,Digamma function,Digamma,digamma,10,,N/A
+-
+- Anaconda extended library
+-
+-  use Anaconda project version with RPC
+E,anaconda,net.myorb.external.anaconda.ComplexAnacondaRPC,LOCALHOST:8080
+F,anaconda,Lambert W (omega) function,Omega,omega0,&#03A9;,0
+F,anaconda,Gamma function,Gamma,GAMMA,10,&#0393;
+F,anaconda,Loggamma function,Loggamma,loggamma,10
+F,anaconda,Polygamma (psi) function,Polygamma,psi0,&#03A8;,0
+F,anaconda,Polygamma (psi) function,Polygamma,psi1,&#03A8;,1
+F,anaconda,Jonquiere polylog function,Polylog,Li1,,1
+F,anaconda,Jonquiere polylog function,Polylog,polylog,,0
+F,anaconda,Riemann Zeta function,Zeta,zeta,&#03B6;,1
+-
+- special power ops for complex
+-
+O,power,Exponentiation operator,Exponentiation,^,9
+O,power,Natural log function of complex value,Log,ln,10
+O,power,Binary root operator (left [root of] right),Root,\,9
+-
+-
+-

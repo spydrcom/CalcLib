@@ -1,0 +1,28 @@
+
+
+// GAMMA spline
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+
+!! GAMMA(x) = GAMMA_IMPORT x
+
+!! rho(a,n) = GAMMA(a + n)/GAMMA(a)
+
+RENDERF rho
+
+RENDER "Pochhammer Function" TOP
+
+render rho(1,n) = n!
+render rho(a,n) * (a+n) = a * rho(a+1,n)
+render (-a) ## n = -1^n / n! * rho(a,n)
+render rho(a,n+k) = rho(a,k) * rho(a+k,n) = rho(a,n) * rho(a+n,k)
+render rho(a,k-n) = -1^n * rho(a,k) / rho(1-a-k,n)
+render rho(a,2*n) = 2^(2*n) * rho(a/2,n) * rho((a+1)/2,n)
+render rho(a,-n) = -1^n / rho(1-a,n)
+
+RENDER "Pochhammer Identities"
+
+plot3d rho ( -1.9, -1.9 ) 3.8 10 
+

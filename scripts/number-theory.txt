@@ -1,0 +1,65 @@
+
+
+INFINITY = 1000
+
+dx = 1 / INFINITY 
+
+
+// rising ( /# )  /  falling factorial ( #/ ) power
+
+!! RF (x,m) = PI [0 <= i <= m-1] (x + i)
+
+!! FF (x,m) = PI [0 <= i <= m-1] (x - i)
+
+
+// binomial coefficients
+
+!! BC (n,k) = n! / ( k! * (n - k)! )
+
+!! BC_alt (n, k) = PI [1 <= i <= k] ( (n - i + 1) / i )
+
+// bc (n,k) = ff(n,k) / k!        for k<=n/2
+// bc (n,k) = ff(n,n-k) / (n-k)!  for k>n/2
+// bc (x,k) = ff(x,k) / k!        for non-integer
+
+
+// Bernoulli recursive definition
+
+!! B(m) = 1 - SIGMA [0 <= k <= m-1] ( BC(m,k) * BERNOULLI(k) / (m-k+1) )
+
+
+
+// harmonic numbers
+
+!! iH(n) = SIGMA [1 <= i <= n] (1/i)
+
+// harmonic of order n
+!! nH(n,m) = SIGMA (1 <= k <= n] (k^(-m))
+
+!! H(x) = x * SIGMA [1 <= k <= INFINITY] (1 / (k^2 + k*x) )
+
+
+
+// euler-mascheroni
+
+gamma = 0.57721566490153286060651209008240243104215933593992
+
+gammaApprox = SIGMA [0 <= x <= 1 <> dx] ( H(x) * dx )
+
+
+// zeta
+
+!! zeta(s) = SIGMA [1 <= n <= INFINITY] ( 1 / n^s )
+// so zeta(s) = H(INFINITY, s)
+
+
+// GAMMA function (n = number of terms)
+
+!! GAMMA (t, n) = n! * n^t / ( PI [0 <= i <= n] (t + i) )
+
+!! GammaFactor (t,n) = ( n / (t+n) ) * ( n / (n-1) )^t
+!! GammaInit (t) = ( t * (t + 1) )^(-1)
+
+!! GAMMAfirstN (t, n) = GammaInit (t) * PI [2 <= i <= INFINITY] (GammaFactor (t,i))
+
+

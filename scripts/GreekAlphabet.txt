@@ -1,0 +1,73 @@
+
+ALPHA = 1
+alpha = 1
+
+BETA = 2
+beta = 2
+
+GAMMA = 3
+gamma = 3
+
+DELTA = 4
+delta = 4
+
+EPSILON = 5
+epsilon = 5
+
+ZETA = 6
+zeta = 6
+
+ETA = 7
+eta = 7
+
+THETA = 8
+theta = 8
+
+IOTA = 9
+iota = 9
+
+KAPPA = 10
+kappa = 10
+
+LAMBDA = 11
+lambda = 11
+
+MU = 12
+mu = 12
+
+NU = 13
+nu = 13
+
+XI = 14
+xi = 14
+
+OMICRON = 15
+omicron = 15
+
+PI = 16
+pi = 16
+
+RHO = 17
+rho = 17
+
+SIGMA = 18
+sigma = 18
+
+TAU = 19
+tau = 19
+
+UPSILON = 20
+upsilon = 20
+
+PHI = 21
+phi = 21
+
+CHI = 22
+chi = 22
+
+PSI = 23
+psi = 23
+
+OMEGA = 24
+omega = 24
+

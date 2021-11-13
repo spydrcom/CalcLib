@@ -1,0 +1,14 @@
+
+// compute a coefficient of the Nth Bernoulli polynomial
+!! BPolyCoef (n, k) = (n##k) * BERNOULLI (1, n-k)
+
+// compute complete set of Nth Bernoulli polynomial coefficients
+!! BernPoly (n) = [0 <= k <= n] (BPolyCoef (n, k))
+
+!! B3(x) = BernPoly(3) +*^ x
+!! B4(x) = BernPoly(4) +*^ x
+!! B5(x) = BernPoly(5) +*^ x
+!! B6(x) = BernPoly(6) +*^ x
+
+graph [0<x<1<>1/100] (B3(x), B4(x), B5(x), B6(x))
+

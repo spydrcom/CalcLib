@@ -1,0 +1,20 @@
+<PLOTS>
+<ITEM PointsSize='5' TransformIdentity='Dendrite' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.7205882' X='-0.16176468133926392' Y='-0.5882352590560913' Title='Julia Dendrite : c= + i' PlotParent='-1' PlotNumber='1000' />
+<ITEM PointsSize='5' TransformIdentity='Dragon' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.4264706' X='-0.4411764442920685' Y='-0.8529411554336548' Title='Julia Dragon : c=(-0.8 + 0.156*i)' PlotParent='-1' PlotNumber='1001' />
+<ITEM PointsSize='5' TransformIdentity='Drunkard' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.9558823' X='-0.6911764740943909' Y='-1.1176470518112183' Title='Julia Drunkard : c=(0.285 + 0.01*i)' PlotParent='-1' PlotNumber='1002' />
+<ITEM PointsSize='5' TransformIdentity='Marco' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.32352942' X='-0.19117645919322968' Y='-1.0' Title='Julia Marco : c=-0.75' PlotParent='-1' PlotNumber='1003' />
+<ITEM PointsSize='5' TransformIdentity='Phi' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.8529412' X='-0.7058823108673096' Y='-0.2499999850988388' Title='Julia Phi : c=(-0.4 + 0.6*i)' PlotParent='-1' PlotNumber='1004' />
+<ITEM PointsSize='5' TransformIdentity='Rabbit' MaxResult='1000' PointsPerAxis='200' EdgeSize='1.7647059' X='-0.8088235259056091' Y='-0.8382352590560913' Title='Julia Rabbit : c=(-0.123 + 0.745*i)' PlotParent='-1' PlotNumber='1005' />
+<ITEM PointsSize='5' TransformIdentity='Siegel' MaxResult='1000' PointsPerAxis='200' EdgeSize='0.011764705' X='-0.09359859675168991' Y='-0.9944636225700378' Title='Julia Siegel : c=(-0.391 - 0.587*i)' PlotParent='-1' PlotNumber='1006' />
+<ITEM PointsSize='5' TransformIdentity='SimpleIminusOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=(-1 + i)' PlotParent='-1' PlotNumber='1007' />
+<ITEM PointsSize='5' TransformIdentity='SimpleNegOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=-1' PlotParent='-1' PlotNumber='1008' />
+<ITEM PointsSize='5' TransformIdentity='SimpleNegTwo' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=-2' PlotParent='-1' PlotNumber='1009' />
+<ITEM PointsSize='5' TransformIdentity='SimpleOne' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=1' PlotParent='-1' PlotNumber='1010' />
+<ITEM PointsSize='5' TransformIdentity='SimpleTwo' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=2' PlotParent='-1' PlotNumber='1011' />
+<ITEM PointsSize='5' TransformIdentity='SimpleThree' MaxResult='1000' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Julia Simple : c=3' PlotParent='-1' PlotNumber='1012' />
+<ITEM PointsSize='5' TransformIdentity='Mandelbrot' MaxResult='3000' PointsPerAxis='200' EdgeSize='5.0' X='-2.5' Y='-2.5' Title='Mandelbrot : (-2.5,-2.5) - 5.0' PlotParent='-1' PlotNumber='1013' />
+<ITEM PointsSize='5' TransformIdentity='Zsquared' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^2-1, a=1+i' PlotParent='-1' PlotNumber='1014' />
+<ITEM PointsSize='5' TransformIdentity='HalfZcubed' MaxResult='40' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=0.5' PlotParent='-1' PlotNumber='1015' />
+<ITEM PointsSize='5' TransformIdentity='Zcubed' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=1' PlotParent='-1' PlotNumber='1016' />
+<ITEM PointsSize='5' TransformIdentity='TwoZcubed' MaxResult='100' PointsPerAxis='200' EdgeSize='10.0' X='-5.0' Y='-5.0' Title='Newton : P=z^3-1, a=2' PlotParent='-1' PlotNumber='1017' />
+</PLOTS>

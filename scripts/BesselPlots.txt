@@ -1,0 +1,22 @@
+
+
+READ BesselFunctions.txt
+
+graph [2<x<10 <> 0.05] (J0(x), J1(x), Y0(x), K0(x), K1(x))  
+
+graph [2<x<10 <> 0.05] (J0(x), J1(x), Y0(x))  
+
+graph [2<x<10 <> 0.05] (J0(x), J1(x), Y0(x), K0(x))  
+
+graph [2<x<10 <> 0.05] (J0(x), J1(x), K0(x), I0(x))  
+
+graph [2<x<10 <> 0.05] (J0(x), J1(x),  K0(x))  
+
+ graph [2<x<10 <> 0.05] (J0(x), J1(x),  Y0(x)) 
+
+ graph [2<x<10 <> 0.05] (J0(x), J1(x),  Y1(x)) 
+
+ graph [2<x<10 <> 0.05] (J0(x), J0'(x <> 0.01))
+
+ graph [2<x<10 <> 0.05] (J0(x), J0'(x <> 0.01), J0''(x <> 0.01)) 
+

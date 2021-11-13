@@ -1,0 +1,7 @@
+
+
+!! erf(x,y) = exp (- (x +!* y)^2 )
+
+plot3d erf ( -2.9, -2.9 ) 5.8 10 
+entitled erf(z)
+

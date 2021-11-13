@@ -1,0 +1,13 @@
+
+c = (-1, 5, 8, -1, -1)
+
+!! f(x) = c +*^ x
+
+rdomain = (-2, 2, 0.05)
+
+tdomain = (0, pi, 0.01)
+
+cdomain = (700700700, 900900900, 10010010)
+
+POLARANGULAR c rdomain tdomain cdomain
+

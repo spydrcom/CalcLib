@@ -1,0 +1,38 @@
+
+INFINITY = 1E4
+dx = 1/INFINITY
+
+k = 0
+RENDER k * psi0(k*z) = k * ln k + SIGMA [0 <= n <= k-1] ( psi0 ( z + n/k ) )
+RENDER "Digamma Multiplication Theorem" TOP
+gamma = 0.5772156649
+A097663 = 3 * exp ( psi0 (1/3) + gamma )
+prettyprint A097663
+A097663_correct = 	0.2331190931
+error = A097663 - A097663_correct
+prettyprint error
+
+render 3^x = 2 * x + 2
+!! solveFor (x) = -1 - omega0 ( - ln(3) / 6 ) / ln(3)
+RENDERF solveFor
+RENDER "Exponential equation solution using Lambert" TOP
+correct_solution = -0.790110011166737
+solution = solveFor (0)
+prettyprint solution
+error = solution - correct_solution
+prettyprint error
+
+RENDER Li1(z) = -ln (1 - z)
+RENDER "Polylog integer identity, order = 1" TOP
+liHalf = Li1 0.5
+prettyprint liHalf
+error = liHalf - ln 2
+prettyprint error
+
+!! Li_0(x) = polylog ( 0, x)
+!! Li_1(x) = polylog (-1, x)
+!! Li_2(x) = polylog (-2, x)
+!! Li_3(x) = polylog (-3, x)
+
+GRAPH LIM 2 [ -0.6 < x < 0.6 <> 0.01 ] ( Li_0(x), Li_1(x), Li_2(x), Li_3(x) )
+

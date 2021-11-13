@@ -1,0 +1,104 @@
+
+
+// Hyper Geometric Function
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA(x) = GAMMA_IMPORT x
+
+!+ F_IMPORT(a,b,c,x) = SpecFunc.F
+!+ M_IMPORT(a,c,x) = SpecFunc.M
+!+ U_IMPORT(a,c,x) = SpecFunc.U
+
+!! F(a,b,c,x) = F_IMPORT (a,b,c,x)
+!! M(a,c,x) = M_IMPORT (a,c,x)
+!! U(a,c,x) = U_IMPORT (a,c,x)
+
+
+RENDER x * (1 - x) * y''(x) + (c - (a + b + 1) * x) * y'(x) - a * b * y(x) = 0
+RENDER "Hyper-Geometric Differential Equation" TOP
+
+RENDER x^2 * y''(x) + (b - x) * y'(x) - a * y(x) = 0
+RENDER "Hyper-Geometric Differential Equation (confluent form)" TOP
+
+RENDER F (a, b, c, x) = SUMMATION [ 0 <= n <= INFINITY ] ( ( rho(a,n) * rho(b,n) / rho(c,n) ) * ( x^n / n! ) )
+RENDER "Hyper-Geometric Function" TOP
+
+RENDER F (a, b, c, z) = SUMMATION [0 <= n <= INFINITY] ( ( ( ( a /#+ n * b /#+ n ) / c /#+ n ) ) * ( z^n / n! ) )
+RENDER "Hyper-Geometric Function using Pochhammer short-hand form" TOP
+
+RENDER M (a, c, x) = SUMMATION [ 0 <= n <= INFINITY ] ( ( rho(a,n) / rho(c,n) ) * ( x^n / n! ) )
+RENDER U (a, c, x) = pi/sin(c*pi) * ( M(a,c,x)/(GAMMA(1+a-c) * GAMMA(c)) - x^(1-c) * M(1+a-c,2-c,x) / (GAMMA(a) * GAMMA(2-c)) )
+RENDER "Confluent Hyper-Geometric Function (First and Second kinds)" TOP
+
+!! rho(a,n) = GAMMA(a + n)/GAMMA(a)
+RENDERF rho ; RENDER "Pochhammer Function" TOP
+
+!! inv1mTo(x,a) = F ( a, 2, 2, x )
+RENDER (1 - x) ^ (-a) = F (a, n, n, x )
+RENDER "Power Functions" TOP
+
+!! exp(x) = M ( 1, 1, x )
+!! ln1m(x) = -x * F ( 1, 1, 2, x )
+!! ln1pO1m(x) = 2 * x * F ( 1/2, 1, 3/2, x^2 )
+
+RENDERF exp
+RENDER ln((1+x)/(1-x)) = 2 * x * F ( 1/2, 1, 3/2, x^2 )
+RENDER ln(1-x) = -x * F ( 1, 1, 2, x )
+RENDER "Logarithms" TOP
+
+!! atan(x) = x * F ( 1/2, 1, 3/2, -x^2 )
+!! asin(x) = x * F ( 1/2, 1/2, 3/2, x^2 )
+RENDERF asin ; RENDERF atan ; RENDER "Trigonometry" TOP
+
+
+// Legendre
+
+!! P(x,v) = F ( -v, v+1, 1, (1-x)/2 )
+RENDERF P ; RENDER "Legendre Polynomials of order 'v'" TOP
+
+
+// Chebyshev
+
+!! Tn(x,n) = F (-n, n, 1/2, (1-x)/2 )
+!! Un(x,n) = F (-n, n+2, 3/2, (1-x)/2 ) * (n+1)
+RENDERF Tn ; RENDERF Un ; RENDER "Chebyshev Polynomials First and second Kind" TOP
+
+
+// Laguerre
+
+!! Ln(n,x) = M (-n, 1, x)
+!! L(a,v,x) = GAMMA(v+a+1) / ( GAMMA(v+1) * GAMMA(a+1) ) * M (-v, a+1, x)
+RENDERF L ; RENDER "Laguerre Polynomials" TOP
+
+
+// Hermite
+
+!! HevenV(v,x)   = 2^v * U (-v/2, 1/2, x^2)
+!! HtwoN(n,x)    = (-1)^n * ((2*n)!)/n! * M (-n, 1/2, x^2 )
+!! Hodd2Np1(n,x) = (-1)^n * (2 * (2*n + 1)!)/(n!) * x * M ( -n, 3/2, x^2 )
+RENDERF HevenV ; RENDERF Hodd2Np1 ; RENDER "Hermite Polynomials" TOP
+
+
+// special functions
+
+!! gamma(a,x) = x^a / a * M ( a, a+1, x )
+!! compGamma(a,x) = exp(-x) * U ( 1-a, 1-a, x )
+!! J(a,x) = (x#/#2)^a / GAMMA(a+1) * exp(-i*x) * M ( a+1/2, 2*a+1, 2*i*x )
+!! erfc(x) = 1/sqrt(pi) * exp(-x*x) * U ( 1/2, 1/2, x^2 )
+!! erf(x) = 2*x/sqrt(pi) * M ( 1/2, 3/2, x )
+!! K(k) = pi/2 * F ( 1/2, 1/2, 1, k^2)
+!! Ei(x) = -exp(x) * U ( 1, 1, -x )
+!! li(x) = -x * U ( 1, 1, - ln x )
+
+RENDERF erfc
+RENDERF gamma
+RENDERF compGamma
+RENDERF Ei
+RENDERF li
+RENDERF K
+RENDERF J
+
+RENDER "Special Functions" TOP
+

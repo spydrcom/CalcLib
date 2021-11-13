@@ -1,0 +1,37 @@
+{
+   "Name": "circle",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "First quadrant circle function ",
+   "Expression": 
+   {
+      "OpName": "sqrt",
+      "PostFix": false,
+      "NodeType": "UnaryOP",
+      "Parameter": 
+      {
+         "OpName": "-",
+         "Left": 1.0,
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "^",
+            "Left": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 2.0,
+            "OpType": "Binary"
+         },
+         "OpType": "Binary"
+      }
+   },
+   "NodeType": "Profile"
+}

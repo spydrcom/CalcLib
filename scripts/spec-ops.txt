@@ -1,0 +1,105 @@
+
+INFINITY = 1000
+
+dt = 1 / INFINITY
+
+!! sinh(x) = ( exp ( x ) - exp ( - x ) ) / 2 
+!! cosh(x) = ( exp ( x ) + exp ( - x ) ) / 2 
+
+
+
+// Bessel
+
+!! j(X,n) = 1/pi * INTEGRAL [0 <= t <= pi <> dt] ( cos ( n*t - x * sin t ) * <*> t )
+
+!! J(X,a) = j(X,a) - sin(a*pi)/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( exp( -x * sinh t - a*t ) * <*> t )
+
+!! Y(X,a) = ( J(X,a) * cos (a*pi) - J(X,-a) ) / sin (a*pi)
+
+!! H(X,a) = J(X,a) +|- i*Y(X,a)
+
+!! C(x,t) = -x * cosh t
+
+!! I(X,a) = 1/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( exp (X*cos t) * cos(a*t) * <*> t ) - INTEGRAL [0 <= t <= INFINITY <> dt] ( exp (C(X,t) - a*t) * <*> t )
+
+!! K(X,a) = SIGMA [0 <= t <= INFINITY <> dt] ( exp(C(X,t)) * cosh(a*t) * <*> t )
+
+
+
+// airy
+
+!! Ai(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( cos (t^3 /3 + x*t) * <*> t )
+
+!! Bi(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( ( exp (-t^3 /3 + x*t) + sin (t^3 /3 + x*t) ) * <*> t )
+
+
+
+// beta / beta incomplete / inv / ln
+
+!! B(x,y) = INTEGRAL [0 <= t <= 1 <> dt] ( t^(x-1) * (1-t)^(y-1) * <*> t )
+
+
+// ellipj ellipke
+
+!! K(k) = INTEGRAL [0 <= t <= 1 <> dt] ( 1 / sqrt ((1-t^2) * (1-k^2*t^2)) * <*> t )
+
+
+// erf error function / inv / complementary
+
+!! erf(x) = 2/sqrt(pi) * INTEGRAL [0 <= t <= x <> dt] ( exp (-t^2) * <*> t )
+
+!! erfc(x) = 1 - erf(x)
+
+
+
+
+// exp integral
+
+!! Ei(x) = - INTEGRAL [-x <= t <= INFINITY <> dt] ( exp(-t) / t * <*> t )
+
+
+// legendre polynomial coefficients
+
+!! P(n) = 2^n * [0 <= k <= n] ( (n##k) * (((n+k-1)/2)##n) )
+
+
+
+SELECT "Special Functions"
+
+
+RENDERF sinh
+RENDERF cosh
+RENDER "Hyperbolic Sin and Cos" TOP
+
+RENDERF B
+RENDER "Beta Function" TOP
+
+RENDERF P
+RENDER "Legendre Polynomial Coefficients" TOP
+
+RENDERF erf
+RENDERF erfc
+RENDER "Error Functions" TOP
+
+RENDERF Ai
+RENDERF Bi
+RENDER "Airy Function" TOP
+
+RENDERF Ei
+RENDER "Exponential Integral" TOP
+
+RENDERF C
+RENDERF J
+RENDERF j
+RENDERF H
+RENDERF I
+RENDERF K
+RENDERF Y
+RENDER "Bessel Functions" TOP
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+
+// Euler-Mascheroni constant
+A001620 = 0.57721566490153286060651209
+// see EulerMash.txt for derivation test
+gamma = A001620
+
+
+// Ei 1 - gamma
+A229837Calc = Ei 1 - gamma
+A229837 = 1.31790215145440389486
+A229837Error = abs ( A229837Calc - A229837 )
+PRETTYPRINT A229837Error
+
+
+INFINITY = 25
+// Sum_{n>=1} 1/(n*n!)
+!! A229837Func(n) = 1 / (n * n!)
+A229837Sum = SIGMA [ 1 <= i <= INFINITY ] ( A229837Func(i) )
+A229837ConvergenceError = abs ( A229837Sum - A229837 )
+PRETTYPRINT A229837ConvergenceError
+
+
+// the calc and sum versions should match
+A229837Difference = abs ( A229837Sum - A229837Calc )
+PRETTYPRINT A229837Difference
+
+
+A069284Calc = Li 2
+// li(2) = gamma + log(log(2)) + Sum
+A069284 = 1.045163780117492784844588889
+A069284Error = abs ( A069284Calc - A069284 )
+PRETTYPRINT A069284Error
+
+
+l2 = ln 2
+A069284Calc = gamma + ln l2
+!! A069284Func(k) = l2^k * A229837Func(k)
+// A069284 : Decimal expansion of li(2) = gamma + log(log(2)) + Sum_{k>=1} log(2)^k / ( k*k! ).
+A069284Calc = A069284Calc + SIGMA [ 1 <= i <= INFINITY ] ( A069284Func(i) )
+A069284ConvergenceError = abs ( A069284Calc - A069284 )
+PRETTYPRINT A069284ConvergenceError

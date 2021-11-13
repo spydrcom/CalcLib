@@ -1,0 +1,42 @@
+
+SCRIPTPRINT FloatDemoSpline.txt
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3 <= t <= 3 <> dt] ( exp ( - t ^ 2 ) ) 
+
+// select segment domains and collect samples
+
+seg1 = [0 <= t <= 1 <> 0.1] ( curve @# t )
+seg2 = [1 <= t <= 2 <> 0.1] ( curve @# t )
+seg3 = [2 <= t <= 3 <> 0.1] ( curve @# t )
+
+s1poly = INTERPOLATE seg1
+s2poly = INTERPOLATE seg2
+s3poly = INTERPOLATE seg3
+
+// define a spline of 3 segments
+!$ bell(x) = (s1poly, s2poly, s3poly)
+
+GRAPH [0 <= x <= 3 <> 0.001] (bell (x))
+
+// evaluation of the error curve
+
+!! P(x) = bell(x)
+!! f(x) = curve @# x
+
+err = [0 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+
+LIBRARY XPF a.sample.library.ExportedFunctions
+
+!+ BELLX(x) = XPF.bell
+
+GRAPH [0 <= x <= 3 <> 0.001] ( BELLX(x) )
+
+

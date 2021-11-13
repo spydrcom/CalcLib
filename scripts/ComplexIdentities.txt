@@ -1,0 +1,29 @@
+
+!! cis(theta) = cos(theta) + i * sin(theta)
+
+!! cos(theta) = ( exp(i*theta) + exp(-i*theta) ) / 2
+!! sin(theta) = ( exp(i*theta) - exp(-i*theta) ) / (2*i)
+
+!! cisToTheN(theta,n) = cis (n*theta)
+
+!! exp(z) = exp(Re(z)) * cis(Im(z))
+
+!! cosh(z) = cos(i*z)
+!! sinh(z) = - i * sin (i*z)
+
+!! exp(z) = cosh(z) + sinh(z)
+
+!! abssq(z) = z * conj z
+!! arg(z) = atan ( Im(z) / Re(z) )
+!! modulus(z) = sqrt ( abssq z )
+
+!! nRoot(z,n) = modulus( z )^( 1 / n ) * cis( arg z / n )
+
+!! ln(z) = ln( abssq z ) / 2 + i * arg z
+
+!! arcosh(z) = ln ( z + sqrt(z^2-1) )
+!! arsinh(z) = ln ( z + sqrt(z^2+1) )
+
+!! acos(z) = -i * ln ( z + i*sqrt( 1 - z^2 ) )
+!! asin(z) = -i * ln ( i*z + sqrt( 1 - z^2 ) )
+!! atan(z) = asin ( sqrt ( z^2 / (z^2 + 1) ) )

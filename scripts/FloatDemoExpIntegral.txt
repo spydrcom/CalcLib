@@ -1,0 +1,22 @@
+
+SCRIPTPRINT FloatDemoExpIntegral.txt
+
+READ JavaMath.txt
+
+INFINITY = 70
+
+dt = 1 / INFINITY 
+
+
+
+// exp integral
+
+!! Ei(x) = - INTEGRAL [-x <= t <= INFINITY <> dt] ( EXP(-t) / t * dt )
+!! E1(x) = INTEGRAL [x <= t <= INFINITY <> dt] ( EXP(-t) / t * dt )
+
+//graph [0.2 <= x <= 0.9 <> 0.05] (Ei(x))
+
+//graph [0.42 <= x <= 0.8 <> 0.0077] (Ei(x))
+
+graph [0.2 <= x <= 1.3 <> 0.01] (E1(x))
+

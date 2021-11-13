@@ -1,0 +1,23 @@
+
+
+LIBRARY JRE java.lang.Math
+
+
+!+ ACOS(x)    = JRE.acos
+!+ ASIN(x)    = JRE.asin
+!+ ATAN(x)    = JRE.atan
+!+ ATAN2(x,y) = JRE.atan2
+!+ CBRT(x)    = JRE.cbrt
+!+ COS(x)     = JRE.cos
+!+ COSH(x)    = JRE.cosh
+!+ EXP(x)     = JRE.exp
+!+ EXPM1(x)   = JRE.expm1
+!+ LOG(x)     = JRE.log
+!+ POW(x,y)   = JRE.pow
+!+ SIN(x)     = JRE.sin
+!+ SINH(x)    = JRE.sinh
+!+ SQRT(x)    = JRE.sqrt
+!+ TAN(x)     = JRE.tan
+!+ TANH(x)    = JRE.tanh
+
+

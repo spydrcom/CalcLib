@@ -1,0 +1,24 @@
+
+
+
+// ChebyshevFamily.txt
+
+
+
+FAMILY Chebyshev 7 First
+
+GRAPH [-1 <= x < 1.02 <> 0.01]  ( T0(x), T1(x), T2(x), T3(x), T4(x), T5(x) )  
+ENTITLED Chebyshev First Kind 'T' Polynomial Family
+
+
+FAMILY Chebyshev 7 Second
+
+GRAPH [-1 <= x <= 1 <> 0.01]  ( U0(x), U1(x), U2(x), U3(x), U4(x), U5(x) ) 
+ENTITLED Chebyshev Second Kind 'U' Polynomial Family
+
+
+FAMILY Gegenbauer 7 1.0
+
+GRAPH   [  -1 <=   x  <=  1  <>  0.01  ]   ( C0(x), C1(x), C2(x), C3(x), C4(x), C5(x) ) 
+ENTITLED Chebyshev Second Kind 'U' Polynomial Family (configured as Gegenbauer Family with lambda=1)
+

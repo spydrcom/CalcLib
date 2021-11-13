@@ -1,0 +1,138 @@
+
+
+// suite of tests for Exponential Integral
+
+
+// root of Exponential Integral is known constant
+//  evaluation of function at this point provides some precision estimation
+//  value is 0.372507410781366634461991866580119133535689497771654
+
+A091723 = 0.3725074107813666
+A091723Error = abs ( Ei (A091723) )
+PRETTYPRINT A091723Error
+
+A091723Calc = 0.5
+ROOTOF Ei A091723Calc
+A091723CalcError = abs ( A091723Calc - A091723 )
+PRETTYPRINT A091723CalcError
+
+
+A099285Calc = Ei (-1)
+A099285 = -0.219383934395520273677163775460121649031047293406908207577978613
+A099285Error = abs (A099285 - A099285Calc)
+//    -0.2193839343955_0902
+PRETTYPRINT A099285Error
+
+
+// computation of EulerGompertz constant depends on Ei(-1)
+//  evaluation of this constant using Ei function provides some precision estimation
+
+A272055 = 0.616887848280727071444
+A272055Calc = -1 / ( exp(2) * Ei(-1) )
+A272055Error = abs ( A272055 - A272055Calc )
+PRETTYPRINT A272055Error
+
+
+// computation of Gompertz G constant depends on Ei(-1)
+//  evaluation of this constant using Ei function provides some precision estimation
+
+A073003Calc = -e * Ei (-1)
+A073003 = 0.596347362323194074341
+A073003Error = abs ( A073003Calc - A073003 )
+PRETTYPRINT A073003Error
+
+
+// Eric Weisstein's MathWorld, Sultan's Dowry Problem.
+// A.K.A. the Secretary problem.
+// Ei(x) - gamma - ln(x) = 1
+
+
+// Euler-Mascheroni constant
+A001620 = 0.57721566490153286060651209
+// see EulerMash.txt for derivation test
+gamma = A001620
+
+
+// tauberian constant
+A249385 = 1.0159835336925734079
+A249385Calc = gamma - 2 * Ei (-1)
+A249385Error = abs ( A249385 - A249385Calc )
+PRETTYPRINT A249385Error
+
+
+// constants associated with Secretary problems
+A242674 = 0.580164223920855346426
+A242672 = 3.86951924139799949569
+
+
+A242673 = 0.80435226284563758465463858778407055
+A242673Test = Ei (A242673) - gamma - ln (A242673)
+A242673Error = abs ( A242673Test - 1 )
+PRETTYPRINT A242673Error
+
+
+// Ei 1 - gamma
+A229837Calc = Ei 1 - gamma
+A229837 = 1.31790215145440389486
+A229837Error = abs ( A229837Calc - A229837 )
+PRETTYPRINT A229837Error
+
+
+INFINITY = 25
+// Sum_{n>=1} 1/(n*n!)
+!! A229837Func(n) = 1 / (n * n!)
+A229837Sum = SIGMA [ 1 <= i <= INFINITY ] ( A229837Func(i) )
+A229837ConvergenceError = abs ( A229837Sum - A229837 )
+PRETTYPRINT A229837ConvergenceError
+
+
+// the calc and sum versions should match
+A229837Difference = abs ( A229837Sum - A229837Calc )
+PRETTYPRINT A229837Difference
+
+
+A069284Calc = li 2
+// li(2) = gamma + log(log(2)) + Sum
+A069284 = 1.045163780117492784844588889
+A069284Error = abs ( A069284Calc - A069284 )
+PRETTYPRINT A069284Error
+
+
+l2 = ln 2
+A069284Calc = gamma + ln l2
+!! A069284Func(k) = l2^k * A229837Func(k)
+// A069284 : Decimal expansion of li(2) = gamma + log(log(2)) + Sum_{k>=1} log(2)^k / ( k*k! ).
+A069284Calc = A069284Calc + SIGMA [ 1 <= i <= INFINITY ] ( A069284Func(i) )
+A069284ConvergenceError = abs ( A069284Calc - A069284 )
+PRETTYPRINT A069284ConvergenceError
+
+
+A070769Calc = 1.5
+ROOTOF li A070769Calc
+// Soldner's constant (li x = 0)
+A070769 = 1.4513692348833810502839684
+A070769Error = abs ( A070769Calc - A070769 )
+PRETTYPRINT A070769Error
+
+
+// li'(A070769)
+A276709Calc = li'(A070769 <> 1E-5)
+// the derivative of logarithmic integral at its positive real root
+A276709 = 2.68451035082070765250238264048723868531
+A276709Error = abs ( A276709Calc - A276709 )
+PRETTYPRINT A276709Error
+
+
+// constants taken from http://www.oeis.org
+// A001620 : Decimal expansion of Euler's constant (or the Euler-Mascheroni constant), gamma. 
+// A242672 : Decimal expansion of an optimal stopping constant related to the Secretary problem.
+// A242674 : Decimal expansion of the asymptotic probability of success in one of the Secretary problems.
+// A073003 : Decimal expansion of -exp(1)*Ei(-1), also called Gompertz's constant ("G"), or the Euler-Gompertz constant.
+// A242673 : Decimal expansion of the unique real solution of the equation Ei(x)-gamma-log(x) = 1, where Ei is the exponential integral function.
+// A272055 : Decimal expansion of -1/(e^2 Ei(-1)), associated with the Euler-Gompertz constant, where Ei is the exponential integral.
+// A276709 : Decimal expansion of the derivative of logarithmic integral at its positive real root.
+// A069284 : Decimal expansion of li(2) = gamma + log(log(2)) + Sum_{k>=1} log(2)^k / ( k*k! ).
+// A091723 : Decimal expansion of the root x of Ei(x)=0, where Ei is the exponential integral.
+// A099285 : Decimal expansion of -Ei(-1), negated exponential integral at -1.
+// A229837 : Decimal expansion of Sum_{n>=1} 1/(n*n!).
+// A070769 : Decimal expansion of Soldner's constant.

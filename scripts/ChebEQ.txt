@@ -1,0 +1,44 @@
+
+
+// display difference in Diff EQ error plots 
+//  between actual derivative formulas and 
+//  numeric approximations in their place
+
+READ ChebyshevT.txt
+// use Chebyshev T5 as test function
+!! t5x(x) = T5(x)
+n = 5
+
+// delta x is very small, should be decent approximation
+dx = 0.0000001
+
+// display T5, T5', and T5'' as computed with approximations
+GRAPH LIM 40 [-1 <= x <= 1 <> 0.01] (t5x(x), t5x'(x<>dx), t5x''(x<>dx))
+
+
+// define differential equation using T5 function and derivative approximations
+!! chebeq(x) = (1-x*x) * t5x''(x<>dx) - x * t5x'(x<>dx) + n*n * t5x(x)
+
+// display MAX error and graph of error
+GRAPH [-1 <= x <= 1 <> 0.01] (chebeq(x))
+err = [-1 <= x <= 1 <> 0.001] (chebeq(x))
+calc MAX err
+
+
+// use coefficient arrays to compute derivative functions
+
+T5d1 = POLYDER t5
+!! t5xD1(x) = T5d1 +*^ x
+
+T5d2 = POLYDER T5d1
+!! t5xD2(x) = T5d2 +*^ x
+
+
+// define differential equation using functions
+!! chebeq2(x) = (1-x*x) * t5xD2(x) - x * t5xD1(x) + n*n * t5x(x)
+GRAPH [-1 <= x <= 1 <> 0.01] (chebeq2(x))
+
+// compute and display error calculation
+err = [-1 <= x <= 1 <> 0.001] (chebeq2(x))
+calc MAX err
+

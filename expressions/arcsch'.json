@@ -1,0 +1,23 @@
+{
+   "Name": "arcsch'",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "First derivative of inverse hyperbolic Cosecant function ",
+   "Expression": 
+   {
+      "OpName": "-",
+      "Left": 0,
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "arsinh",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": null
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

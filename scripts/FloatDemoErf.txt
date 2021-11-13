@@ -1,0 +1,151 @@
+
+
+//
+// Bell curve { exp (-x^2) } has no anti-derivative form
+//
+// the error function ERF is computed as the integral for the Bell curve
+// so numerical integration is the best way to arrive at values of ERF(x)
+//
+// two types of quadrature are applied below to compute the error function.
+// The Chebyshev interpolation has been compared against online computations of
+// the error function (URL below), the comparison shows a solid 4 decimal places of precision.
+// (https://www.geophysik.uni-muenchen.de/~malservisi/GlobaleGeophysik2/erf_tables.pdf)
+// a comparison is done in the last step showing the maximum difference between types.
+//
+
+
+
+SCRIPTPRINT FloatDemoErf.txt
+
+
+
+// definitions
+
+SQRT_PI = sqrt(pi)
+
+// Gauss standard normal
+// (variance = sigma^2 = 1/2)
+norm = 1 / SQRT_PI
+
+// Bell curve definition (ala Gauss)
+!! phi(x) = norm * exp ( - x^2 )
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3.5 <= t <= 3.5 <> dt] ( phi(t) ) 
+
+// show a plot of the curve
+GRAPH curve 
+
+
+
+// error function from integration of Bell curve
+
+
+// show a plot of the integral of the curve
+GRAPH 2 * ARRAYINT  (curve, 0, 3) 
+
+// capture integral as array function
+// erf = 2 * ARRAYINT (INTERVAL (curve, 0, 3))
+erf = 2 * ARRAYINT (curve, 0, 3)
+
+// define erfc function
+!! erfc(x) = 1 - ( erf @# x )
+
+GRAPH [0 <= t <= 3 <> dt] ( erfc (t) )
+
+
+
+// produce a polynomial interpolation of erf(t)
+
+
+// reduce the domain to provide proper size sample set
+samples = [0 <= t <= 3 <> 0.3] ( erf @# t )
+
+// perform polynomial interpolation
+erfpoly = INTERPOLATE samples
+!! erfx(x) = erfpoly +*^ x
+
+GRAPH [0 <= t <= 3 <> dt] ( erfx (t) )
+
+
+
+
+
+// alternative version using Chebyshev
+seg1 = [-0.6 <= t <=  2.8 <> 0.2] ( curve @# t )
+s1poly =  CHEBINTERP seg1
+!! P(x) = s1poly @*^ x
+
+
+// erf using Clenshaw Quadrature
+erfQuad = [0 <= x <= 2 <> 0.01] (CLENQUAD(s1poly,0,x) * 2)
+!! erfq(x) = erfQuad @# x
+
+
+// erfc using ClenQuad
+!! erfcq(x) = 1 - erfq(x)
+
+// plot of erfc generated using ClenQuad
+GRAPH [0 <= x <= 1.8 <> 0.01] ( erfcq (x) )
+
+
+// interpolation error of e^(-x^2)
+curveError = [0 <= x <= 1.8 <> 0.001] (abs (P(x) - phi(x)))
+maxCurveError  = MAX curveError 
+
+
+// maximum error found
+PRETTYPRINT maxCurveError  
+GRAPH curveError 
+
+
+// difference between Lagrange and Chebyshev
+difInterp = [0.02 <= x <= 1.8 <> 0.001] (abs (erfq(x) - erfx(x)))
+maxDifInterp = MAX difInterp 
+PRETTYPRINT maxDifInterp 
+GRAPH difInterp 
+
+
+LIBRARY ErrFunc net.myorb.math.specialfunctions.Erf
+
+!+ EXSQ_IMPORT(x) = ErrFunc.erfPrime
+!+ ERF_IMPORT(x) = ErrFunc.erf
+!! Erf'(x) = EXSQ_IMPORT x
+!! Erfs(x) = ERF_IMPORT x
+
+// alternatively use erfq to see differences from approaches
+// !! Erfs(x) = erfq(x)
+
+// erf(rho) = 0.5
+RHO = 0.4769362762044
+A069286Calc = Erfs (RHO)
+A069286Error = abs ( A069286Calc - 0.5 )
+PRETTYPRINT A069286Error
+
+// erf sqrt pi
+A128891 = 45.9993260893828
+A128891Calc = e^pi * (1 + Erfs (SQRT_PI))
+A128891Error = abs ( A128891 - A128891Calc )
+PRETTYPRINT A128891Error
+
+// erf 1
+A125961 = 4.0601569385574
+A125961Calc = e * SQRT_PI * Erfs(1)
+A125961Error = abs ( A125961 - A125961Calc )
+PRETTYPRINT A125961Error
+
+// erf x = x
+A260632 = 0.617446879080607
+A260632Error = abs ( Erfs (A260632) - A260632 )
+PRETTYPRINT A260632Error
+
+
+// constants taken from http://www.oeis.org
+// A125961 : Decimal expansion of e * sqrt (pi) * erf (1).
+// A128891 : Decimal expansion of e^pi * ( 1 + erf (sqrt (pi)) ).
+// A260632 : Decimal expansion of the positive solution of erf (x) = x.
+// A069286 : Decimal expansion of constant rho satisfying Gaussian PHI (rho * sqrt (2)) = erf (rho) = 1/2.
+

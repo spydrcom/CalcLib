@@ -1,0 +1,22 @@
+
+LIBRARY Legendre net.myorb.math.specialfunctions.Legendre
+
+!+ Q0_IMPORT(x) = Legendre.Q0
+!+ Q1_IMPORT(x) = Legendre.Q1
+!+ Q2_IMPORT(x) = Legendre.Q2
+!+ Q3_IMPORT(x) = Legendre.Q3
+!+ Q4_IMPORT(x) = Legendre.Q4
+!+ Q5_IMPORT(x) = Legendre.Q5
+
+!! Q0(x) = Q0_IMPORT x
+!! Q1(x) = Q1_IMPORT x
+!! Q2(x) = Q2_IMPORT x
+!! Q3(x) = Q3_IMPORT x
+!! Q4(x) = Q4_IMPORT x
+!! Q5(x) = Q5_IMPORT x
+
+GRAPH  LIM 3  [  -1 <=    x    <= 1  <>  0.01  ]   ( Q0(x), Q1(x), Q2(x), Q3(x), Q4(x), Q5(x) )
+ENTITLED Legendre Q0 - Q5 [-1,1]
+
+GRAPH  LIM 3  [  1.1 <=    x    <= 3  <>  0.01  ]   ( Q0(x), Q1(x), Q2(x), Q3(x), Q4(x), Q5(x) )
+ENTITLED Legendre Q0 - Q5 [1,3]

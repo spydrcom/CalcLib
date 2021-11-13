@@ -1,0 +1,54 @@
+
+
+SCRIPTPRINT FloatDemoCalculus.txt
+
+
+// computations of polynomial derivative (POLYDER) and integral (POLYINT) are not
+// approximations but are actual term-by-term integrals and derivative applied to the
+// coefficients of the polynomial
+
+p = (2, -3, 4, -5, 6)
+
+pder = POLYDER p
+pint = POLYINT p
+
+POLYPRINT p
+POLYPRINT pder
+POLYPRINT pint
+
+// by convention the value of 'delta' is assigned as a constant.
+// this is a literal selection of precision made by the user with an
+// understanding that the smaller delta results in higher calculation time
+dx = 0.005
+
+// starting the integral at 0 reduces the result by the -INFINITY to 0 INTEGRAL
+e_minus1_approximation = INTEGRAL [0 <= x <= 1 <> dx](exp(x) * dx)
+PRETTYPRINT e_minus1_approximation 
+
+!! f(x) = 2\(1 - x^2)
+// this is the approximation of the area of the unit circle
+pi_approximation = 4 * INTEGRAL [0 <= x <= 1 <> dx] ( f(x) * dx )
+PRETTYPRINT pi_approximation 
+
+// this is an approximation of the
+// Euler-Masheroni gamma value using the INTEGRAL of the H(x) series
+gamma_approximation = INTEGRAL [0 <= x <= 1 <> dx] (HARMONIC(x) * dx)
+PRETTYPRINT gamma_approximation 
+
+// infinite series approximation.
+// expanding the Taylor series for EXP(1) give a fast convergence to the value of e
+e_approximation = SIGMA [0 <= i <= 10] (1/i!)
+PRETTYPRINT e_approximation 
+
+!! zeta(x) = SIGMA [1 <= n <= 1000] (n^(-x))
+// the Apery constant is equivalent to zert(3)
+Apery = zeta(3)
+PRETTYPRINT Apery
+
+// CALCLIB accepts the F'(x) notation for requesting derivative approximation.
+// the addition of the specification of the delta value allows the user to choose precision.
+// again the trade-off is increased precision for increased calculation time as smaller delta is chosen
+fprime = f'( 0.5 <> dx )
+PRETTYPRINT fprime 
+
+

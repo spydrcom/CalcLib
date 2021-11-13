@@ -1,0 +1,21 @@
+
+// Runge-Kutta error test
+
+// generate interpolation
+T  =  [ 0 <= t <= N ]  ( T0 + t * h )   
+solution = CHEBYSHEV (T, Y)
+
+// generate alias for solution and for derivative
+!! y  (x) = solution  @*^   x
+!! y' (x) = solution  @*^'  x
+
+// improve polynomial use efficiency
+OPTIMIZE  y ; OPTIMIZE  y'
+
+// post error test
+!! testError (x) = y' (x) - f ( x, y(x) )
+
+// plot error against domain described by test parameters
+PLOTF testError  [  T0 <=  x  <= T0 + h * N  <>  h/10  ]  
+
+SIDEBYSIDE "Regression Versus Error Plot"

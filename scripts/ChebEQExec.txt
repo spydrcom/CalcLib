@@ -1,0 +1,34 @@
+
+
+// plot Tn and Un with derivatives
+//  also plot DiffEQ errors for Tn and Un
+// show max DiffEQ errors for Tn and Un
+
+READ ChebEQDef.txt
+!! errT(x) = abs ( chebeq1(x) )
+!! errU(x) = abs ( chebeq2(x) )
+
+
+// display of plots of Tn, Tn', & Tn''
+GRAPH LIM 50 [-1 <= x <= 1 <> 0.01] ( Tn(x), Tn'(x), Tn''(x) )
+ENTITLED Chebyshev Tn plot with first and second derivatives
+
+// display MAX error and graph of error of first kind
+GRAPH LIM 50 [-1 <= x <= 1 <> 0.01] ( errT(x) )
+ENTITLED Chebyshev Tn DiffEQ error plot
+
+err = [-1 <= x <= 1 <> 0.001] ( errT(x) )
+maxErrT = MAX err; PRETTYPRINT maxErrT
+
+
+// display of plots of Un, Un', & Un''
+GRAPH LIM 50 [-1 <= x <= 1 <> 0.01] ( Un(x), Un'(x), Un''(x) )
+ENTITLED Chebyshev Un plot with first and second derivatives
+
+// display MAX error and graph of error of second kind
+GRAPH LIM 50 [-1 <= x <= 1 <> 0.01] ( errU(x) )
+ENTITLED Chebyshev Un DiffEQ error plot
+
+err = [-1 <= x <= 1 <> 0.001] ( errU(x) )
+maxErrU = MAX err; PRETTYPRINT maxErrU
+

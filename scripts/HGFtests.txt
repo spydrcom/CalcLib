@@ -1,0 +1,31 @@
+
+
+// tests for Hyper-Geometric Functions
+
+
+// Hermite script shows variations on use of HGF script
+
+READ Hermite.txt
+
+
+// use P5 as defined in HGF.txt
+// P5(x) = F (-5, 6 : 1 : (1-x)/2 )
+!! P5(x) = F (-5, 6,  1,  (1-x)/2 )
+
+// !* defines HG polynomials
+!* p5hgPoly (x) = HG (-5, 6 : 1)
+!! p5hg (x) = p5hgPoly ( (1-x)/2 )
+
+
+// test HG definition
+
+!! differences (x) = P5(x) - p5hg(x)
+
+// this plot of P5 should match others
+PLOTF p5hg  [  -1 <=    x    <= 1  <>  0.01  ]
+
+// a flat line 0 difference shows the function identical
+PLOTF differences  [  -1 <=    x    <= 1  <>  0.01  ]
+
+READ HGFpoly.sub
+

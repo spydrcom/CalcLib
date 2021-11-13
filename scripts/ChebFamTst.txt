@@ -1,0 +1,32 @@
+
+
+// run DiffEQ tests with PREPARE command
+
+FAMILY Chebyshev 7 First
+FAMILY Chebyshev 7 Second
+
+
+n = 5
+// prepare Tn and Un with specified order
+PREPARE T5 Tn 0.00001
+PREPARE U5 Un 0.00001
+
+// execute differential equation definition
+READ ChebEQExec.txt
+
+
+// show error plots when true derivatives are used
+
+T5d1 = POLYDER t5
+!! Tn'(x) = T5d1 +*^ x
+
+T5d2 = POLYDER T5d1
+!! Tn''(x) = T5d2 +*^ x
+
+U5d1 = POLYDER u5
+!! Un'(x) = U5d1 +*^ x
+
+U5d2 = POLYDER U5d1
+!! Un''(x) = U5d2 +*^ x
+
+READ ChebEQExec.txt

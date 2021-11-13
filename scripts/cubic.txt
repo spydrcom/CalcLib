@@ -1,0 +1,17 @@
+
+delta#3 = 0
+
+a = x#3; b = x#2; c = x#1; d = x#0
+
+delta#0 = b^2 - 3*a*c; delta#1 = 2*b^3 - 9*a*b*c + 27*a^2*d
+
+delta#3 = delta#1 ^ 2  - 4 * delta#0 ^ 3
+
+C = 3\( ( delta#1 + 2\delta#3 ) / 2 )
+
+u = APPEND (-1/2 +|- i*2\3 / 2, 1)
+
+cubic_roots = [0 <= k <= 2] (- (b + u#k * C + delta#0 / (u#k * C)) / (3*a) )
+
+PRETTYPRINT cubic_roots 
+

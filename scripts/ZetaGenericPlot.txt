@@ -1,0 +1,9 @@
+
+READ ZetaGeneric.txt
+READ ZetaEuler.txt
+
+//
+// simple plot of specified domain
+//
+//graph [1.1 < t < 5 <> 0.1 ] ( RiemannZeta (t) )
+graph [1.1 < t < 5 <> 0.1 ] ( EulerZeta (t) )

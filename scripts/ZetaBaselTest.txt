@@ -1,0 +1,11 @@
+
+
+zeta2 = zeta 2
+calc zeta2
+
+approx = sqrt (6 * zeta2)
+calc approx
+
+error = pi - approx
+calc error
+

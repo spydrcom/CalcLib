@@ -1,0 +1,17 @@
+
+VERIFY n
+VERIFY pn
+
+// Legenre Polynomial Generator
+
+m = 2*n + 1; invNp1 = 1 / (n + 1); pnp1 = m*CONV(x,pn)
+
+pnm1 = APPEND (pnm1, 0, 0); pnm1 = n * pnm1
+
+pnp1 = pnp1 - pnm1; pnp1 = pnp1 * invNp1
+
+pnm1 = pn; pn = pnp1; n = n + 1
+
+POLYPRINT pn
+
+

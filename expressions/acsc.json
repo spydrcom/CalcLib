@@ -1,0 +1,44 @@
+{
+   "Name": "acsc",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Trigonometric inverse cosecant function ",
+   "Expression": 
+   {
+      "OpName": "-",
+      "Left": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "Operator": null,
+            "Symbol": "",
+            "NodeType": "Identifier",
+            "Kind": "Variable",
+            "Name": "pi"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 2.0,
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "asec",
+         "PostFix": false,
+         "NodeType": "UnaryOP",
+         "Parameter": 
+         {
+            "Operator": null,
+            "Symbol": null,
+            "NodeType": "Identifier",
+            "Kind": "Unknown",
+            "Name": "x"
+         }
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

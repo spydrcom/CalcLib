@@ -1,0 +1,85 @@
+
+
+// comparisons of TSQ and CCQ
+
+
+READ JavaMath.txt
+
+
+// function with multiple uneven hills and valleys
+!! expSin (x) = EXP (-x / 5.0) * (2.0 + SIN (2.0 * x))
+
+// simple plot of expSin (x) over [0,10] where full range is > 0
+GRAPH  [  0 <=    x    <= 10  <>  0.01  ]   ( expSin (x) )
+
+// region of interest is on domain [0, 10]
+SETDOMAIN expSin (0, 10)
+
+
+// correct area of expSin over domain [0, 10]
+exactAnswer = 9.1082396073230
+
+// compute area with TSQ operator over full range
+TSQapprox = expSin $| (0, 10, 1E-6)
+PRETTYPRINT TSQapprox
+
+// compute error relative to expected answer
+error = abs (exactAnswer - TSQapprox)
+PRETTYPRINT error
+
+
+// TSQ with a standard domain of [-1,1]
+STDDOMAIN expSin expSinStd line
+slope = line#1
+
+// integral requires slope multiplier for coordinate translation  
+TSQapprox2 = slope * expSinStd $| (-1, 1, 1)
+PRETTYPRINT TSQapprox2
+
+// compute error relative to expected answer
+error = abs (exactAnswer - TSQapprox2)
+PRETTYPRINT error
+
+
+
+// TSQ with a standard domain of [0,pi]
+!! expSinPolar (x) = expSinStd (cos x) * sin x
+TSQapprox3 = slope * expSinPolar $| (0, pi, 1)
+PRETTYPRINT TSQapprox3
+
+// compute error relative to expected answer
+error = abs (exactAnswer - TSQapprox3)
+PRETTYPRINT error
+
+
+
+// build DC Transform
+DCT 20 expSinStd expSinDct
+
+// CCQ is now efficient area computation
+CCQapprox = expSinDct $@ ()
+PRETTYPRINT CCQapprox
+
+// compute error relative to expected answer
+error = abs (exactAnswer - CCQapprox)
+PRETTYPRINT error
+
+
+// DC Transform, higher N
+DCT 40 expSinStd expSinDct2 II
+
+// CCQ is the efficient area computation
+CCQapprox2 = expSinDct2 $@ ()
+PRETTYPRINT CCQapprox2
+
+// compute error relative to expected answer
+error = abs (exactAnswer - CCQapprox2)
+PRETTYPRINT error
+
+
+// plot of transforms
+!! DctTest (x) = expSinDct (x)
+!! DctTestII (x) = expSinDct2 (x)
+PLOTF DctTest    [  0 <=    x    <= pi  <>  0.01  ]  
+PLOTF DctTestII  [  0 <=    x    <= pi  <>  0.01  ]  
+

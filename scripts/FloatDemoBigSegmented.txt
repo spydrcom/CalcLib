@@ -1,0 +1,75 @@
+
+SCRIPTPRINT FloatDemoSegmented.txt
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3.5 <= t <= 3.5 <> dt] ( exp ( - t ^ 2 ) ) 
+
+// select segment domains and collect samples
+
+seg1 = [-3.1 <= t <= -2.6 <> 0.1] ( curve @# t )
+seg2 = [-3.0 <= t <= -2.0 <> 0.2] ( curve @# t )
+seg3 = [-2.5 <= t <= -2.1 <> 0.1] ( curve @# t ) 
+seg4 = [-2.4 <= t <= -1.5 <> 0.2] ( curve @# t )
+seg5 = [-2.0 <= t <= -1.4 <> 0.1] ( curve @# t )
+seg6 = [-1.8 <= t <= -0.8 <> 0.2] ( curve @# t )
+seg7 = [-1.3 <= t <=  0.4 <> 0.2] ( curve @# t )
+seg8 = [-0.4 <= t <=  1.3 <> 0.2] ( curve @# t )
+seg9 = [ 0.8 <= t <=  1.8 <> 0.2] ( curve @# t )
+seg10 = [1.4 <= t <=  2.0 <> 0.1] ( curve @# t )
+seg11 = [1.5 <= t <=  2.5 <> 0.2] ( curve @# t )
+seg14 = [1.9 <= t <=  2.95 <> 0.2] ( curve @# t )
+seg15 = [2.5 <= t <=  3.0 <> 0.1] ( curve @# t )
+seg16 = [2.7 <= t <=  3.2 <> 0.1] ( curve @# t )
+
+
+seg2 = [-3.0 <= t <= -2.0 <> 0.1] ( curve @# t )
+seg3 = [-2.4 <= t <= -1.9 <> 0.1] ( curve @# t ) 
+seg4 = [-2.2 <= t <= -1.5 <> 0.1] ( curve @# t )
+seg6 = [-1.8 <= t <= -0.8 <> 0.1] ( curve @# t )
+seg7 = [-1.1 <= t <= -0.2 <> 0.1] ( curve @# t )
+segA = [-0.6 <= t <=  0.4 <> 0.1] ( curve @# t )
+seg8 = [-0.4 <= t <=  1.3 <> 0.1] ( curve @# t )
+seg9 = [ 0.8 <= t <=  1.8 <> 0.1] ( curve @# t )
+seg11 = [1.5 <= t <=  2.5 <> 0.1] ( curve @# t )
+seg14 = [1.9 <= t <=  2.7 <> 0.1] ( curve @# t )
+seg15 = [2.4 <= t <=  2.9 <> 0.1] ( curve @# t )
+seg16 = [2.6 <= t <=  3.2 <> 0.1] ( curve @# t )
+
+
+s1poly = INTERPOLATE seg1
+s2poly = INTERPOLATE seg2
+s3poly = INTERPOLATE seg3
+s4poly = INTERPOLATE seg4
+s5poly = INTERPOLATE seg5
+s6poly = INTERPOLATE seg6
+s7poly = INTERPOLATE seg7
+s8poly = INTERPOLATE seg8
+s9poly = INTERPOLATE seg9
+s10poly = INTERPOLATE seg10
+s11poly = INTERPOLATE seg11
+s14poly = INTERPOLATE seg14
+s15poly = INTERPOLATE seg15
+s16poly = INTERPOLATE seg16
+sApoly = INTERPOLATE segA
+
+
+!$ bell(x) = (s1poly, s2poly, s3poly, s4poly, s5poly, s6poly, s7poly, sApoly, s8poly, s9poly, s10poly, s11poly, s14poly, s15poly, s16poly)
+
+GRAPH [-3 <= x <= 3 <> 0.001] (bell (x))
+
+// evaluation of the error curve
+
+!! P(x) = bell(x)
+!! f(x) = curve @# x
+
+err = [-3 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+
+LIBRARY XPF a.sample.library.ExportedFunctions
+

@@ -1,0 +1,108 @@
+
+
+READ DemoMatrix.txt
+Reading... C:\workspace\MathFields\scripts\DemoMatrix.txt
+
+
+SCRIPTPRINT DemoMatrix.txt
+
+
+IMPORT mx2 MX2.TDF
+PRETTYPRINT mx2
+
+
+mx2_DET = DET(mx2)
+PRETTYPRINT mx2_DET 
+
+mx2_TRANSPOSE = TRANSPOSE(mx2)
+PRETTYPRINT mx2_TRANSPOSE 
+
+mx2_COMATRIX = COMATRIX(mx2)
+PRETTYPRINT mx2_COMATRIX 
+
+mx2_ADJ = ADJ(mx2)
+PRETTYPRINT mx2_ADJ 
+
+mx2_INV = INV(mx2)
+PRETTYPRINT mx2_INV 
+
+mx2_TR = TR(mx2)
+PRETTYPRINT mx2_TR 
+
+
+mx2_CHARACTERISTIC = CHARACTERISTIC(mx2)
+
+mx2_EIGENVALUE = EIG(mx2,mx2_EIGENVECTOR)
+
+
+Import from file:  C:\workspace\MathFields\data\MX2.TDF
+Import to matrix:  mx2
+ Columns per row:  3
+       Rows read:  3
+
+data read:
+      (-7 - 11*i)     (-11 + 10*i)       (14 - 5*i)
+     (-11 - 16*i)     (-13 + 11*i)       (19 - 4*i)
+      (18 + 12*i)      (12 - 18*i)     (-15 + 12*i)
+
+=EOD=
+
+
+mx2 = 
+
+      (-7 - 11*i)     (-11 + 10*i)       (14 - 5*i)
+     (-11 - 16*i)     (-13 + 11*i)       (19 - 4*i)
+      (18 + 12*i)      (12 - 18*i)     (-15 + 12*i)
+
+
+
+mx2_DET = 
+
+	(-369 + 108*i)
+
+
+mx2_TRANSPOSE = 
+
+      (-7 - 11*i)     (-11 - 16*i)      (18 + 12*i)
+     (-11 + 10*i)     (-13 + 11*i)      (12 - 18*i)
+       (14 - 5*i)       (19 - 4*i)     (-15 + 12*i)
+
+
+
+mx2_COMATRIX = 
+
+     (-93 + 69*i)      (33 + 48*i)     (-54 - 36*i)
+      (33 - 30*i)      (-75 + 3*i)     (-36 + 54*i)
+     (-42 + 15*i)     (-57 + 12*i)              -69
+
+
+
+mx2_ADJ = 
+
+     (-93 + 69*i)      (33 - 30*i)     (-42 + 15*i)
+      (33 + 48*i)      (-75 + 3*i)     (-57 + 12*i)
+     (-54 - 36*i)     (-36 + 54*i)              -69
+
+
+
+mx2_INV = 
+
+      (0.28255707762557075 - 0.10429223744292238*i)     (-0.10429223744292236 + 0.05077625570776255*i)     (0.11579908675799085 - 0.006757990867579909*i)
+      (-0.04730593607305936 - 0.1439269406392694*i)       (0.1894063926940639 + 0.04730593607305935*i)     (0.15105022831050227 + 0.011689497716894974*i)
+       (0.1084931506849315 + 0.12931506849315066*i)       (0.12931506849315066 - 0.1084931506849315*i)     (0.17223744292237442 + 0.050410958904109585*i)
+
+
+
+mx2_TR = 
+
+	(-35 + 12*i)
+
+
+Characteristic polynomial :     - (369 - 108*i) + (237 - 72*i)*x - (35 - 12*i)*x^2 - x^3
+
+
+Von Mises dominant Eigen-Pair
+ Dominant Eigenvalue is:  42.720018726587654
+Dominant Eigenvector is:  [(0.45054741724475555 + 0.06575787393774077*i), (0.5946656941881086 + 0.005590057346825324*i), (-0.6128582806028053 - 0.2518513810573125*i)]
+
+

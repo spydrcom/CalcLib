@@ -1,0 +1,6 @@
+
+
+FAMILY Bernoulli 5 
+
+GRAPH [0 <= x <= 1 <> 0.01] ( B3(x), B4(x), B5(x) ) 
+ENTITLED Bernoulli Polynomial Family

@@ -1,0 +1,101 @@
+
+READ JavaMath.txt
+
+
+INFINITY = 2^12; dx = 1 / INFINITY
+
+!! expSin (x) = EXP (-x / 5.0) * ( 2.0 + SIN (2.0 * x) )
+// for computation of area of the [0,10] domain
+exactAnswer = 9.1082396073230
+
+
+// brute force array of 40k points
+approximation = INTEGRAL [0 <= x <= 10 <> dx] ( expSin (x) * dx )
+PRETTYPRINT approximation
+
+// compute error in integral computation
+error = abs ( exactAnswer - approximation )
+PRETTYPRINT error
+
+
+// 4k trapezoid points
+trapQuad = expSin $# (0, 10, dx)
+PRETTYPRINT trapQuad
+
+// compute error in integral computation
+error = abs ( exactAnswer - trapQuad )
+PRETTYPRINT error
+
+
+// simple TSQ evaluation
+tsqExpSin = expSin $| (0, 10, 1E-4)
+PRETTYPRINT tsqExpSin
+
+// compute error in integral computation
+error = abs ( exactAnswer - tsqExpSin )
+PRETTYPRINT error
+
+
+// constrain to [0,10]
+SETDOMAIN expSin (0, 10)
+
+// standardize to [-1,1]
+STDDOMAIN expSin expSinStd line
+slope = line#1
+
+// connect to UDF
+!! std (x) = expSinStd (x)
+
+// show plot over [-1,1] domain
+PLOTF std     [  -1 <=    x    <=  1  <>  0.01  ]  
+
+
+// simple TSQ evaluation with [-1,1] domain
+tsqStd = slope * std $| (-1, 1, 1E-4)
+PRETTYPRINT tsqStd
+
+// compute error in integral computation
+error = abs ( exactAnswer - tsqStd )
+PRETTYPRINT error
+
+
+// use cosine to translate to [0,pi]
+!! stdCos (x) = expSinStd (cos x) * sin x
+// show plot of function translated to [0,pi] domain
+PLOTF stdCos  [   0 <=    x    <= pi  <>  0.01  ]  
+
+// compute integral over [0,pi] domain
+polarTsqCos = slope * stdCos $| (0, pi, 1E-4)
+PRETTYPRINT polarTsqCos
+
+// compute error in integral computation
+error = abs ( exactAnswer - polarTsqCos )
+PRETTYPRINT error
+
+
+// select evenly spaced points on standardized curve
+
+d = [-1 <= x <= 1 <> 0.1] ( x )
+r = [-1 <= x <= 1 <> 0.1] ( std (x) )
+
+// interpolate from collected points
+!% interpPoly (x) +*^= FITPOLY (d, r)
+!! interpStd (x) = interpPoly (x)
+
+// plot from interpolation
+PLOTF interpStd  [  -1 <=    x    <= 1  <>  0.01  ]  
+
+// compute integral over [-1,1] domain
+tsqInterp = slope * interpStd $| (-1, 1, 1E-4)
+PRETTYPRINT tsqInterp
+
+// compute error in integral computation
+error = abs ( exactAnswer - tsqInterp )
+PRETTYPRINT error
+
+// compute error in integral computation
+!! er (x) = std (x) - interpStd (x)
+
+// plot error function
+PLOTF er  [  -1 <=    x    <= 1  <>  0.01  ]  
+

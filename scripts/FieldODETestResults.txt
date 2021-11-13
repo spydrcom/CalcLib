@@ -1,0 +1,6 @@
+
+GRAPH  [  0 <=    x    <= 3.5  <>  0.01  ]   ( y(x), y'(x), y''(x) )
+
+PLOTF fieldODE  [  0.0 <=    x    <= 3.5  <>  0.01  ]  
+
+SIDEBYSIDE "Regression Versus Error Plot"

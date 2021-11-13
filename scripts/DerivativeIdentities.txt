@@ -1,0 +1,168 @@
+
+
+
+// Exponentiation:
+
+
+!! exp'(x) = exp(x)
+DESCRIBE exp' First derivative of exponential
+express exp' First derivative of exponential
+savejson exp' First derivative of exponential
+
+!! tenToX'(x) = 10^x * ln 10
+
+!! xToX'(x) = x^x * (1 + ln x)
+
+
+// common logarithm (base 10)
+
+!! log'(x) = 1 #/# x / ln 10
+DESCRIBE log' First derivative of common logarithm
+express log' First derivative of common logarithm
+savejson log' First derivative of common logarithm
+
+// natural logarithm (base e)
+
+!! ln'(x) = 1 / x
+DESCRIBE ln' First derivative of natural logarithm
+express ln' First derivative of natural logarithm
+savejson ln' First derivative of natural logarithm
+
+
+
+// Trigonometric:
+
+READ TrigIdentities.txt
+
+!! sin'(x) = cos(x)
+!! cos'(x) = - (sin(x))
+!! cot'(x) = - (cscSq(x))
+!! tan'(x) = 1 + tanSq(x) 
+!! sec'(x) = sec(x) * tan(x)
+!! csc'(x) = - (csc(x) * cot(x))
+
+DESCRIBE sin' First derivative of Sine function
+DESCRIBE cos' First derivative of Cosine function
+DESCRIBE cot' First derivative of Cotangent function
+DESCRIBE tan' First derivative of Tangent function
+DESCRIBE sec' First derivative of Secant function
+DESCRIBE csc' First derivative of Cosecant function
+
+express sin' First derivative of Sine function
+express cos' First derivative of Cosine function
+express cot' First derivative of Cotangent function
+express tan' First derivative of Tangent function
+express sec' First derivative of Secant function
+express csc' First derivative of Cosecant function
+
+savejson sin' First derivative of Sine function
+savejson cos' First derivative of Cosine function
+savejson cot' First derivative of Cotangent function
+savejson tan' First derivative of Tangent function
+savejson sec' First derivative of Secant function
+savejson csc' First derivative of Cosecant function
+
+!! asin'(x) = 1 / sqrt (1 - x^2)
+!! asec'(x) = 1 / (abs(x) * sqrt (x^2 - 1))
+!! atan'(x) = 1 / (x^2 + 1)
+!! acos'(x) = - (asin(x))
+!! acot'(x) = - (atan(x))
+!! acsc'(x) = - (asec(x))
+
+DESCRIBE asin' First derivative of inverse Sine function
+DESCRIBE acos' First derivative of inverse Cosine function
+DESCRIBE acot' First derivative of inverse Cotangent function
+DESCRIBE atan' First derivative of inverse Tangent function
+DESCRIBE asec' First derivative of inverse Secant function
+DESCRIBE acsc' First derivative of inverse Cosecant function
+
+express asin' First derivative of inverse Sine function
+express acos' First derivative of inverse Cosine function
+express acot' First derivative of inverse Cotangent function
+express atan' First derivative of inverse Tangent function
+express asec' First derivative of inverse Secant function
+express acsc' First derivative of inverse Cosecant function
+
+savejson asin' First derivative of inverse Sine function
+savejson acos' First derivative of inverse Cosine function
+savejson acot' First derivative of inverse Cotangent function
+savejson atan' First derivative of inverse Tangent function
+savejson asec' First derivative of inverse Secant function
+savejson acsc' First derivative of inverse Cosecant function
+
+!! cosh'(x) = sinh(x)
+!! coth'(x) = - (cschsq(x))
+!! csch'(x) = - (coth(x) * csch(x))
+!! sech'(x) = - (tanh(x) * sech(x))
+!! tanh'(x) = sechsq(x)
+!! sinh'(x) = cosh(x)
+
+DESCRIBE sinh' First derivative of hyperbolic Sine function
+DESCRIBE cosh' First derivative of hyperbolic Cosine function
+DESCRIBE coth' First derivative of hyperbolic Cotangent function
+DESCRIBE tanh' First derivative of hyperbolic Tangent function
+DESCRIBE sech' First derivative of hyperbolic Secant function
+DESCRIBE csch' First derivative of hyperbolic Cosecant function
+
+express sinh' First derivative of hyperbolic Sine function
+express cosh' First derivative of hyperbolic Cosine function
+express coth' First derivative of hyperbolic Cotangent function
+express tanh' First derivative of hyperbolic Tangent function
+express sech' First derivative of hyperbolic Secant function
+express csch' First derivative of hyperbolic Cosecant function
+
+savejson sinh' First derivative of hyperbolic Sine function
+savejson cosh' First derivative of hyperbolic Cosine function
+savejson coth' First derivative of hyperbolic Cotangent function
+savejson tanh' First derivative of hyperbolic Tangent function
+savejson sech' First derivative of hyperbolic Secant function
+savejson csch' First derivative of hyperbolic Cosecant function
+
+!! arsinh'(x) = 1 / sqrt (x^2 + 1)
+!! arcoth'(x) = 1 / (1 - x^2)
+!! arsech'(x) = - (asin'(x) / x)
+!! arcsch'(x) = - (arsinh'(x) / abs(x))
+!! arcosh'(x) = 1 / sqrt (x^2 - 1)
+!! artanh'(x) = 1 / (1 - x^2)
+
+DESCRIBE arsinh' First derivative of inverse hyperbolic Sine function
+DESCRIBE arcosh' First derivative of inverse hyperbolic Cosine function
+DESCRIBE arcoth' First derivative of inverse hyperbolic Cotangent function
+DESCRIBE artanh' First derivative of inverse hyperbolic Tangent function
+DESCRIBE arsech' First derivative of inverse hyperbolic Secant function
+DESCRIBE arcsch' First derivative of inverse hyperbolic Cosecant function
+
+express arsinh' First derivative of inverse hyperbolic Sine function
+express arcosh' First derivative of inverse hyperbolic Cosine function
+express arcoth' First derivative of inverse hyperbolic Cotangent function
+express artanh' First derivative of inverse hyperbolic Tangent function
+express arsech' First derivative of inverse hyperbolic Secant function
+express arcsch' First derivative of inverse hyperbolic Cosecant function
+
+savejson arsinh' First derivative of inverse hyperbolic Sine function
+savejson arcosh' First derivative of inverse hyperbolic Cosine function
+savejson arcoth' First derivative of inverse hyperbolic Cotangent function
+savejson artanh' First derivative of inverse hyperbolic Tangent function
+savejson arsech' First derivative of inverse hyperbolic Secant function
+savejson arcsch' First derivative of inverse hyperbolic Cosecant function
+
+//		sin	cos	tan	cot	sec	csc
+//		x	x	x	x	x	x
+//arc	x	x	x	x	x	x
+//hyp	x	x	x	x	x	x
+//ar	x	x	x	x	x	x
+
+
+
+// special functions
+
+INFINITY = 10000
+dt = 1 / INFINITY
+
+!! GAMMA'(x) = INTEGRAL [0 <= t <= INFINITY <> dt] ( t^(x-1) * exp(- t) * ln(t) * <*> t )
+DESCRIBE GAMMA' First derivative of GAMMA function
+
+!! zeta'(x) = - SIGMA [1 <= n <= INFINITY] ( ln (n) / n^x )
+!! zeta(x) = SIGMA [1 <= n <= INFINITY] ( 1 / n^x )
+
+

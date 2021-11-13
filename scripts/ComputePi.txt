@@ -1,0 +1,92 @@
+
+
+// pi = 3.141592653589793238462643383279502884197169399375105820974944592307816406
+
+
+INFINITY = 100000
+
+READ JavaMath.txt
+
+SELECT "Equations for Approximation of PI"
+
+RENDER "Historical methods for computation of the value of pi" CENTER red
+
+!!zeta(n) = SIGMA [1 <= k <= INFINITY] ( 1 / k^n )
+RENDER zeta(n) = SIGMA [1 <= k <= INFINITY] ( 1 / k^n )
+RENDER "Reimann zeta(n) function" TOP
+
+// very slow convergence
+RENDER pi = sqrt ( 6 * zeta(2) )
+RENDER " Basel problem computing the convergence of zeta(2) " TOP
+
+// zeta uses parameter for exponent which is 2
+//  instead using a function which parameterizes the term count
+// sum of inverted squares gets small fast but all positive terms
+//   pi^2/6 = 1.6449340668482262, sumInvSq(100000) = 1.6449240668982423
+//   pi^2/6 - sumInvSq(100000) = 9.999949983852119E-6, large error for 100,000 terms
+!!sumInvSq(n) = SIGMA [1 <= k <= n] ( 1/(k^2) )
+invSqRez = SQRT ( 6 * sumInvSq(INFINITY) )
+//   10000 terms = 3.141497
+
+
+// declaration of symbols that can be used with integral approximation
+
+RENDER asin'(x) = 1 / sqrt (1 - x^2)
+//  6 * INTEGRAL [0 <= x <= 0.5 <> dx] (asn'(x)) * dx
+RENDER pi = 6 * INTEGRAL [0 <= x <= 0.5 <> dx] ( asin'(x) )  * <*>x
+RENDER "Isaac Newton asin series" TOP
+!!asn'(x) = 1 / SQRT (1 - x*x)
+
+
+// or the circular segment equation
+//  circle'(x) = SQRT (x - x*x) is shown to have circular segment
+//  pi = 3*SQRT(3)/4 + 24 * area => area = 0.07677310616304730284654410946459
+
+RENDER SegmentArea = INTEGRAL [0 <= x <= 0.25 <> dx] ( sqrt (x - x^2) ) * <*>x
+areaOfCircularSegment = 0.07677310616304730284654410946459
+//   = INTEGRAL [0 <= x <= 0.25 <> dx] (circle'(x)) * dx
+
+RENDER pi = 3*\3 #/# 4 + 24 * SegmentArea
+RENDER "Off center circle segment area used to compute pi" TOP
+!!circle'(x) = SQRT (x - x*x)
+
+
+// James Gregory atan series
+// atan x = x - x^3/3 + x^5/5 - x^7/7 + ...
+!!atn(x,n) = SIGMA [1 <= i <= n <> 4] (x^i/i - x^(i+2)/(i+2))
+
+
+RENDER atan'(x) = 1 / (1 + x^2)
+RENDER pi = 4 * INTEGRAL [0 <= x <= 1 <> LIM] ( atan'(x) ) * <*> x
+RENDER "integration of arc tangent derivative to compute pi" TOP
+
+
+LIM = 1/INFINITY
+!!atn'(x) = 1 / (1 + x*x)
+
+//  4 * INTEGRAL [0 <= x <= 1 <> dx] (atn'(x)) * dx
+atnIntRez = INTEGRAL [0 <= x <= 1 <> LIM] (4 * atn'(x) * <*> x)
+
+!! f(x) = 1/( (x+1) * sqrt(x) )
+simpleIntegral = 6 * f $| (1, 3, 1E-8)  
+
+PRETTYPRINT LIM
+PRETTYPRINT invSqRez
+PRETTYPRINT atnIntRez
+PRETTYPRINT simpleIntegral
+
+
+// arc tangent function used to compute pi
+polyTerms = 8; polyDegree = polyTerms * 2 - 1; countMax = polyDegree - 2
+RENDER atan(x) = SUMMATION [1 <= i <= INFINITY] ( ( ((x^(4*i - 3) / (4*i - 3)) - (x^(4*i - 1) / (4*i - 1))) ) )
+RENDER "James Gregory atan series : atan x = x - x^3/3 + x^5/5 - x^7/7 + ..." TOP
+
+RENDER pi = 4 * ( 4 * atan (1 / 5) - atan (1 / 239) )
+RENDER "Arc Tangent series of John Machin" TOP
+
+RENDER pi = 20 * atan (1 / 7) + 8 * atan (3 / 79)
+RENDER "Arc Tangent series of Leonhard Euler" TOP
+
+RENDER 1/pi = 2*\2 / 9801 * ( SUMMATION [0 <= k <= INFINITY] ( (4*k)! * (1103 + 26390*k) / ((k!)^4 * 396 ^ (4*k)) ) )
+RENDER "Series of Srinivasa Ramanujan" TOP
+

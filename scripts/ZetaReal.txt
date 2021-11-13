@@ -1,0 +1,65 @@
+
+
+// primes 2..397
+p = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397)
+
+INFINITY = LENGTH p
+
+
+!! zeta (s) = SIGMA [1 <= n < INFINITY] ( 1 / ( n ^ s ) )  
+describe zeta Riemann zeta function 
+express zeta
+
+
+// Euler's Infinite Product Representation
+!! Z (x) = PI [0 <= i < INFINITY] ( 1 / ( 1 - p#i ^ (-x) ) )  
+describe Z Euler product formula for zeta
+express Z
+
+
+GRAPH [   1 <= x <=  12 <> 0.1 ] ( ln (2 ^ (-x)), ln (Z (x) - 1) )
+ENTITLED Convergence of Z(x) with 1/2^x
+
+GRAPH [ 1.5 <= x <= 3.5 <> 0.1 ] ( Z (x), zeta (x) )
+ENTITLED Euler product formula VS zeta function
+
+SELECT "Reimann zeta function VS Euler product formula"
+RENDERF zeta
+RENDERF Z
+
+
+// Z (2,3,4,5,6) computed from primes 2..2000
+//zetaValues = (1.6448381469037244, 1.2020568847190002, 1.0823232337054985, 1.0369277551433679, 1.0173430619844492)
+zetaValues = (1.6449340668482264364724151666460251892189499012,  1.202056903159594285399738161511449990764986292, 1.082323233711138191516, 1.0369277551433679, 1.0173430619844492)
+// OEIS A013661, A002117, A013662
+
+zCalc = [2 <= k <= 6] ( zeta (k) )
+ZCalc = [2 <= k <= 6] ( Z (k) )
+
+prettyprint zetaValues
+prettyprint zCalc
+prettyprint ZCalc
+
+ZErrors = ZCalc - zetaValues
+prettyprint ZErrors
+
+calc 2\(zetaValues#0 * 6)
+calc 2\(ZCalc#0 * 6)
+
+
+
+
+INFINITY = 1000
+!! zeta (s) = SIGMA [1 <= n < INFINITY] ( 1 / ( n ^ s ) )
+express zeta
+
+zCalc1000 = [2 <= k <= 6] ( zeta (k) )
+prettyprint zCalc1000
+prettyprint zCalc
+
+
+zErrors = zCalc - zetaValues
+zErrors1000 = zCalc1000 - zetaValues
+prettyprint zErrors1000
+prettyprint zErrors
+

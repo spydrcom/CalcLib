@@ -1,0 +1,41 @@
+
+READ VC31Prep.txt
+
+LIBRARY AiFunc net.myorb.math.specialfunctions.AiryFunctions
+
+n = 1
+wid = 1.5
+nwid = n * wid
+samplestep = n * 0.1
+plotstep = n * 0.01
+
+
+// Ai(x)
+
+!+ AI_IMPORT(x) = AiFunc.Ai
+!! Ai(x) = AI_IMPORT x
+
+a = [-nwid <= x <= nwid+0.05 <> samplestep] ( Ai(x) ) 
+calc LENGTH a ; graph a ; ac = VC31INTERP (a)
+
+!! AiS(x) = ac @*^ (x/n)
+!! erra(x) = AiS''(x<>0.001) - x * AiS(x)
+
+PLOTF AiS  [  -nwid <=   x    <= nwid  <>  plotstep  ]  
+PLOTF erra  [ -nwid <    x    <  nwid  <>  plotstep  ]  
+
+
+// Bi(x)
+
+!+ BI_IMPORT(x) = AiFunc.Bi
+!! Bi(x) = BI_IMPORT x
+
+b = [-nwid <= x <= nwid+0.05 <> samplestep] ( Bi(x) ) 
+calc LENGTH b ; graph b ; bc = VC31INTERP (b)
+
+!! BiS(x) = bc @*^ (x/n)
+!! errb(x) = BiS''(x<>0.001) - x * BiS(x)
+
+PLOTF BiS   [  -nwid <=   x    <= nwid  <>  plotstep  ]  
+PLOTF errb  [  -nwid <    x    <  nwid  <>  plotstep  ]  
+

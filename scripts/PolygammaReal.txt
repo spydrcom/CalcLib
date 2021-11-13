@@ -1,0 +1,6 @@
+
+!! loggamma(x) = ln (GAMMA x)
+!! digamma(x) = loggamma' ( x <> 0.001 )
+!! trigamma(x) = digamma' ( x <> 0.001 )
+
+graph LIM 5 [0 < x < 10 <> 0.01] ( loggamma (x), digamma (x), trigamma (x) )

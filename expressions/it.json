@@ -1,0 +1,75 @@
+{
+   "Name": "it",
+   "Parameters": 
+   [
+      "t"
+   ],
+   "Description": "Iterative trapezoidal integral approximation of e ^ x over 0.. t ",
+   "Expression": 
+   {
+      "Hi": 
+      {
+         "Operator": null,
+         "Symbol": null,
+         "NodeType": "Identifier",
+         "Kind": "Unknown",
+         "Name": "t"
+      },
+      "Target": 
+      {
+         "OpName": "*",
+         "Left": 
+         {
+            "OpName": "ex",
+            "PostFix": false,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            }
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "<*>",
+            "PostFix": false,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            }
+         },
+         "OpType": "Unknown"
+      },
+      "Hbnd": "<=",
+      "Variable": "x",
+      "Lo": 0.0,
+      "Consumer": "IntegralConsumer",
+      "Delta": 
+      {
+         "OpName": "/",
+         "Left": 1.0,
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "Operator": null,
+            "Symbol": "AssignedVariableStorage",
+            "NodeType": "Identifier",
+            "Kind": "Variable",
+            "Name": "INFINITY"
+         },
+         "OpType": "Unknown"
+      },
+      "NodeType": "Range",
+      "Lbnd": "<="
+   },
+   "NodeType": "Profile"
+}

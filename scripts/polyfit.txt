@@ -1,0 +1,4 @@
+
+x = [pi/2 <= w <= pi <> 0.1](w)
+
+y = [0 <= i <= LENGTH(x)-1] (sin x#i)

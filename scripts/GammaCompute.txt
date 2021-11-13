@@ -1,0 +1,38 @@
+
+VERIFY x
+
+!! GammaFactor (t,n) = n / (t+n) * (n / (n-1))^t
+
+gammaPart = x^2 + x
+
+gammaPart = 1 / gammaPart
+
+n = 2 ; correct = GAMMA x
+
+ITERATE 1000 GammaIteration.sub
+error = correct - gammaPart
+PRETTYPRINT gammaPart 
+PRETTYPRINT error
+
+// the correct value of GAMMA(6) = 5! = 120, so this approximation is off by 2%
+// and this is at 1000 iterations, at 5000 it is not much closer
+// this is very slow convergence
+
+ITERATE 4000 GammaIteration.sub
+error = correct - gammaPart
+PRETTYPRINT gammaPart 
+PRETTYPRINT error
+
+ITERATE 5000 GammaIteration.sub
+error = correct - gammaPart
+PRETTYPRINT gammaPart 
+PRETTYPRINT error
+
+ITERATE 3000 GammaIteration.sub
+error = correct - gammaPart
+PRETTYPRINT gammaPart 
+PRETTYPRINT error
+
+// IMPORTANT NOTE:  look at the formula for the Nth GAMMA factor.
+// note that for integer t the computation can be done as integer exponentiation.
+// if t is real, computation becomes exp(ln(n)*t), much more expensive 

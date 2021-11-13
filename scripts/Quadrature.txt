@@ -1,0 +1,66 @@
+
+
+// suite of tests for methods of Quadrature computations
+
+
+// define environment as using Java.Math for fast function calls
+INFINITY = 2^12; dx = 1 / INFINITY
+READ JavaMath.txt
+
+
+// function used as test subject
+!! expSin (x) = EXP (-x / 5.0) * ( 2.0 + SIN (2.0 * x) )
+// for computation of area of the [0,10] domain
+exactAnswer = 9.1082396073230
+
+
+// brute force array of 40k points
+approximation = INTEGRAL [0 <= x <= 10 <> dx] ( expSin (x) * dx )
+PRETTYPRINT approximation
+
+// compute error in integral computation
+error = abs ( exactAnswer - approximation )
+PRETTYPRINT error
+
+adjust = expSin(0) + expSin(10)
+// weights for end-points brings the approximation in alignment with Trapezoidal rule
+approximationAdjusted = approximation - dx * adjust/2
+PRETTYPRINT approximationAdjusted
+
+// compute error in adjusted integral computation
+errorAdjusted = abs ( exactAnswer - approximationAdjusted )
+PRETTYPRINT errorAdjusted
+
+
+// TrapAdjust operator $% provides end-point weight adjustment bringing the approximation in alignment with Trapezoidal rule
+approximationAdjusted2 = approximation + expSin $% (0, 10, dx)
+PRETTYPRINT approximationAdjusted2
+
+// compute error in adjusted integral computation
+errorAdjusted2 = abs ( exactAnswer - approximationAdjusted2 )
+// adjustment errors should be identical
+PRETTYPRINT errorAdjusted2
+
+
+// 4k trapezoid points
+trapQuad = expSin $# (0, 10, dx)
+PRETTYPRINT trapQuad
+
+// compute error in integral computation
+error = abs ( exactAnswer - trapQuad )
+PRETTYPRINT error
+
+
+READ DCT.txt
+
+READ GaussQuad.txt
+
+READ ClenQuad.txt
+
+// TanhSinh Quadrature approximation
+
+!% f (x) +*^= LAGRANGE (x_all, y_poly)
+!! lagrangePoly (x) = f (x)
+
+tsqApprox = lagrangePoly $| (-1, 2, 1E-6)
+PRETTYPRINT tsqApprox

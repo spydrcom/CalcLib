@@ -1,0 +1,30 @@
+
+RENDER  3 + x - 1
+
+RENDER  4 + - x
+
+RENDER  3 * x - 2
+
+RENDER  5 * (-x)
+
+RENDER  2*x^2 -3*x + 1 == 0
+
+RENDER  sqrt x - 1
+
+RENDER  exp x * 2
+
+x = 1
+
+CALC  3 + x - 1
+
+CALC  4 + - x
+
+CALC  3 * x - 2
+
+CALC  5 * (-x)
+
+CALC  (2*x^2 -3*x + 1) == 0
+
+CALC  sqrt x - 1
+
+CALC  exp x * 2

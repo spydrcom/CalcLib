@@ -1,0 +1,16 @@
+
+READ JavaMath.txt
+
+INFINITY = 100
+
+dt = 1 / INFINITY 
+
+
+// airy
+
+!! Ai(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( COS (POW (t,3) /3 + x*t) * dt )
+
+!! Bi(x) = 1/pi * INTEGRAL [0 <= t <= INFINITY <> dt] ( ( EXP (-POW (t,3) /3 + x*t) + SIN (POW (t,3) /3 + x*t) ) * dt )
+
+graph [-8 <= x < 0 <> 0.02] (Ai(x))
+

@@ -1,0 +1,30 @@
+{
+   "Hi": 25.0,
+   "Hbnd": "<=",
+   "Target": 
+   {
+      "OpName": "/",
+      "Left": 1.0,
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "!",
+         "PostFix": true,
+         "Parameters": 
+         {
+            "Operator": null,
+            "Symbol": "LocalVariable",
+            "NodeType": "Identifier",
+            "Kind": "Local",
+            "Name": "i"
+         },
+         "NodeType": "UnaryOP"
+      }
+   },
+   "Variable": "i",
+   "Lo": 0.0,
+   "Consumer": "SummationConsumer",
+   "Delta": 1.0,
+   "NodeType": "Range",
+   "Lbnd": "<="
+}

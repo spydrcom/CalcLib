@@ -1,0 +1,20 @@
+{
+   "Parameters": [],
+   "Expression": 
+   {
+      "OpName": "/",
+      "Left": 
+      {
+         "OpName": "*\\",
+         "Left": 2.0,
+         "NodeType": "BinaryOP",
+         "Right": 2.0,
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 9801.0,
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile",
+   "Name": "cons"
+}

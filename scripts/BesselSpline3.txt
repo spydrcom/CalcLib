@@ -1,0 +1,20 @@
+
+
+
+READ ColtLib.txt
+
+READ VanChe31X.txt
+
+READ BesselFunctions.txt
+
+
+jVals = [2.5<=x<=5.51<>0.1](J0(x))
+mj3 = MATRIX(jVals,31,1)  
+j0coef3 = SolveWithLUD(VC31x,mj3) 
+j0c3 = j0coef3|#1
+!! j0lcl3(x) = j0c3 @*^ (x-4)
+
+!! besFunL3 (x) = x^2 * j0lcl3''(x <> dx) + x * j0lcl3'(x <> dx) + (x^2 - alpha^2)* j0lcl3(x)
+graph [3<x<5<>0.01] (besFun (x), besFunL3 (x)) 
+
+

@@ -1,0 +1,29 @@
+
+
+
+RECOGNIZE DerivativeIdentities.txt
+// READ DerivativeIdentities.txt
+
+
+!% rate(x) +*^= (0, -0.1)
+
+
+// apply CHAIN rule
+!% decay(x) <>= CHAIN { exp (rate()) }
+
+
+// apply PRODUCT rule
+!% decayingCycle(x) <>= PRODUCT { decay() *  cos() }
+
+
+// graph with transformed derivative
+graph [0<x<20<>0.01](decayingCycle(x), decayingCycle'(x))
+
+
+// graph with approximated derivative
+graph [0<x<20<>0.01](decayingCycle(x), decayingCycle'(x<>0.00001))
+
+
+calc rate' 1
+
+

@@ -1,0 +1,26 @@
+
+LIBRARY Probability cern.jet.stat.Probability
+
+!+ ERF(x)                           = Probability.errorFunction
+!+ ERFC(x)                          = Probability.errorFunctionComplemented
+
+!+ Normal(x)                        = Probability.normal
+!+ NormalInverse(y0)                = Probability.normalInverse
+
+!+ Gamma(alpha,beta,x)              = Probability.gamma
+!+ GammaC(alpha,beta,x)             = Probability.gammaComplemented
+
+!+ ChiSquare(degreesFree,x)         = Probability.chiSquare
+!+ ChiSquareC(degreesFree,x)        = Probability.chiSquareComplemented
+
+!+ Poisson(terms,mean)              = Probability.poisson
+!+ PoissonC(startTerm,mean)         = Probability.poissonComplemented
+
+!+ StudentT(degreesFree,x)          = Probability.studentT
+!+ StudentTinv(alpha,size)          = Probability.studentTInverse
+
+!+ Binomial(endTerm,numTrial,prob)     = Probability.binomial
+!+ BinomialC(endTerm,numTrial,prob)    = Probability.binomialComplemented
+!+ NegBinomial(endTerm,numTrial,prob)  = Probability.negativeBinomial
+!+ NegBinomialC(endTerm,numTrial,prob) = Probability.negativeBinomialComplemented
+

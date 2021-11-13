@@ -1,0 +1,13 @@
+
+
+LIBRARY XPF a.sample.library.ExportedFunctions 
+
+!+ psi(x) = XPF.psi
+
+p = PRIMES 16000
+
+
+psiVal = psi (p)
+
+
+graph [0<x<15000](psiVal#x)

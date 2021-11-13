@@ -1,0 +1,57 @@
+
+SCRIPTPRINT FloatDemoRungeSegmented.txt
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3.2 <= t <= 3.5 <> dt] ( exp ( - t ^ 2 ) ) 
+
+
+
+// select segment domains and collect samples
+
+
+seg4 = [-0.2 <= t <=  0.25 <> 0.05] ( curve @# t )
+seg5 = [-0.1 <= t <=  2.3 <> 0.1] ( curve @# t )
+segB = [ 1.05 <= t <=  1.95 <> 0.1] ( curve @# t )
+segC = [ 1.8 <= t <=  2.35 <> 0.03] ( curve @# t )
+seg6 = [ 2.1 <= t <=   3  <> 0.1] ( curve @# t )
+seg7 = [ 2.7 <= t <=  3.2 <> 0.1] ( curve @# t )
+segN = [-0.5 <= t <= 0.1  <> 0.1] ( curve @# t ) 
+segM = [-1.1 <= t <= 0.5  <> 0.1] ( curve @# t ) 
+segL = [-1.6 <= t <= -0.8 <> 0.1] ( curve @# t ) 
+segK = [-2.6 <= t <= -1.1 <> 0.2] ( curve @# t )  
+segJ = [-2.9 <= t <= -2.2 <> 0.1] ( curve @# t )  
+segI = [-3.2 <= t <= -2.3 <> 0.2] ( curve @# t )  
+
+s4poly = CHEBINTERP seg4
+s5poly = CHEBINTERP seg5
+s6poly = CHEBINTERP seg6
+s7poly = CHEBINTERP seg7
+sBpoly = INTERPOLATE segB
+sCpoly = CHEBINTERP segC
+sMpoly = CHEBINTERP segM
+sNpoly = CHEBINTERP segN
+sLpoly = CHEBINTERP segL
+sKpoly = CHEBINTERP segK
+sJpoly = INTERPOLATE segJ
+sIpoly = CHEBINTERP segI
+
+
+
+!$ BellC(x) = (s4poly, s5poly, s6poly, s7poly, sBpoly, sCpoly, sMpoly, sNpoly, sLpoly, sKpoly, sJpoly, sIpoly)
+
+GRAPH [-3 <= x <= 3 <> 0.01] (BellC (x))
+
+// evaluation of the error curve
+
+!! P(x) = BellC(abs(x))
+!! f(x) = curve @# x
+
+err = [-3 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+

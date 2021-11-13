@@ -1,0 +1,36 @@
+
+// constants for approximation purposes
+INFINITY = 1000; dt = 1 / INFINITY
+
+// create an array function describing the curve
+curve = [-3.2 <= t <= 4.0 <> dt] ( exp ( - t ^ 2 ) ) 
+
+
+
+// select segment domains and collect samples
+
+seg1 = [-0.6 <= t <=  3.8 <> 0.2] ( curve @# t )
+seg2 = [ 0.6 <= t <=  3.0 <> 0.2] ( curve @# t )
+seg3 = [ 1.7 <= t <=  4.0 <> 0.2] ( curve @# t )
+
+s1poly =  CHEBINTERP seg1
+s2poly = INTERPOLATE seg2
+s3poly = INTERPOLATE seg3
+
+!$ BellC(x) = (s1poly, s2poly, s3poly)
+
+// the error curve
+
+!! P(x) = BellC (abs(x))
+!! f(x) = curve @# x
+
+// 1000 points between -3 and 3
+
+err = [-3 <= x <= 3 <> 0.001] (abs (P(x) - f(x)))
+
+// locate maximum
+maxError = MAX err 
+PRETTYPRINT maxError 
+GRAPH err
+
+GRAPH [-3 <= x <= 3 <> 0.01] (P (x))

@@ -1,0 +1,62 @@
+{
+   "Name": "ex",
+   "Parameters": 
+   [
+      "x"
+   ],
+   "Description": "Taylor series expansion of e ^ x over 25 terms ",
+   "Expression": 
+   {
+      "Hi": 25.0,
+      "Target": 
+      {
+         "OpName": "/",
+         "Left": 
+         {
+            "OpName": "^",
+            "Left": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "x"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "i"
+            },
+            "OpType": "Unknown"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "!",
+            "PostFix": true,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "Operator": null,
+               "Symbol": null,
+               "NodeType": "Identifier",
+               "Kind": "Unknown",
+               "Name": "i"
+            }
+         },
+         "OpType": "Unknown"
+      },
+      "Hbnd": "<=",
+      "Variable": "i",
+      "Lo": 0.0,
+      "Consumer": "SummationConsumer",
+      "Delta": 1.0,
+      "NodeType": "Range",
+      "Lbnd": "<="
+   },
+   "NodeType": "Profile"
+}

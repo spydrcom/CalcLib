@@ -1,0 +1,14 @@
+
+
+LIBRARY Gamma cern.jet.stat.Gamma
+
+!+ beta(alpha,beta)    = Gamma.beta
+!+ ibeta(alpha,beta,x) = Gamma.incompleteBeta
+
+!+ gamma(x)            = Gamma.gamma
+!+ igamma(alpha,x)     = Gamma.incompleteGamma
+!+ igamc(alpha,x)      = Gamma.incompleteGammaComplement
+
+!+ LOGGAMMA(x)         = Gamma.logGamma
+
+

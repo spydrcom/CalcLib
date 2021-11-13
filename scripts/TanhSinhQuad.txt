@@ -1,0 +1,37 @@
+
+
+RECOGNIZE TrigIdentities.txt
+
+!! abscissas(k,h) = tanh(pi/2 * sinh (k*h))
+
+!! weight(k,h) = pi/2 * h * cosh (k*h) / cosh ( pi/2 * sinh (k*h) )^2
+
+!! step01(x) = abscissas(x,0.01)
+
+GRAPH  [  -10 <=    x    <= 10  <>  0.01  ]   ( step01(x) )
+
+
+
+READ JavaMath.txt
+
+
+!! f(x) = POW(1.0 - x, 5.0)*POW(x, -1.0/3.0)
+
+GRAPH  [  0.1 <=    x    <= 1  <>  0.01  ]   ( f(x) )
+
+
+!! g(x) = EXP(-x/5.0)*(2.0 + SIN(2.0*x))
+
+GRAPH  [  0 <=    x    <= 10  <>  0.01  ]   ( g(x) )
+
+exactAnswer = 9.1082396073230
+
+approx = g$|(0,10,1E-6)
+
+PRETTYPRINT approx
+
+error = abs (exactAnswer - approx)
+
+PRETTYPRINT error
+
+

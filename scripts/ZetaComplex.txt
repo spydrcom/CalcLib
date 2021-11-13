@@ -1,0 +1,40 @@
+
+READ ZetaGeneric.txt
+READ ZetaEuler.txt
+
+//
+// domain of Reimann hypothesis
+//
+!! dom (t) = 1/2 + t*i
+
+//
+// use code from CalcLib build
+//
+//rng = [-10 <= x <= 10 <> 0.1] ( zeta (dom (x)) ) 
+
+//
+// use zeta implemented in generic script
+//
+//rng = [0 <= x <= 30 <> 0.1] ( RiemannZeta (dom (x)) ) 
+
+//
+// use zeta implemented with Euler prime algorithm
+//
+rng = [-30 <= x <= 30 <> 0.1] ( EulerZeta (dom (x)) ) 
+
+//
+// real and imaginary parts separated into arrays
+//
+RE = [0 <= n < LENGTH rng] ( Re (rng#n) )
+IM = [0 <= n < LENGTH rng] ( Im (rng#n) )
+
+//
+// dump vectors of real and imag parts
+//
+calc RE
+calc IM
+
+//
+// plot both parts
+//
+graph LIM 10 [0 <= n < LENGTH rng] (RE#n,IM#n)

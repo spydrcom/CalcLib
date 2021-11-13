@@ -1,0 +1,24 @@
+
+
+INFINITY = 10000
+
+dx = 1/INFINITY
+
+!! int(x) = INTEGRAL [0<=x<=1 <> dx] ( f(x) * dx )
+
+!! sig(x) = SIGMA  [0<x<10] ( f(x)  ) 
+
+!! summ(x) = SUMMATION  [0<=x<100] ( f(x)  )
+
+!! summ2(x) = SUMMATION  [0<x<=INFINITY] ( f(x)  )
+
+!! unitCircle(x) = sqrt (1 - x^2)
+
+!! unitCircleArea(delta) = 4 * INTEGRAL [0<=x<=1<>delta] (unitCircle(x) * delta) 
+
+!! circleArea(delta) = 4 * INTEGRAL [0<=x<=1<>delta] ( sqrt ( 1 - x ^ 2 ) * delta)
+
+!! cosApprox(x,terms) = SIGMA [0<=n<=terms]((-1)^n*(pi/x)^(2*n)/(2*n)!) 
+
+!! eApprox(n) = SIGMA [0<=i<n](1/i!)
+

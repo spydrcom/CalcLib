@@ -1,0 +1,22 @@
+
+LIBRARY AiFunc net.myorb.math.specialfunctions.AiryFunctions
+
+!+ AI_IMPORT(x) = AiFunc.AiS4
+!! Ai(x) = AI_IMPORT x
+
+!+ BI_IMPORT(x) = AiFunc.BiS4
+!! Bi(x) = BI_IMPORT x
+
+!! Ai2(x) = Ai''(x <> 0.001)
+!! Bi2(x) = Bi''(x <> 0.001)
+
+!! errA(x) = abs ( Ai2(x) - x * Ai(x) )
+!! errB(x) = abs ( Bi2(x) - x * Bi(x) )
+
+n = 4
+
+GRAPH LIM 2E-7   [  -1.4*n <=    x    <= 1.4*n  <>  0.01  ]   ( errA(x), errB(x) ) 
+ENTITLED Error in computation of Ai(x) / Bi(x) using Chebyshev spline
+
+GRAPH LIM 1   [  -1.5*n <=    x    <= 1.5*n  <>  0.01  ]   ( Ai(x), Bi(x) ) 
+ENTITLED Airy (Ai / Bi) Spline Function Plots

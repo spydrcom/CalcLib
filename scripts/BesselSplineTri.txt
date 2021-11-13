@@ -1,0 +1,44 @@
+
+
+READ VC31Prep.txt
+READ BesselSpline.txt
+
+
+jVals = [0.5<=xx<=3.6<>0.1](J0(xx))
+
+// j0c2 = LUXB(VC31L, VC31U, jVals, VC31P)  
+j0c2 = VC31INTERP (jVals)
+
+!! j0lcl2(x) = j0c2 @*^ (x-2)
+
+calc j0lcl2(2);        //  0.22389078190857192
+calc J0(2);            //  0.2238907819085722
+
+!! besFunL2 (x) = x^2 * j0lcl2''(x <> dx) + x * j0lcl2'(x <> dx) + (x^2 - alpha^2)* j0lcl2(x)   
+graph [1<x<3<>0.01] (besFun (x), besFunL2 (x))  
+
+err  =  [1 < x < 3 <> 0.01] (abs(besFun(x)))
+errL =  [1 < x < 3 <> 0.01] (abs(besFunL2(x)))
+
+calc MAX err;     // 6.013422098871679E-5
+calc MAX errL;    //  1.464845459953068E-5  //  so far, so good
+
+// the function implementing the knot
+!! j0x(x) = (x>1)? j0lcl2(x) : j0lcl(x)
+
+// a graph of the overlay
+graph [-1 < x < 3 <> 0.01] (J0(x),  j0x(x))  
+
+
+
+!! besFunLx (x) = x^2 * j0x''(x <> dx) + x * j0x'(x <> dx) + (x^2 - alpha^2)* j0x(x)    
+
+err  =  [-1 < x < 3 <> 0.01](abs (besFun (x)))
+errL =  [-1 < x < 3 <> 0.01](abs (besFunLx (x)))
+
+calc MAX err;   //  5.182550320093071E-5
+calc MAX errL;  //  1.4990911813006491E-5
+
+graph [-1 < x < 3 <> 0.01] (besFun(x),  besFunLx(x))     
+
+

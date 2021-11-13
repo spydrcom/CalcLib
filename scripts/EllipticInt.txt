@@ -1,0 +1,70 @@
+
+
+INFINITY = 100
+
+dt = 1 / INFINITY 
+
+qPi = pi #/# 4
+
+
+// complete first kind
+
+!! K(k) = INTEGRAL [0 < theta <= pi/2 <> dt] ( 1 / 2\(1 - k^2 * sinsq theta) * <*> theta )
+
+graph [0 <= x <= 1 <> dt] ( K(x) )
+ENTITLED Complete Elliptic Integral of first kind ( K(k) )
+
+
+// complete second kind
+
+!! E'(m, theta) = 2\ (1 - m^2 * sinsq theta)
+!! E(m, phi) = INTEGRAL [0 < theta <= phi <> dt] ( E'(m,theta) * <*> theta )
+!! F(m, phi) = INTEGRAL [0 < theta <= phi <> dt] ( 1 / E'(m,theta) * <*> theta )
+!! PI(n, k) = INTEGRAL [0 < theta <= pi/2 <> dt] ( 1 / ( E'(k,theta) * (1 - n * sinsq (theta)) ) * <*> theta )
+
+graph [0 <= k <= 1 <> dt] ( PI(0.5,k), PI(0,k), PI(-1,k), PI(-3,k) )
+ENTITLED Complete Elliptic Integral of third kind ( PI(n,k), n = 0.5, 0, -1 )
+
+SELECT "Elliptic Integral"
+
+RENDERF E'
+RENDER " Derivative of the Elliptic Integral equation " TOP
+
+RENDERF E
+RENDER " The incomplete Elliptic Integral of the second kind " TOP
+
+RENDERF F
+RENDER " The incomplete Elliptic Integral of the first kind " TOP
+
+RENDERF K
+RENDER " The complete Elliptic Integral of the first kind " TOP
+
+RENDERF PI
+RENDER " The complete Elliptic Integral of the Third kind " TOP
+
+// degenerate case is simple circle
+// graph [0 < x < 1 <> dt] ( E'(x, 2 * qPi) )
+
+!! E1(x) = E(x, qPi)
+!! E2(x) = E(x, 2 * qPi)
+!! E3(x) = E(x, 3 * qPi)
+
+!! F'(m, theta) = 1 / E'(m, theta)
+!! F(m, phi) = INTEGRAL [0 < theta <= phi <> dt] ( F'(m, theta) * <*> theta )
+
+!! F1(x) = F(x, qPi)
+!! F2(x) = F(x, 2 * qPi)
+!! F3(x) = F(x, 3 * qPi)
+
+graph [0 <= x <= 1 <> dt] ( F1(x), F2(x), F3(x) )
+ENTITLED Incomplete Elliptic Integral of first kind ( F(m,phi) for phi = n*pi/4, n=1,2,3 )
+
+graph [0 <= x <= 1 <> dt] ( E1(x), E2(x), E3(x) )
+ENTITLED Incomplete Elliptic Integral of second kind ( E(m,phi) for phi = n*pi/4, n=1,2,3 )
+
+// !! Er(k) = INTEGRAL [0 < t < 1 <> dt] ( sqrt ((1-k^2*t^2) / (1-t^2)) * dt )
+
+// !! dif2(x) = E2(x) - Er(x)
+// !! dif3(x) = E3(x) - Er(x)
+
+// graph [0 < x < 1 <> dt] ( dif2(x), dif3(x) )

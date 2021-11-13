@@ -1,0 +1,9 @@
+
+
+LIBRARY SpecFunc net.myorb.math.specialfunctions.Library
+
+!+ GAMMA_IMPORT(x) = SpecFunc.gamma
+!! GAMMA(x) = GAMMA_IMPORT x
+
+READ HGFpoly.sub
+

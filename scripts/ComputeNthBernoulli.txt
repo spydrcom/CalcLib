@@ -1,0 +1,3 @@
+bn = BERNOULLI(n)
+PRETTYPRINT bn
+n = n + 1

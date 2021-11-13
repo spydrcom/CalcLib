@@ -1,0 +1,22 @@
+
+// Golden Ratio
+//  x/1 = (x+1)/x   =>  
+
+render  x^2 - x - 1 = 0
+
+render x = ( 1 +|- sqrt(5) ) / 2
+
+READ JavaMath.txt
+
+x = 1/2 +|- SQRT(5)/2
+
+PHI = x#0
+phi = x#1
+
+calc PHI^2
+calc 1/PHI
+
+ render PHI = ( 1 + sqrt(5) ) / 2
+
+ render phi = ( 1 - sqrt(5) ) / 2
+

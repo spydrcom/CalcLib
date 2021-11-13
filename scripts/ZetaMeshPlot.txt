@@ -1,0 +1,8 @@
+
+
+!! Z (x, y) = modSq (zeta (x + i*y) )
+// !! Z (x, y) = Im (zeta (x + i*y) )
+
+plot3d Z (-3,-3)  2 6 
+
+// calc [58 < x < 68 <> 0.1] ( Z (0.4, x) )

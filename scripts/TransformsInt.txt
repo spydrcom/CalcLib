@@ -1,0 +1,11 @@
+
+READ FloatDemoRegression.txt
+
+!% px(x) +*^= poly_coefficients
+
+ graph [-3 <= x <= 5 <> 0.01] (px(x)) 
+
+!% pxi(x) $= px
+
+ graph [-3 <= x <= 5 <> 0.01] (pxi(x)) 
+

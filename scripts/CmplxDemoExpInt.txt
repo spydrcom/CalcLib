@@ -1,0 +1,18 @@
+
+
+INFINITY = 20
+
+dt = 1 / INFINITY 
+
+// exp integral
+
+!! Ei(x) = - INTEGRAL [-x <= t <= INFINITY <> dt] ( exp(-t) / t * dt )
+!! E1(x) = INTEGRAL [x <= t <= INFINITY <> dt] ( exp(-t) / t * dt )
+
+E1vals = [0.2 <= x <= 16 <> 0.2] (E1(i*x))
+
+
+graph [0<=ii<LENGTH(E1vals)]( Re(E1vals#ii) )
+
+graph [0<=ii<LENGTH(E1vals)]( Im(E1vals#ii) ) 
+

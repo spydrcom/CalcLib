@@ -1,0 +1,22 @@
+
+terms = 25
+
+!! taylor (x, n) = x^n / n!
+DESCRIBE taylor Boiler plate term for Taylor expansion polynomials
+express taylor
+savejson taylor
+
+!! sin (x) = SUMMATION [1 <= n < terms <> 4]  ( taylor (x, n) - taylor (x, n + 2) )
+DESCRIBE sin Periodic Sine function
+express sin
+savejson sin
+
+!! cos (x) = SUMMATION [0 <= n < terms <> 4]  ( taylor (x, n) - taylor (x, n + 2) )
+DESCRIBE cos Periodic Cosine function
+express cos
+savejson cos
+
+!! exp (x) = SUMMATION [0 <= n < terms]  ( taylor (x, n) )
+DESCRIBE exp Euler exponential function
+express exp
+savejson exp

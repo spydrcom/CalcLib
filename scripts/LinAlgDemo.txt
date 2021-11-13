@@ -1,0 +1,26 @@
+
+IMPORT simple simple.TDF
+
+READ ColtLib.txt
+
+calc MatRpt simple
+
+
+S = GetSvdS()
+V = GetSvdV() 
+U = GetSvdU() 
+
+
+PRETTYPRINT S 5
+PRETTYPRINT V 5
+PRETTYPRINT U 5
+
+
+Vt= TRANSPOSE(V)
+prd = U * S * Vt
+
+PRETTYPRINT prd 
+
+PRETTYPRINT simple 
+
+

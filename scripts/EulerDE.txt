@@ -1,0 +1,15 @@
+
+
+// Euler Differential Equation
+
+// x^2 * y''(x) + a*x*y'(x) + b*y(x) = 0
+
+!! eulerDE(x) = x^2 * y''(x) + a*x*y'(x) + b*y(x)
+DIFEQ  eulerDE  "Euler Differential Equation"
+
+
+SELECT "Differential Equations"
+
+RENDERD eulerDE
+
+RENDER "Euler Differential Equation" TOP

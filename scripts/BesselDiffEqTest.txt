@@ -1,0 +1,56 @@
+
+
+alpha=2
+// test Jn 2
+family Bessel 3 First
+prepare J2 f 0.001
+READ BesselDE.txt
+
+!! JnSolutionError(x) = BesDE (x)
+PLOTF JnSolutionError  [  0 <=    x    <= 10  <>  0.01  ]   
+entitled Error function for J(n=2)
+
+
+alpha=2.5
+// test Jp 2.5
+family Bessel 3 Jp,2.5
+prepare JP2_50 f 0.001
+READ BesselDE.txt
+
+!! JpSolutionError(x) = BesDE (x)
+PLOTF JpSolutionError  [  0 <=    x    <= 10  <>  0.01  ]   
+entitled Error function for J(p=2.5)
+
+
+alpha=3.5
+// test Ya 3.5
+family Bessel 3 Ya,3.5
+prepare YA3_50 f 0.001
+READ BesselDE.txt
+
+!! YaSolutionError(x) = BesDE (x)
+PLOTF YaSolutionError  [  2 <=    x    <= 10  <>  0.01  ]   
+entitled Error function for Y(a=3.5)
+
+
+alpha=2.2
+// test Ia 2.2
+family Bessel 3 Ia,2.2
+prepare IA2_20 f 0.001
+READ BesselDE.txt
+
+!! IaSolutionError(x) = BesModDE (x)
+PLOTF IaSolutionError  [  0.1 <=    x    <= 5  <>  0.01  ]   
+entitled Error function for I(a=2.2)
+
+
+alpha=3.7
+// test Ka 3.7
+family Bessel 3 Ka,3.7
+prepare KA3_70 f 0.001
+READ BesselDE.txt
+
+!! KaSolutionError(x) = BesModDE (x)
+PLOTF KaSolutionError  [  2 <=    x    <= 8  <>  0.01  ]   
+entitled Error function for K(a=3.7)
+

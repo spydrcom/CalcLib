@@ -1,0 +1,5 @@
+
+!! etox (x) = SIGMA [0 <= j <= 20] ( x^j / j! )
+
+graph [-5 <= x <= 5 <> 0.1] ( etox (x) )
+graph [-5 <= x <= 5 <> 0.1] ( etox (-x) )

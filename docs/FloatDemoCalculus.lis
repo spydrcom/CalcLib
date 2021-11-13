@@ -1,0 +1,90 @@
+
+
+READ DemoCalculus.txt
+Reading... C:\workspace\MathFields\scripts\DemoCalculus.txt
+
+
+SCRIPTPRINT DemoCalculus.txt
+
+
+
+dx = 0.005
+
+
+
+p = (2, -3, 4, -5, 6)
+
+pder = POLYDER p
+
+pint = POLYINT p
+
+POLYPRINT p
+POLYPRINT pder
+POLYPRINT pint
+
+
+
+e_approximation = SIGMA [0 <= i <= 10] (1/i!)
+PRETTYPRINT e_approximation 
+
+
+
+e_minus1_approximation = SIGMA [0 <= x <= 1 <> dx](exp(x) * dx)
+PRETTYPRINT e_minus1_approximation 
+
+
+!! f(x) = 2\(1 - x^2)
+pi_approximation = 4 * SIGMA [0 <= x <= 1 <> dx] ( f(x) * dx )
+PRETTYPRINT pi_approximation 
+
+
+
+gamma_approximation = SIGMA [0 <= x <= 1 <> dx] (HARMONIC(x) * dx)
+PRETTYPRINT gamma_approximation 
+
+
+
+fprime = f'( 0.5 <> dx )
+PRETTYPRINT fprime 
+
+
+p = 
+
+	2 - 3*x + 4*x^2 - 5*x^3 + 6*x^4
+
+
+pder = 
+
+	 - 3 + 8*x - 15*x^2 + 24*x^3
+
+
+pint = 
+
+	2*x - 1.5*x^2 + 1.3333333333333333*x^3 - 1.25*x^4 + 1.2000000000000002*x^5
+
+
+e_approximation = 
+
+	2.7182818011463845
+
+
+e_minus1_approximation = 
+
+	1.7139897036402167
+
+
+pi_approximation = 
+
+	3.1511769448395244
+
+
+gamma_approximation = 
+
+	0.5746638357147642
+
+
+fprime = 
+
+	-0.5773534767267385
+
+

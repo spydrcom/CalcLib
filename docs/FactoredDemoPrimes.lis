@@ -1,0 +1,344 @@
+
+
+READ DemoPrimes.txt
+Reading... C:\workspace\MathFields\scripts\DemoPrimes.txt
+Reading... C:\workspace\MathFields\scripts\DemoPrimes.TXT
+
+SCRIPTPRINT DemoPrimes.TXT
+
+
+x = 7
+SCRIPTPRINT sqrtCompute.txt
+SCRIPTPRINT sqrtIteration.txt
+READ sqrtCompute.txt
+
+
+n=1
+SCRIPTPRINT BERNOULLI.txt
+ITERATE 30 BERNOULLI.txt
+
+Reading... C:\workspace\MathFields\scripts\sqrtCompute.txt
+
+// looking for 10 decimal places of precision
+
+TOLERANCE = 10^(-10)
+
+// polynomial solutions "c - x^2 = 0" gives sqrt(c) as a solution
+
+sqrt_polynomial = (x,0,-1)
+
+polyprint sqrt_polynomial 
+
+// Newton's methods uses the first derivative for the solution
+
+sqrt_poly_derivative = POLYDER sqrt_polynomial 
+
+polyprint sqrt_poly_derivative 
+
+// initial approximation
+
+sqrtx = 1
+
+ITERATE 10 SqrtIteration.txt
+
+Reading... C:\workspace\MathFields\scripts\sqrtIteration.txt
+
+// compute polynomial value
+
+f = sqrt_polynomial +*^ sqrtx
+
+// compute derivative value
+
+fprime = sqrt_poly_derivative +*^ sqrtx
+
+// iteration contribution computed
+
+sqrt_iteration = f/fprime 
+
+// new value for this iteration
+
+sqrtx = sqrtx - sqrt_iteration 
+
+// check status of result
+
+sqrtx_squared = sqrtx ^ 2
+
+// display intermediate results
+
+PRETTYPRINT sqrt_iteration 
+PRETTYPRINT sqrtx_squared
+PRETTYPRINT sqrtx 
+
+// look for convergence
+
+ASSERT "Convergence Complete" TOLERANCE >|| sqrt_iteration 
+
+
+
+
+sqrt_polynomial = 
+
+	7 - x^2
+
+
+sqrt_poly_derivative = 
+
+	 - 2*x
+
+Reading... C:\workspace\MathFields\scripts\SqrtIteration.txt
+
+sqrt_iteration = 
+
+	-3 = -3 / 1 = (  - 3 ) / ( 1 )
+
+
+sqrtx_squared = 
+
+	16 = 16 / 1 = ( 2^4 ) / ( 1 )
+
+
+sqrtx = 
+
+	4 = 4 / 1 = ( 2^2 ) / ( 1 )
+
+
+sqrt_iteration = 
+
+	1.125 = 9 / 8 = ( 3^2 ) / ( 2^3 )
+
+
+sqrtx_squared = 
+
+	8.265625 = 529 / 64 = ( 23^2 ) / ( 2^6 )
+
+
+sqrtx = 
+
+	2.875 = 23 / 8 = ( 23 ) / ( 2^3 )
+
+
+sqrt_iteration = 
+
+	0.220108695652174 = 81 / 368 = ( 3^4 ) / ( 2^4 * 23 )
+
+
+sqrtx_squared = 
+
+	7.048447837901701 = 954529 / 135424 = ( 977^2 ) / ( 2^8 * 23^2 )
+
+
+sqrtx = 
+
+	2.654891304347826 = 977 / 368 = ( 977 ) / ( 2^4 * 23 )
+
+
+sqrt_iteration = 
+
+	0.0091242601575364 = 6561 / 719072 = ( 3^8 ) / ( 2^5 * 23 * 977 )
+
+
+sqrtx_squared = 
+
+	7.000083252123423 = 3619494835009 / 517064541184 = ( 1902497^2 ) / ( 2^10 * 23^2 * 977^2 )
+
+
+sqrtx = 
+
+	2.64576704419029 = 1902497 / 719072 = ( 1902497 ) / ( 2^5 * 23 * 977 )
+
+
+sqrt_iteration = 
+
+	1.57330789204E-5 = 43046721 / 2736064645568 = ( 3^16 ) / ( 2^6 * 23 * 977 * 1902497 )
+
+
+sqrtx_squared = 
+
+	7.00000000024753 = 52402348214943038423150209 / 7486049744727145462042624 = ( 127^2 * 449^2 * 126947839^2 ) / ( 2^12 * 23^2 * 977^2 * 1902497^2 )
+
+
+sqrtx = 
+
+	2.6457513111113693 = 7238946623297 / 2736064645568 = ( 127 * 449 * 126947839 ) / ( 2^6 * 23 * 977 * 1902497 )
+
+
+sqrt_iteration = 
+
+	4.67788E-11 = 1853020188851841 / 39612451854313553433195392 = ( 3^32 ) / ( 2^7 * 23 * 127 * 449 * 977 * 1902497 * 126947839 )
+
+
+sqrtx_squared = 
+
+	7 = 10984024393372164945081646087753767584561255399324929 / 1569146341910309277868316057704782153153799650033664 = ( 31231^2 * 313727^2 * 10696531080798721^2 ) / ( 2^14 * 23^2 * 127^2 * 449^2 * 977^2 * 1902497^2 * 126947839^2 )
+
+
+sqrtx = 
+
+	2.6457513110645907 = 104804696428033056657448577 / 39612451854313553433195392 = ( 31231 * 313727 * 10696531080798721 ) / ( 2^7 * 23 * 127 * 449 * 977 * 1902497 * 126947839 )
+
+
+Script interrupted in iteration 6
+Assertion "Convergence Complete" has been validated, TOLERANCE >|| sqrt_iteration 
+*** Script has terminated
+
+
+
+Reading... C:\workspace\MathFields\scripts\BERNOULLI.txt
+bn = BERNOULLI(n)
+PRETTYPRINT bn
+n = n + 1
+
+bn = 
+
+	0.5 = 1 / 2 = ( 1 ) / ( 2 )
+
+
+bn = 
+
+	0.1666666666666667 = 1 / 6 = ( 1 ) / ( 2 * 3 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-0.0333333333333334 = -1 / 30 = (  - 1 ) / ( 2 * 3 * 5 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	0.0238095238095239 = 1 / 42 = ( 1 ) / ( 2 * 3 * 7 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-0.0333333333333334 = -1 / 30 = (  - 1 ) / ( 2 * 3 * 5 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	0.0757575757575758 = 5 / 66 = ( 5 ) / ( 2 * 3 * 11 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-0.2531135531135532 = -691 / 2730 = (  - 691 ) / ( 2 * 3 * 5 * 7 * 13 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	1.1666666666666667 = 7 / 6 = ( 7 ) / ( 2 * 3 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-7.092156862745098 = -3617 / 510 = (  - 3617 ) / ( 2 * 3 * 5 * 17 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	54.971177944862156 = 43867 / 798 = ( 43867 ) / ( 2 * 3 * 7 * 19 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-529.1242424242424 = -174611 / 330 = (  - 283 * 617 ) / ( 2 * 3 * 5 * 11 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	6192.123188405797 = 854513 / 138 = ( 11 * 131 * 593 ) / ( 2 * 3 * 23 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-86580.25311355312 = -236364091 / 2730 = (  - 103 * 2294797 ) / ( 2 * 3 * 5 * 7 * 13 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	1425517.1666666667 = 8553103 / 6 = ( 13 * 657931 ) / ( 2 * 3 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	-2.7298231067816094E7 = -23749461029 / 870 = (  - 7 * 9349 * 362903 ) / ( 2 * 3 * 5 * 29 )
+
+
+bn = 
+
+	0
+
+
+bn = 
+
+	6.015808739006424E8 = 8615841276005 / 14322 = ( 5 * 1721 * 1001259881 ) / ( 2 * 3 * 7 * 11 * 31 )
+
+
+Iteration 30 has completed
+*** Maximum iteration count exceeded
+
+
