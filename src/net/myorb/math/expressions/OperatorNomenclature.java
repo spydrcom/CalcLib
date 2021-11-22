@@ -284,6 +284,7 @@ public class OperatorNomenclature
 	TRANSFORM_PREFIX			= "!%",			// !% f(x) = 		identify function transformation as definition
 	TRANSFORM_ENABLE			= "!^",			// !^ f(x) = 		enable function as transformation source
 	COMMENT_PREFIX				= "//",			// // anything 		comment to put in output stream
+	TIP_PREFIX					= "//*",		// //* anything 	comment to associate with script
 
 	INDEXING_OPERATOR			= "#",			// A#1		 		as opposed to conventional form of index a(1) or a[1]
 	COL_INDEX_OPERATOR			= "|#",			// M|#1 			column vector indexing for matrices (same as COL function)

@@ -97,6 +97,10 @@ public class DisplayFiles extends MenuManager
 			addToMenuBar (dataItems, "Data", menuBar);
 			addToMenuBar (scriptItems, "Scripts", menuBar);
 		}
+
+		EnvironmentCore
+		.getExecutionEnvironment (components).getControl ().getEngine ()
+		.getScriptManager ().connectFileDrop (script);
 	}
 
 

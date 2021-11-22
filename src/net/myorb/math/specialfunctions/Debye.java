@@ -31,10 +31,14 @@ public class Debye
 		/* (non-Javadoc)
 		 * @see net.myorb.math.computational.ADSplineRealSegmentManager#eval(java.lang.Double)
 		 */
-		public Double eval (Double x)  { return Math.pow (x, N) / (Math.exp (x) - 1); }
+		public Double eval (Double x) 
+		{
+			return Math.pow (x, N) / (Math.exp (x) - 1);
+		}
 		
 	}
 
+	public static double nXn (double x, int n) { return n / Math.pow (x, n); }
 
 	/**
 	 * spline for D1
@@ -50,7 +54,7 @@ public class Debye
 	{
 		if (splineD1 == null)
 		{ splineD1 = new D1Segments ().newSplineInstance (); }
-		return splineD1.eval (x);
+		return splineD1.eval (x) * nXn (x, 1);
 	}
 	static Function<Double> splineD1 = null;
 
@@ -69,7 +73,7 @@ public class Debye
 	{
 		if (splineD2 == null)
 		{ splineD2 = new D2Segments ().newSplineInstance (); }
-		return splineD2.eval (x);
+		return splineD2.eval (x) * nXn (x, 2);
 	}
 	static Function<Double> splineD2 = null;
 
@@ -88,7 +92,7 @@ public class Debye
 	{
 		if (splineD3 == null)
 		{ splineD3 = new D3Segments ().newSplineInstance (); }
-		return splineD3.eval (x);
+		return splineD3.eval (x) * nXn (x, 3);
 	}
 	static Function<Double> splineD3 = null;
 
@@ -107,7 +111,7 @@ public class Debye
 	{
 		if (splineD4 == null)
 		{ splineD4 = new D4Segments ().newSplineInstance (); }
-		return splineD4.eval (x);
+		return splineD4.eval (x) * nXn (x, 4);
 	}
 	static Function<Double> splineD4 = null;
 
@@ -126,7 +130,7 @@ public class Debye
 	{
 		if (splineD5 == null)
 		{ splineD5 = new D5Segments ().newSplineInstance (); }
-		return splineD5.eval (x);
+		return splineD5.eval (x) * nXn (x, 5);
 	}
 	static Function<Double> splineD5 = null;
 
