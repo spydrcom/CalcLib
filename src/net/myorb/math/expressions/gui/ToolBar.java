@@ -52,6 +52,10 @@ public class ToolBar extends ToolBarTabbedPanes
 		list.add (new CreateCommand ("NEW ", "ScriptFiles", processor, false, c));
 		list.add (new EditCommand ("EDIT ", "ScriptFiles", processor, true, c));
 
+		list.add (new ScriptFilesCommand (processor, c));
+		list.add (new ActiveFilesCommand (processor, c));
+		list.add (new CachedFilesCommand (processor, c));
+
 		list.add (new IterateCommand (processor, c));
 		list.add (new ForkCommand (processor, c));
 		list.add (new PrintCommand (processor, c));

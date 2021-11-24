@@ -1,9 +1,10 @@
 
 package net.myorb.math.expressions.commands;
 
+import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.evaluationstates.Environment;
-
+import net.myorb.math.expressions.gui.DisplayConsole;
 import net.myorb.data.abstractions.SimpleUtilities;
 
 import java.util.List;
@@ -21,8 +22,12 @@ public class CommandAdministration<T> extends Utilities<T>
 	(Environment<T> environment)
 	{
 		super (environment);
+		control = environment.getControl ();
 		commands = environment.getCommandDictionary ();
+		if (control != null) guiMap = control.getGuiMap ();
 	}
+	protected DisplayConsole.StreamProperties guiMap;
+	protected EvaluationControlI<T> control;
 
 
 	/**

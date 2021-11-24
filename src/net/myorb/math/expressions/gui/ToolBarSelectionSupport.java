@@ -332,6 +332,87 @@ class IterateCommand extends SelectedCommand implements MenuManager.HotKeyAvaila
 
 
 /**
+ * list script files in table
+ */
+class ScriptFilesCommand extends SelectedCommand implements MenuManager.HotKeyAvailable
+{
+
+	ScriptFilesCommand
+		(
+			DisplayIO.CommandProcessor processor, Component c
+		)
+	{
+		super ("SHOWFILES ", "ScriptFiles", processor, false, c);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.components.MenuManager.HotKeyAvailable#getHotKey()
+	 */
+	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_F, ActionEvent.ALT_MASK); }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "Filelist"; }
+
+}
+
+
+/**
+ * list active scripts in table
+ */
+class ActiveFilesCommand extends SelectedCommand implements MenuManager.HotKeyAvailable
+{
+
+	ActiveFilesCommand
+		(
+			DisplayIO.CommandProcessor processor, Component c
+		)
+	{
+		super ("SHOWACTIVE ", "ScriptFiles", processor, false, c);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.components.MenuManager.HotKeyAvailable#getHotKey()
+	 */
+	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_A, ActionEvent.ALT_MASK); }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "Active"; }
+
+}
+
+
+/**
+ * list cached scripts in table
+ */
+class CachedFilesCommand extends SelectedCommand implements MenuManager.HotKeyAvailable
+{
+
+	CachedFilesCommand
+		(
+			DisplayIO.CommandProcessor processor, Component c
+		)
+	{
+		super ("SHOWCACHE ", "ScriptFiles", processor, false, c);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.components.MenuManager.HotKeyAvailable#getHotKey()
+	 */
+	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_C, ActionEvent.ALT_MASK); }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "Cached"; }
+
+}
+
+
+/**
  * run script in background thread
  */
 class ForkCommand extends SelectedCommand implements MenuManager.MnemonicAvailable
@@ -356,6 +437,7 @@ class ForkCommand extends SelectedCommand implements MenuManager.MnemonicAvailab
 	public String toString () { return "Fork"; }
 
 }
+
 
 /**
  * show tracking list of contour plots

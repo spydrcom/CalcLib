@@ -54,23 +54,24 @@ public class EnvironmentCore
 
 	/**
 	 * get the command processor for the app
-	 * @param coreMap the map holding the GUI objects
+	 * @param properties the map holding the GUI objects
 	 * @return the command processor object
 	 */
-	public static CommandProcessor getCommandProcessor (CoreMap coreMap)
+	public static CommandProcessor getCommandProcessor (DisplayConsole.StreamProperties properties)
 	{
-		return (CommandProcessor) coreMap.get (CoreCommandProcessor);
+		return (CommandProcessor) properties.get (CoreCommandProcessor);
 	}
 
 
 	/**
 	 * get the master object repository for the app
-	 * @param coreMap the map holding the GUI objects
+	 * @param properties the map holding the GUI objects
 	 * @return the central object repository
 	 */
-	public static Environment <?> getExecutionEnvironment (CoreMap coreMap)
+	public static Environment <?> getExecutionEnvironment
+	(DisplayConsole.StreamProperties properties)
 	{
-		return (Environment <?>) coreMap.get (CoreExecutionEnvironment);
+		return (Environment <?>) properties.get (CoreExecutionEnvironment);
 	}
 
 	/**

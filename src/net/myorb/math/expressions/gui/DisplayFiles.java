@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions.gui;
 
+import net.myorb.math.expressions.ScriptManager;
+
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.DisplayTable;
 import net.myorb.gui.components.MenuManager;
@@ -18,6 +20,41 @@ public class DisplayFiles extends MenuManager
 {
 
 
+	public static String[][] objectListTable (Object [] list)
+	{
+		int i = 0;
+		String [] [] objectTable = new String [list.length] [1];
+		for (Object o : list) { objectTable [i++] [0] = o.toString (); }
+		return objectTable;
+	}
+
+
+	public static void changeListData
+	(Object tableAccess, Object [] list)
+	{
+		Object[][] newData = objectListTable (list);
+		DisplayTable.changeData (tableAccess, newData);
+	}
+
+
+	public static String[][] fileListTable (File [] list)
+	{
+		int i = 0;
+		String [] [] fileTable = new String [list.length] [1];
+		for (File f : list) { fileTable [i++] [0] = f.getName (); }
+		return fileTable;
+	}
+
+
+	public static void changeFileData
+	(Object tableAccess, String directoryName)
+	{
+		Object[][] newData =
+			fileListTable (directoryOf (directoryName).listFiles ());
+		DisplayTable.changeData (tableAccess, newData);
+	}
+
+
 	/**
 	 * produce table of files
 	 * @param list the list of files to include
@@ -26,9 +63,7 @@ public class DisplayFiles extends MenuManager
 	 */
 	public static JComponent tabulateFiles (File [] list, String header)
 	{
-		int i = 0;
-		String [] [] fileTable = new String [list.length] [1];
-		for (File f : list) { fileTable [i++] [0] = f.getName (); }
+		String [] [] fileTable = fileListTable (list);
 		return DisplayTable.tabulate (fileTable, new String [] {header});
 	}
 
@@ -47,22 +82,22 @@ public class DisplayFiles extends MenuManager
 
 	/**
 	 * build the file tabulation display
-	 * @param components the core symbol map
+	 * @param properties the core symbol map
 	 * @param menuBar the application menu bar being built
 	 * @return the file tabulation display component
 	 */
-	public static JComponent fileSplit (EnvironmentCore.CoreMap components, JMenuBar menuBar)
+	public static JComponent fileSplit (DisplayConsole.StreamProperties properties, JMenuBar menuBar)
 	{
 		JComponent script, data;
 		JComponent c = DisplayEnvironment.vSplit
 				(script = scriptFiles (), data = dataFiles ());
-		processActions (components, script, data, menuBar);
+		processActions (properties, script, data, menuBar);
 
-		if (components != null)
+		if (properties != null)
 		{
-			components.put (DisplayEnvironment.DataFiles, data);
-			components.put (DisplayEnvironment.ScriptFiles, script);
-			components.put (DisplayEnvironment.FileSplit, c);
+			properties.put (DisplayEnvironment.DataFiles, data);
+			properties.put (DisplayEnvironment.ScriptFiles, script);
+			properties.put (DisplayEnvironment.FileSplit, c);
 		}
 
 		return c;
@@ -78,13 +113,13 @@ public class DisplayFiles extends MenuManager
 	 */
 	static void processActions
 		(
-			EnvironmentCore.CoreMap components,
+			DisplayConsole.StreamProperties properties,
 			JComponent script, JComponent data,
 			JMenuBar menuBar
 		)
 	{
 		DisplayIO.CommandProcessor
-			p = EnvironmentCore.getCommandProcessor (components);
+			p = EnvironmentCore.getCommandProcessor (properties);
 
 		ActionList dataItems = ToolBar.getDataTableMenuItems (p, script);
 		ActionList scriptItems = ToolBar.getScriptTableMenuItems (p, script);
@@ -98,19 +133,43 @@ public class DisplayFiles extends MenuManager
 			addToMenuBar (scriptItems, "Scripts", menuBar);
 		}
 
-		EnvironmentCore
-		.getExecutionEnvironment (components).getControl ().getEngine ()
-		.getScriptManager ().connectFileDrop (script);
+		getScriptManager (properties).connectFileDrop (script);
+	}
+
+
+	public static ScriptManager<?> getScriptManager (DisplayConsole.StreamProperties properties)
+	{
+		return EnvironmentCore.getExecutionEnvironment (properties)
+			.getControl ().getEngine ().getScriptManager ();
 	}
 
 
 	/**
 	 * show files in frame
-	 * @param components the core symbol map
+	 * @param properties the core symbol map
 	 */
-	public static void showFiles (EnvironmentCore.CoreMap components)
+	public static void showFiles (DisplayConsole.StreamProperties properties)
 	{
-		new DisplayFrame (fileSplit (components, null), "Files").show ();
+		new DisplayFrame (fileSplit (properties, null), "Files").show ();
+	}
+
+
+	public static void showScriptCache (DisplayConsole.StreamProperties properties)
+	{
+		Object[] cache = getScriptManager (properties).getScriptNames ().toArray ();
+		changeListData (properties.get (DisplayEnvironment.ScriptFiles), cache);
+	}
+
+
+	public static void showScriptDirectory (DisplayConsole.StreamProperties properties)
+	{
+		changeFileData (properties.get (DisplayEnvironment.ScriptFiles), "Scripts");
+	}
+
+
+	public static void displayActiveScripts (DisplayConsole.StreamProperties properties)
+	{
+		getScriptManager (properties).displayScriptCache ();
 	}
 
 

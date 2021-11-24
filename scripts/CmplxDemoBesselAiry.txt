@@ -11,15 +11,15 @@ LIBRARY JRE java.lang.Math
 
 LIBRARY Gamma cern.jet.stat.Gamma
 
-!+ gamma(x)   = Gamma.gamma
+!+ GAMMA(x)   = Gamma.gamma
 
 
 
 // modified Bessel Ialpha and Kalpha
 
-!! IalphaTerm(alpha,x,m) = (x/2)^(2*m+alpha) / m! / gamma (m+alpha+1)
+!! IalphaTerm(alpha,x,m) = (x/2)^(2*m+alpha) / ( m! * GAMMA (m+alpha+1) )
 
-!! Ialpha(alpha,x) = SIGMA [0<=m<=INFINITY] ( (x/2)^(2*m+alpha) / m! / gamma (m+alpha+1) ) )
+!! Ialpha(alpha,x) = SIGMA [0<=m<=INFINITY] ( (x/2)^(2*m+alpha) / ( m! * GAMMA (m+alpha+1) ) )
 !! Kalpha(alpha,x) = pi/2 * ( Ialpha(-alpha,x) - Ialpha(alpha,x) ) / SIN (pi*alpha)
 
 

@@ -3,7 +3,9 @@ package net.myorb.math.expressions;
 
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.evaluationstates.Environment;
+
 import net.myorb.math.expressions.gui.DisplayConsole;
+import net.myorb.math.expressions.gui.DisplayFiles;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.abstractions.ZipUtilities;
@@ -13,6 +15,7 @@ import net.myorb.data.abstractions.ZipSource;
 import net.myorb.gui.components.FileDrop;
 
 import java.awt.Component;
+import java.io.PrintStream;
 import java.io.File;
 
 import java.util.ArrayList;
@@ -80,9 +83,9 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 
 	public ScriptManager (EvaluationControlI<T> control, Environment<T> environment)
 	{
+		this.control = control;
 		this.scripts = new HashMap<String,Script>();
 		this.environment = environment;
-		this.control = control;
 	}
 	protected EvaluationControlI<T> control;
 	protected Environment<T> environment;
@@ -118,23 +121,28 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	 */
 	public void displayScriptCache ()
 	{
+		PrintStream out = environment.getOutStream ();
+
+		out.println ();
+		out.println ("===");
+
 		for (Script s : getScriptCache ())
 		{
-			System.out.print ("'");
-			System.out.print (s);
-			System.out.print ("'");
+			out.print ("'");
+			out.print (s);
+			out.print ("'");
 
 			if (s.tip != null)
 			{
-				System.out.print (" - ");
-				System.out.print (s.tip);
+				out.print (" - ");
+				out.print (s.tip);
 			}
 
-			System.out.println ();
+			out.println ();
 		}
 
-		System.out.println ("===");
-		System.out.println ();
+		out.println ("===");
+		out.println ();
 	}
 
 
@@ -365,7 +373,8 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	 */
 	public void process (File file)
 	{
-		notify (read (file));
+		notify ("Reading... ", file.getAbsolutePath ());
+		read (file);
 	}
 
 
@@ -375,6 +384,7 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	public void process (List<File> files)
 	{
 		for (File f : files) process (f);
+		DisplayFiles.showScriptCache (control.getGuiMap ());
 		displayScriptCache ();
 	}
 
