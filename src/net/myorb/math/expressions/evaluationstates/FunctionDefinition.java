@@ -95,21 +95,33 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 	 */
 	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
 	{
-		String name = tokens.get (1).getTokenImage ();
-
+		String name;
+		LibraryObject<T> lib = getLib (name = tokens.get (1).getTokenImage ());
+		Map<String, Object> parameters = lib.getParameterization ();
+		configure (name, tokens, parameters);
+	}
+	LibraryObject<T> getLib (String name)
+	{
 		@SuppressWarnings("unchecked")
 		LibraryObject<T> lib = (LibraryObject<T>) environment.getSymbolMap ().get (name);
-		Map<String, Object> parameters = lib.getParameterization ();
-
+		return lib;
+	}
+	void configure
+		(
+			String name,
+			List<TokenParser.TokenDescriptor> tokens,
+			Map<String, Object> parameters
+		)
+	{
 		int n = 2;
 		while (n+1 < tokens.size())
 		{
 			String
-			sym = tokens.get (n++).getTokenImage (),
-			val = tokens.get (n++).getTokenImage ();
+				sym = tokens.get (n++).getTokenImage (),
+				val = tokens.get (n++).getTokenImage ();
 			parameters.put (sym, val);
 		}
-		System.out.println (parameters);
+		System.out.println ("Lib " + name + " config " + parameters);
 	}
 
 
