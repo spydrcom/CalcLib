@@ -42,6 +42,7 @@ public class OperatorNomenclature
 	DUMPING_KEYWORD = "DUMPING",				// let DUMPING=1		trace enable flag (show value stack changes)
 	FAMILY_KEYWORD = "FAMILY",					// FAMILY name count	load polynomial power function of named family
 	LIBRARY_KEYWORD = "LIBRARY",				// LIBRARY L java.Math	import a class as a library of functions
+	CONFIGURE_KEYWORD = "CONFIGURE",			// CONFIGURE L P1 ...	post symbols to a library of functions
 	IMPORT_KEYWORD = "IMPORT",					// IMPORT m  file		import data from file into specified matrix
 	EXPORT_KEYWORD = "EXPORT",					// EXPORT m  file		export data to file from specified matrix
 	SETMODE_KEYWORD = "SETMODE",				// SETMODE				show precision and value display mode options

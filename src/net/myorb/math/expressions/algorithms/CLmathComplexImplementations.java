@@ -7,7 +7,7 @@ import net.myorb.math.complexnumbers.ComplexLibrary;
 import net.myorb.math.complexnumbers.GammaLanczos;
 import net.myorb.math.complexnumbers.ZetaComplexAnalytic;
 import net.myorb.math.complexnumbers.JreComplexSupportLibrary;
-
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
@@ -25,9 +25,10 @@ public class CLmathComplexImplementations
 	static ComplexLibrary<Double> library = new ComplexLibrary<Double> (realMgr, cmplxMgr);
 
 
-	public CLmathComplexImplementations ()
+	public CLmathComplexImplementations
+	(Environment<ComplexValue<Double>> environment)
 	{
-		super (cmplxMgr, cmplxMgr, library);
+		super (cmplxMgr, cmplxMgr, library, environment);
 		this.jreLib = new JreComplexSupportLibrary (realMgr);
 		library.setMathLib (jreLib);
 	}

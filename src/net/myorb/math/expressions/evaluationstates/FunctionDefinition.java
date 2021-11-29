@@ -75,8 +75,10 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 			Method[] classMethods =
 				Class.forName (classPath).getMethods ();
 			Map<String,Method> methods = new HashMap<String,Method> ();
-			for (Method m : classMethods) { methods.put (m.getName (), m); /* System.out.println (m.getName()); */ }
-			library = new LibraryObject (classPath, libraryName, methods);
+			for (Method m : classMethods) { methods.put (m.getName (), m); }
+			LibraryObject<T> libObj = new LibraryObject<T> (classPath, libraryName, methods);
+			libObj.setEnvironment (environment);
+			library = libObj;
 		}
 		catch (Exception e)
 		{
@@ -84,6 +86,30 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 		}
 
 		environment.getSymbolMap ().add (library);
+	}
+
+
+	/**
+	 * supply configuration parameters for library
+	 * @param tokens the tokens of the configuration string
+	 */
+	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
+	{
+		String name = tokens.get (1).getTokenImage ();
+
+		@SuppressWarnings("unchecked")
+		LibraryObject<T> lib = (LibraryObject<T>) environment.getSymbolMap ().get (name);
+		Map<String, Object> parameters = lib.getParameterization ();
+
+		int n = 2;
+		while (n+1 < tokens.size())
+		{
+			String
+			sym = tokens.get (n++).getTokenImage (),
+			val = tokens.get (n++).getTokenImage ();
+			parameters.put (sym, val);
+		}
+		System.out.println (parameters);
 	}
 
 

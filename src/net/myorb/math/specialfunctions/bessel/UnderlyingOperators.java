@@ -10,6 +10,7 @@ import net.myorb.math.specialfunctions.Library;
 
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.Function;
 
 /**
@@ -18,6 +19,12 @@ import net.myorb.math.Function;
  */
 public abstract class UnderlyingOperators extends Library
 {
+
+
+	public static <T> Polynomial.PowerFunction<T> getPoly 
+	(T p, boolean modified, int termCount, PolynomialSpaceManager<T> psm, ExpressionSpaceManager<T> sm)
+	{ return sumOfTerms (0, 0, termCount, plusOne (p, sm), psm, modified, getGammaSum ()); }
+
 
 	/**
 	 * compute Gamma (left, right) as appropriate for data type
@@ -129,10 +136,15 @@ public abstract class UnderlyingOperators extends Library
 		public T eval (T x)
 		{
 			T xOver2 = sm.multiply (x, HALF);
-			T exponentiation = realPower (xOver2, parameter, sm);
+			T exponentiation = TraisedToT (xOver2, parameter);
 			return sm.multiply (exponentiation, polynomial.eval (x));
 		}
 		protected Function<T> polynomial;
+
+		public T TraisedToT (T base, T power)
+		{
+			return realPower (base, power, sm);
+		}
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
@@ -226,9 +238,24 @@ public abstract class UnderlyingOperators extends Library
 		return list;
 	}
 	public abstract <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getFunction (T parameter, int termCount, PolynomialSpaceManager<T> psm);
-	public static int POLYNOMIAL_TERM_COUNT = 25;
+	getFunction (T parameter, int termCount, PolynomialSpaceManager<T> psm);
 
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+	(T parameter, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		return getFunction (parameter, POLYNOMIAL_TERM_COUNT, lib, psm);
+	}
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+	(String kind, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> esm = getExpressionManager (psm);
+		T parameter = esm.convertFromDouble (Double.parseDouble (kind));
+		return getFunction (parameter, POLYNOMIAL_TERM_COUNT, lib, psm);
+	}
+	public abstract <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+	getFunction (T parameter, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm);
+
+	public static int POLYNOMIAL_TERM_COUNT = 25;
 
 }
 

@@ -2,13 +2,14 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
-
+import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
 import net.myorb.data.abstractions.CommonCommandParser.TokenType;
 
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -135,6 +136,18 @@ public class HankelFunctions extends UnderlyingOperators
 		return list;																// list is conjugate pairs
 	}
 	int kind;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.ExtendedPowerLibrary, net.myorb.math.polynomial.PolynomialSpaceManager)
+	 */
+	@Override
+	public <T> FunctionDescription<T> getFunction
+	(T parameter, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		throw new RuntimeException ("Unimplemented");
+	}
+
 
 }
 

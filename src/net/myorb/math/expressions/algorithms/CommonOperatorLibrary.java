@@ -235,6 +235,7 @@ public class CommonOperatorLibrary<T>
 	 */
 	public class MultipleMarshalingWrapper
 		extends AbstractParameterizedFunction
+		implements FormattingRequirement
 	{
 
 		/**

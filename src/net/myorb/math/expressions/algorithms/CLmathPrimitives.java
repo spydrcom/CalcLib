@@ -320,6 +320,15 @@ public abstract class CLmathPrimitives<T> extends CommonOperatorLibrary<T>
 	public CommonOperatorImplementation getBesselImplementation ()
 	{ return new Unimplemented ("Bessel"); }
 
+	/**
+	 * implement function - Bessel Function
+	 * @param symbol the symbol associated with function
+	 * @return function implementation object
+	 */
+	public AbstractParameterizedFunction getBesFunAlgorithm (String symbol)
+	{ return new MultipleMarshalingWrapper (symbol, getBesFunImplementation ()); }
+	public CommonFunctionImplementation getBesFunImplementation ()
+	{ return new Missing ("Bessel Function"); }
 
 }
 

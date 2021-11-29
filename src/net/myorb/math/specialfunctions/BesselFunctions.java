@@ -7,7 +7,7 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.polynomial.PolynomialFamilyManager;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
-
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -76,6 +76,21 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 	}
 	protected PolynomialSpaceManager<T> psm;
 	protected SpaceManager<T> manager;
+
+
+	public SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+	(String kind, T order, ExtendedPowerLibrary<T> lib)
+	{
+		switch (kind.charAt (0))
+		{
+			case 'J': return new OrdinaryFirstKind ().getFunction (order, lib, psm);
+			case 'Y': return new OrdinarySecondKind ().getFunction (order, lib, psm);
+			case 'K': return new ModifiedSecondKind ().getFunction (order, lib, psm);
+			case 'I': return new ModifiedFirstKind ().getFunction (order, lib, psm);
+		}
+
+		return null;
+	}
 
 
 }

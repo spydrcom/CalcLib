@@ -3,9 +3,10 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
+import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.SpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.Polynomial;
 
 /**
@@ -147,6 +148,17 @@ public class SphericalFirstKind extends UnderlyingOperators
 	{
 		SpaceManager<T> sm = psm.getSpaceDescription ();
 		return getj (sm.toNumber (parameter).intValue (), terms, psm);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.ExtendedPowerLibrary, net.myorb.math.polynomial.PolynomialSpaceManager)
+	 */
+	@Override
+	public <T> FunctionDescription<T> getFunction
+	(T parameter, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		throw new RuntimeException ("Unimplemented");
 	}
 
 

@@ -2,11 +2,10 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
-import net.myorb.math.Polynomial;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.Function;
 
 /**
@@ -32,8 +31,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		getI (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		Polynomial.PowerFunction<T> poly = sumOfTerms (0, 0, termCount, plusOne (a, sm), psm, true, getGammaSum ());
-		return new IaFunction<T>(a, poly, sm);
+		return new IaFunction<T>(a, getPoly (a, true, termCount, psm, sm), sm);
 	}
 
 
@@ -76,10 +74,56 @@ public class ModifiedFirstKind extends UnderlyingOperators
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.polynomial.PolynomialSpaceManager)
 	 */
-	public <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getFunction (T parameter, int terms, PolynomialSpaceManager<T> psm)
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+		(T parameter, int terms, PolynomialSpaceManager<T> psm)
 	{
 		return getI (parameter, terms, psm);
+	}
+
+
+	/**
+	 * extended to domain beyond Real
+	 * @param <T> the data type
+	 */
+	public static class IaExtendedFunction<T> extends IaFunction<T>
+	{
+	
+		IaExtendedFunction
+			(
+				T a,
+				Function<T> polynomial,
+				ExtendedPowerLibrary<T> lib,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			super (a, polynomial, sm);
+			this.lib = lib;
+		}
+		ExtendedPowerLibrary<T> lib;
+	
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.bessel.ModifiedFirstKind.IaFunction#TraisedToT(java.lang.Object, java.lang.Object)
+		 */
+		public T TraisedToT (T base, T power)
+		{
+			return lib.power (base, power);
+		}
+	
+	}
+
+
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		return getI (parameter, terms, lib, psm);
+	}
+
+
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getI (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		return new IaExtendedFunction<T>(a, getPoly (a, true, termCount, psm, sm), lib, sm);
 	}
 
 

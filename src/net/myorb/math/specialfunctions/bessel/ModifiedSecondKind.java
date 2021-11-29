@@ -5,7 +5,7 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
-
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -29,7 +29,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 			getK (T a, int termCount, PolynomialSpaceManager<T> psm)
-	{ return new KaFunction<T>(a, termCount, getExpressionManager (psm)); }
+	{ return new KaFunction<T>(a, termCount, null, getExpressionManager (psm)); }
 
 
 	/**
@@ -42,14 +42,20 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	
 		KaFunction
 			(
-				T a, int termCount, ExpressionSpaceManager<T> sm
+				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
 			)
 		{
-			PolynomialSpaceManager<T>
-				psm = new PolynomialSpaceManager<T>(sm);
-			this.Ia = ModifiedFirstKind.getI (a, termCount, psm);
-			this.Ina = ModifiedFirstKind.getI (sm.negate (a), termCount, psm);
+			this.lib = lib;
 			processParameter (a, sm);
+			createK (termCount);
+		}
+		ExtendedPowerLibrary<T> lib;
+
+		protected void createK (int termCount)
+		{
+			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
+			this.Ina = ModifiedFirstKind.getI (sm.negate (parameter), termCount, psm);
+			this.Ia = ModifiedFirstKind.getI (parameter, termCount, psm);
 		}
 		protected SpecialFunctionFamilyManager.FunctionDescription<T> Ia, Ina;
 	
@@ -116,6 +122,43 @@ public class ModifiedSecondKind extends UnderlyingOperators
 		getFunction (T parameter, int terms, PolynomialSpaceManager<T> psm)
 	{
 		return getK (parameter, terms, psm);
+	}
+
+
+	/**
+	 * extended to domain beyond Real
+	 * @param <T> the data type
+	 */
+	public static class KaExtendedFunction<T> extends KaFunction<T>
+	{
+
+		KaExtendedFunction
+			(
+				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
+			)
+		{
+			super (a, termCount, lib, sm);
+		}
+	
+		protected void createK (int termCount)
+		{
+			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
+			this.Ina = ModifiedFirstKind.getI (sm.negate (parameter), termCount, lib, psm);
+			this.Ia = ModifiedFirstKind.getI (parameter, termCount, lib, psm);
+		}
+	
+	}
+
+
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getK (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{ return new KaExtendedFunction<T>(a, termCount, lib, getExpressionManager (psm)); }
+
+
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		return getK (parameter, terms, lib, psm);
 	}
 
 

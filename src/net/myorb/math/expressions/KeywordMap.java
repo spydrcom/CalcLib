@@ -197,6 +197,23 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 
 
 	/**
+	 * process a configure command
+	 * @return a keyword command for the CONFIGURE keyword
+	 */
+	public KeywordCommand constructConfigureKeywordCommand ()
+	{
+		return new KeywordCommand ()
+		{
+			public String describe () 
+			{ return "Configure a library of functions"; }
+
+			public void execute (CommandSequence tokens)
+			{ engine.getFunctionManager ().configureLibrary (tokens); }
+		};
+	}
+
+
+	/**
 	 * process a family command
 	 * @return a keyword command for the FAMILY keyword
 	 */
@@ -1387,6 +1404,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 		// alpha commands allow for case independence
 		addAsLowerCase (OperatorNomenclature.DEFINITION_KEYWORD, constructDefineKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.LIBRARY_KEYWORD, constructLibraryKeywordCommand ());
+		addAsLowerCase (OperatorNomenclature.CONFIGURE_KEYWORD, constructConfigureKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.FAMILY_KEYWORD, constructFamilyKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.CALCULATE_KEYWORD, constructCalculateKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.CALC_ABBREVIATION_KEYWORD, constructCalculateKeywordCommand ());

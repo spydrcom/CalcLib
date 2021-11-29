@@ -1,19 +1,16 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
-
-import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
 
 import net.myorb.math.specialfunctions.ExponentialIntegral;
 import net.myorb.math.specialfunctions.ZetaRealAnalytic;
-import net.myorb.math.specialfunctions.BesselFunctions;
 import net.myorb.math.specialfunctions.AiryFunctions;
 import net.myorb.math.specialfunctions.Bernoulli;
 import net.myorb.math.specialfunctions.Gamma;
 
 import net.myorb.math.ExtendedPowerLibrary;
-import net.myorb.math.Function;
 
 import java.util.List;
 
@@ -31,9 +28,9 @@ public class CLmathRealImplementations
 	static ExtendedPowerLibrary<Double> library = jrePowerLibrary;
 
 
-	public CLmathRealImplementations ()
+	public CLmathRealImplementations (Environment<Double> environment)
 	{
-		super (realMgr, realMgr, library);
+		super (realMgr, realMgr, library, environment);
 	}
 
 
@@ -208,38 +205,6 @@ public class CLmathRealImplementations
 				Double p1 = using.get (0), p2 = using.get (1);
 				return Bernoulli.evalPoly (p1.intValue (), p2);
 			}
-		};
-	}
-
-
-	/*
-	 * 		Bessel
-	 */
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.CLmathPrimitives#getBesselImplementation()
-	 */
-	public CommonOperatorImplementation getBesselImplementation ()
-	{
-		return new CommonOperatorImplementation ()
-		{
-			public void configure (String parameters)
-			{
-				// family Bessel 2 Jp,2.5
-				BesselFunctions<Double> bf;
-
-				String[] fields = parameters.split (";");
-				String kind = fields[0] + "," + fields[1];
-				int upTo = Integer.parseInt (fields[2]);
-
-				(bf = new BesselFunctions<Double> ()).init (realMgr);
-				FunctionList<Double> list = bf.getFunctions (kind, upTo);
-
-				bessel = list.get (list.size () - 1);
-			}
-			public Double evaluate (Double using)
-			{ return bessel.eval (using); }
-			Function<Double> bessel;
 		};
 	}
 

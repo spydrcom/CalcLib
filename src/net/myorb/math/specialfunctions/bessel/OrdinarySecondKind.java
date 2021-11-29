@@ -5,6 +5,7 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -28,7 +29,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 			getY (T a, int termCount, PolynomialSpaceManager<T> psm)
-	{ return new YaFunction<T>(a, termCount, getExpressionManager (psm)); }
+	{ return new YaFunction<T>(a, termCount, null, getExpressionManager (psm)); }
 
 
 	/**
@@ -41,14 +42,20 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 		YaFunction
 			(
-				T a, int termCount, ExpressionSpaceManager<T> sm
+				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
 			)
 		{
-			PolynomialSpaceManager<T>
-				psm = new PolynomialSpaceManager<T>(sm);
-			this.Ja = OrdinaryFirstKind.getJ (a, termCount, psm);
-			this.Jna = OrdinaryFirstKind.getJ (sm.negate (a), termCount, psm);
+			this.lib = lib;
 			processParameter (a, sm);
+			createJ (termCount);
+		}
+		protected ExtendedPowerLibrary<T> lib;
+
+		protected void createJ (int termCount)
+		{
+			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
+			this.Jna = OrdinaryFirstKind.getJ (sm.negate (parameter), termCount, psm);
+			this.Ja = OrdinaryFirstKind.getJ (parameter, termCount, psm);
 		}
 		protected SpecialFunctionFamilyManager.FunctionDescription<T> Ja, Jna;
 
@@ -66,7 +73,6 @@ public class OrdinarySecondKind extends UnderlyingOperators
 			this.negCscAlphaPi = sm.convertFromDouble (-1 / sinAlphaPi);
 			this.parameter = a;
 			this.sm = sm;
-			
 		}
 		protected T cotAlphaPi, negCscAlphaPi;
 		protected Double parameterValue;
@@ -117,6 +123,43 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		getFunction (T parameter, int terms, PolynomialSpaceManager<T> psm)
 	{
 		return getY (parameter, terms, psm);
+	}
+
+
+	/**
+	 * extended to domain beyond Real
+	 * @param <T> the data type
+	 */
+	public static class YaExtendedFunction<T> extends YaFunction<T>
+	{
+	
+		YaExtendedFunction
+			(
+				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
+			)
+		{
+			super (a, termCount, lib, sm);
+		}
+	
+		protected void createJ (int termCount)
+		{
+			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
+			this.Jna = OrdinaryFirstKind.getJ (sm.negate (parameter), termCount, lib, psm);
+			this.Ja = OrdinaryFirstKind.getJ (parameter, termCount, lib, psm);
+		}
+	
+	}
+
+
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getY (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{ return new YaExtendedFunction<T>(a, termCount, lib, getExpressionManager (psm)); }
+
+
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		return getY (parameter, terms, lib, psm);
 	}
 
 

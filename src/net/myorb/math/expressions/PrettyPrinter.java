@@ -196,9 +196,18 @@ public class PrettyPrinter<T> extends RenderingDisplay
 	{
 		if (renderer == null) throw new RuntimeException ("Expression renderer is not configured");
 		if (tokens.get (0).getTokenType() == TokenParser.TokenType.QOT) display (tokens);
-		else display (formatter.render (tokens), ttText);
+		else display (toMML (tokens), ttText);
 	}
 
+	/**
+	 * construct MML description from token stream
+	 * @param tokens the token list that comprises the expression to be rendered
+	 * @return the MML text equivalent for the token stream specified
+	 * @throws Exception for any errors
+	 */
+	public String toMML
+	(List<TokenParser.TokenDescriptor> tokens) throws Exception
+	{ return formatter.render (tokens); }
 
 	/**
 	 * @param commands the document covering commands

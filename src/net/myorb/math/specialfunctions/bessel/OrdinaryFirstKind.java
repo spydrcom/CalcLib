@@ -5,6 +5,7 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 
 import net.myorb.math.Polynomial;
 import net.myorb.math.Function;
@@ -47,8 +48,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		getJ (T p, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		Polynomial.PowerFunction<T> poly = sumOfTerms (0, 0, termCount, plusOne (p, sm), psm, false, getGammaSum ());
-		return new JpFunction<T>(p, poly, sm);
+		return new JpFunction<T>(p, getPoly (p, false, termCount, psm, sm), sm);
 	}
 
 
@@ -95,6 +95,52 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		getFunction (T parameter, int terms, PolynomialSpaceManager<T> psm)
 	{
 		return getJ (parameter, terms, psm);
+	}
+
+
+	/**
+	 * extended to domain beyond Real
+	 * @param <T> the data type
+	 */
+	public static class JpExtendedFunction<T> extends JpFunction<T>
+	{
+	
+		JpExtendedFunction
+			(
+				T p,
+				Function<T> polynomial,
+				ExtendedPowerLibrary<T> lib,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			super (p, polynomial, sm);
+			this.lib = lib;
+		}
+		ExtendedPowerLibrary<T> lib;
+	
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.bessel.OrdinaryFirstKind.JpFunction#TraisedToT(java.lang.Object, java.lang.Object)
+		 */
+		public T TraisedToT (T base, T power)
+		{
+			return lib.power (base, power);
+		}
+	
+	}
+
+
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
+		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		return getJ (parameter, terms, lib, psm);
+	}
+
+
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getJ (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		return new JpExtendedFunction<T>(p, getPoly (p, false, termCount, psm, sm), lib, sm);
 	}
 
 

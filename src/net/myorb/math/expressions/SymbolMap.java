@@ -86,6 +86,11 @@ public class SymbolMap extends HashMap <String, Object>
 		 * @return map of name to method
 		 */
 		Map<String, Method> getMethods ();
+
+		/**
+		 * @return map of parameter objects posted to library
+		 */
+		Map<String, Object> getParameterization ();
 	}
 
 	/**
@@ -283,7 +288,7 @@ public class SymbolMap extends HashMap <String, Object>
 	}
 
 	/**
-	 * force render to use markupForDisplay for functin
+	 * force render to use markupForDisplay for function
 	 */
 	public interface EnhancedFunctionFormattingRequirement {}
 
@@ -762,6 +767,7 @@ public class SymbolMap extends HashMap <String, Object>
 	 * @param out print writer for file
 	 * @param <T> data type
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> void printType
 		(
 			String forName,
@@ -790,7 +796,7 @@ public class SymbolMap extends HashMap <String, Object>
 		else if (o instanceof LibraryObject)							// for Library the classpath is dumped
 		{
 			out.print ("\t");
-			out.print (((LibraryObject)o).formatPretty ());
+			out.print (((LibraryObject<T>)o).formatPretty ());
 		}
 		else if ((description = helpTable.get (forName)) != null)
 		{
