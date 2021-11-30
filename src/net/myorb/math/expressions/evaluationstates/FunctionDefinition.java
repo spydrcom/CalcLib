@@ -103,7 +103,8 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 	LibraryObject<T> getLib (String name)
 	{
 		@SuppressWarnings("unchecked")
-		LibraryObject<T> lib = (LibraryObject<T>) environment.getSymbolMap ().get (name);
+		LibraryObject<T> lib = (LibraryObject<T>) environment
+			.getSymbolMap ().get (name);
 		return lib;
 	}
 	void configure
@@ -114,11 +115,11 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 		)
 	{
 		int n = 2;
+		String sym, val;
 		while (n+1 < tokens.size())
 		{
-			String
-				sym = tokens.get (n++).getTokenImage (),
-				val = tokens.get (n++).getTokenImage ();
+			sym = tokens.get (n++).getTokenImage ();
+			val = tokens.get (n++).getTokenImage ();
 			parameters.put (sym, val);
 		}
 		System.out.println ("Lib " + name + " config " + parameters);
