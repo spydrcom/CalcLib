@@ -16,12 +16,45 @@ import java.util.Map;
 public class LibraryObject<T> extends OperationObject implements SymbolMap.Library
 {
 
+	public interface InstanceGenerator<T>
+	{
+		void newInstance (String sym, LibraryObject<T> lib);
+		void setEnvironment (Environment<T> environment);
+	}
+
 	public LibraryObject
 	(String classpath, String name, Map<String, Method> methods)
 	{
 		super (name, 0);
 		this.methods = methods;
 		this.classpath = classpath;
+	}
+
+	public void newInstance
+	(String sym, Environment<T> environment)
+	throws Exception
+	{
+		@SuppressWarnings("unchecked")
+		InstanceGenerator<T> generator = (InstanceGenerator<T>)
+			Class.forName (classpath).newInstance ();
+		generator.setEnvironment (environment);
+		generator.newInstance (sym, this);
+	}
+
+	public static <T> void newInstance
+	(String sym, String lib, Environment<T> environment)
+	{
+		try
+		{
+			@SuppressWarnings("unchecked")
+			LibraryObject<T> library = (LibraryObject<T>)
+				environment.getSymbolMap ().get (lib);
+			library.newInstance (sym, environment);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException ("Unable to generate instance for " + sym, e);
+		}
 	}
 
 	/* (non-Javadoc)

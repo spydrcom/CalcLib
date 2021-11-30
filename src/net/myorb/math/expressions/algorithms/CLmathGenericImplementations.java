@@ -198,10 +198,9 @@ public abstract class CLmathGenericImplementations<T>
 	 */
 	ClMathBessel<T> getBesselParameterManager ()
 	{
-		return new ClMathBessel<T>
-		(
-			manager, conversion, library, environment
-		);
+		ClMathBessel<T> bessel = new ClMathBessel<T>();
+		bessel.setEnvironment (environment);
+		return bessel;
 	}
 
 

@@ -79,14 +79,14 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 
 
 	public SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
-	(String kind, T order, ExtendedPowerLibrary<T> lib)
+	(String kind, T order, int terms, ExtendedPowerLibrary<T> lib)
 	{
 		switch (kind.charAt (0))
 		{
-			case 'J': return new OrdinaryFirstKind ().getFunction (order, lib, psm);
-			case 'Y': return new OrdinarySecondKind ().getFunction (order, lib, psm);
-			case 'K': return new ModifiedSecondKind ().getFunction (order, lib, psm);
-			case 'I': return new ModifiedFirstKind ().getFunction (order, lib, psm);
+			case 'J': return new OrdinaryFirstKind ().getFunction (order, terms, lib, psm);
+			case 'Y': return new OrdinarySecondKind ().getFunction (order, terms, lib, psm);
+			case 'K': return new ModifiedSecondKind ().getFunction (order, terms, lib, psm);
+			case 'I': return new ModifiedFirstKind ().getFunction (order, terms, lib, psm);
 		}
 
 		return null;
