@@ -84,7 +84,8 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 		function = methods.get (functionName);
 		Type[] parameterTypes = function.getGenericParameterTypes ();
 		parameterType = new ExtendedDataConversions.Types[parameterTypes.length];
-		returnType = ExtendedDataConversions.getTypeFor (function.getGenericReturnType ().toString ());
+		String fReturnType = function.getGenericReturnType ().toString ();
+		returnType = ExtendedDataConversions.getTypeFor (fReturnType);
 
 		for (int i = 0; i < parameterTypes.length; i++)
 		{
@@ -149,8 +150,13 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 	public ValueManager.GenericValue returnValueFor (Object returned)
 	{
 		if (returned == null)
+		{
 			return valueManager.newUndefinedSymbolReference (functionName);
-		else return converter.convertObject (returned, returnType);
+		}
+		else
+		{
+			return converter.convertObject (returned, returnType);
+		}
 	}
 	protected ExtendedDataConversions.Types returnType;
 

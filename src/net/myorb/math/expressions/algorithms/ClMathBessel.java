@@ -74,9 +74,9 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 		/**
 		 * @return configured alpha value
 		 */
-		public T getAlpha ()
+		public double getAlpha ()
 		{
-			return parameterManager.getAlpha ();
+			return manager.toNumber (parameterManager.getAlpha ()).doubleValue ();
 		}
 
 	}

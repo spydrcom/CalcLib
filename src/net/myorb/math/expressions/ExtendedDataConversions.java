@@ -91,15 +91,28 @@ public class ExtendedDataConversions<T> extends DataConversions<T>
 	 */
 	public ValueManager.GenericValue convertObject (Object object, Types type)
 	{
-		if (type == null) { return valueManager.newStructure (object); }
-		
-		switch (type)
+		if (object instanceof Number)
 		{
-			case BOOLEAN: return convertBoolean (object);
-			case TXT:     return valueManager.newText (object.toString ());
-			case MAT:     return matrixFor ((double[][])object);
-			case VEC:     return vectorFor ((double[])object);
-			default:      return convertNumber (object);
+			return convertNumber (object);
+		}
+		else if (object instanceof ComplexMarker)
+		{
+			return valueManager.newStructure (new ComplexWrapper ((ComplexMarker) object));
+		}
+		else if (type == null)
+		{
+			return valueManager.newStructure (object);
+		}
+		else
+		{
+			switch (type)
+			{
+				case BOOLEAN: return convertBoolean (object);
+				case TXT:     return valueManager.newText (object.toString ());
+				case MAT:     return matrixFor ((double[][])object);
+				case VEC:     return vectorFor ((double[])object);
+				default:      return convertNumber (object);
+			}
 		}
 	}
 	public ValueManager.GenericValue convertNumber (Object from)

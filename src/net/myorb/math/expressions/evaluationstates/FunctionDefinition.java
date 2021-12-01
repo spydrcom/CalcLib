@@ -68,14 +68,13 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 
 		tokens.remove (0);
 		String classPath = TokenParser.toString (tokens).replace (" ", "");
-		SymbolMap.Named library;
+		LibraryObject<T> library;
 
 		try
 		{
 			Map<String,Method> methods = getMethodMap (Class.forName (classPath));
-			LibraryObject<T> libObj = new LibraryObject<T> (classPath, libraryName, methods);
-			libObj.setEnvironment (environment);
-			library = libObj;
+			library = new LibraryObject<T> (classPath, libraryName, methods);
+			library.setEnvironment (environment);
 		}
 		catch (Exception e)
 		{
