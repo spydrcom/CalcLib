@@ -72,6 +72,7 @@ public class LibraryObject<T> extends OperationObject implements SymbolMap.Libra
 	 * @param sym the name for the symbol
 	 * @param lib the name of the library to be used for configuration
 	 * @param environment the session environment object
+	 * @param <T> data type being processed
 	 */
 	public static <T> void newInstance
 	(String sym, String lib, Environment<T> environment)
