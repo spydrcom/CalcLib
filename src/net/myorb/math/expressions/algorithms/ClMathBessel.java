@@ -17,6 +17,11 @@ import net.myorb.math.Function;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * manage parameterization of functions declared as Bessel
+ * @param <T> data type being processed
+ * @author Michael Druckman
+ */
 public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 {
 
@@ -30,7 +35,10 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	}
 
 
-	class BesselAbstraction extends MultipleMarshalingWrapper
+	/**
+	 * Bessel function object base class
+	 */
+	public class BesselAbstraction extends MultipleMarshalingWrapper
 	{
 
 		BesselAbstraction (String sym, LibraryObject<T> lib)
@@ -63,6 +71,9 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 		}
 		BesselParameterManager<T> parameterManager;
 
+		/**
+		 * @return configured alpha value
+		 */
 		public T getAlpha ()
 		{
 			return parameterManager.getAlpha ();
@@ -71,12 +82,18 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	}
 
 
+	/**
+	 * @return allocate an object that manages configuration from start-up XML source
+	 */
 	public CommonFunctionImplementation getConfigurableBesselImplementation ()
 	{
 		return new ConfigurableBesselImplementation ();
 	}
 
 
+	/**
+	 * an object that manages configuration from start-up XML source
+	 */
 	class ConfigurableBesselImplementation extends BesselImplementation
 	{
 		/* (non-Javadoc)
@@ -142,6 +159,7 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 		{ return markupForDisplay (operator, operand, using); }
 
 		/**
+		 * connect parameter manager from configuration
 		 * @param bessel parameter processing object
 		 */
 		public void setParameterManager
@@ -166,6 +184,10 @@ class BesselParameterManager<T>
 	static final int DEFAULT_TERM_COUNT = 20;
 
 
+	/**
+	 * @param parameters map of configured parameters
+	 * @param environment description of the session
+	 */
 	BesselParameterManager (Map<String,Object> parameters, Environment<T> environment)
 	{
 		this (parameters.get ("kind"), parameters.get ("alpha"), parameters.get ("terms"), environment);
@@ -187,10 +209,19 @@ class BesselParameterManager<T>
 	String kind;
 
 
+	/**
+	 * get configured term count
+	 * @return configured count of terms
+	 */
 	public int getTermCount () { return this.terms; }
 	int terms = DEFAULT_TERM_COUNT;
 
 
+	/**
+	 * construct MML for function identifier
+	 * @param using the node formatting tool
+	 * @return the function reference MML
+	 */
 	String render (NodeFormatting using)
 	{
 		try
@@ -203,6 +234,11 @@ class BesselParameterManager<T>
 	}
 
 
+	/**
+	 * parse the configuration source for the alpha value
+	 * @param configuration the text of the configuration parameters
+	 * @param environment description of the session
+	 */
 	void parseAlpha (String configuration, Environment<T> environment)
 	{
 		alphaManager = new ParameterManager<T> (environment);
@@ -212,6 +248,11 @@ class BesselParameterManager<T>
 	ParameterManager<T> alphaManager;
 
 
+	/**
+	 * get Bessel function instance from library
+	 * @param manager the description of the domain space
+	 * @param library the library holding the model for the function
+	 */
 	void buildFunction (SpaceManager<T> manager, ExtendedPowerLibrary<T> library)
 	{
 		BesselFunctions<T> functions;

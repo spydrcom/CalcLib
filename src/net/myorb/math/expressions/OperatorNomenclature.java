@@ -43,6 +43,7 @@ public class OperatorNomenclature
 	FAMILY_KEYWORD = "FAMILY",					// FAMILY name count	load polynomial power function of named family
 	LIBRARY_KEYWORD = "LIBRARY",				// LIBRARY L java.Math	import a class as a library of functions
 	CONFIGURE_KEYWORD = "CONFIGURE",			// CONFIGURE L P1 ...	post symbols to a library of functions
+	INSTANCE_KEYWORD = "INSTANCE",				// INSTANCE NAME LIB	post symbol defined by a parameter library
 	IMPORT_KEYWORD = "IMPORT",					// IMPORT m  file		import data from file into specified matrix
 	EXPORT_KEYWORD = "EXPORT",					// EXPORT m  file		export data to file from specified matrix
 	SETMODE_KEYWORD = "SETMODE",				// SETMODE				show precision and value display mode options

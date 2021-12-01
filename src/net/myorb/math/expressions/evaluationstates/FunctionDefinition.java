@@ -72,10 +72,7 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 
 		try
 		{
-			Method[] classMethods =
-				Class.forName (classPath).getMethods ();
-			Map<String,Method> methods = new HashMap<String,Method> ();
-			for (Method m : classMethods) { methods.put (m.getName (), m); }
+			Map<String,Method> methods = getMethodMap (Class.forName (classPath));
 			LibraryObject<T> libObj = new LibraryObject<T> (classPath, libraryName, methods);
 			libObj.setEnvironment (environment);
 			library = libObj;
@@ -86,6 +83,18 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 		}
 
 		environment.getSymbolMap ().add (library);
+	}
+
+
+	/**
+	 * @param c class to be mapped
+	 * @return a Map of methods from name
+	 */
+	public static Map<String,Method> getMethodMap (Class<?> c)
+	{
+		Map<String,Method> methods = new HashMap<String,Method> ();
+		for (Method m : c.getMethods ()) { methods.put (m.getName (), m); }
+		return methods;
 	}
 
 
@@ -119,10 +128,26 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 		while (n+1 < tokens.size())
 		{
 			sym = tokens.get (n++).getTokenImage ();
-			val = tokens.get (n++).getTokenImage ();
+			val = strip (tokens.get (n++).getTokenImage ());
 			parameters.put (sym, val);
 		}
 		System.out.println ("Lib " + name + " config " + parameters);
+	}
+	String strip (String text) { return TokenParser.stripQuotes (text); }
+
+
+	/**
+	 * supply configuration parameters for library
+	 * @param tokens the tokens of the configuration string
+	 */
+	public void instanceSymbol (List<TokenParser.TokenDescriptor> tokens)
+	{
+		LibraryObject.newInstance
+		(
+			tokens.get (1).getTokenImage (),
+			tokens.get (2).getTokenImage (),
+			environment
+		);
 	}
 
 

@@ -3,12 +3,14 @@ package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.*;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * describe a function imported from an external class
@@ -46,18 +48,40 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 
 
 	/**
+	 * @param source the object holding the function
+	 * @return the map of methods
+	 */
+	Map<String,Method> getMethodMap (Object source)
+	{
+		Map<String,Method> methods;
+		if (source instanceof LibraryObject)
+		{
+			methods = ((LibraryObject<?>) source).getMethods ();
+		}
+		else
+		{
+			methods = FunctionDefinition.getMethodMap (source.getClass ());
+			this.setContainerObject (source);
+		}
+		return methods;
+	}
+
+
+	/**
 	 * use the token list to find the method within the class
 	 */
 	public void parseFunction ()
 	{
-		String libraryName = functionTokens.get (0).getTokenImage ();
-		SymbolMap.Library library = (SymbolMap.Library) symbols.lookup (libraryName);
-		declaration.append (libraryName).append (".");
+		String libraryName =
+			functionTokens.get (0).getTokenImage ();
+		Object libObj = symbols.lookup (libraryName);
+		Map<String,Method> methods = getMethodMap (libObj);
 
+		declaration.append (libraryName).append (".");
 		functionName = functionTokens.get (2).getTokenImage ();
 		declaration.append (functionName).append (" (");
 
-		function = library.getMethods ().get (functionName);
+		function = methods.get (functionName);
 		Type[] parameterTypes = function.getGenericParameterTypes ();
 		parameterType = new ExtendedDataConversions.Types[parameterTypes.length];
 		returnType = ExtendedDataConversions.getTypeFor (function.getGenericReturnType ().toString ());
@@ -98,13 +122,23 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 		try
 		{
 			return returnValueFor (function.invoke (enclosingClass, actualParametersFor (parameters)));
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			throw new RuntimeException ("Library function invocation failed", e);
 		}
 	}
-	protected Object enclosingClass = null;		// assumption is that imported class uses static methods
 	protected Method function;
+
+
+	/**
+	 * @param container the object containing the function
+	 */
+	public void setContainerObject (Object container)
+	{
+		this.enclosingClass = container;
+	}
+	protected Object enclosingClass = null;		// default assumption is that imported class uses static methods
 
 
 	/**
@@ -130,7 +164,11 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 	{
 		List<Object> parameterSet = new ArrayList<Object>();
 
-		if (parameterType.length == 1)
+		if (parameterType.length == 0)
+		{
+			return new Object[]{};
+		}
+		else if (parameterType.length == 1)
 		{
 			parameterSet.add (converter.convertToType (parameters, parameterType[0]));
 		}

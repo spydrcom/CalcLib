@@ -8,6 +8,11 @@ import net.myorb.math.expressions.SymbolMap.Named;
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
+/**
+ * manage parameterization of functions configured in-line
+ * @param <T> data type being processed
+ * @author Michael Druckman
+ */
 public abstract class InstanciableFunctionLibrary<T> extends CommonOperatorLibrary<T>
 			implements LibraryObject.InstanceGenerator<T>
 {
