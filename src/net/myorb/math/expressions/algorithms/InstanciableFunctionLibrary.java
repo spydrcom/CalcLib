@@ -47,6 +47,10 @@ public abstract class InstanciableFunctionLibrary<T> extends CommonOperatorLibra
 		environment.getSymbolMap ().add (symbol, description.toString ());
 	}
 
+	/**
+	 * @param declaring the name of the symbol to be declared
+	 * @param libName the name of the LibraryObject describing the symbol
+	 */
 	public void newInstance (String declaring, String libName)
 	{
 		@SuppressWarnings("unchecked")

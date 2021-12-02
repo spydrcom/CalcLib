@@ -174,6 +174,7 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 
 /**
  * localize Bessel function processing as operator and as function syntax
+ * @param <T> data type being processed
  */
 class BesselParameterManager<T>
 {
