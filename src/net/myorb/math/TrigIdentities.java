@@ -37,7 +37,7 @@ public class TrigIdentities<T> extends TrigLib<T>
 	 * @param x the angle used to compute result (radians)
 	 * @return result of computation
 	 */
-	public T tan (T x) { return X (sin(x), inverted (cos (x))); }
+	public T tan (T x) { return X (sin (x), inverted (cos (x))); }
 
 
 	/**

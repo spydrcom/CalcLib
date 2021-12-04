@@ -7,6 +7,10 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
+import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ImplementedFeatures;
+import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ParameterizationManager;
+import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Renderer;
+
 import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.SymbolMap.Named;
 
@@ -14,7 +18,6 @@ import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,7 +25,7 @@ import java.util.Map;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
+public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
 {
 
 
@@ -38,45 +41,22 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	/**
 	 * Bessel function object base class
 	 */
-	public class BesselAbstraction extends MultipleMarshalingWrapper
+	public class BesselAbstraction extends ImplementationAbstraction
 	{
 
 		BesselAbstraction (String sym, LibraryObject<T> lib)
 		{
-			this
-			(
-				sym, lib.getParameterization ()
-			);
+			super (sym, lib);
+			alphaManager = parameterizationManager.getManagerFor ("alpha");
 		}
-
-		BesselAbstraction
-		(String sym, Map<String,Object> parameterMap)
-		{
-			this
-			(
-				sym,
-				configureBesselManager (parameterMap),
-				new BesselImplementation ()
-			);
-			this.parameterMap = parameterMap;
-		}
-		Map<String,Object> parameterMap;
-
-		BesselAbstraction
-		(String sym, BesselParameterManager<T> manager, BesselImplementation impl)
-		{
-			super (sym, impl);
-			impl.setParameterManager (manager);
-			this.parameterManager = manager;
-		}
-		BesselParameterManager<T> parameterManager;
+		ParameterManager<T> alphaManager;
 
 		/**
 		 * @return configured alpha value
 		 */
 		public double getAlpha ()
 		{
-			return manager.toNumber (parameterManager.getAlpha ()).doubleValue ();
+			return manager.toNumber (alphaManager.eval ()).doubleValue ();
 		}
 
 	}
@@ -94,13 +74,12 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	/**
 	 * an object that manages configuration from start-up XML source
 	 */
-	class ConfigurableBesselImplementation extends BesselImplementation
+	class ConfigurableBesselImplementation extends Implementation
 	{
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.CommonOperatorLibrary.CommonFunctionImplementation#configure(java.lang.String)
 		 */
-		public void configure (String parameters)
-		{ setParameterManager (configureBesselManager (parameters)); }
+		public void configure (String parameters) { establishImplementedFeatures (configureBesselManager (parameters)); }
 	}
 
 
@@ -110,13 +89,7 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	 * @return a configured function wrapper
 	 */
 	public BesselParameterManager<T> configureBesselManager (String parameters)
-	{
-		BesselParameterManager<T> bessel =
-			new BesselParameterManager<T> (parameters, environment);
-		bessel.buildFunction (manager, library);
-		return bessel;
-	}
-
+	{ return configureBesselManager (new BesselParameterManager<T> (parameters, environment)); }
 
 	/**
 	 * allocate manager object for function
@@ -124,49 +97,27 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
 	 * @return a configured function wrapper
 	 */
 	public BesselParameterManager<T> configureBesselManager (Map<String,Object> parameters)
-	{
-		BesselParameterManager<T> bessel =
-			new BesselParameterManager<T> (parameters, environment);
-		bessel.buildFunction (manager, library);
-		return bessel;
-	}
-
+	{ return configureBesselManager (new BesselParameterManager<T> (parameters, environment)); }
 
 	/**
-	 * Bessel as common function
+	 * configure a parameter manager to represent a function
+	 * @param bessel manager for parameters of Bessel function
+	 * @return the manager being configured
 	 */
-	class BesselImplementation extends CommonFunctionImplementation
-	{
+	public BesselParameterManager<T> configureBesselManager (BesselParameterManager<T> bessel)
+	{ return bessel.buildFunction (manager, library); }
 
-		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.CommonOperatorLibrary.CommonFunctionImplementation#evaluate(java.util.List)
-		 */
-		public T evaluate (List<T> using)
-		{ return bessel.function.eval (using.get (0)); }
 
-		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.CommonOperatorLibrary.CommonFunctionImplementation#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
-		 */
-		public String markupForDisplay
-		(String operator, String parameters, NodeFormatting using)
-		{ return bessel.render (using) + using.formatParenthetical (parameters); }
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#configureManager(java.util.Map)
+	 */
+	public Configuration<T> configureManager (Map<String, Object> parameterMap) { return configureBesselManager (parameterMap); }
 
-		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.CommonOperatorLibrary.CommonFunctionImplementation#markupForDisplay(java.lang.String, java.lang.String, boolean, net.myorb.math.expressions.gui.rendering.NodeFormatting)
-		 */
-		public String markupForDisplay
-		(String operator, String operand, boolean fenceOperand, NodeFormatting using)
-		{ return markupForDisplay (operator, operand, using); }
 
-		/**
-		 * connect parameter manager from configuration
-		 * @param bessel parameter processing object
-		 */
-		public void setParameterManager
-		(BesselParameterManager<T> bessel) { this.bessel = bessel; }
-		protected BesselParameterManager<T> bessel;
-
-	}
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#provideImplementation()
+	 */
+	public Implementation provideImplementation () { return new ConfigurableBesselImplementation (); }
 
 
 }
@@ -176,7 +127,10 @@ public class ClMathBessel<T> extends InstanciableFunctionLibrary<T>
  * localize Bessel function processing as operator and as function syntax
  * @param <T> data type being processed
  */
-class BesselParameterManager<T>
+class BesselParameterManager<T> implements
+	AlgorithmImplementationAbstraction.ImplementedFeatures<T>,
+	AlgorithmImplementationAbstraction.Configuration<T>,
+	AlgorithmImplementationAbstraction.Renderer
 {
 
 
@@ -207,7 +161,7 @@ class BesselParameterManager<T>
 		if (terms != null) this.terms = Integer.parseInt (terms.toString ());
 		this.kind = kind.toString ();
 	}
-	String kind;
+	protected String kind;
 
 
 	/**
@@ -223,7 +177,7 @@ class BesselParameterManager<T>
 	 * @param using the node formatting tool
 	 * @return the function reference MML
 	 */
-	String render (NodeFormatting using)
+	public String render (NodeFormatting using)
 	{
 		try
 		{
@@ -246,21 +200,50 @@ class BesselParameterManager<T>
 		alphaManager.setExpression (configuration);
 	}
 	public T getAlpha () { return alphaManager.eval (); }
-	ParameterManager<T> alphaManager;
+	protected ParameterManager<T> alphaManager;
 
 
 	/**
 	 * get Bessel function instance from library
 	 * @param manager the description of the domain space
 	 * @param library the library holding the model for the function
+	 * @return THIS for chaining
 	 */
-	void buildFunction (SpaceManager<T> manager, ExtendedPowerLibrary<T> library)
+	BesselParameterManager<T> buildFunction (SpaceManager<T> manager, ExtendedPowerLibrary<T> library)
 	{
 		BesselFunctions<T> functions;
 		(functions = new BesselFunctions<T> ()).init (manager);
 		function = functions.getFunction (kind, alphaManager.eval (), terms, library);
+		return this;
 	}
-	Function<T> function;
+	public Function<T> getFunction () { return function; }
+	protected Function<T> function;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration#getImplementedFeatures()
+	 */
+	public ImplementedFeatures<T> getImplementedFeatures () { return this; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ImplementedFeatures#getFormatter()
+	 */
+	public Renderer getFormatter () { return this; }
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration#getParameterizationManager()
+	 */
+	public ParameterizationManager<T> getParameterizationManager ()
+	{
+		return new ParameterizationManager<T> ()
+		{
+			public ParameterManager<T> getManagerFor (String symbol)
+			{
+				return alphaManager;
+			};
+		};
+	}
 
 
 }
