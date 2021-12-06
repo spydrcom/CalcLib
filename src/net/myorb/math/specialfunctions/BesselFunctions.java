@@ -54,10 +54,14 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 		{
 			case 'J': return new OrdinaryFirstKind ().getFunctions (order, upTo, psm);
 			case 'Y': return new OrdinarySecondKind ().getFunctions (order, upTo, psm);
+			case 'h': return new OrdinaryFirstKindStruve ().getFunctions (order, upTo, psm);
+			case 'k': return new OrdinarySecondKindStruve ().getFunctions (order, upTo, psm);
 			case 'j': return new SphericalFirstKind ().getFunctions (order, upTo, psm);
 			case 'y': return new SphericalSecondKind ().getFunctions (order, upTo, psm);
 			case 'K': return new ModifiedSecondKind ().getFunctions (order, upTo, psm);
 			case 'I': return new ModifiedFirstKind ().getFunctions (order, upTo, psm);
+			case 'l': return new ModifiedFirstKindStruve ().getFunctions (order, upTo, psm);
+			case 'm': return new ModifiedSecondKindStruve ().getFunctions (order, upTo, psm);
 			case 'H': return new HankelFunctions ().getFunctions (order, upTo, psm);
 		}
 
@@ -87,6 +91,10 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 			case 'Y': return new OrdinarySecondKind ().getFunction (order, terms, lib, psm);
 			case 'K': return new ModifiedSecondKind ().getFunction (order, terms, lib, psm);
 			case 'I': return new ModifiedFirstKind ().getFunction (order, terms, lib, psm);
+			case 'h': return new OrdinaryFirstKindStruve ().getFunction (order, terms, lib, psm);
+			case 'k': return new OrdinarySecondKindStruve ().getFunction (order, terms, lib, psm);
+			case 'l': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
+			case 'm': return new ModifiedSecondKindStruve ().getFunction (order, terms, lib, psm);
 		}
 
 		return null;

@@ -47,7 +47,7 @@ public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
 		BesselAbstraction (String sym, LibraryObject<T> lib)
 		{
 			super (sym, lib);
-			alphaManager = parameterizationManager.getManagerFor ("alpha");
+			alphaManager = getParameterCalled ("alpha");
 		}
 		ParameterManager<T> alphaManager;
 
@@ -56,7 +56,7 @@ public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
 		 */
 		public double getAlpha ()
 		{
-			return manager.toNumber (alphaManager.eval ()).doubleValue ();
+			return getValueFor (alphaManager);
 		}
 
 	}

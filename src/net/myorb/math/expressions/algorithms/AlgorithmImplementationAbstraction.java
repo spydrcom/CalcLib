@@ -129,6 +129,12 @@ public abstract class AlgorithmImplementationAbstraction<T>
 			impl.establishImplementedFeatures (configuration.getImplementedFeatures ());
 			this.parameterizationManager = configuration.getParameterizationManager ();
 		}
+
+		protected ParameterManager<T>
+			getParameterCalled (String name)
+		{ return parameterizationManager.getManagerFor (name); }
+		protected double getValueFor (ParameterManager<T> parameter)
+		{ return manager.toNumber (parameter.eval ()).doubleValue (); }
 		protected ParameterizationManager<T> parameterizationManager;
 
 	}
