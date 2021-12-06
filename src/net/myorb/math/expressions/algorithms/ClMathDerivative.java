@@ -7,12 +7,15 @@ import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.
 import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ParameterizationManager;
 import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Renderer;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.symbols.GenericWrapper;
 import net.myorb.math.expressions.symbols.LibraryObject;
+
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -74,7 +77,7 @@ public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
 
 
 	/**
-	 * @return allocate an object that manages configuration from start-up XML source
+	 * @return allocated object that manages configuration from start-up XML source
 	 */
 	public CommonFunctionImplementation getConfigurableDerivativeImplementation ()
 	{
@@ -178,14 +181,16 @@ class DerivativeParameterManager<T> implements
 		this.parseRun (run.toString (), environment);
 		this.order = Integer.parseInt (order.toString ());
 		this.identifyFunction (function.toString ());
-		this.mgr = environment.getSpaceManager ();
 	}
-	protected SpaceManager<T> mgr;
 	protected String symbolName, variableName;
 	protected SymbolMap symbols;
 	protected int order;
 
 
+	/**
+	 * locate named function in symbol table
+	 * @param functionName name of the function targeted for derivative
+	 */
 	@SuppressWarnings("unchecked")
 	void identifyFunction (String functionName)
 	{
@@ -213,7 +218,7 @@ class DerivativeParameterManager<T> implements
 
 
 	/**
-	 * get Bessel function instance from library
+	 * construct DerivativeApproximation instance
 	 * @param manager the description of the domain space
 	 * @param library the library holding the model for the function
 	 * @return THIS for chaining
@@ -221,11 +226,13 @@ class DerivativeParameterManager<T> implements
 	DerivativeParameterManager<T> buildFunction
 	(SpaceManager<T> manager, ExtendedPowerLibrary<T> library)
 	{
-		derivative = DerivativeApproximation.getDerivativesFor
-			(function, getRun ()).forOrder (order);
+		this.mgr = manager;
+		this.derivative = DerivativeApproximation.getDerivativesFor
+				(function, getRun ()).forOrder (order);
 		return this;
 	}
-	GenericWrapper.GenericFunction<T> derivative;
+	protected GenericWrapper.GenericFunction<T> derivative;
+	protected SpaceManager<T> mgr;
 
 
 	/* (non-Javadoc)
