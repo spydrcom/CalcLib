@@ -90,7 +90,8 @@ public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
 	 * @param parameters the parameter text supplied in configuration
 	 * @return a configured function wrapper
 	 */
-	public DerivativeParameterManager<T> configureDerivativeManager (String parameters)
+	public DerivativeParameterManager<T>
+		configureDerivativeManager (String parameters)
 	{ return configureDerivativeManager (new DerivativeParameterManager<T> (parameters, environment)); }
 
 	/**
@@ -98,7 +99,8 @@ public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
 	 * @param parameters the parameter map supplied in configuration
 	 * @return a configured function wrapper
 	 */
-	public DerivativeParameterManager<T> configureDerivativeManager (Map<String,Object> parameters)
+	public DerivativeParameterManager<T>
+		configureDerivativeManager (Map<String,Object> parameters)
 	{ return configureDerivativeManager (new DerivativeParameterManager<T> (parameters, environment)); }
 
 	/**
@@ -106,7 +108,8 @@ public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
 	 * @param derivative manager for parameters of derivative function
 	 * @return the manager being configured
 	 */
-	public DerivativeParameterManager<T> configureDerivativeManager (DerivativeParameterManager<T> derivative)
+	public DerivativeParameterManager<T>
+		configureDerivativeManager (DerivativeParameterManager<T> derivative)
 	{ return derivative.buildFunction (manager, library); }
 
 
@@ -120,7 +123,8 @@ public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#provideImplementation()
 	 */
-	public AlgorithmImplementationAbstraction<T>.Implementation provideImplementation ()
+	public AlgorithmImplementationAbstraction<T>.Implementation
+			provideImplementation ()
 	{
 		return new ConfigurableDerivativeImplementation ();
 	}
