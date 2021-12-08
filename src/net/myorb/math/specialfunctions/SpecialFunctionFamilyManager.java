@@ -31,6 +31,11 @@ public class SpecialFunctionFamilyManager
 	{
 
 		/**
+		 * @return the character that denotes function type
+		 */
+		String getRenderIdentifier ();
+
+		/**
 		 * @return a description for the function
 		 */
 		StringBuffer getFunctionDescription ();

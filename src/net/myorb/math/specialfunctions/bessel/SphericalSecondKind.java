@@ -117,6 +117,11 @@ public class SphericalSecondKind extends UnderlyingOperators
 		}
 
 		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "y"; }
+
+		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#getSpaceManager()
 		 */
 		public SpaceManager<T> getSpaceDescription () { return sm; }

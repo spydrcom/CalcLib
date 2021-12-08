@@ -32,7 +32,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	public static <T> Polynomial.PowerFunction<T>
 		getJ (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (n, n, termCount, n, psm, false, getFactorialSum ());
+		return sumOfTerms (n, n, termCount, n, psm, false, getStandardDenominator ());
 	}
 
 
@@ -48,7 +48,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		getJ (T p, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new JpFunction<T>(p, getPoly (p, false, termCount, psm, sm), sm);
+		return new JpFunction<T>(p, getPoly (p, false, termCount, psm, getStandardDenominator (), sm), sm);
 	}
 
 
@@ -76,6 +76,11 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		{
 			return new StringBuffer ("Bessel: J(p=").append (parameterValue).append (")");
 		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "J"; }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
@@ -140,7 +145,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		getJ (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new JpExtendedFunction<T>(p, getPoly (p, false, termCount, psm, sm), lib, sm);
+		return new JpExtendedFunction<T>(p, getPoly (p, false, termCount, psm, getStandardDenominator (), sm), lib, sm);
 	}
 
 

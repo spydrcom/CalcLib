@@ -31,7 +31,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		getI (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new IaFunction<T>(a, getPoly (a, true, termCount, psm, sm), sm);
+		return new IaFunction<T>(a, getPoly (a, true, termCount, psm, getStandardDenominator (), sm), sm);
 	}
 
 
@@ -67,7 +67,12 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		{
 			return "IA" + formatParameterDisplay (parameterValue);
 		}
-		
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "I"; }
+
 	}
 
 
@@ -123,7 +128,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		getI (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new IaExtendedFunction<T>(a, getPoly (a, true, termCount, psm, sm), lib, sm);
+		return new IaExtendedFunction<T>(a, getPoly (a, true, termCount, psm, getStandardDenominator (), sm), lib, sm);
 	}
 
 

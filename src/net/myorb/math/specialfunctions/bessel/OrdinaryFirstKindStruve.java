@@ -2,7 +2,6 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.ExtendedPowerLibrary;
@@ -17,7 +16,6 @@ import net.myorb.math.Function;
 public class OrdinaryFirstKindStruve extends UnderlyingOperators
 {
 
-	// J#p = SUMMATION [ 0 <= k <= INFINITY ] ( (-1)^k * (x/2)^(2*k+p) / ( k! * GAMMA(k+p+1) ) )
 
 	// H#a = SUMMATION [ 0 <= m <= INFINITY ] ( (-1)^m * (x/2)^(2*m+a+1) / ( GAMMA(m+3/2) * GAMMA(m+a+3/2) ) )
 
@@ -33,7 +31,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 	public static <T> Polynomial.PowerFunction<T>
 		getH (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (n, n, termCount, n, psm, false, getFactorialSum ());
+		return sumOfTerms (n, n, termCount, n, psm, false, getStruveDenominator ());
 	}
 
 
@@ -49,7 +47,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		getH (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new HaFunction<T>(a, getPoly (a, false, termCount, psm, sm), sm);
+		return new HaFunction<T>(a, getPoly (a, false, termCount, psm, getStruveDenominator (), sm), sm);
 	}
 
 
@@ -67,7 +65,8 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			super (a, polynomial, sm);
+			super (plusOneT (a, sm), polynomial, sm);
+			this.parameterValue = sm.convertToDouble (a);
 		}
 
 		/* (non-Javadoc)
@@ -77,6 +76,11 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		{
 			return new StringBuffer ("Struve: H(a=").append (parameterValue).append (")");
 		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "H"; }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
@@ -120,7 +124,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		ExtendedPowerLibrary<T> lib;
 	
 		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.bessel.OrdinaryFirstKind.JpFunction#TraisedToT(java.lang.Object, java.lang.Object)
+		 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators.ExponentialFunction#TraisedToT(java.lang.Object, java.lang.Object)
 		 */
 		public T TraisedToT (T base, T power)
 		{
@@ -142,7 +146,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		getH (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new HaExtendedFunction<T>(p, getPoly (p, false, termCount, psm, sm), lib, sm);
+		return new HaExtendedFunction<T>(p, getPoly (p, false, termCount, psm, getStruveDenominator (), sm), lib, sm);
 	}
 
 

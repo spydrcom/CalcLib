@@ -107,6 +107,11 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		}
 
 		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "Y"; }
+
+		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#getSpaceManager()
 		 */
 		public SpaceManager<T> getSpaceDescription () { return sm; }

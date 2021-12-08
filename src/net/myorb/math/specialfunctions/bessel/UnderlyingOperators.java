@@ -21,25 +21,57 @@ public abstract class UnderlyingOperators extends Library
 {
 
 
+
+	public interface Denominator<T>
+	{
+		T eval (int idx, Number order, ExpressionSpaceManager<T> esm);
+	}
+
+
 	public static <T> Polynomial.PowerFunction<T> getPoly 
-	(T p, boolean modified, int termCount, PolynomialSpaceManager<T> psm, ExpressionSpaceManager<T> sm)
-	{ return sumOfTerms (0, 0, termCount, plusOne (p, sm), psm, modified, getGammaSum ()); }
+			(
+				T p, boolean modified, int termCount, PolynomialSpaceManager<T> psm,
+				Denominator<T> denominator, ExpressionSpaceManager<T> sm
+			)
+	{ return sumOfTerms (0, 0, termCount, plusOne (p, sm), psm, modified, denominator); }
 
 
 	/**
-	 * compute Gamma (left, right) as appropriate for data type
+	 * @return products of GAMMA function that calculate the Bessel series denominator
 	 * @param <T> data type being used
 	 */
-	public interface GammaSum<T>
+	public static <T> Denominator<T> getStandardDenominator ()
 	{
-		/**
-		 * @param left the left side term
-		 * @param right the right left side term
-		 * @param sm manager for data type
-		 * @return Gamma (left + right)
-		 */
-		T computeGammaOfSum (Number left, Number right, SpaceManager<T> sm);
+		return new Denominator<T>()
+		{
+			public T eval (int idx, Number order, ExpressionSpaceManager<T> sm)
+			{
+				double sum = idx + order.doubleValue ();
+				T gsum = sm.convertFromDouble (gamma (sum));
+				return sm.multiply (gsum, factorialT (idx, sm));
+			}
+		};
 	}
+
+
+	/**
+	 * @return products of GAMMA function that calculate the Struve series denominator
+	 * @param <T> data type being used
+	 */
+	public static <T> Denominator<T> getStruveDenominator ()
+	{
+		return new Denominator<T>()
+		{
+			double ratio32 = 3.0/2.0;
+			public T eval (int idx, Number order, ExpressionSpaceManager<T> sm)
+			{
+				double sum1 = idx + ratio32;
+				double sum2 = idx + order.doubleValue () + ratio32;
+				return sm.convertFromDouble (gamma (sum1) * gamma (sum2));
+			}
+		};
+	}
+
 
 
 	/**
@@ -52,6 +84,10 @@ public abstract class UnderlyingOperators extends Library
 	{
 		return esm.toNumber (esm.add (value, esm.getOne ()));
 	}
+	public static <T> T plusOneT (T value, ExpressionSpaceManager<T> esm)
+	{
+		return esm.add (value, esm.getOne ());
+	}
 
 
 	/**
@@ -61,8 +97,8 @@ public abstract class UnderlyingOperators extends Library
 	 * @param termCount the number of terms to include in the polynomial
 	 * @param polynomialOrder the highest exponent value of the polynomial
 	 * @param psm a space manager for polynomial management
-	 * @param gamma the function to use for Gamma
 	 * @param modified negation term removed
+	 * @param denominator Gamma computation
 	 * @return the constructed polynomial
 	 * @param <T> data type manager
 	 */
@@ -71,10 +107,10 @@ public abstract class UnderlyingOperators extends Library
 			int initialPowX, int initialPow2,
 			int termCount, Number polynomialOrder,
 			PolynomialSpaceManager<T> psm, boolean modified,
-			GammaSum<T> gamma
+			Denominator<T> denominator
 		)
 	{
-		SpaceManager<T> sm = psm.getSpaceDescription ();
+		ExpressionSpaceManager<T> sm = (ExpressionSpaceManager<T>) psm.getSpaceDescription ();
 
 		Polynomial.PowerFunction<T> x = psm.newVariable ();
 		Polynomial.PowerFunction<T> xsq = psm.multiply (x, x);
@@ -88,10 +124,11 @@ public abstract class UnderlyingOperators extends Library
 
 		for (int k = 0; k < termCount; k++)
 		{
-			denom = pow2;
-			denom = sm.multiply (denom, factorialT (k, sm));
-			denom = sm.multiply (denom, gamma.computeGammaOfSum (k, polynomialOrder, sm));
-
+			denom = sm.multiply
+				(
+					pow2,
+					denominator.eval (k, polynomialOrder, sm)
+				);
 			term = psm.times (sm.invert (denom), xpow);
 			if (!modified) term = signT (term, k, psm);
 
@@ -180,45 +217,6 @@ public abstract class UnderlyingOperators extends Library
 
 
 	/**
-	 * @return GammaSum for whole number parameters
-	 * @param <T> data type manager
-	 */
-	public static <T> GammaSum<T> getFactorialSum ()
-	{
-		return new GammaSum<T>()
-		{
-			/* (non-Javadoc)
-			 * @see net.myorb.math.specialfunctions.Bessel.GammaSum#computeGammaOfSum(java.lang.Number, java.lang.Number, net.myorb.math.SpaceManager)
-			 */
-			public T computeGammaOfSum (Number left, Number right, SpaceManager<T> sm)
-			{
-				return factorialT (left.intValue () + right.intValue (), sm);
-			}
-		};
-	}
-
-
-	/**
-	 * @return GammaSum for real number parameters
-	 * @param <T> data type manager
-	 */
-	public static <T> GammaSum<T> getGammaSum ()
-	{
-		return new GammaSum<T>()
-		{
-			/* (non-Javadoc)
-			 * @see net.myorb.math.specialfunctions.Bessel.GammaSum#computeGammaOfSum(java.lang.Number, java.lang.Number, net.myorb.math.SpaceManager)
-			 */
-			public T computeGammaOfSum (Number left, Number right, SpaceManager<T> sm)
-			{
-				ExpressionSpaceManager<T> esm = (ExpressionSpaceManager<T>) sm;
-				return gammaT (left.doubleValue () + right.doubleValue (), esm);
-			}
-		};
-	}
-
-
-	/**
 	 * @param kind the kind of functions
 	 * @param count number of functions to be generated
 	 * @param psm a space manager for polynomial management
@@ -255,7 +253,9 @@ public abstract class UnderlyingOperators extends Library
 	public abstract <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 	getFunction (T parameter, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm);
 
+
 	public static int POLYNOMIAL_TERM_COUNT = 25;
+
 
 }
 

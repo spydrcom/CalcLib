@@ -104,7 +104,12 @@ public class ModifiedSecondKind extends UnderlyingOperators
 		{
 			return "KA" + formatParameterDisplay (parameterValue);
 		}
-	
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier () { return "K"; }
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#getSpaceManager()
 		 */
