@@ -22,18 +22,37 @@ public abstract class UnderlyingOperators extends Library
 
 
 
+	/**
+	 * calculation of denominator of polynomial terms
+	 * @param <T> data type used
+	 */
 	public interface Denominator<T>
 	{
+		/**
+		 * @param idx the loop index of the term
+		 * @param order the alpha value for the function
+		 * @param esm a manager for the number space in use
+		 * @return the calculated value
+		 */
 		T eval (int idx, Number order, ExpressionSpaceManager<T> esm);
 	}
 
 
+	/**
+	 * @param a the alpha value for the function
+	 * @param modified the alternating sign of the formula is removed
+	 * @param termCount the number of term to generate for the polynomial
+	 * @param psm a manager for the polynomial space (arithmetic for polynomials)
+	 * @param denominator a calculation engine for the term denominator (Gamma product)
+	 * @param sm a manager for the number space in use
+	 * @return a polynomial power function
+	 */
 	public static <T> Polynomial.PowerFunction<T> getPoly 
 			(
-				T p, boolean modified, int termCount, PolynomialSpaceManager<T> psm,
+				T a, boolean modified, int termCount, PolynomialSpaceManager<T> psm,
 				Denominator<T> denominator, ExpressionSpaceManager<T> sm
 			)
-	{ return sumOfTerms (0, 0, termCount, plusOne (p, sm), psm, modified, denominator); }
+	{ return sumOfTerms (0, 0, termCount, sm.toNumber (a), psm, modified, denominator); }
 
 
 	/**
@@ -46,7 +65,7 @@ public abstract class UnderlyingOperators extends Library
 		{
 			public T eval (int idx, Number order, ExpressionSpaceManager<T> sm)
 			{
-				double sum = idx + order.doubleValue ();
+				double sum = idx + order.doubleValue () + 1;
 				T gsum = sm.convertFromDouble (gamma (sum));
 				return sm.multiply (gsum, factorialT (idx, sm));
 			}
@@ -71,7 +90,6 @@ public abstract class UnderlyingOperators extends Library
 			}
 		};
 	}
-
 
 
 	/**

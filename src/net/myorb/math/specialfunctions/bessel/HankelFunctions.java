@@ -66,7 +66,6 @@ public class HankelFunctions extends UnderlyingOperators
 			if (kind == 2) plusOrMinusI = sm.negate (plusOrMinusI);
 			this.parameter = a;
 			this.sm = sm;
-			
 		}
 		protected T plusOrMinusI;
 		protected Double parameterValue;
