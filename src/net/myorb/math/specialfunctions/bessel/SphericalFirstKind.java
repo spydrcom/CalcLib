@@ -67,7 +67,7 @@ public class SphericalFirstKind extends UnderlyingOperators
 	{
 		double twoPow = Math.pow (2, n + 0.5);
 		T constant = getExpressionManager (psm).convertFromDouble (Math.sqrt (Math.PI / 2) / twoPow);
-		Polynomial.PowerFunction<T> poly = sumOfTerms (0, 0, termCount, n + 1.5, psm, false, getStandardDenominator ());
+		Polynomial.PowerFunction<T> poly = sumOfTerms (0, 0, termCount, n + 1.5, psm, false, getBesselDenominator ());
 		Polynomial.PowerFunction<T> xToN = psm.pow (psm.newVariable (), n + r);
 		return psm.times (constant, psm.multiply (xToN, poly));
 	}

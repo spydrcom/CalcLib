@@ -7,6 +7,7 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.Function;
+import net.myorb.math.Polynomial;
 
 /**
  * support for describing Bessel I (Modified First Kind) functions
@@ -30,8 +31,25 @@ public class ModifiedFirstKind extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getI (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new IaFunction<T>(a, getPoly (a, true, termCount, psm, getStandardDenominator (), sm), sm);
+		return new IaFunction<T>(a, termCount, psm);
+	}
+
+
+	/**
+	 * @param a a real number identifying the order of the Ha description
+	 * @param termCount the number of terms to include in the polynomial
+	 * @param psm a space manager for polynomial management
+	 * @param sm a manager for the number space in use
+	 * @return the representation of the polynomial
+	 * @param <T> data type manager
+	 */
+	public static <T> Polynomial.PowerFunction<T> getPoly 
+		(
+			T a, int termCount, PolynomialSpaceManager<T> psm,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		return getPoly (a, true, termCount, psm, getBesselDenominator (), sm);
 	}
 
 
@@ -44,12 +62,31 @@ public class ModifiedFirstKind extends UnderlyingOperators
 
 		IaFunction
 			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm
+			)
+		{
+			this (a, n, psm, getExpressionManager (psm));
+		}
+	
+		IaFunction
+			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			this (a, getPoly (a, n, psm, sm), sm);
+		}
+
+		IaFunction
+			(
 				T a,
 				Function<T> polynomial,
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			super (a, polynomial, sm);
+			super (sm.toNumber (a), polynomial, sm);
 		}
 
 		/* (non-Javadoc)
@@ -57,7 +94,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		 */
 		public StringBuffer getFunctionDescription ()
 		{
-			return new StringBuffer ("Bessel: I(a=").append (parameterValue).append (")");
+			return new StringBuffer ("Bessel: I(a=").append (displayParameter).append (")");
 		}
 
 		/* (non-Javadoc)
@@ -65,7 +102,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		 */
 		public String getFunctionName ()
 		{
-			return "IA" + formatParameterDisplay (parameterValue);
+			return "IA" + formatParameterDisplay (displayParameter.doubleValue ());
 		}
 
 		/* (non-Javadoc)
@@ -92,16 +129,15 @@ public class ModifiedFirstKind extends UnderlyingOperators
 	 */
 	public static class IaExtendedFunction<T> extends IaFunction<T>
 	{
-	
+
 		IaExtendedFunction
-			(
-				T a,
-				Function<T> polynomial,
-				ExtendedPowerLibrary<T> lib,
-				ExpressionSpaceManager<T> sm
+		(
+				T p, int n,
+				PolynomialSpaceManager<T> psm,
+				ExtendedPowerLibrary<T> lib
 			)
 		{
-			super (a, polynomial, sm);
+			super (p, n, psm);
 			this.lib = lib;
 		}
 		ExtendedPowerLibrary<T> lib;
@@ -127,8 +163,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getI (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new IaExtendedFunction<T>(a, getPoly (a, true, termCount, psm, getStandardDenominator (), sm), lib, sm);
+		return new IaExtendedFunction<T>(a, termCount, psm, lib);
 	}
 
 

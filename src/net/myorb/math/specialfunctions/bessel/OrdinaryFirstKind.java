@@ -32,7 +32,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	public static <T> Polynomial.PowerFunction<T>
 		getJ (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (n, n, termCount, n, psm, false, getStandardDenominator ());
+		return sumOfTerms (n, n, termCount, n, psm, false, getBesselDenominator ());
 	}
 
 
@@ -47,8 +47,25 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getJ (T p, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new JpFunction<T>(p, getPoly (p, false, termCount, psm, getStandardDenominator (), sm), sm);
+		return new JpFunction<T>(p, termCount, psm);
+	}
+
+
+	/**
+	 * @param a a real number identifying the order of the Ha description
+	 * @param termCount the number of terms to include in the polynomial
+	 * @param psm a space manager for polynomial management
+	 * @param sm a manager for the number space in use
+	 * @return the representation of the polynomial
+	 * @param <T> data type manager
+	 */
+	public static <T> Polynomial.PowerFunction<T> getPoly 
+		(
+			T a, int termCount, PolynomialSpaceManager<T> psm,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		return getPoly (a, false, termCount, psm, getBesselDenominator (), sm);
 	}
 
 
@@ -61,12 +78,31 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 
 		JpFunction
 			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm
+			)
+		{
+			this (a, n, psm, getExpressionManager (psm));
+		}
+	
+		JpFunction
+			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			this (a, getPoly (a, n, psm, sm), sm);
+		}
+
+		JpFunction
+			(
 				T p,
 				Function<T> polynomial,
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			super (p, polynomial, sm);
+			super (sm.toNumber (p), polynomial, sm);
 		}
 
 		/* (non-Javadoc)
@@ -74,7 +110,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		 */
 		public StringBuffer getFunctionDescription ()
 		{
-			return new StringBuffer ("Bessel: J(p=").append (parameterValue).append (")");
+			return new StringBuffer ("Bessel: J(p=").append (displayParameter).append (")");
 		}
 
 		/* (non-Javadoc)
@@ -87,7 +123,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		 */
 		public String getFunctionName ()
 		{
-			return "JP" + formatParameterDisplay (parameterValue);
+			return "JP" + formatParameterDisplay (displayParameter.doubleValue ());
 		}
 		
 	}
@@ -112,13 +148,12 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	
 		JpExtendedFunction
 			(
-				T p,
-				Function<T> polynomial,
-				ExtendedPowerLibrary<T> lib,
-				ExpressionSpaceManager<T> sm
+				T p, int n,
+				PolynomialSpaceManager<T> psm,
+				ExtendedPowerLibrary<T> lib
 			)
 		{
-			super (p, polynomial, sm);
+			super (p, n, psm);
 			this.lib = lib;
 		}
 		ExtendedPowerLibrary<T> lib;
@@ -144,8 +179,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getJ (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new JpExtendedFunction<T>(p, getPoly (p, false, termCount, psm, getStandardDenominator (), sm), lib, sm);
+		return new JpExtendedFunction<T>(p, termCount, psm, lib);
 	}
 
 

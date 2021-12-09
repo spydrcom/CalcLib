@@ -46,8 +46,25 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getH (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new HaFunction<T>(a, getPoly (a, false, termCount, psm, getStruveDenominator (), sm), sm);
+		return new HaFunction<T>(a, termCount, psm);
+	}
+
+
+	/**
+	 * @param a a real number identifying the order of the Ha description
+	 * @param termCount the number of terms to include in the polynomial
+	 * @param psm a space manager for polynomial management
+	 * @param sm a manager for the number space in use
+	 * @return the representation of the polynomial
+	 * @param <T> data type manager
+	 */
+	public static <T> Polynomial.PowerFunction<T> getPoly 
+		(
+			T a, int termCount, PolynomialSpaceManager<T> psm,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		return getPoly (a, false, termCount, psm, getStruveDenominator (), sm);
 	}
 
 
@@ -60,13 +77,31 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 
 		HaFunction
 			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm
+			)
+		{
+			this (a, n, psm, getExpressionManager (psm));
+		}
+	
+		HaFunction
+			(
+				T a, int n,
+				PolynomialSpaceManager<T> psm,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			this (a, getPoly (a, n, psm, sm), sm);
+		}
+	
+		HaFunction
+			(
 				T a,
 				Function<T> polynomial,
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			super (plusOneT (a, sm), polynomial, sm);
-			this.parameterValue = sm.convertToDouble (a);
+			super (sm.convertToDouble (a), polynomial, sm);
 		}
 
 		/* (non-Javadoc)
@@ -74,7 +109,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		 */
 		public StringBuffer getFunctionDescription ()
 		{
-			return new StringBuffer ("Struve: H(a=").append (parameterValue).append (")");
+			return new StringBuffer ("Struve: H(a=").append (displayParameter).append (")");
 		}
 
 		/* (non-Javadoc)
@@ -87,7 +122,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 		 */
 		public String getFunctionName ()
 		{
-			return "HA" + formatParameterDisplay (parameterValue);
+			return "HA" + formatParameterDisplay (displayParameter.doubleValue ());
 		}
 		
 	}
@@ -112,13 +147,12 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 	
 		HaExtendedFunction
 			(
-				T a,
-				Function<T> polynomial,
-				ExtendedPowerLibrary<T> lib,
-				ExpressionSpaceManager<T> sm
+				T a, int n,
+				PolynomialSpaceManager<T> psm,
+				ExtendedPowerLibrary<T> lib
 			)
 		{
-			super (a, polynomial, sm);
+			super (a, n, psm);
 			this.lib = lib;
 		}
 		ExtendedPowerLibrary<T> lib;
@@ -145,8 +179,7 @@ public class OrdinaryFirstKindStruve extends UnderlyingOperators
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getH (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return new HaExtendedFunction<T>(p, getPoly (p, false, termCount, psm, getStruveDenominator (), sm), lib, sm);
+		return new HaExtendedFunction<T>(p, termCount, psm, lib);
 	}
 
 
