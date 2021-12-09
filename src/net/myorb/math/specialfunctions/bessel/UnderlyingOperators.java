@@ -53,44 +53,7 @@ public abstract class UnderlyingOperators extends Library
 				T a, boolean modified, int termCount, PolynomialSpaceManager<T> psm,
 				Denominator<T> denominator, ExpressionSpaceManager<T> sm
 			)
-	{ return sumOfTerms (0, 0, termCount, sm.toNumber (a), psm, modified, denominator); }
-
-
-	/**
-	 * @return products of GAMMA function that calculate the Bessel series denominator
-	 * @param <T> data type being used
-	 */
-	public static <T> Denominator<T> getBesselDenominator ()
-	{
-		return new Denominator<T>()
-		{
-			public T eval (int idx, Number order, ExpressionSpaceManager<T> sm)
-			{
-				double gammaSum = gamma (idx + order.doubleValue () + 1);
-				double product = gammaSum * factorial (idx).doubleValue ();
-				return sm.convertFromDouble (product);
-			}
-		};
-	}
-
-
-	/**
-	 * @return products of GAMMA function that calculate the Struve series denominator
-	 * @param <T> data type being used
-	 */
-	public static <T> Denominator<T> getStruveDenominator ()
-	{
-		return new Denominator<T>()
-		{
-			double ratio32 = 3.0/2.0;
-			public T eval (int idx, Number order, ExpressionSpaceManager<T> sm)
-			{
-				double gammaIndex = gamma (idx + ratio32);
-				double gammaOrder = gamma (idx + order.doubleValue () + ratio32);
-				return sm.convertFromDouble (gammaIndex * gammaOrder);
-			}
-		};
-	}
+	{ return sumOfTerms (0, 0, termCount, sm.toNumber (a), psm, modified, denominator, sm); }
 
 
 	/**
@@ -102,6 +65,7 @@ public abstract class UnderlyingOperators extends Library
 	 * @param psm a space manager for polynomial management
 	 * @param modified negation term removed
 	 * @param denominator Gamma computation
+	 * @param sm a manager for the data type
 	 * @return the constructed polynomial
 	 * @param <T> data type manager
 	 */
@@ -110,11 +74,9 @@ public abstract class UnderlyingOperators extends Library
 			int initialPowX, int initialPow2,
 			int termCount, Number polynomialOrder,
 			PolynomialSpaceManager<T> psm, boolean modified,
-			Denominator<T> denominator
+			Denominator<T> denominator, ExpressionSpaceManager<T> sm
 		)
 	{
-		ExpressionSpaceManager<T> sm = (ExpressionSpaceManager<T>) psm.getSpaceDescription ();
-
 		Polynomial.PowerFunction<T> x = psm.newVariable ();
 		Polynomial.PowerFunction<T> xsq = psm.multiply (x, x);
 		Polynomial.PowerFunction<T> polynomial = psm.getZero ();
@@ -142,6 +104,21 @@ public abstract class UnderlyingOperators extends Library
 		}
 
 		return polynomial;
+	}
+	public static <T> Polynomial.PowerFunction<T> sumOfTerms
+		(
+			Number order, int termCount,
+			PolynomialSpaceManager<T> psm, boolean modified,
+			Denominator<T> denominator
+		)
+	{
+		int n = order.intValue ();
+
+		return sumOfTerms
+		(
+			n, n, termCount, order, psm, modified,
+			denominator, getExpressionManager (psm)
+		);
 	}
 
 
@@ -178,7 +155,7 @@ public abstract class UnderlyingOperators extends Library
 		 * @param sm the type manager for the data type used
 		 */
 		public ExponentialFunction
-		(double a, Function<T> polynomial, ExpressionSpaceManager<T> sm)
+		(Double a, Function<T> polynomial, ExpressionSpaceManager<T> sm)
 		{ this (a + 1, a, polynomial, sm); }
 
 		/**
@@ -283,18 +260,18 @@ public abstract class UnderlyingOperators extends Library
 
 
 	/**
-	 * @param kind the kind of functions
+	 * @param order starting order of the functions
 	 * @param count number of functions to be generated
 	 * @param psm a space manager for polynomial management
 	 * @return list of functions
 	 * @param <T> data type
 	 */
 	public <T> FunctionList<T> getFunctions
-	(String kind, int count, PolynomialSpaceManager<T> psm)
+	(String order, int count, PolynomialSpaceManager<T> psm)
 	{
 		FunctionList<T> list = new FunctionList<T>();
 		ExpressionSpaceManager<T> esm = getExpressionManager (psm);
-		T initialParameter = esm.convertFromDouble (Double.parseDouble (kind));
+		T initialParameter = esm.convertFromDouble (Double.parseDouble (order));
 		for (int i = 0; i < count; i++)
 		{
 			list.add

@@ -12,7 +12,7 @@ import net.myorb.math.SpaceManager;
  * support for describing Bessel y (Spherical Second Kind) functions
  * @author Michael Druckman
  */
-public class SphericalSecondKind extends UnderlyingOperators
+public class SphericalSecondKind extends BesselPrimitive
 {
 
 

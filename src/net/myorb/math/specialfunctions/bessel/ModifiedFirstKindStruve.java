@@ -13,7 +13,7 @@ import net.myorb.math.Function;
  * support for describing Struve L (Modified First Kind) functions
  * @author Michael Druckman
  */
-public class ModifiedFirstKindStruve extends UnderlyingOperators
+public class ModifiedFirstKindStruve extends StruvePrimitive
 {
 
 
@@ -29,9 +29,9 @@ public class ModifiedFirstKindStruve extends UnderlyingOperators
 	 * @param <T> data type manager
 	 */
 	public static <T> Polynomial.PowerFunction<T>
-		getH (int n, int termCount, PolynomialSpaceManager<T> psm)
+		getL (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (n, n, termCount, n, psm, true, getStruveDenominator ());
+		return modifiedSumOfTerms (n, termCount, psm);
 	}
 
 
@@ -47,24 +47,6 @@ public class ModifiedFirstKindStruve extends UnderlyingOperators
 		getL (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		return new LaFunction<T>(a, termCount, psm);
-	}
-
-
-	/**
-	 * @param a a real number identifying the order of the Ha description
-	 * @param termCount the number of terms to include in the polynomial
-	 * @param psm a space manager for polynomial management
-	 * @param sm a manager for the number space in use
-	 * @return the representation of the polynomial
-	 * @param <T> data type manager
-	 */
-	public static <T> Polynomial.PowerFunction<T> getPoly 
-		(
-			T a, int termCount, PolynomialSpaceManager<T> psm,
-			ExpressionSpaceManager<T> sm
-		)
-	{
-		return getPoly (a, true, termCount, psm, getStruveDenominator (), sm);
 	}
 
 
@@ -91,7 +73,7 @@ public class ModifiedFirstKindStruve extends UnderlyingOperators
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			this (a, getPoly (a, n, psm, sm), sm);
+			this (a, getModifiedPoly (a, n, psm, sm), sm);
 		}
 
 		LaFunction
@@ -176,6 +158,7 @@ public class ModifiedFirstKindStruve extends UnderlyingOperators
 	{
 		return getL (parameter, terms, lib, psm);
 	}
+
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getL (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{

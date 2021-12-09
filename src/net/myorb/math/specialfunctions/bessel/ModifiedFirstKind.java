@@ -7,13 +7,12 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.Function;
-import net.myorb.math.Polynomial;
 
 /**
  * support for describing Bessel I (Modified First Kind) functions
  * @author Michael Druckman
  */
-public class ModifiedFirstKind extends UnderlyingOperators
+public class ModifiedFirstKind extends BesselPrimitive
 {
 
 
@@ -32,24 +31,6 @@ public class ModifiedFirstKind extends UnderlyingOperators
 		getI (T a, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		return new IaFunction<T>(a, termCount, psm);
-	}
-
-
-	/**
-	 * @param a a real number identifying the order of the Ha description
-	 * @param termCount the number of terms to include in the polynomial
-	 * @param psm a space manager for polynomial management
-	 * @param sm a manager for the number space in use
-	 * @return the representation of the polynomial
-	 * @param <T> data type manager
-	 */
-	public static <T> Polynomial.PowerFunction<T> getPoly 
-		(
-			T a, int termCount, PolynomialSpaceManager<T> psm,
-			ExpressionSpaceManager<T> sm
-		)
-	{
-		return getPoly (a, true, termCount, psm, getBesselDenominator (), sm);
 	}
 
 
@@ -76,7 +57,7 @@ public class ModifiedFirstKind extends UnderlyingOperators
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			this (a, getPoly (a, n, psm, sm), sm);
+			this (a, getModifiedPoly (a, n, psm, sm), sm);
 		}
 
 		IaFunction

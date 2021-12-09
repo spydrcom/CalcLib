@@ -13,7 +13,7 @@ import net.myorb.math.Polynomial;
  * support for describing Bessel j (Spherical First Kind) functions
  * @author Michael Druckman
  */
-public class SphericalFirstKind extends UnderlyingOperators
+public class SphericalFirstKind extends BesselPrimitive
 {
 
 
@@ -67,9 +67,14 @@ public class SphericalFirstKind extends UnderlyingOperators
 	{
 		double twoPow = Math.pow (2, n + 0.5);
 		T constant = getExpressionManager (psm).convertFromDouble (Math.sqrt (Math.PI / 2) / twoPow);
-		Polynomial.PowerFunction<T> poly = sumOfTerms (0, 0, termCount, n + 1.5, psm, false, getBesselDenominator ());
 		Polynomial.PowerFunction<T> xToN = psm.pow (psm.newVariable (), n + r);
+		Polynomial.PowerFunction<T> poly = getPoly (n, termCount, psm);
 		return psm.times (constant, psm.multiply (xToN, poly));
+	}
+	static <T> Polynomial.PowerFunction<T> getPoly (int order, int n, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		return getOrdinaryPoly (sm.convertFromDouble (order + 0.5), n, psm, sm);
 	}
 
 

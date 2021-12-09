@@ -14,7 +14,7 @@ import net.myorb.math.Function;
  * support for describing Bessel J (Ordinary First Kind) functions
  * @author Michael Druckman
  */
-public class OrdinaryFirstKind extends UnderlyingOperators
+public class OrdinaryFirstKind extends BesselPrimitive
 {
 
 
@@ -32,7 +32,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 	public static <T> Polynomial.PowerFunction<T>
 		getJ (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (n, n, termCount, n, psm, false, getBesselDenominator ());
+		return ordinarySumOfTerms (n, termCount, psm);
 	}
 
 
@@ -48,24 +48,6 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 		getJ (T p, int termCount, PolynomialSpaceManager<T> psm)
 	{
 		return new JpFunction<T>(p, termCount, psm);
-	}
-
-
-	/**
-	 * @param a a real number identifying the order of the Ha description
-	 * @param termCount the number of terms to include in the polynomial
-	 * @param psm a space manager for polynomial management
-	 * @param sm a manager for the number space in use
-	 * @return the representation of the polynomial
-	 * @param <T> data type manager
-	 */
-	public static <T> Polynomial.PowerFunction<T> getPoly 
-		(
-			T a, int termCount, PolynomialSpaceManager<T> psm,
-			ExpressionSpaceManager<T> sm
-		)
-	{
-		return getPoly (a, false, termCount, psm, getBesselDenominator (), sm);
 	}
 
 
@@ -92,7 +74,7 @@ public class OrdinaryFirstKind extends UnderlyingOperators
 				ExpressionSpaceManager<T> sm
 			)
 		{
-			this (a, getPoly (a, n, psm, sm), sm);
+			this (a, getOrdinaryPoly (a, n, psm, sm), sm);
 		}
 
 		JpFunction
