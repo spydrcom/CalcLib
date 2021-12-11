@@ -135,7 +135,8 @@ public class Library
 	{
 		if (gammaFunction == null)
 			gammaFunction = new Gamma ();
-		return gammaFunction.eval (x);
+		try { return gammaFunction.eval (x); }
+		catch (Exception e) { return Double.POSITIVE_INFINITY; }
 	}
 	static Gamma gammaFunction = null;
 

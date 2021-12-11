@@ -21,6 +21,26 @@ public abstract class UnderlyingOperators extends Library
 {
 
 
+	/*
+	 *           F#n(x) = LIM [a -> n] F#a
+	 * { for F in [Y,K] to avoid GAMMA(-n) & COT(n*PI) }
+	 */
+	public static final double INTEGER_ORDER_ADJUSTMENT = 0.00001;
+
+	/**
+	 * @param alpha order value for a function
+	 * @return adjusted value for negative integers
+	 */
+	public static double integerOrderCheck (Number alpha)
+	{
+		double value;
+		if (isInteger (value = alpha.doubleValue ()))
+		{ return value + INTEGER_ORDER_ADJUSTMENT; }
+		else return value;
+	}
+	public static <T> T integerOrderCheck (T alpha, ExpressionSpaceManager<T> sm)
+	{ return sm.convertFromDouble (integerOrderCheck (sm.toNumber (alpha))); }
+
 
 	/**
 	 * calculation of denominator of polynomial terms
@@ -39,6 +59,8 @@ public abstract class UnderlyingOperators extends Library
 
 
 	/**
+	 * used with exponential term product.
+	 *  polynomial can start with (x ^ 0) term
 	 * @param a the alpha value for the function
 	 * @param modified the alternating sign of the formula is removed
 	 * @param termCount the number of term to generate for the polynomial
@@ -107,16 +129,14 @@ public abstract class UnderlyingOperators extends Library
 	}
 	public static <T> Polynomial.PowerFunction<T> sumOfTerms
 		(
-			Number order, int termCount,
+			int p, int n, Number a,
 			PolynomialSpaceManager<T> psm, boolean modified,
 			Denominator<T> denominator
 		)
 	{
-		int n = order.intValue ();
-
 		return sumOfTerms
 		(
-			n, n, termCount, order, psm, modified,
+			p, p, n, a, psm, modified,
 			denominator, getExpressionManager (psm)
 		);
 	}

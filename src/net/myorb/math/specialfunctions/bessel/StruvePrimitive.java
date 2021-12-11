@@ -49,11 +49,14 @@ public abstract class StruvePrimitive extends UnderlyingOperators
 	{
 		return getPoly (a, true, n, psm, getStruveDenominator (), sm);
 	}
-
 	public static <T> Polynomial.PowerFunction<T> modifiedSumOfTerms
-		(int order, int n, PolynomialSpaceManager<T> psm)
+		(int a, int n, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (order+1, n, psm, true, getStruveDenominator ());
+		return sumOfTerms
+		(
+			a + 1, n, a, psm, true,
+			getStruveDenominator ()
+		);
 	}
 
 
@@ -73,11 +76,14 @@ public abstract class StruvePrimitive extends UnderlyingOperators
 	{
 		return getPoly (a, false, n, psm, getStruveDenominator (), sm);
 	}
-
 	public static <T> Polynomial.PowerFunction<T> ordinarySumOfTerms
-		(int order, int n, PolynomialSpaceManager<T> psm)
+		(int a, int n, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (order+1, n, psm, false, getStruveDenominator ());
+		return sumOfTerms
+		(
+			a + 1, n, a, psm, false,
+			getStruveDenominator ()
+		);
 	}
 
 

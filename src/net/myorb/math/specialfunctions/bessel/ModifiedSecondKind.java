@@ -18,6 +18,8 @@ public class ModifiedSecondKind extends UnderlyingOperators
 
 	// K#a(x) = pi/2 * ( I#-a(x) - I#a(x) ) / sin(a*pi)
 
+	// K#n(x) = LIM [a -> n] K#a { to avoid GAMMA(-n) }
+
 
 	/**
 	 * describe a Bessel function Ka where a is a real number
@@ -61,19 +63,22 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	
 		void processParameter (T a, ExpressionSpaceManager<T> sm)
 		{
-			double pi = Math.PI;
 			this.parameterValue = sm.convertToDouble (a);
-			constant = pi / (2 * Math.sin (parameterValue * pi));
-			multiplier = sm.convertFromDouble (constant);
-			this.parameter = a;
-			this.sm = sm;
-			
+			this.parameter = integerOrderCheck (a, sm); this.sm = sm;
+			this.computeTrigConstants (sm.convertToDouble (parameter));
 		}
 		protected Double parameterValue;
+		protected T parameter;
+
+		void computeTrigConstants (double p)
+		{
+			double pi = Math.PI;
+			this.constant = pi / (2 * Math.sin (p * pi));
+			this.multiplier = sm.convertFromDouble (constant);
+		}
 		protected double constant;
 		protected T multiplier;
-		protected T parameter;
-	
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#eval(java.lang.Object)
 		 */

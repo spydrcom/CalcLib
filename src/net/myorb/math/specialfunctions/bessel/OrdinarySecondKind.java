@@ -16,7 +16,13 @@ public class OrdinarySecondKind extends UnderlyingOperators
 {
 
 
+	// Y#n(z) = -2^n / ( pi * z^n ) * SIGMA [0 <= k <= n-1] ( (z^2 / 4)^k * (n - k - 1)! / k! ) -
+	//                  ( z^n / ( 2^n * pi ) * SIGMA [0 <= k <= INFINITY] ( (psi(k+1) + psi(n+k+1)) * ( - z^2 / 4)^k / ( k! * (n+k)! ) ) ) +
+	//                  ( 2/pi * J#n(z) * ln (z/2) )
+
 	// Y#a(x) = ( J#a(x) * cos(a*pi) - J#-a(x) ) / sin(a*pi)
+	
+	// Y#n(x) = LIM [a -> n] Y#a { to avoid GAMMA(-n) }
 
 
 	/**
@@ -53,9 +59,10 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 		protected void createJ (int termCount)
 		{
+			T p = parameter;
 			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
-			this.Jna = OrdinaryFirstKind.getJ (sm.negate (parameter), termCount, psm);
-			this.Ja = OrdinaryFirstKind.getJ (parameter, termCount, psm);
+			this.Jna = OrdinaryFirstKind.getJ (sm.negate (p), termCount, psm);
+			this.Ja = OrdinaryFirstKind.getJ (p, termCount, psm);
 		}
 		protected SpecialFunctionFamilyManager.FunctionDescription<T> Ja, Jna;
 
@@ -65,18 +72,21 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		 */
 		void processParameter (T a, ExpressionSpaceManager<T> sm)
 		{
-			this.parameterValue =
-					sm.convertToDouble (a);
-			double alphaPi = parameterValue * Math.PI;
+			this.parameterValue = sm.convertToDouble (a);
+			this.parameter = integerOrderCheck (a, sm); this.sm = sm;
+			this.computeTrigConstants (sm.convertToDouble (parameter));
+		}
+		protected Double parameterValue;
+		protected T parameter;
+
+		void computeTrigConstants (double p)
+		{
+			double alphaPi = p * Math.PI;
 			double cosAlphaPi = Math.cos (alphaPi), sinAlphaPi = Math.sin (alphaPi);
 			this.cotAlphaPi = sm.convertFromDouble (cosAlphaPi / sinAlphaPi);
 			this.negCscAlphaPi = sm.convertFromDouble (-1 / sinAlphaPi);
-			this.parameter = a;
-			this.sm = sm;
 		}
 		protected T cotAlphaPi, negCscAlphaPi;
-		protected Double parameterValue;
-		protected T parameter;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#eval(java.lang.Object)
@@ -148,9 +158,10 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	
 		protected void createJ (int termCount)
 		{
+			T p = parameter;
 			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
-			this.Jna = OrdinaryFirstKind.getJ (sm.negate (parameter), termCount, lib, psm);
-			this.Ja = OrdinaryFirstKind.getJ (parameter, termCount, lib, psm);
+			this.Jna = OrdinaryFirstKind.getJ (sm.negate (p), termCount, lib, psm);
+			this.Ja = OrdinaryFirstKind.getJ (p, termCount, lib, psm);
 		}
 	
 	}

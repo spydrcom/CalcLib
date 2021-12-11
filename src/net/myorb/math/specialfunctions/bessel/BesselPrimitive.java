@@ -48,11 +48,14 @@ public abstract class BesselPrimitive extends UnderlyingOperators
 	{
 		return getPoly (a, true, n, psm, getBesselDenominator (), sm);
 	}
-
 	public static <T> Polynomial.PowerFunction<T> modifiedSumOfTerms
-		(int order, int n, PolynomialSpaceManager<T> psm)
+		(int a, int n, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (order, n, psm, true, getBesselDenominator ());
+		return sumOfTerms
+		(
+			a, n, a, psm, true,
+			getBesselDenominator ()
+		);
 	}
 
 
@@ -72,11 +75,14 @@ public abstract class BesselPrimitive extends UnderlyingOperators
 	{
 		return getPoly (a, false, n, psm, getBesselDenominator (), sm);
 	}
-
 	public static <T> Polynomial.PowerFunction<T> ordinarySumOfTerms
-		(int order, int n, PolynomialSpaceManager<T> psm)
+		(int a, int n, PolynomialSpaceManager<T> psm)
 	{
-		return sumOfTerms (order, n, psm, false, getBesselDenominator ());
+		return sumOfTerms
+		(
+			a, n, a, psm, false,
+			getBesselDenominator ()
+		);
 	}
 
 

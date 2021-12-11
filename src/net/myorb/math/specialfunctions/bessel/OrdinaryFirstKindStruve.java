@@ -83,6 +83,7 @@ public class OrdinaryFirstKindStruve extends StruvePrimitive
 				ExpressionSpaceManager<T> sm
 			)
 		{
+			// Struve uses Double to allow change exponent to alpha+1
 			super (sm.convertToDouble (a), polynomial, sm);
 		}
 
