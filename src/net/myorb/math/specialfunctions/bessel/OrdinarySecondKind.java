@@ -1,10 +1,13 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
+import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.data.abstractions.SpaceDescription;
+
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
@@ -178,6 +181,251 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		return getY (parameter, terms, lib, psm);
 	}
 
+
+	/**
+	 * special case for integer order.
+	 *  LIM [ a -> n ] to avoid GAMMA(-n)
+	 * @param parameter the alpha value order
+	 * @param terms the count of terms for the series
+	 * @param lib an extended library of primitive functions
+	 * @param psm the manager for the polynomial space
+	 * @return the function description
+	 */
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
+		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		int n = sm.toNumber (parameter).intValue ();
+		return getY (n, terms, lib, sm);
+	}
+
+
+	/**
+	 * an alternative to the LIM [ a -> n ]...
+	 *  the function evaluation algorithm uses digamma
+	 * @param n the value of (alpha) order which is integer
+	 * @param termCount the count of terms for the series
+	 * @param lib an extended library of primitive functions
+	 * @param sm the manager for the data type
+	 * @return the function description
+	 */
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getY (int n, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm)
+	{
+		return new SpecialFunctionFamilyManager.FunctionDescription<T>()
+		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+			 */
+			public T eval (T x) { return Y.eval (x); }
+			Yn<T> Y = new Yn<T> (n, termCount, lib, sm);
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
+			 */
+			public StringBuffer getFunctionDescription ()
+			{
+				return new StringBuffer ("Bessel: Y(n=").append (n).append (")");
+			}
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+			 */
+			public String getRenderIdentifier () { return "Y"; }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
+			 */
+			public String getFunctionName () { return "Y_" + n; }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+			 */
+			public SpaceDescription<T> getSpaceDescription () { return sm; }
+			public SpaceManager<T> getSpaceManager () { return sm; }
+
+		};
+	}
+
+}
+
+
+class Yn<T>
+{
+
+	interface Term<T>
+	{
+		T eval (int k, T z);
+	}
+
+	Yn (int n, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm)
+	{
+		this.J = OrdinaryFirstKind.getJ
+			(sm.newScalar (n), termCount, lib, new PolynomialSpaceManager<T>(sm));
+		this.TWO = sm.newScalar (2); this.HALF = sm.invert (TWO);
+		this.PI_INVERTED = sm.invert (sm.getPi ());
+		this.lib = lib; this.sm = sm;
+		this.infinity = termCount;
+		this.n = n;
+	}
+	ExtendedPowerLibrary<T> lib; ExpressionSpaceManager<T> sm;
+	SpecialFunctionFamilyManager.FunctionDescription<T> J;
+	T TWO, HALF, PI_INVERTED; int n, infinity;
+
+	public T eval (T z)
+	{
+		try
+		{
+			T sum = BYnTerm1 (z);
+			sum = sm.add (sum, sm.negate (BYnTerm2 (z)));
+			sum = sm.add (sum, sm.negate (BYnTerm3 (z)));
+			return sm.multiply (PI_INVERTED, sum);
+		}
+		catch (Exception x) { throw new RuntimeException ("Eval error", x); }
+	}
+
+	/**
+	 * 2 * BJn(z) * ln (z/2)
+	 * @param z the function parameter value
+	 * @return the term evaluation
+	 */
+	public T BYnTerm1 (T z)
+	{
+		T twoJz = sm.multiply (TWO, J.eval (z));
+		return sm.multiply (twoJz, lib.ln (sm.multiply (z, HALF)));
+	}
+
+	/**
+	 * (z / 2)^n * series
+	 * @param z the function parameter value
+	 * @return the term evaluation
+	 */
+	public T BYnTerm2 (T z)
+	{
+		return sm.multiply (lib.pow (sm.multiply (HALF, z), n), digammaSeries (z));
+	}
+
+	/**
+	 * (2 / z)^n * series
+	 * @param z the function parameter value
+	 * @return the term evaluation
+	 */
+	public T BYnTerm3 (T z)
+	{
+		return sm.multiply (lib.pow (sm.multiply (TWO, sm.invert (z)), n), factorialSeries (z));
+	}
+
+	/**
+	 * ( (-1)^k * (psi(k+1) + psi(n+k+1)) / ( 4^k * k! * (n+k)! ) )
+	 * @param k the loop index value for the summation
+	 * @return the coefficient for the k term
+	 */
+	public T digammaCoefficient (int k)
+	{
+		double num = Library.digamma (k + 1) * Library.digamma (n + k + 1),
+			den = Math.pow (4, k) * factorial (k) * factorial (n + k);
+		return sm.convertFromDouble (Math.pow (-1, k) * num / den);
+	}
+
+	/**
+	 * SUMMATION [0 <= k <= INFINITY]
+	 *   ( (-1)^k * (psi(k+1) + psi(n+k+1)) * z^(2*k) / ( 4^k * k! * (n+k)! ) )
+	 * @param z the function parameter value
+	 * @return the series evaluation
+	 */
+	public T digammaSeries (T z)
+	{
+		return summation
+		(
+			0, infinity, z,
+			new Term<T>()
+			{
+				public T eval (int k, T z)
+				{
+					return sm.multiply
+					(
+						digammaCoefficient (k),
+						lib.pow (z, 2*k)
+					);
+				}
+			}
+		);
+	}
+
+	/**
+	 * (n - k - 1)! / (4^k * k!)
+	 * @param k the loop index value for the summation
+	 * @return the coefficient for the k term
+	 */
+	public T factorialCoefficient (int k)
+	{
+		double num = factorial (n - k - 1),
+				den = Math.pow (4, k) * factorial (k);
+		return sm.convertFromDouble (num / den);
+	}
+
+	/**
+	 * SUMMATION [0 <= k <= n-1] ( (z^2 / 4)^k * ( (n - k - 1)! / k! ) )
+	 * @param z the function parameter value
+	 * @return the series evaluation
+	 */
+	public T factorialSeries (T z)
+	{
+		return summation
+		(
+			0, n-1, z,
+			new Term<T>()
+			{
+				public T eval (int k, T z)
+				{
+					return sm.multiply
+					(
+						factorialCoefficient (k),
+						lib.pow (z, 2*k)
+					);
+				}
+			}
+		);
+	}
+
+	/**
+	 * @param lo the starting value
+	 * @param hi the largest to be evaluated
+	 * @param z the function parameter value
+	 * @param t a Term object for the summation
+	 * @return the sum of the terms
+	 */
+	T summation (int lo, int hi, T z, Term<T> t)
+	{
+		T sum = sm.getZero ();
+		for (int k = lo; k <= hi; k++)
+		{ sum = sm.add (sum, t.eval (k, z)); }
+		return sum;
+	}
+
+	/**
+	 * common factorial
+	 * @param x integer parameter
+	 * @return result as double
+	 */
+	public double factorial (int x)
+	{
+		return Library.factorial (x).doubleValue ();
+	}
+
+	/*
+!! BYnTerm1(z) = 2 * BJn(z) * ln (z/2)
+
+!! BYnTerm2(z) = (z / 2)^n * BYnSeries(z)
+
+!! BYnSeries(z) = SUMMATION [0 <= k <= INFINITY]
+	( (-1)^k * (psi(k+1) + psi(n+k+1)) * z^(2*k) / ( 4^k * k! * (n+k)! ) )
+
+!! BYnTerm3(z) = (2 / z)^n * SUMMATION [0 <= k <= n-1] ( (z^2 / 4)^k * ( (n - k - 1)! / k! ) )
+
+!! BYn(z) = 1/pi * (BYnTerm1(z) - BYnTerm2(z) - BYnTerm3(z))
+	 */
 
 }
 

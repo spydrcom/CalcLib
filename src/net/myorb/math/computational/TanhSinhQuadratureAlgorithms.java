@@ -64,7 +64,7 @@ public class TanhSinhQuadratureAlgorithms
 
 
 	/**
-	 * margain for error = 10 * slope
+	 * margin for error = 10 * slope
 	 * @param targetAbsoluteError requested error bound from user input
 	 */
 	void setErrorToBeObserved (double targetAbsoluteError)

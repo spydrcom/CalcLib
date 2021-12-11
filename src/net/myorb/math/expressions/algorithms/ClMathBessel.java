@@ -179,13 +179,14 @@ class BesselParameterManager<T> implements
 	 */
 	public String render (NodeFormatting using)
 	{
-		try
-		{
-			String sp = MathMarkupNodes.space ("5");
-			String id = using.formatIdentifierReference (identifier);
-			return using.formatSubScript (id, alphaManager.render ()) + sp;
-		}
-		catch (Exception e) { return ""; }
+		String sp = MathMarkupNodes.space ("5");
+		String id = using.formatIdentifierReference (identifier);
+		return using.formatSubScript (id, formatAlpha (using)) + sp;
+	}
+	public String formatAlpha (NodeFormatting using)
+	{
+		try { return alphaManager.render (); }
+		catch (Exception e) { return using.formatIdentifierReference ("?"); }
 	}
 
 

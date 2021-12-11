@@ -52,17 +52,20 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 
 		switch (id)
 		{
-			case 'J': return new OrdinaryFirstKind ().getFunctions (order, upTo, psm);
+			case 'H': return new HankelFunctions ().getFunctions (order, upTo, psm);			// Hankel functions
+
+			case 'J': return new OrdinaryFirstKind ().getFunctions (order, upTo, psm);			// Bessel functions
 			case 'Y': return new OrdinarySecondKind ().getFunctions (order, upTo, psm);
-			case 'h': return new OrdinaryFirstKindStruve ().getFunctions (order, upTo, psm);
-			case 'k': return new OrdinarySecondKindStruve ().getFunctions (order, upTo, psm);
-			case 'j': return new SphericalFirstKind ().getFunctions (order, upTo, psm);
-			case 'y': return new SphericalSecondKind ().getFunctions (order, upTo, psm);
 			case 'K': return new ModifiedSecondKind ().getFunctions (order, upTo, psm);
 			case 'I': return new ModifiedFirstKind ().getFunctions (order, upTo, psm);
+
+			case 'h': return new OrdinaryFirstKindStruve ().getFunctions (order, upTo, psm);	// STRUVE functions
+			case 'k': return new OrdinarySecondKindStruve ().getFunctions (order, upTo, psm);
 			case 'l': return new ModifiedFirstKindStruve ().getFunctions (order, upTo, psm);
 			case 'm': return new ModifiedSecondKindStruve ().getFunctions (order, upTo, psm);
-			case 'H': return new HankelFunctions ().getFunctions (order, upTo, psm);
+
+			case 'y': return new SphericalSecondKind ().getFunctions (order, upTo, psm);		// Spherical functions
+			case 'j': return new SphericalFirstKind ().getFunctions (order, upTo, psm);
 		}
 
 		return null;
@@ -87,14 +90,18 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 	{
 		switch (kind.charAt (0))
 		{
-			case 'J': return new OrdinaryFirstKind ().getFunction (order, terms, lib, psm);
+			case 'J': return new OrdinaryFirstKind ().getFunction (order, terms, lib, psm);				// Bessel functions
 			case 'Y': return new OrdinarySecondKind ().getFunction (order, terms, lib, psm);
 			case 'K': return new ModifiedSecondKind ().getFunction (order, terms, lib, psm);
 			case 'I': return new ModifiedFirstKind ().getFunction (order, terms, lib, psm);
-			case 'h': return new OrdinaryFirstKindStruve ().getFunction (order, terms, lib, psm);
+
+			case 'h': return new OrdinaryFirstKindStruve ().getFunction (order, terms, lib, psm);		// STRUVE functions
 			case 'k': return new OrdinarySecondKindStruve ().getFunction (order, terms, lib, psm);
-			case 'l': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
 			case 'm': return new ModifiedSecondKindStruve ().getFunction (order, terms, lib, psm);
+			case 'l': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
+																										// Special Cases (improved performance)
+			case 'N': return new OrdinarySecondKind ().getSpecialCase (order, terms, lib, psm);			// Yn identity with digamma
+			case 'A': return new ModifiedSecondKind ().getSpecialCase (order, terms, 1E-4, psm);		// Ka integral algorithm
 		}
 
 		return null;

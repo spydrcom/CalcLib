@@ -174,9 +174,10 @@ public class Library
 	 */
 	public static double gammaPrime (double x)
 	{
-		return gamma ((x + dx) - gamma (x)) / dx;
+		return (gamma (x + dx) - gamma (x)) / dx;
 	}
-	static final double dx = 0.0000001;
+	//static final double dx = 0.0000001;
+	static final double dx = 0.0001;
 
 	/**
 	 * digamma function
