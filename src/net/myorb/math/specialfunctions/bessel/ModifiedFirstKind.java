@@ -293,9 +293,7 @@ class IalphaPart1Integrand extends RealIntegrandFunctionBase
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{
-		return Math.exp ( x * Math.cos (t) ) * Math.cos (a * t);
-	}
+	{ return Math.exp ( x * Math.cos (t) ) * Math.cos (a * t); }
 	IalphaPart1Integrand (double x, double a) { super (x, a); }
 }
 
@@ -309,9 +307,7 @@ class IalphaPart2Integrand extends RealIntegrandFunctionBase
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{
-		return Math.exp ( - x * Math.cosh ( (1-a) * t) );
-	}
+	{ return Math.exp ( - x * Math.cosh ( (1-a) * t) ); }
 	IalphaPart2Integrand (double x, double a) { super (x, a); }
 }
 

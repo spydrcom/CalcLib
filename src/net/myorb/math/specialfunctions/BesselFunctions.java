@@ -86,7 +86,7 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 
 
 	public SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
-	(String kind, T order, int terms, ExtendedPowerLibrary<T> lib)
+	(String kind, T order, int terms, double precision, ExtendedPowerLibrary<T> lib)
 	{
 		switch (kind.charAt (0))
 		{
@@ -101,8 +101,8 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 			case 'l': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
 																										// Special Cases (improved performance)
 			case 'N': return new OrdinarySecondKind ().getSpecialCase (order, terms, lib, psm);			// Yn identity with digamma
-			case 'A': return new ModifiedSecondKind ().getSpecialCase (order, terms, 1E-4, psm);		// Ka integral algorithm
-			case 'i': return new ModifiedFirstKind ().getSpecialCase (order, terms, 1E-4, psm);			// Ia integral algorithm
+			case 'A': return new ModifiedSecondKind ().getSpecialCase (order, terms, precision, psm);	// Ka integral algorithm
+			case 'i': return new ModifiedFirstKind ().getSpecialCase (order, terms, precision, psm);	// Ia integral algorithm
 		}
 
 		return null;
