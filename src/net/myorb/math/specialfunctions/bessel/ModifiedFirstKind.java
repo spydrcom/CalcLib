@@ -1,11 +1,14 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
+import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.data.abstractions.SpaceDescription;
 
 import net.myorb.math.ExtendedPowerLibrary;
+import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
 
 /**
@@ -148,5 +151,167 @@ public class ModifiedFirstKind extends BesselPrimitive
 	}
 
 
+	/**
+	 * special case for using integral
+	 * @param parameter the alpha value order
+	 * @param terms the count of terms for the series
+	 * @param precision target value for approximation error
+	 * @param psm the manager for the polynomial space
+	 * @return the function description
+	 */
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
+		(T parameter, int terms, double precision, PolynomialSpaceManager<T> psm)
+	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		return getI (parameter, terms, precision, sm);
+	}
+
+
+	/**
+	 * an alternative to the LIM [ a -> n ]...
+	 *  the function evaluation algorithm from integral
+	 * @param a the value of alpha which is integer/real
+	 * @param termCount the count of terms for the series
+	 * @param precision target value for approximation error
+	 * @param sm the manager for the data type
+	 * @return the function description
+	 */
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
+		getI (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
+	{
+		return new IaFunctionDescription<T> (a, termCount, precision, sm);
+	}
+
+
+}
+
+
+/**
+ * Function Description for special case of Ia implementation.
+ *  domain of real numbers, integral form is: exp ( x * cos (t) ) * cos (a * t)
+ * @param <T> data type in use
+ */
+class IaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
+{
+
+	IaFunctionDescription (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
+	{ this.I = new Ia (sm.convertToDouble (a), termCount, precision); this.sm = sm; this.a = a; }
+	ExpressionSpaceManager<T> sm; Ia I; T a;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public T eval (T x)
+	{
+		return sm.convertFromDouble ( I.eval ( sm.convertToDouble (x) ) );
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
+	 */
+	public StringBuffer getFunctionDescription ()
+	{
+		return new StringBuffer ("Bessel: I(a=").append (a).append (")");
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+	 */
+	public String getRenderIdentifier () { return "I"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
+	 */
+	public String getFunctionName () { return "I_" + a; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+	 */
+	public SpaceDescription<T> getSpaceDescription () { return sm; }
+	public SpaceManager<T> getSpaceManager () { return sm; }
+
+}
+
+
+/**
+ * provide real version of Ia using integral algorithm.
+ * TanhSinh Quadrature is used to provide numerical integration
+ */
+class Ia
+{
+
+	Ia (double a, int infinity, double prec)
+	{
+		this.a = a; this.infinity = infinity;
+		this.targetAbsoluteError = prec;
+		this.pi = Math.PI;
+	}
+	double pi;
+	double targetAbsoluteError;
+	double a; int infinity;
+
+	/**
+	 * Integral form of Ia:
+	 * exp ( x * cos (t) ) * cos (a * t)
+	 * @param x parameter to Ia function
+	 * @return calculated result
+	 */
+	double eval (double x)
+	{
+		return 1/pi * (part1 (x) - Math.sin (a * pi) * part2 (x));
+	}
+	double part1 (double x)
+	{
+		Function<Double> f = new IalphaPart1Integrand (x, a);
+		return TanhSinhQuadratureAlgorithms.Integrate
+		(f, 0, pi, targetAbsoluteError, null);
+	}
+	double part2 (double x)
+	{
+		Function<Double> f = new IalphaPart2Integrand (x, a);
+		return TanhSinhQuadratureAlgorithms.Integrate
+		(f, 0, infinity, targetAbsoluteError, null);
+	}
+
+/*
+	!! iap2 (x,a,t) = exp ( - x * cosh ( (1-a) * t)
+	!! iap1 (x,a,t) = exp ( x * cos (t) ) * cos (a * t)
+
+	!! Ia (x,a) = 1/pi * ( INTEGRAL [0 <= t <= pi <> dt] (iap1 (x, a, t) * <*> t) -
+			sin (a * pi) * INTEGRAL [0 <= t <= INFINITY <> dt] (iap2 (x, a, t) * <*> t) )
+ */
+
+}
+
+
+/**
+ * part1 integral form of Ia
+ */
+class IalphaPart1Integrand extends RealIntegrandFunctionBase
+{
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public Double eval (Double t)
+	{
+		return Math.exp ( x * Math.cos (t) ) * Math.cos (a * t);
+	}
+	IalphaPart1Integrand (double x, double a) { super (x, a); }
+}
+
+
+/**
+ * part2 integral form of Ia
+ */
+class IalphaPart2Integrand extends RealIntegrandFunctionBase
+{
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public Double eval (Double t)
+	{
+		return Math.exp ( - x * Math.cosh ( (1-a) * t) );
+	}
+	IalphaPart2Integrand (double x, double a) { super (x, a); }
 }
 

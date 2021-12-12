@@ -325,8 +325,9 @@ class Yn<T>
 	{
 		double num = Library.digamma (k + 1) * Library.digamma (n + k + 1),
 			den = Math.pow (4, k) * factorial (k) * factorial (n + k);
-		return sm.convertFromDouble (Math.pow (-1, k) * num / den);
+		return sm.convertFromDouble (sgn (k) * num / den);
 	}
+	int sgn (int k) { return k%2 == 0? 1: -1; }
 
 	/**
 	 * SUMMATION [0 <= k <= INFINITY]

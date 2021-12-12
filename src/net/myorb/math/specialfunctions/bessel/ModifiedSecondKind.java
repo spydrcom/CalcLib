@@ -1,7 +1,6 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
-import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.expressions.ExpressionSpaceManager;
@@ -261,7 +260,7 @@ class KaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
 
 /**
  * provide real version of Ka using integral algorithm.
- * TanhSinh Quadrature is used to privide numerical integration
+ * TanhSinh Quadrature is used to provide numerical integration
  */
 class Ka
 {
@@ -298,13 +297,8 @@ class Ka
 /**
  * integral form of Ka
  */
-class KalphaIntegrand implements Function<Double>
+class KalphaIntegrand extends RealIntegrandFunctionBase
 {
-
-	KalphaIntegrand (double x, double a)
-	{ this.a = a; this.x = x; }
-	double x, a;
-
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
@@ -312,13 +306,6 @@ class KalphaIntegrand implements Function<Double>
 	{
 		return Math.exp ( - x * Math.cosh (t) ) * Math.cosh (a * t);
 	}
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.Function#getSpaceManager()
-	 */
-	public SpaceManager<Double> getSpaceManager () { return sm; }
-	ExpressionSpaceManager<Double> sm = new ExpressionFloatingFieldManager ();
-	public SpaceManager<Double> getSpaceDescription () { return sm; }
-
+	KalphaIntegrand (double x, double a) { super (x, a); }
 }
 

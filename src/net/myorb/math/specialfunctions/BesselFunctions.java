@@ -102,6 +102,7 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 																										// Special Cases (improved performance)
 			case 'N': return new OrdinarySecondKind ().getSpecialCase (order, terms, lib, psm);			// Yn identity with digamma
 			case 'A': return new ModifiedSecondKind ().getSpecialCase (order, terms, 1E-4, psm);		// Ka integral algorithm
+			case 'i': return new ModifiedFirstKind ().getSpecialCase (order, terms, 1E-4, psm);			// Ia integral algorithm
 		}
 
 		return null;
