@@ -184,12 +184,13 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 	/**
 	 * special case for integer order.
-	 *  LIM [ a -> n ] to avoid GAMMA(-n)
+	 *  LIM [ a -&gt; n ] to avoid GAMMA(-n)
 	 * @param parameter the alpha value order
 	 * @param terms the count of terms for the series
 	 * @param lib an extended library of primitive functions
 	 * @param psm the manager for the polynomial space
 	 * @return the function description
+	 * @param <T> data type manager
 	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
 		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
@@ -201,13 +202,14 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 
 	/**
-	 * an alternative to the LIM [ a -> n ]...
+	 * an alternative to the LIM [ a -&gt; n ]...
 	 *  the function evaluation algorithm uses digamma
 	 * @param n the value of (alpha) order which is integer
 	 * @param termCount the count of terms for the series
 	 * @param lib an extended library of primitive functions
 	 * @param sm the manager for the data type
 	 * @return the function description
+	 * @param <T> data type manager
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getY (int n, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm)

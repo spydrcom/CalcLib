@@ -183,6 +183,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	 * @param precision target value for approximation error
 	 * @param psm the manager for the polynomial space
 	 * @return the function description
+	 * @param <T> data type manager
 	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
 		(T parameter, int terms, double precision, PolynomialSpaceManager<T> psm)
@@ -193,13 +194,14 @@ public class ModifiedSecondKind extends UnderlyingOperators
 
 
 	/**
-	 * an alternative to the LIM [ a -> n ]...
+	 * an alternative to the LIM [ a -&gt; n ]...
 	 *  the function evaluation algorithm from integral
 	 * @param a the value of alpha which is integer/real
 	 * @param termCount the count of terms for the series
 	 * @param precision target value for approximation error
 	 * @param sm the manager for the data type
 	 * @return the function description
+	 * @param <T> data type manager
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getK (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
