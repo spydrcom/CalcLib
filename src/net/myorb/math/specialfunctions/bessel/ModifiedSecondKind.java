@@ -303,9 +303,7 @@ class KalphaIntegrand extends RealIntegrandFunctionBase
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{
-		return Math.exp ( - x * Math.cosh (t) ) * Math.cosh (a * t);
-	}
+	{ return Math.exp ( - x * Math.cosh (t) ) * Math.cosh (a * t); }
 	KalphaIntegrand (double x, double a) { super (x, a); }
 }
 

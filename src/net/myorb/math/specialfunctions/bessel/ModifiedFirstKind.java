@@ -246,9 +246,8 @@ class Ia
 		this.targetAbsoluteError = prec;
 		this.pi = Math.PI;
 	}
-	double pi;
-	double targetAbsoluteError;
-	double a; int infinity;
+	double pi, a, targetAbsoluteError;
+	int infinity;
 
 	/**
 	 * Integral form of Ia:
@@ -274,7 +273,7 @@ class Ia
 	}
 
 /*
-	!! iap2 (x,a,t) = exp ( - x * cosh ( (1-a) * t)
+	!! iap2 (x,a,t) = exp ( - x * cosh ( (1-a) * t) )
 	!! iap1 (x,a,t) = exp ( x * cos (t) ) * cos (a * t)
 
 	!! Ia (x,a) = 1/pi * ( INTEGRAL [0 <= t <= pi <> dt] (iap1 (x, a, t) * <*> t) -

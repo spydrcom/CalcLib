@@ -3,7 +3,9 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.specialfunctions.BesselFunctions;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
+
 import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
@@ -223,7 +225,7 @@ class BesselParameterManager<T> implements
 	{
 		BesselFunctions<T> functions;
 		(functions = new BesselFunctions<T> ()).init (manager);
-		function = functions.getFunction (kind, alphaManager.eval (), terms, precision, library); //TODO: 
+		function = functions.getFunction (kind, alphaManager.eval (), terms, precision, library);
 		identifier = ((SpecialFunctionFamilyManager.FunctionDescription<T>) function).getRenderIdentifier ();
 		return this;
 	}
