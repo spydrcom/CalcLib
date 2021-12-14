@@ -2,6 +2,7 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
+import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
@@ -244,22 +245,24 @@ class Ia
 
 	Ia (double a, int infinity, double prec)
 	{
-		this.a = a; this.infinity = infinity;
+		this.pi = Math.PI; this.a = a; this.infinity = infinity;
+		this.nonIntegerAlpha = ! Library.isInteger (a);
+		this.sinAlphaPi = - Math.sin (a * pi);
 		this.targetAbsoluteError = prec;
-		this.pi = Math.PI;
 	}
-	double pi, a, targetAbsoluteError;
-	int infinity;
+	double pi, a, sinAlphaPi, targetAbsoluteError;
+	int infinity; boolean nonIntegerAlpha;
 
 	/**
-	 * Integral form of Ia:
-	 * exp ( x * cos (t) ) * cos (a * t)
+	 * Integral form of Ia
 	 * @param x parameter to Ia function
 	 * @return calculated result
 	 */
 	double eval (double x)
 	{
-		return 1/pi * (part1 (x) - Math.sin (a * pi) * part2 (x));
+		double sum = part1 (x);
+		if (nonIntegerAlpha) sum += sinAlphaPi * part2 (x);
+		return sum / pi;
 	}
 	double part1 (double x)
 	{
@@ -275,7 +278,7 @@ class Ia
 	}
 
 /*
-	!! iap2 (x,a,t) = exp ( - x * cosh ( (1-a) * t) )
+	!! iap2 (x,a,t) = exp ( - x * cosh (t) - a * t )
 	!! iap1 (x,a,t) = exp ( x * cos (t) ) * cos (a * t)
 
 	!! Ia (x,a) = 1/pi * ( INTEGRAL [0 <= t <= pi <> dt] (iap1 (x, a, t) * <*> t) -
@@ -308,7 +311,7 @@ class IalphaPart2Integrand extends RealIntegrandFunctionBase
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{ return Math.exp ( - x * Math.cosh ( (1-a) * t) ); }
+	{ return Math.exp ( - x * Math.cosh (t) - a * t ); }
 	IalphaPart2Integrand (double x, double a) { super (x, a); }
 }
 
