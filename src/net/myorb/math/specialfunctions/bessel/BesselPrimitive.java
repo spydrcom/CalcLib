@@ -25,7 +25,7 @@ public abstract class BesselPrimitive extends UnderlyingOperators
 			{
 				// k! * GAMMA(k+p+1)
 				double gammaSum = gamma (k + p.doubleValue () + 1);
-				double product = gammaSum * factorial (k).doubleValue ();
+				double product = gammaSum * factorial (k);
 				return sm.convertFromDouble (product);
 			}
 		};

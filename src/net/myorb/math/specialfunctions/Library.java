@@ -12,6 +12,41 @@ import net.myorb.math.SpaceManager;
 public class Library
 {
 
+
+	/**
+	 * describe a term for a summation
+	 * @param <T> data type used
+	 */
+	public interface Term<T>
+	{
+		/**
+		 * @param k the order of the term
+		 * @param z the value of the variable in the term
+		 * @return the calculated term value
+		 */
+		T eval (int k, T z);
+	}
+
+
+	/**
+	 * @param lo the starting value
+	 * @param hi the largest to be evaluated
+	 * @param z the function parameter value
+	 * @param t a Term object for the summation
+	 * @param sm a manager for the type
+	 * @return the sum of the terms
+	 * @param <T> data type used
+	 */
+	public static <T> T summation
+	(int lo, int hi, T z, Term<T> t, SpaceManager<T> sm)
+	{
+		T sum = sm.getZero ();
+		for (int k = lo; k <= hi; k++)
+		{ sum = sm.add (sum, t.eval (k, z)); }
+		return sum;
+	}
+
+
 	/**
 	 * @param from polynomial manager identifying function type
 	 * @return the expression manager for the type
@@ -79,6 +114,13 @@ public class Library
 		return result;
 	}
 
+	public static double factorial (int x)
+	{
+		double result = 1, next = x;
+		for (int i=2; i<=x; i++) { result *= next; next -= 1; }
+		return result;
+	}
+
 	/**
 	 * compute integer factorial
 	 * @param n the integer to use a parameter to factorial function
@@ -88,7 +130,7 @@ public class Library
 	 */
 	public static <T> T factorialT (int n, SpaceManager<T> sm)
 	{
-		return toExpressionManager (sm).convertFromDouble (factorial (n).doubleValue ());
+		return toExpressionManager (sm).convertFromDouble (factorial (n));
 	}
 
 	/**
@@ -176,8 +218,8 @@ public class Library
 	{
 		return (gamma (x + dx) - gamma (x)) / dx;
 	}
-	//static final double dx = 0.0000001;
-	static final double dx = 0.0001;
+	static final double dx = 0.0000001;
+	//static final double dx = 0.0001;
 
 	/**
 	 * digamma function
