@@ -12,6 +12,7 @@ import net.myorb.math.GeneratingFunctions.Coefficients;
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
+import net.myorb.math.Function;
 
 /**
  * support for describing Bessel Y (Ordinary Second Kind) functions
@@ -267,7 +268,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
  */
 class YnSeries<T> extends Library
 {
-
+	
 	/**
 	 * @param k the index of the term
 	 * @return the ratio of the factorials of the term
@@ -285,7 +286,7 @@ class YnSeries<T> extends Library
 	 */
 	public double digammaOverFactorial (int k)
 	{
-		double num = digamma (k + 1) * digamma (n + k + 1);
+		double num = digamma (k + 1) + digamma (n + k + 1);
 		double den = factorial (k) * factorial (n + k);
 		return num / den;
 	}
@@ -352,6 +353,35 @@ class YnSeries<T> extends Library
 	public T finiteSeriesTermCoefficient  (int k)
 	{
 		return ratio (factorialQuotient (k), Math.pow (2, 2 * k - n));		// no negative power in polynomial
+	}
+
+	/**
+	 * [0 <= k <= n-1] ( (n - k - 1)! / ( 4^k * k! ) )
+	 * @return the computed coefficients
+	 */
+	public Coefficients<Double> getFactorialCoefficients ()
+	{
+		Coefficients<Double> cs = new Coefficients<Double>();
+		for (int k=0; k<=n-1; k++)
+		{
+			cs.add (factorialQuotient (k) / Math.pow (4, k));
+		}
+		return cs;
+	}
+
+	/**
+	 * [0 <= k <= INFINITY] ( (-1)^k * (psi(k+1) + psi(n+k+1)) / ( 4^k * k! * (n+k)! ) )
+	 * @param infinity approximation being used for infinity
+	 * @return the computed coefficients
+	 */
+	public Coefficients<Double> getPsiCoefficients (int infinity)
+	{
+		Coefficients<Double> cs = new Coefficients<Double>();
+		for (int k=0; k<=infinity; k++)
+		{
+			cs.add (alternatingSign (k) * digammaOverFactorial (k) / Math.pow (4, k));
+		}
+		return cs;
 	}
 
 	/**
@@ -552,7 +582,8 @@ class YnEquations<T> extends YnSeries<T>
 class Yn<T> extends YnEquations<T>
 {
 
-	public static boolean AVOID_POLY = false;
+	public static boolean USE_POLY = false;
+	public static boolean USE_LONG_FORM = true;
 
 	/**
 	 * @param n the order of the Y Bessel function
@@ -576,9 +607,10 @@ class Yn<T> extends YnEquations<T>
 	 */
 	public void constructPolynomial ()
 	{
-		if (AVOID_POLY) return;
-		this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);
+		if (USE_LONG_FORM) this.longForm = new YnLongForm<T> (n, infinity, sm);
+		else if (USE_POLY) this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);
 	}
+	protected YnLongForm<T> longForm = null;
 	protected YnPolynomial<T> yPoly = null;
 
 	/**
@@ -596,15 +628,16 @@ class Yn<T> extends YnEquations<T>
 	 * this encapsulates term2+term3.
 	 *  method to be determined by criteria.
 	 *  choices are polynomial or straight calculation.
+	 *  also provided is long form calculation option.
 	 * @param z the function parameter value
 	 * @return the sum of terms 2 and 3
 	 */
 	public T digestLaterTerms (T z)
 	{
 		T digest;
-		if (yPoly != null)
-		{ digest = polynomialDigest (z); }
-		else digest = digestSum (z);
+		if (yPoly != null) { digest = polynomialDigest (z); }
+		else if (longForm != null) { digest = longForm.eval (z); }
+		else { digest = digestSum (z); }
 		return sm.negate (digest);
 	}
 
@@ -655,17 +688,20 @@ class YnPolynomial<T> extends YnSeries<T> implements Polynomial.PowerFunction<T>
 	{
 		super (n, sm); this.psm = psm;
 		this.constructPolynomial (terms);
+		this.showPolynomial (terms);
 	}
 	protected PolynomialSpaceManager<T> psm;
 
 
 	/**
+	 * ( (-1)^k * (psi(k+1) + psi(n+k+1)) / ( 2^(2*k+n) * k! * (n+k)! ) * z^(2*k+2*n) )
 	 * @param infinity the number of terms to approximate infinity
 	 * @return a representation of the polynomial
 	 */
 	public Polynomial.PowerFunction<T> infiniteSeries (int infinity)
 	{
 		Polynomial.PowerFunction<T> p = psm.getZero ();
+		Polynomial.PowerFunction<T> x = psm.newVariable ();
 
 		for (int k = 0; k <= infinity; k++)
 		{
@@ -686,6 +722,7 @@ class YnPolynomial<T> extends YnSeries<T> implements Polynomial.PowerFunction<T>
 	public Polynomial.PowerFunction<T> finiteSeries ()
 	{
 		Polynomial.PowerFunction<T> p = psm.getZero ();
+		Polynomial.PowerFunction<T> x = psm.newVariable ();
 
 		for (int k = 0; k <= n-1; k++)
 		{																			// no negative power allowed in polynomial
@@ -702,13 +739,16 @@ class YnPolynomial<T> extends YnSeries<T> implements Polynomial.PowerFunction<T>
 	 */
 	public void constructPolynomial (int infinity)
 	{
-		this.x = psm.newVariable ();
 		Polynomial.PowerFunction<T> is = infiniteSeries (infinity);
 		Polynomial.PowerFunction<T> fs = finiteSeries ();
 		this.pf = psm.add (is, fs);
 	}
+	public void showPolynomial (int infinity)
+	{
+		System.out.println ( "Yn polynomial ( n=" + n + ", INFINITY=" + infinity + " )");
+		psm.show (pf);
+	}
 	protected Polynomial.PowerFunction<T> pf;
-	protected Polynomial.PowerFunction<T> x;
 
 
 	/*
@@ -741,6 +781,116 @@ class YnPolynomial<T> extends YnSeries<T> implements Polynomial.PowerFunction<T>
 !! BYn(z) = 1/pi * ( BYnTerm1(z) - ( BYnTerm2(z) + BYnTerm3(z) ) )
 	 */
 
+
+}
+
+
+/**
+ * construct a long form representation of the equations that compute Yn(z)
+ * @param <T> data type of terms
+ */
+class YnLongForm<T> extends YnSeries<T> implements Function<T>
+{
+
+
+	/**
+	 * @param n the order of the Y Bessel function
+	 * @param termCount the number of terms to approximate infinity
+	 * @param sm a manager object for the data type
+	 */
+	public YnLongForm
+		(
+			int n, int terms,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		super (n, sm);
+		this.psiCoefficients = getPsiCoefficients (terms);
+		this.factorialCoefficients = getFactorialCoefficients ();
+	}
+	protected Coefficients<Double> factorialCoefficients, psiCoefficients;
+
+	/*
+c1 = [0 <= k <= INFINITY] ( (-1)^k * (psi(k+1) + psi(n+k+1)) / ( 4^k * k! * (n+k)! ) )
+c2 = [0 <= k <= n-1] ( (n - k - 1)! / ( 4^k * k! ) )
+
+!! BYnTerm1(z) = 2 * BJn(z) * ln (z/2)
+
+!! BYnTerm2(z,z2n) = z2n * SUMMATION [0 <= k <= INFINITY] ( c1#k * z^(2*k) )
+
+!! BYnTerm3(z,z2n) = z2n * SUMMATION [0 <= k <= n-1] ( c2#k * z^(2*k) )
+
+!! digest23(z,z2n) = BYnTerm2(z,z2n) + BYnTerm3(z,1/z2n)
+
+!! BYn(z) = 1/pi * (BYnTerm1(z) - digest23(z,(z/2)^n))
+	 */
+
+	/**
+	 * @param z parameter to Yn
+	 * @param z2n calculation of (z/2)^n
+	 * @return summation of terms
+	 */
+	public double BYnTerm2 (double z, double z2n)
+	{
+		return z2n * evalPoly (psiCoefficients, z);
+	}
+
+	/**
+	 * @param z parameter to Yn
+	 * @param z2n calculation of (z/2)^(-n)
+	 * @return summation of terms
+	 */
+	public double BYnTerm3 (double z, double z2n)
+	{
+		return z2n * evalPoly (factorialCoefficients, z);
+	}
+
+	/**
+	 * @param c the Coefficients of the polynomial terms
+	 * @param z the parameter to the Yn function
+	 * @return the computed result
+	 */
+	public double evalPoly (Coefficients<Double> c, double z)
+	{
+		double
+		sum = 0.0, zsq = z * z, zpow = 1.0;
+		for (int k=0; k<=c.size()-1; k++)
+		{
+			sum += c.get (k) * zpow;
+			zpow *= zsq;
+		}
+		return sum;
+	}
+
+	/**
+	 * @param z parameter to Yn
+	 * @param z2n calculation of (z/2)^n
+	 * @return summation of terms 2 + 3
+	 */
+	public double digest23 (double z, double z2n)
+	{
+		return BYnTerm2 (z, z2n) + BYnTerm3 (z, 1/z2n);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public T eval (T x)
+	{
+		double z = sm.convertToDouble (x);
+		double digest = digest23 (z, Math.pow (z/2, n));
+		return sm.convertFromDouble (digest);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+	 */
+	public SpaceDescription<T> getSpaceDescription () { return sm; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.Function#getSpaceManager()
+	 */
+	public SpaceManager<T> getSpaceManager () { return sm; }
 
 }
 

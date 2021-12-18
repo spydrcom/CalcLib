@@ -45,6 +45,14 @@ public class Library
 		{ sum = sm.add (sum, t.eval (k, z)); }
 		return sum;
 	}
+	public static double summation
+	(int lo, int hi, double z, Term<Double> t)
+	{
+		double sum = 0.0;
+		for (int k = lo; k <= hi; k++)
+		{ sum += t.eval (k, z); }
+		return sum;
+	}
 
 
 	/**
