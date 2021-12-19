@@ -7,8 +7,11 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.polynomial.PolynomialFamilyManager;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
+
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
+
+import java.util.Map;
 
 /**
  * support for describing Bessel functions
@@ -85,29 +88,78 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 	protected SpaceManager<T> manager;
 
 
+	/**
+	 * @param kind the kind of Bessel function
+	 * @param order the order integer or real (no complex yet)
+	 * @param terms the number of term for series computations (approximation of infinity)
+	 * @param parameters a set of name/value parameters for control of the algorithm
+	 * @param lib a library of functions which can operate of the data type
+	 * @return a function description for the specified function
+	 */
 	public SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
-	(String kind, T order, int terms, double precision, ExtendedPowerLibrary<T> lib)
+	(String kind, T order, int terms, Map<String,Object> parameters, ExtendedPowerLibrary<T> lib)
 	{
-		switch (kind.charAt (0))
+		switch (getForm (parameters))
 		{
-			case 'J': return new OrdinaryFirstKind ().getFunction (order, terms, lib, psm);				// Bessel functions
-			case 'Y': return new OrdinarySecondKind ().getFunction (order, terms, lib, psm);
-			case 'K': return new ModifiedSecondKind ().getFunction (order, terms, lib, psm);
-			case 'I': return new ModifiedFirstKind ().getFunction (order, terms, lib, psm);
-
-			case 'h': return new OrdinaryFirstKindStruve ().getFunction (order, terms, lib, psm);		// STRUVE functions
-			case 'k': return new OrdinarySecondKindStruve ().getFunction (order, terms, lib, psm);
-			case 'm': return new ModifiedSecondKindStruve ().getFunction (order, terms, lib, psm);
-			case 'l': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
-																										// Special Cases (improved performance)
-			case 'N': return new OrdinarySecondKind ().getSpecialCase (order, terms, lib, psm);			// Yn identity with digamma
-			case 'j': return new OrdinaryFirstKind ().getSpecialCase (order, terms, precision, psm);	// Ja integral algorithm
-			case 'A': return new ModifiedSecondKind ().getSpecialCase (order, terms, precision, psm);	// Ka integral algorithm
-			case 'i': return new ModifiedFirstKind ().getSpecialCase (order, terms, precision, psm);	// Ia integral algorithm
+			case WEBER:
+				switch (kind.charAt (0))
+				{
+				case 'J': return new OrdinaryFirstKind ().getFunction (order, terms, lib, psm);				// Bessel (Weber) functions
+				case 'Y': return new OrdinarySecondKind ().getFunction (order, terms, lib, psm);
+				case 'K': return new ModifiedSecondKind ().getFunction (order, terms, lib, psm);
+				case 'I': return new ModifiedFirstKind ().getFunction (order, terms, lib, psm);
+				}
+			case STRUVE:
+				switch (kind.charAt (0))
+				{
+				case 'H': return new OrdinaryFirstKindStruve ().getFunction (order, terms, lib, psm);		// STRUVE functions
+				case 'K': return new OrdinarySecondKindStruve ().getFunction (order, terms, lib, psm);
+				case 'M': return new ModifiedSecondKindStruve ().getFunction (order, terms, lib, psm);
+				case 'L': return new ModifiedFirstKindStruve ().getFunction (order, terms, lib, psm);
+				}
+			case INTEGRAL:																					// Special Cases (integral algorithm)
+				switch (kind.charAt (0))
+				{
+				case 'J': return new OrdinaryFirstKind ().getSpecialCase (order, terms, parameters, psm);
+				case 'K': return new ModifiedSecondKind ().getSpecialCase (order, terms, parameters, psm);
+				case 'I': return new ModifiedFirstKind ().getSpecialCase (order, terms, parameters, psm);
+				}
+			case SPHERICAL:																					// Spherical functions
+				switch (kind.charAt (0))
+				{
+				case 'y': return new SphericalSecondKind ().getFunctions (order.toString (), 1, psm).get(0);
+				case 'j': return new SphericalFirstKind ().getFunctions (order.toString (), 1, psm).get (0);
+				}
+			case DIGAMMA:
+				return new OrdinarySecondKind ().getSpecialCase (order, terms, lib, parameters, psm);		// Yn identity with digamma and Jn
+			case HANKEL: return new HankelFunctions ().getFunctions (order.toString (), 1, psm).get (0);	// Hankel complex conjugate pair
 		}
-
-		return null;
+		throw new RuntimeException ("Bessel function specifications not recognized");
 	}
+
+
+	/**
+	 * identify the algorithm to be used.
+	 *  each type of function may support multiple algorithm implementations.
+	 *  these may be for efficiency or most notable is the LIM [a -&gt; n] to be avoided
+	 * @param parameters the parameters given for source configuration of the function
+	 * @return an identifier for the form recognized by parameters (default is WEBER)
+	 */
+	public Forms getForm (Map<String,Object> parameters)
+	{
+		Object specified;
+		if ((specified = parameters.get ("form")) != null)
+		{
+			try
+			{
+				String name = specified.toString ();
+				return Forms.valueOf (name.toUpperCase ());
+			}
+			catch (Exception e) {}
+		}
+		return Forms.WEBER;
+	}
+	public enum Forms {WEBER, STRUVE, HANKEL, SPHERICAL, INTEGRAL, DIGAMMA}
 
 
 }

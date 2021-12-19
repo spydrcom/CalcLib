@@ -3,6 +3,7 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+
 import net.myorb.math.Polynomial;
 
 /**

@@ -5,6 +5,9 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+
+import java.util.Map;
+
 import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
@@ -180,16 +183,16 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	 * special case for using integral
 	 * @param parameter the alpha value order
 	 * @param terms the count of terms for the series
-	 * @param precision target value for approximation error
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param psm the manager for the polynomial space
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
-		(T parameter, int terms, double precision, PolynomialSpaceManager<T> psm)
+		(T parameter, int terms, Map<String,Object> parameters, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return getK (parameter, terms, precision, sm);
+		return getK (parameter, terms, getPrecision (parameters), sm);
 	}
 
 

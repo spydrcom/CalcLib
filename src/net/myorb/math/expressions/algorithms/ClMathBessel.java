@@ -20,6 +20,7 @@ import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -139,7 +140,6 @@ class BesselParameterManager<T> implements
 	// family Bessel 2 Jp,2.5
 
 	static final int DEFAULT_TERM_COUNT = 20;
-	static final double DEFAULT_PRECISION = 1E-4;
 
 	/**
 	 * @param parameters map of configured parameters
@@ -147,7 +147,8 @@ class BesselParameterManager<T> implements
 	 */
 	BesselParameterManager (Map<String,Object> parameters, Environment<T> environment)
 	{
-		this (parameters.get ("kind"), parameters.get ("alpha"), parameters.get ("terms"), parameters.get ("precision"), environment);
+		this (parameters.get ("kind"), parameters.get ("alpha"), parameters.get ("terms"), environment);
+		this.parameters.putAll (parameters);
 	}
 	BesselParameterManager (String parameters, Environment<T> environment)
 	{
@@ -155,15 +156,15 @@ class BesselParameterManager<T> implements
 	}
 	BesselParameterManager (String[] parameters, Environment<T> environment)
 	{
-		this (parameters[0], parameters[1], parameters.length>2? parameters[2]: null, parameters.length>3? parameters[3]: null, environment);
+		this (parameters[0], parameters[1], parameters.length>2? parameters[2]: null, environment);
 	}
-	BesselParameterManager (Object kind, Object alpha, Object terms, Object precision, Environment<T> environment)
+	BesselParameterManager (Object kind, Object alpha, Object terms, Environment<T> environment)
 	{
 		parseAlpha (alpha.toString (), environment);
 		if (terms != null) this.terms = Integer.parseInt (terms.toString ());
-		if (precision != null) this.precision = Double.parseDouble (precision.toString ());
 		this.kind = kind.toString ();
 	}
+	protected Map<String,Object> parameters = new HashMap<String,Object> ();
 	protected String kind;
 
 
@@ -173,14 +174,6 @@ class BesselParameterManager<T> implements
 	 */
 	public int getTermCount () { return this.terms; }
 	int terms = DEFAULT_TERM_COUNT;
-
-
-	/**
-	 * get configured precision
-	 * @return configured requested precision for computation
-	 */
-	public int getPrecision () { return this.terms; }
-	double precision = DEFAULT_PRECISION;
 
 
 	/**
@@ -225,7 +218,7 @@ class BesselParameterManager<T> implements
 	{
 		BesselFunctions<T> functions;
 		(functions = new BesselFunctions<T> ()).init (manager);
-		function = functions.getFunction (kind, alphaManager.eval (), terms, precision, library);
+		function = functions.getFunction (kind, alphaManager.eval (), terms, parameters, library);
 		identifier = ((SpecialFunctionFamilyManager.FunctionDescription<T>) function).getRenderIdentifier ();
 		return this;
 	}

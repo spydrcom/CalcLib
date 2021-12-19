@@ -8,6 +8,8 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
 import net.myorb.math.specialfunctions.Library;
 
+import java.util.Map;
+
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
@@ -356,6 +358,21 @@ public abstract class UnderlyingOperators extends Library
 	 */
 	public abstract <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 	getFunction (T parameter, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm);
+
+
+	/**
+	 * get a value of precision to be used either as specified or defaulted
+	 * @param parameters a hash of name/value pairs passed from configuration
+	 * @return the precision value to be used
+	 */
+	public double getPrecision (Map<String,Object> parameters)
+	{
+		double precision = DEFAULT_PRECISION;
+		Object p = parameters.get ("precision");
+		if (p != null) precision = Double.parseDouble (p.toString ());
+		return precision;
+	}
+	static final double DEFAULT_PRECISION = 1E-4;
 
 
 	public static int DEFAULT_POLYNOMIAL_TERM_COUNT = 25;

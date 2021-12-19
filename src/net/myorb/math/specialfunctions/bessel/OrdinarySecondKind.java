@@ -3,16 +3,18 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
-import net.myorb.data.abstractions.SpaceDescription;
-
 import net.myorb.math.GeneratingFunctions.Coefficients;
+
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
 import net.myorb.math.Function;
+
+import net.myorb.data.abstractions.SpaceDescription;
+
+import java.util.Map;
 
 /**
  * support for describing Bessel Y (Ordinary Second Kind) functions
@@ -197,16 +199,21 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	 * @param parameter the alpha value order
 	 * @param terms the count of terms for the series
 	 * @param lib an extended library of primitive functions
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param psm the manager for the polynomial space
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
-		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
+		(
+			T parameter, int terms, ExtendedPowerLibrary<T> lib,
+			Map<String,Object> parameters, PolynomialSpaceManager<T> psm
+		)
 	{
-		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		ExpressionSpaceManager<T>
+			sm = getExpressionManager (psm);
 		int n = sm.toNumber (parameter).intValue ();
-		return getY (n, terms, lib, sm);
+		return getY (n, terms, lib, parameters, sm);
 	}
 
 
@@ -216,12 +223,16 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	 * @param n the value of (alpha) order which is integer
 	 * @param termCount the count of terms for the series
 	 * @param lib an extended library of primitive functions
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param sm the manager for the data type
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
-	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getY (int n, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm)
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T> getY
+		(
+			int n, int termCount, ExtendedPowerLibrary<T> lib,
+			Map<String,Object> parameters, ExpressionSpaceManager<T> sm
+		)
 	{
 		return new SpecialFunctionFamilyManager.FunctionDescription<T>()
 		{
@@ -230,7 +241,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
 			 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 			 */
 			public T eval (T x) { return Y.eval (x); }
-			Yn<T> Y = new Yn<T> (n, termCount, lib, sm);
+			Yn<T> Y = new Yn<T> (n, termCount, lib, parameters, sm);
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
@@ -582,33 +593,67 @@ class YnEquations<T> extends YnSeries<T>
 class Yn<T> extends YnEquations<T>
 {
 
-	public static boolean USE_POLY = false;
-	public static boolean USE_LONG_FORM = true;
 
 	/**
 	 * @param n the order of the Y Bessel function
 	 * @param termCount the number of terms to approximate infinity
-	 * @param lib the library of function operating on T data type
+	 * @param lib the library of functions operating on configured T data type
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param sm a manager object for the data type
 	 */
 	public Yn
 		(
 			int n, int termCount,
 			ExtendedPowerLibrary<T> lib,
+			Map<String,Object> parameters, 
 			ExpressionSpaceManager<T> sm
 		)
 	{
 		super (n, termCount, lib, sm);
-		this.constructPolynomial ();
+		this.constructPolynomial (parameters);
+	}
+
+	/**
+	 * @param parameters a hash of name/value pairs passed from configuration
+	 * @return the method of calculation configured for the function
+	 */
+	public Methods identifyMethod (Map<String,Object> parameters)
+	{
+		Object specified;
+		if ((specified = parameters.get ("method")) != null)
+		{
+			try
+			{
+				String name = specified.toString ();
+				return Methods.valueOf (name.toUpperCase ());
+			}
+			catch (Exception e) {}
+		}
+		return Methods.SECTIONED;
+	}
+	public enum Methods
+	{
+		STRAIGHT,		// calculate every term for every function call
+		POLYNOMIAL,		// construct a polynomial with all coefficients calculated once
+		SECTIONED		// calculate the coefficients for each section and treat as 2 series
 	}
 
 	/**
 	 * construct the polynomial representation for the equations
+	 * @param parameters
 	 */
-	public void constructPolynomial ()
+	public void constructPolynomial (Map<String,Object> parameters)
 	{
-		if (USE_LONG_FORM) this.longForm = new YnLongForm<T> (n, infinity, sm);
-		else if (USE_POLY) this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);
+		switch (identifyMethod (parameters))
+		{
+			case POLYNOMIAL:
+				this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);
+				break;
+			case SECTIONED:
+				this.longForm = new YnLongForm<T> (n, infinity, sm);
+				break;
+			case STRAIGHT: break;
+		}
 	}
 	protected YnLongForm<T> longForm = null;
 	protected YnPolynomial<T> yPoly = null;

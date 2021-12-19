@@ -25,6 +25,11 @@ public class TanhSinhQuadratureTables
 		 */
 		public double errorEstimate = Double.MAX_VALUE;
 		public int numFunctionEvaluations = 0;
+		
+		public String toString ()
+		{
+			return "estimate=" + errorEstimate + ", num=" + numFunctionEvaluations;
+		}
 	}
 
 
