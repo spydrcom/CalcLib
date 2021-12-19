@@ -8,12 +8,12 @@ import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionList;
 import net.myorb.math.specialfunctions.Library;
 
-import java.util.Map;
-
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
 import net.myorb.math.Function;
+
+import java.util.Map;
 
 /**
  * common math formulas for Bessel functions
@@ -365,7 +365,7 @@ public abstract class UnderlyingOperators extends Library
 	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @return the precision value to be used
 	 */
-	public double getPrecision (Map<String,Object> parameters)
+	public static double getPrecision (Map<String,Object> parameters)
 	{
 		double precision = DEFAULT_PRECISION;
 		Object p = parameters.get ("precision");

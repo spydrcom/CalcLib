@@ -1,19 +1,18 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
-import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
-import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
-
-import java.util.Map;
-
-import net.myorb.data.abstractions.SpaceDescription;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
+
+import net.myorb.data.abstractions.SpaceDescription;
+
+import java.util.Map;
 
 /**
  * support for describing Bessel I (Modified First Kind) functions
@@ -168,7 +167,7 @@ public class ModifiedFirstKind extends BesselPrimitive
 		(T parameter, int terms, Map<String,Object> parameters, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return getI (parameter, terms, getPrecision (parameters), sm);
+		return getI (parameter, terms, parameters, sm);
 	}
 
 
@@ -177,15 +176,15 @@ public class ModifiedFirstKind extends BesselPrimitive
 	 *  the function evaluation algorithm from integral
 	 * @param a the value of alpha which is integer/real
 	 * @param termCount the count of terms for the series
-	 * @param precision target value for approximation error
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param sm the manager for the data type
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getI (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
+		getI (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
 	{
-		return new IaFunctionDescription<T> (a, termCount, precision, sm);
+		return new IaFunctionDescription<T> (a, termCount, parameters, sm);
 	}
 
 
@@ -200,8 +199,8 @@ public class ModifiedFirstKind extends BesselPrimitive
 class IaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
 {
 
-	IaFunctionDescription (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
-	{ this.I = new Ia (sm.convertToDouble (a), termCount, precision); this.sm = sm; this.a = a; }
+	IaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
+	{ this.I = new Ia (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
 	ExpressionSpaceManager<T> sm; Ia I; T a;
 
 	/* (non-Javadoc)
@@ -243,41 +242,18 @@ class IaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
  * provide real version of Ia using integral algorithm.
  * TanhSinh Quadrature is used to provide numerical integration
  */
-class Ia
+class Ia extends SectionedAlgorithm
 {
 
-	Ia (double a, int infinity, double prec)
+	Ia (double a, int infinity, Map<String,Object> parameters)
 	{
-		this.pi = Math.PI; this.a = a; this.infinity = infinity;
-		this.nonIntegerAlpha = ! Library.isInteger (a);
-		this.sinAlphaPi = - Math.sin (a * pi);
-		this.targetAbsoluteError = prec;
-	}
-	double pi, a, sinAlphaPi, targetAbsoluteError;
-	int infinity; boolean nonIntegerAlpha;
-
-	/**
-	 * Integral form of Ia
-	 * @param x parameter to Ia function
-	 * @return calculated result
-	 */
-	double eval (double x)
-	{
-		double sum = part1 (x);
-		if (nonIntegerAlpha) sum += sinAlphaPi * part2 (x);
-		return sum / pi;
-	}
-	double part1 (double x)
-	{
-		Function<Double> f = new IalphaPart1Integrand (x, a);
-		return TanhSinhQuadratureAlgorithms.Integrate
-		(f, 0, pi, targetAbsoluteError, null);
-	}
-	double part2 (double x)
-	{
-		Function<Double> f = new IalphaPart2Integrand (x, a);
-		return TanhSinhQuadratureAlgorithms.Integrate
-		(f, 0, infinity, targetAbsoluteError, null);
+		super
+		(
+			a, infinity,
+			new IalphaPart1Integrand (a),
+			new IalphaPart2Integrand (a),
+			parameters
+		);
 	}
 
 /*
@@ -301,7 +277,7 @@ class IalphaPart1Integrand extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{ return Math.exp ( x * Math.cos (t) ) * Math.cos (a * t); }
-	IalphaPart1Integrand (double x, double a) { super (x, a); }
+	IalphaPart1Integrand (double a) { super (a); }
 }
 
 
@@ -315,6 +291,6 @@ class IalphaPart2Integrand extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{ return Math.exp ( - x * Math.cosh (t) - a * t ); }
-	IalphaPart2Integrand (double x, double a) { super (x, a); }
+	IalphaPart2Integrand (double a) { super (a); }
 }
 

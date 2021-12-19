@@ -1,22 +1,17 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
-import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
-
-import java.util.Map;
-
 import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.math.ExtendedPowerLibrary;
 
-import net.myorb.math.Polynomial;
 import net.myorb.math.SpaceManager;
-import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
-import net.myorb.math.computational.TanhSinhQuadratureTables;
+import net.myorb.math.Polynomial;
 import net.myorb.math.Function;
+
+import java.util.Map;
 
 /**
  * support for describing Bessel J (Ordinary First Kind) functions
@@ -186,7 +181,7 @@ public class OrdinaryFirstKind extends BesselPrimitive
 		(T parameter, int terms, Map<String,Object> parameters, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return getJ (parameter, terms, getPrecision (parameters), sm);
+		return getJ (parameter, terms, parameters, sm);
 	}
 
 
@@ -195,15 +190,15 @@ public class OrdinaryFirstKind extends BesselPrimitive
 	 *  the function evaluation algorithm from integral
 	 * @param a the value of alpha which is integer/real
 	 * @param termCount the count of terms for the series
-	 * @param precision target value for approximation error
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param sm the manager for the data type
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getJ (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
+		getJ (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
 	{
-		return new JaFunctionDescription<T> (a, termCount, precision, sm);
+		return new JaFunctionDescription<T> (a, termCount, parameters, sm);
 	}
 
 
@@ -217,8 +212,8 @@ public class OrdinaryFirstKind extends BesselPrimitive
 class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
 {
 
-	JaFunctionDescription (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
-	{ this.J = new Ja (sm.convertToDouble (a), termCount, precision); this.sm = sm; this.a = a; }
+	JaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
+	{ this.J = new Ja (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
 	ExpressionSpaceManager<T> sm; Ja J; T a;
 
 	/* (non-Javadoc)
@@ -260,45 +255,18 @@ class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
  * provide real version of Ja using integral algorithm.
  * TanhSinh Quadrature is used to provide numerical integration
  */
-class Ja
+class Ja extends SectionedAlgorithm
 {
 
-	Ja (double a, int infinity, double prec)
+	Ja (double a, int infinity, Map<String,Object> parameters)
 	{
-		this.pi = Math.PI; this.a = a; this.infinity = infinity;
-		this.nonIntegerAlpha = ! Library.isInteger (a);
-		this.sinAlphaPi = - Math.sin (a * pi);
-		this.targetAbsoluteError = prec;
-	}
-	double pi, a, sinAlphaPi, targetAbsoluteError;
-	int infinity; boolean nonIntegerAlpha;
-
-	/**
-	 * Integral form of Ja
-	 * @param x parameter to Ja function
-	 * @return calculated result
-	 */
-	double eval (double x)
-	{
-		double sum = part1 (x);
-		if (nonIntegerAlpha) sum += sinAlphaPi * part2 (x);
-		return sum / pi;
-	}
-	double part1 (double x)
-	{
-		TanhSinhQuadratureTables.ErrorEvaluation
-			error = new TanhSinhQuadratureTables.ErrorEvaluation ();
-		Function<Double> f = new JalphaPart1Integrand (x, a);
-		double result = TanhSinhQuadratureAlgorithms.Integrate
-			(f, 0, pi, targetAbsoluteError, error);
-		// System.out.println ("x=" + x + ", " + error);
-		return result;
-	}
-	double part2 (double x)
-	{
-		Function<Double> f = new JalphaPart2Integrand (x, a);
-		return TanhSinhQuadratureAlgorithms.Integrate
-		(f, 0, infinity, targetAbsoluteError, null);
+		super
+		(
+			a, infinity,
+			new JalphaPart1Integrand (a),
+			new JalphaPart2Integrand (a),
+			parameters
+		);
 	}
 
 /*
@@ -322,7 +290,7 @@ class JalphaPart1Integrand extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{ return Math.exp ( Math.cos ( a * t - x * Math.sin (t) ) ); }
-	JalphaPart1Integrand (double x, double a) { super (x, a); }
+	JalphaPart1Integrand (double a) { super (a); }
 }
 
 
@@ -336,6 +304,6 @@ class JalphaPart2Integrand extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{ return Math.exp ( - x * Math.sinh (t) - a * t ); }
-	JalphaPart2Integrand (double x, double a) { super (x, a); }
+	JalphaPart2Integrand (double a) { super (a); }
 }
 

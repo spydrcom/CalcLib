@@ -2,7 +2,6 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
@@ -11,7 +10,6 @@ import java.util.Map;
 import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
-import net.myorb.math.Function;
 
 /**
  * support for describing Bessel K (Modified Second Kind) functions
@@ -192,7 +190,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 		(T parameter, int terms, Map<String,Object> parameters, PolynomialSpaceManager<T> psm)
 	{
 		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
-		return getK (parameter, terms, getPrecision (parameters), sm);
+		return getK (parameter, terms, parameters, sm);
 	}
 
 
@@ -201,15 +199,15 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	 *  the function evaluation algorithm from integral
 	 * @param a the value of alpha which is integer/real
 	 * @param termCount the count of terms for the series
-	 * @param precision target value for approximation error
+	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @param sm the manager for the data type
 	 * @return the function description
 	 * @param <T> data type manager
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
-		getK (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
+		getK (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
 	{
-		return new KaFunctionDescription<T> (a, termCount, precision, sm);
+		return new KaFunctionDescription<T> (a, termCount, parameters, sm);
 	}
 
 
@@ -224,8 +222,8 @@ public class ModifiedSecondKind extends UnderlyingOperators
 class KaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
 {
 
-	KaFunctionDescription (T a, int termCount, double precision, ExpressionSpaceManager<T> sm)
-	{ this.K = new Ka (sm.convertToDouble (a), termCount, precision); this.sm = sm; this.a = a; }
+	KaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
+	{ this.K = new Ka (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
 	ExpressionSpaceManager<T> sm; Ka K; T a;
 
 	/* (non-Javadoc)
@@ -270,13 +268,13 @@ class KaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
 class Ka
 {
 
-	Ka (double a, int infinity, double prec)
+	Ka (double a, int infinity, Map<String,Object> parameters)
 	{
+		I = new Quadrature (new KalphaIntegrand (a), parameters).getIntegral ();
 		this.a = a; this.infinity = infinity;
-		this.targetAbsoluteError = prec;
 	}
-	double targetAbsoluteError;
 	double a; int infinity;
+	Quadrature.Integral I;
 
 	/**
 	 * Integral form of Ka:
@@ -286,9 +284,7 @@ class Ka
 	 */
 	double integral (double x)
 	{
-		Function<Double> f = new KalphaIntegrand (x, a);
-		return TanhSinhQuadratureAlgorithms.Integrate
-		(f, 0, infinity, targetAbsoluteError, null);
+		return I.eval (x, 0.0, infinity);
 	}
 
 /*
@@ -309,6 +305,6 @@ class KalphaIntegrand extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{ return Math.exp ( - x * Math.cosh (t) ) * Math.cosh (a * t); }
-	KalphaIntegrand (double x, double a) { super (x, a); }
+	KalphaIntegrand (double a) { super (a); }
 }
 
