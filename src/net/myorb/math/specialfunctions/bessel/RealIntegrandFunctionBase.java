@@ -4,6 +4,7 @@ package net.myorb.math.specialfunctions.bessel;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
+import net.myorb.math.computational.TrapezoidIntegration;
 import net.myorb.math.computational.CCQIntegration;
 import net.myorb.math.specialfunctions.Library;
 
@@ -104,6 +105,13 @@ class SectionedAlgorithm
  */
 class Quadrature
 {
+	public enum Methods
+	{
+		TSQ,	// Tanh-Sinh Quadrature
+		CCQ,	// Clenshaw-Curtis Quadrature
+		CTA,	// Common Trapezoidal Approximation, no adjustment
+		CTAA	// Common Trapezoidal Approximation, using adjustment
+	}
 	public interface Integral
 	{
 		public double eval (double x, double lo, double hi);
@@ -114,15 +122,52 @@ class Quadrature
 			Map<String,Object> parameters
 		)
 	{
-		this.integrand = integrand;
-		this.parameters = parameters;
+		Object methodName = parameters.get ("method");
+		this.integrand = integrand; this.parameters = parameters;
+		if (methodName != null) method = Methods.valueOf(methodName.toString ());
 	}
 	Integral getIntegral ()
 	{
-		return new CCQuadrature (integrand, parameters);
+		switch (method)
+		{
+		case TSQ:	return new TSQuadrature (integrand, parameters);
+		case CCQ:	return new CCQuadrature (integrand, parameters);
+		case CTA:	return new TrapezoidalApproximation (integrand, parameters, false);
+		case CTAA:	return new TrapezoidalApproximation (integrand, parameters, true);
+		default: throw new RuntimeException ("Integration method not recognized");
+		}
 	}
 	RealIntegrandFunctionBase integrand;
 	Map<String,Object> parameters;
+	Methods method = Methods.CCQ;
+}
+
+
+/**
+ * integration by Trapezoidal Approximation
+ */
+class TrapezoidalApproximation implements Quadrature.Integral
+{
+	public double eval (double x, double lo, double hi)
+	{
+		integrand.setParameter (x);
+		return approximation.eval (lo, hi, delta);
+	}
+	TrapezoidalApproximation
+		(
+			RealIntegrandFunctionBase integrand,
+			Map<String,Object> parameters,
+			boolean adjusted
+		)
+	{
+		this.approximation = new TrapezoidIntegration<Double> (integrand, adjusted);
+		this.delta = Double.parseDouble (parameters.get ("delta").toString ());
+		System.out.println ("TrapezoidalApproximation " + delta);
+		this.integrand = integrand;
+	}
+	TrapezoidIntegration<Double> approximation;
+	RealIntegrandFunctionBase integrand;
+	double delta;
 }
 
 

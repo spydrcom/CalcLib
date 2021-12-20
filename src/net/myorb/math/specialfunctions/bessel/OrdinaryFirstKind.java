@@ -289,7 +289,7 @@ class JalphaPart1Integrand extends RealIntegrandFunctionBase
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{ return Math.exp ( Math.cos ( a * t - x * Math.sin (t) ) ); }
+	{ return Math.cos ( a * t - x * Math.sin (t) ); }
 	JalphaPart1Integrand (double a) { super (a); }
 }
 
