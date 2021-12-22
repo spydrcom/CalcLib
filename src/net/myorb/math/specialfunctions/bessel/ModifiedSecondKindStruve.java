@@ -89,6 +89,7 @@ public class ModifiedSecondKindStruve extends UnderlyingOperators
 		{
 			return new StringBuffer ("Struve: M(a=").append (parameterValue).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()

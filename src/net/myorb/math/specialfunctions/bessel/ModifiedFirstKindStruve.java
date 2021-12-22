@@ -94,6 +94,7 @@ public class ModifiedFirstKindStruve extends StruvePrimitive
 		{
 			return new StringBuffer ("Struve: L(a=").append (displayParameter).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getRenderIdentifier()

@@ -96,7 +96,8 @@ public class HankelFunctions extends UnderlyingOperators
 		{
 			return new StringBuffer ("Bessel: H"+ kind + "(a=").append (parameterValue).append (")");
 		}
-	
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
 		 */

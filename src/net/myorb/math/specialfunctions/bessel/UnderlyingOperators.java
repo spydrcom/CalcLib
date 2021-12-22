@@ -166,7 +166,7 @@ public abstract class UnderlyingOperators extends Library
 	 * connect polynomial part with exponential part of function
 	 * @param <T> type on which operations are to be executed
 	 */
-	public static abstract class ExponentialFunction<T>
+	public static class ExponentialFunction<T>
 		implements SpecialFunctionFamilyManager.FunctionDescription<T>
 	{
 
@@ -248,16 +248,38 @@ public abstract class UnderlyingOperators extends Library
 			return realPower (base, power, sm);
 		}
 
+		/**
+		 * @param functionId identifier for the function
+		 * @param orderId identifier for the order specifier
+		 */
+		public void setBesselDescription (String functionId, String orderId)
+		{ this.description = new BesselDescription<T> (exponent, functionId, orderId, sm); }
+		BesselDescription<T> description;
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
 		 */
-		public abstract StringBuffer getFunctionDescription ();
+		public StringBuffer getFunctionDescription ()
+		{ return description.getElaborateFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
 		 */
-		public abstract String getFunctionName ();
+		public String getFunctionName ()
+		{ return description.getFunctionName (); }
 		
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 */
+		public String getRenderIdentifier ()
+		{ return description.getRenderIdentifier (); }
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getElaborateFunctionDescription()
+		 */
+		public StringBuffer getElaborateFunctionDescription ()
+		{ return description.getElaborateFunctionDescription (); }
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.Function#getSpaceManager()
 		 */

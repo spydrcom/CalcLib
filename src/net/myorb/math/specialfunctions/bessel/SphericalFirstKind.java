@@ -126,6 +126,7 @@ public class SphericalFirstKind extends BesselPrimitive
 		{
 			return new StringBuffer ("Bessel: ").append (identifier).append (" (n=").append (parameterValue).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()

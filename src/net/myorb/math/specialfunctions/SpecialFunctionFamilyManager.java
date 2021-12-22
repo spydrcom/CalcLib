@@ -41,6 +41,12 @@ public class SpecialFunctionFamilyManager
 		StringBuffer getFunctionDescription ();
 
 		/**
+		 * description including configuration parameters
+		 * @return an elaborate description for the function
+		 */
+		StringBuffer getElaborateFunctionDescription ();
+
+		/**
 		 * @return a name for the function
 		 */
 		String getFunctionName ();

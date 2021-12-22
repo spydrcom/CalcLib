@@ -97,6 +97,7 @@ public class OrdinaryFirstKind extends BesselPrimitive
 		{
 			return new StringBuffer ("Bessel: J(p=").append (displayParameter).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
@@ -213,8 +214,9 @@ class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
 {
 
 	JaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
-	{ this.J = new Ja (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
+	{ this.J = new Ja (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; this.parameters = parameters; }
 	ExpressionSpaceManager<T> sm; Ja J; T a;
+	Map<String,Object> parameters;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
@@ -231,6 +233,9 @@ class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
 	{
 		return new StringBuffer ("Bessel: J(a=").append (a).append (")");
 	}
+	public StringBuffer getElaborateFunctionDescription ()
+	{ return getFunctionDescription ().append (getElaboration ()); }
+	public String getElaboration () { return "   " + parameters.toString (); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()

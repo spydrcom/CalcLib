@@ -220,10 +220,12 @@ class BesselParameterManager<T> implements
 		(functions = new BesselFunctions<T> ()).init (manager);
 		function = functions.getFunction (kind, alphaManager.eval (), terms, parameters, library);
 		identifier = ((SpecialFunctionFamilyManager.FunctionDescription<T>) function).getRenderIdentifier ();
+		System.out.println (function.getElaborateFunctionDescription ());
 		return this;
 	}
 	public Function<T> getFunction () { return function; }
-	protected Function<T> function;
+	protected SpecialFunctionFamilyManager.FunctionDescription<T> function;
+	//protected Function<T> function;
 	protected String identifier;
 
 

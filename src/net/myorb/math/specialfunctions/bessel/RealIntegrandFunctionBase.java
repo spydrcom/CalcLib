@@ -150,7 +150,7 @@ class TrapezoidalApproximation implements Quadrature.Integral
 {
 	public double eval (double x, double lo, double hi)
 	{
-		integrand.setParameter (x);
+		this.integrand.setParameter (x);
 		return approximation.eval (lo, hi, delta);
 	}
 	TrapezoidalApproximation
@@ -162,7 +162,7 @@ class TrapezoidalApproximation implements Quadrature.Integral
 	{
 		this.approximation = new TrapezoidIntegration<Double> (integrand, adjusted);
 		this.delta = Double.parseDouble (parameters.get ("delta").toString ());
-		System.out.println ("TrapezoidalApproximation " + delta);
+		//System.out.println ("TrapezoidalApproximation " + delta);
 		this.integrand = integrand;
 	}
 	TrapezoidIntegration<Double> approximation;
@@ -187,7 +187,7 @@ class CCQuadrature implements Quadrature.Integral
 			Map<String,Object> parameters
 		)
 	{
-		ccq = new CCQIntegration (integrand);
+		this.ccq = new CCQIntegration (integrand);
 		this.integrand = integrand;
 	}
 	RealIntegrandFunctionBase integrand;

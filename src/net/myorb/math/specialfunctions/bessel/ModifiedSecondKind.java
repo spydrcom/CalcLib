@@ -4,12 +4,9 @@ package net.myorb.math.specialfunctions.bessel;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 
 import java.util.Map;
-
-import net.myorb.data.abstractions.SpaceDescription;
-import net.myorb.math.ExtendedPowerLibrary;
-import net.myorb.math.SpaceManager;
 
 /**
  * support for describing Bessel K (Modified Second Kind) functions
@@ -43,8 +40,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	 * function class for Ka formula
 	 * @param <T> type on which operations are to be executed
 	 */
-	public static class KaFunction<T>
-		implements SpecialFunctionFamilyManager.FunctionDescription<T>
+	public static class KaFunction<T> extends KDescription<T>
 	{
 	
 		KaFunction
@@ -52,6 +48,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
 			)
 		{
+			super (a, sm);
 			this.lib = lib;
 			processParameter (a, sm);
 			createK (termCount);
@@ -68,8 +65,9 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	
 		void processParameter (T a, ExpressionSpaceManager<T> sm)
 		{
-			this.parameterValue = sm.convertToDouble (a);
-			this.parameter = integerOrderCheck (a, sm); this.sm = sm;
+			this.parameterValue =
+					sm.convertToDouble (a);
+			this.parameter = integerOrderCheck (a, sm);
 			this.computeTrigConstants (sm.convertToDouble (parameter));
 		}
 		protected Double parameterValue;
@@ -98,34 +96,11 @@ public class ModifiedSecondKind extends UnderlyingOperators
 				), multiplier
 			);
 		}
-	
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
-		 */
-		public StringBuffer getFunctionDescription ()
-		{
-			return new StringBuffer ("Bessel: K(a=").append (parameterValue).append (")");
-		}
-	
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-		 */
-		public String getFunctionName ()
-		{
-			return "KA" + formatParameterDisplay (parameterValue);
-		}
 
 		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+		 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#evalReal(double)
 		 */
-		public String getRenderIdentifier () { return "K"; }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.Function#getSpaceManager()
-		 */
-		public SpaceManager<T> getSpaceDescription () { return sm; }
-		public SpaceManager<T> getSpaceManager () { return sm; }
-		protected ExpressionSpaceManager<T> sm;
+		public double evalReal (double x) { return 0; }
 	
 	}
 
@@ -155,6 +130,9 @@ public class ModifiedSecondKind extends UnderlyingOperators
 			super (a, termCount, lib, sm);
 		}
 	
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.bessel.ModifiedSecondKind.KaFunction#createK(int)
+		 */
 		protected void createK (int termCount)
 		{
 			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
@@ -170,6 +148,9 @@ public class ModifiedSecondKind extends UnderlyingOperators
 	{ return new KaExtendedFunction<T>(a, termCount, lib, getExpressionManager (psm)); }
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.ExtendedPowerLibrary, net.myorb.math.polynomial.PolynomialSpaceManager)
+	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
 		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
@@ -215,48 +196,43 @@ public class ModifiedSecondKind extends UnderlyingOperators
 
 
 /**
+ * encapsulation of descriptive text portions of FunctionDescription
+ * @param <T> data type in use
+ */
+abstract class KDescription<T> extends BesselDescription<T>
+{
+	KDescription
+	(T a, ExpressionSpaceManager<T> sm)
+	{ super (a, "K", "a", sm); }
+}
+
+
+/**
  * Function Description for special case of Ka implementation.
  *  domain of real numbers, integral form is: exp ( - x * cosh (t) ) * cosh (a * t)
  * @param <T> data type in use
  */
-class KaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
+class KaFunctionDescription<T> extends KDescription<T>
 {
 
 	KaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
-	{ this.K = new Ka (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
-	ExpressionSpaceManager<T> sm; Ka K; T a;
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
-	 */
-	public T eval (T x)
 	{
-		return sm.convertFromDouble ( K.integral ( sm.convertToDouble (x) ) );
+		super (a, sm);
+		this.K = new Ka (sm.convertToDouble (a), termCount, parameters);
+		this.parameters = parameters;
 	}
+	protected Ka K;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
+	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#evalReal(double)
 	 */
-	public StringBuffer getFunctionDescription ()
-	{
-		return new StringBuffer ("Bessel: K(a=").append (a).append (")");
-	}
+	public double evalReal (double x) { return K.integral (x); }
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+	 * @see net.myorb.math.specialfunctions.bessel.KDescription#getElaboration()
 	 */
-	public String getRenderIdentifier () { return "K"; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-	 */
-	public String getFunctionName () { return "K_" + a; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceDescription<T> getSpaceDescription () { return sm; }
-	public SpaceManager<T> getSpaceManager () { return sm; }
+	public String getElaboration () { return "   " + parameters.toString (); }
+	protected Map<String,Object> parameters;
 
 }
 
@@ -273,8 +249,7 @@ class Ka
 		I = new Quadrature (new KalphaIntegrand (a), parameters).getIntegral ();
 		this.a = a; this.infinity = infinity;
 	}
-	double a; int infinity;
-	Quadrature.Integral I;
+	protected double a;
 
 	/**
 	 * Integral form of Ka:
@@ -286,6 +261,8 @@ class Ka
 	{
 		return I.eval (x, 0.0, infinity);
 	}
+	protected Quadrature.Integral I;
+	protected int infinity;
 
 /*
 	!! kap (x,a,t) = exp ( - x * cosh (t) ) * cosh (a * t)

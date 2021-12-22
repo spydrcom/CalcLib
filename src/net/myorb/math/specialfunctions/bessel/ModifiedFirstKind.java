@@ -7,10 +7,7 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
 import net.myorb.math.ExtendedPowerLibrary;
-import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
-
-import net.myorb.data.abstractions.SpaceDescription;
 
 import java.util.Map;
 
@@ -74,28 +71,8 @@ public class ModifiedFirstKind extends BesselPrimitive
 			)
 		{
 			super (sm.toNumber (a), polynomial, sm);
+			this.setBesselDescription ("I", "a");
 		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
-		 */
-		public StringBuffer getFunctionDescription ()
-		{
-			return new StringBuffer ("Bessel: I(a=").append (displayParameter).append (")");
-		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-		 */
-		public String getFunctionName ()
-		{
-			return "IA" + formatParameterDisplay (displayParameter.doubleValue ());
-		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
-		 */
-		public String getRenderIdentifier () { return "I"; }
 
 	}
 
@@ -140,6 +117,9 @@ public class ModifiedFirstKind extends BesselPrimitive
 	}
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.ExtendedPowerLibrary, net.myorb.math.polynomial.PolynomialSpaceManager)
+	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
 		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
@@ -192,48 +172,48 @@ public class ModifiedFirstKind extends BesselPrimitive
 
 
 /**
+ * encapsulation of descriptive text portions of FunctionDescription
+ * @param <T> data type in use
+ */
+abstract class IDescription<T> extends BesselDescription<T>
+{
+	IDescription
+	(T a, ExpressionSpaceManager<T> sm)
+	{ super (a, "I", "a", sm); }
+}
+
+
+/**
  * Function Description for special case of Ia implementation.
  *  domain of real numbers, integral form is: exp ( x * cos (t) ) * cos (a * t)
  * @param <T> data type in use
  */
-class IaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
+class IaFunctionDescription<T> extends IDescription<T>
 {
 
-	IaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
-	{ this.I = new Ia (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; }
-	ExpressionSpaceManager<T> sm; Ia I; T a;
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
-	 */
-	public T eval (T x)
+	IaFunctionDescription
+		(
+			T a, int termCount,
+			Map<String,Object> parameters,
+			ExpressionSpaceManager<T> sm
+		)
 	{
-		return sm.convertFromDouble ( I.eval ( sm.convertToDouble (x) ) );
+		super (a, sm);
+		this.I = new Ia (sm.convertToDouble (a), termCount, parameters);
+		this.parameters = parameters;
 	}
+	Ia I;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
+	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#getElaboration()
 	 */
-	public StringBuffer getFunctionDescription ()
-	{
-		return new StringBuffer ("Bessel: I(a=").append (a).append (")");
-	}
+	public String getElaboration () { return "   " + parameters.toString (); }
+	Map<String,Object> parameters;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
+	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#evalReal(double)
 	 */
-	public String getRenderIdentifier () { return "I"; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-	 */
-	public String getFunctionName () { return "I_" + a; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceDescription<T> getSpaceDescription () { return sm; }
-	public SpaceManager<T> getSpaceManager () { return sm; }
+	public double evalReal (double x) { return I.eval (x); }
 
 }
 

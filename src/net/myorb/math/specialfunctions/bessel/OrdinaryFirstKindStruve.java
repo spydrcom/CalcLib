@@ -94,6 +94,7 @@ public class OrdinaryFirstKindStruve extends StruvePrimitive
 		{
 			return new StringBuffer ("Struve: H(a=").append (displayParameter).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()

@@ -115,6 +115,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		{
 			return new StringBuffer ("Bessel: Y(a=").append (parameterValue).append (")");
 		}
+		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
@@ -250,6 +251,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
 			{
 				return new StringBuffer ("Bessel: Y(n=").append (n).append (")");
 			}
+			public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
