@@ -33,7 +33,7 @@ public class Primitives<T>
 
 	/**
 	 * set data sources
-	 * @param symbols the symbol table to use for sumbol resolution
+	 * @param symbols the symbol table to use for symbol resolution
 	 * @param spaceManager the type manager for evaluation control
 	 */
 	protected void setDataSources

@@ -65,6 +65,7 @@ public class OperatorNomenclature
 	DIFEQ_KEYWORD = "DIFEQ",					// DIFEQ function		identify differential equation and describe
 	TDES_KEYWORD = "TDES",						// TDES function		Test differential equation solution
 	RADIX_KEYWORD = "RADIX",					// RADIX 16 value		display value with specified radix
+	REQUEST_KEYWORD = "REQUEST",				// REQUEST x			request value for symbol and verify result
 	VERIFY_KEYWORD = "VERIFY",					// VERIFY x				lookup symbol and verify present
 	HELP_KEYWORD = "HELP",						// HELP					list of operator descriptions
 	DOCS_KEYWORD = "DOCS",						// DOCS					show JavaDocs HTML

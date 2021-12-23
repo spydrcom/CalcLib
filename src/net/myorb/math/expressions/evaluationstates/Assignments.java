@@ -162,9 +162,31 @@ public class Assignments<T> extends Primitives<T>
 	 */
 	public NamedObject generateSymbolAssignment (SymbolMap.VariableAssignment op)
 	{
-		ValueManager.GenericValue value = getValueStack ().pop ();
+		return assign (getValueStack ().pop (), op.getName ());
+	}
+
+
+	/**
+	 * connect a variable to a value
+	 * @param value the value being assigned
+	 * @param toVariableName the name of the variable
+	 * @return the named object holding the assignment
+	 */
+	public NamedObject assign (ValueManager.GenericValue value, String toVariableName)
+	{
 		ValueManager.setFormatter (value, getSpaceManager ());
-		return generateSymbolStorage (op.getName (), value);
+		return generateSymbolStorage (toVariableName, value);
+	}
+
+
+	/**
+	 * save assignment to symbol map
+	 * @param value the value being assigned
+	 * @param toVariableName the name of the variable
+	 */
+	public void postAssignment (ValueManager.GenericValue value, String toVariableName)
+	{
+		getSymbolMap ().add (assign (value, toVariableName));
 	}
 
 

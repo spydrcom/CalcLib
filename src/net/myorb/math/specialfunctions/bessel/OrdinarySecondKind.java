@@ -3,6 +3,7 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.GeneratingFunctions.Coefficients;
@@ -43,28 +44,29 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 			getY (T a, int termCount, PolynomialSpaceManager<T> psm)
-	{ return new YaFunction<T>(a, termCount, null, getExpressionManager (psm)); }
+	{ return new YaFunction<T>(a, termCount, getExpressionManager (psm)); }
 
 
 	/**
 	 * function class for Ya formula
 	 * @param <T> type on which operations are to be executed
 	 */
-	public static class YaFunction<T>
-		implements SpecialFunctionFamilyManager.FunctionDescription<T>
+	public static class YaFunction<T> extends BesselDescription<T>
 	{
 
 		YaFunction
 			(
-				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
+				T a, int termCount, ExpressionSpaceManager<T> sm
 			)
 		{
-			this.lib = lib;
+			super (a,OrderTypes.LIM, "Y", "a", sm);
 			processParameter (a, sm);
 			createJ (termCount);
 		}
-		protected ExtendedPowerLibrary<T> lib;
 
+		/**
+		 * @param termCount approximation of infinity for infinite series
+		 */
 		protected void createJ (int termCount)
 		{
 			T p = parameter;
@@ -75,18 +77,37 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		protected SpecialFunctionFamilyManager.FunctionDescription<T> Ja, Jna;
 
 		/**
-		 * @param a the order for the function
+		 * check for special needs of -n order
+		 * @param a the order for the function (can be integer or real)
 		 * @param sm expression manager for data type
 		 */
 		void processParameter (T a, ExpressionSpaceManager<T> sm)
 		{
-			this.parameterValue = sm.convertToDouble (a);
-			this.parameter = integerOrderCheck (a, sm); this.sm = sm;
-			this.computeTrigConstants (sm.convertToDouble (parameter));
+			Number n; // Y#-n = -1^n * Y#n
+			if (sm.isNegative(a) && Library.isInteger (n = sm.toNumber (a)))
+			{ a = sm.negate (a); setNegate (n.intValue ()); }
+			useParameter (integerOrderCheck (a, sm));
 		}
-		protected Double parameterValue;
+
+		/**
+		 * the order has been adjusted as necessary
+		 *  to avoid GAMMA(-n) and COT(n*PI) in the Yn formulas
+		 * @param p the value of the order of the function
+		 */
+		void useParameter (T p)
+		{
+			this.computeTrigConstants
+			(
+				sm.convertToDouble (this.parameter = p)
+			);
+		}
 		protected T parameter;
 
+		/**
+		 * COT (alpha PI) and CSC (alpha PI)
+		 *  computed to be used as constants in formulas
+		 * @param p the value of the order of the function
+		 */
 		void computeTrigConstants (double p)
 		{
 			double alphaPi = p * Math.PI;
@@ -101,41 +122,15 @@ public class OrdinarySecondKind extends UnderlyingOperators
 		 */
 		public T eval (T x)
 		{
-			return sm.add
+			T sum = sm.add
 			(
 				sm.multiply (cotAlphaPi, Ja.eval (x)),
 				sm.multiply (negCscAlphaPi, Jna.eval (x))
 			);
+			return negate? sm.negate (sum): sum;
 		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
-		 */
-		public StringBuffer getFunctionDescription ()
-		{
-			return new StringBuffer ("Bessel: Y(a=").append (parameterValue).append (")");
-		}
-		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-		 */
-		public String getFunctionName ()
-		{
-			return "YA" + formatParameterDisplay (parameterValue);
-		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
-		 */
-		public String getRenderIdentifier () { return "Y"; }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.Function#getSpaceManager()
-		 */
-		public SpaceManager<T> getSpaceDescription () { return sm; }
-		public SpaceManager<T> getSpaceManager () { return sm; }
-		protected ExpressionSpaceManager<T> sm;
+		void setNegate (int n) { negate = Library.alternatingSign (n) < 0; }
+		protected boolean negate = false;
 
 	}
 
@@ -162,13 +157,10 @@ public class OrdinarySecondKind extends UnderlyingOperators
 				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
 			)
 		{
-			super (a, termCount, lib, sm);
+			super (a, termCount, sm); createJ (termCount, lib);
 		}
 	
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.bessel.OrdinarySecondKind.YaFunction#createJ(int)
-		 */
-		protected void createJ (int termCount)
+		protected void createJ (int termCount, ExtendedPowerLibrary<T> lib)
 		{
 			T p = parameter;
 			PolynomialSpaceManager<T> psm = new PolynomialSpaceManager<T>(sm);
@@ -235,40 +227,13 @@ public class OrdinarySecondKind extends UnderlyingOperators
 			Map<String,Object> parameters, ExpressionSpaceManager<T> sm
 		)
 	{
-		return new SpecialFunctionFamilyManager.FunctionDescription<T>()
+		return new BesselDescription<T> (sm.newScalar (n), OrderTypes.INT, "Y", "n", sm)
 		{
-
 			/* (non-Javadoc)
 			 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 			 */
 			public T eval (T x) { return Y.eval (x); }
 			Yn<T> Y = new Yn<T> (n, termCount, lib, parameters, sm);
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
-			 */
-			public StringBuffer getFunctionDescription ()
-			{
-				return new StringBuffer ("Bessel: Y(n=").append (n).append (")");
-			}
-			public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
-			 */
-			public String getRenderIdentifier () { return "Y"; }
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-			 */
-			public String getFunctionName () { return "Y_" + n; }
-
-			/* (non-Javadoc)
-			 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-			 */
-			public SpaceDescription<T> getSpaceDescription () { return sm; }
-			public SpaceManager<T> getSpaceManager () { return sm; }
-
 		};
 	}
 
@@ -398,15 +363,29 @@ class YnSeries<T> extends Library
 	}
 
 	/**
+	 * Y#-n = -1^n * Y#n
+	 * @param n the integer order
+	 */
+	void setOrder (int n)
+	{
+		if (n < 0)
+		{
+			this.n = -n;
+			this.negate = this.n % 2 == 1;
+		} else this.n = n;
+	}
+	protected boolean negate = false;
+	protected int n;
+
+	/**
 	 * @param n the order of the series
 	 * @param sm a manager object for the data type
 	 */
 	public YnSeries (int n, ExpressionSpaceManager<T> sm)
 	{
-		this.n = n; this.sm = sm;
+		this.sm = sm; setOrder (n);
 	}
 	protected ExpressionSpaceManager<T> sm;
-	protected int n;
 
 }
 
@@ -571,7 +550,7 @@ class YnEquations<T> extends YnSeries<T>
 	{
 		try
 		{
-			return sm.multiply
+			T result = sm.multiply
 			(
 				PI_INVERTED,
 				sm.add
@@ -580,6 +559,8 @@ class YnEquations<T> extends YnSeries<T>
 					otherTerms (z)
 				)
 			);
+			if (negate) return sm.negate (result);
+			return result;
 		}
 		catch (Exception x) { throw new RuntimeException ("Eval error", x); }
 	}
@@ -786,8 +767,8 @@ class YnPolynomial<T> extends YnSeries<T> implements Polynomial.PowerFunction<T>
 	 */
 	public void constructPolynomial (int infinity)
 	{
-		Polynomial.PowerFunction<T> is = infiniteSeries (infinity);
 		Polynomial.PowerFunction<T> fs = finiteSeries ();
+		Polynomial.PowerFunction<T> is = infiniteSeries (infinity);
 		this.pf = psm.add (is, fs);
 	}
 	public void showPolynomial (int infinity)

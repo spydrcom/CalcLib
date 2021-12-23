@@ -251,9 +251,11 @@ public abstract class UnderlyingOperators extends Library
 		/**
 		 * @param functionId identifier for the function
 		 * @param orderId identifier for the order specifier
+		 * @param orderType the type of data expected for the order
 		 */
-		public void setBesselDescription (String functionId, String orderId)
-		{ this.description = new BesselDescription<T> (exponent, functionId, orderId, sm); }
+		public void setBesselDescription
+		(String functionId, String orderId, BesselDescription.OrderTypes orderType)
+		{ this.description = new BesselDescription<T> (exponent, orderType, functionId, orderId, sm); }
 		BesselDescription<T> description;
 
 		/* (non-Javadoc)

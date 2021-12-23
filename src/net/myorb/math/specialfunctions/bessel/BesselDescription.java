@@ -1,6 +1,7 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
+import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.data.abstractions.SpaceDescription;
@@ -14,25 +15,63 @@ import net.myorb.math.SpaceManager;
 public class BesselDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
 {
 
+	public enum OrderTypes {NON_SPECIFIC, INT, REAL, COMPLEX, LIM}
+
 	public BesselDescription
-	(T a, String functionId, String orderId, ExpressionSpaceManager<T> sm)
+		(
+			T a, OrderTypes orderType,
+			String functionId, String orderId,
+			ExpressionSpaceManager<T> sm
+		)
 	{
 		this.a = a; this.sm = sm;
+		this.orderType = orderType;
 		this.orderIdentifier = orderId;
 		this.functionIidentifier = functionId;
 		this.formatTypedValue (a);
 	}
 	protected T a;
 
+	/**
+	 * @return format order specific to type
+	 */
+	String orderTypeDisplay ()
+	{
+		Number order = sm.toNumber (a);
+		switch (orderType)
+		{
+		case INT:	return orderAsInt (order);
+		case NON_SPECIFIC:
+			if (Library.isInteger (order))
+				return orderAsInt (order);
+		default:	return order.toString ();
+		}
+	}
+	protected String orderAsInt (Number order)
+	{ return Integer.toString (order.intValue ()); }
+	protected OrderTypes orderType;
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
 	 */
 	public StringBuffer getFunctionDescription ()
 	{
-		return new StringBuffer ()
-		.append ("Bessel: ").append(functionIidentifier)
-		.append ("(").append (orderIdentifier).append ("=")
-		.append (a).append (")");
+		Number order = sm.toNumber (a);
+		StringBuffer display = new StringBuffer ();
+
+		if (orderType == OrderTypes.LIM && Library.isInteger (sm.toNumber (a)))
+		{
+			display.append ("(").append (orderIdentifier)
+			.append (" -> ").append (orderAsInt (order)).append (")");
+		}
+		else
+		{
+			display.append ("(").append (orderIdentifier)
+			.append (" = ").append (orderTypeDisplay ()).append (")");
+		}
+
+		return new StringBuffer ().append ("Bessel: ")
+		.append (functionIidentifier).append (display);
 	}
 
 	/* (non-Javadoc)

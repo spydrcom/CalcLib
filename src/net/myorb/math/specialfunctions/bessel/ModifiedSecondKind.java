@@ -48,10 +48,9 @@ public class ModifiedSecondKind extends UnderlyingOperators
 				T a, int termCount, ExtendedPowerLibrary<T> lib, ExpressionSpaceManager<T> sm
 			)
 		{
-			super (a, sm);
-			this.lib = lib;
-			processParameter (a, sm);
-			createK (termCount);
+			super (a, OrderTypes.LIM, sm);
+			this.lib = lib; this.processParameter (a, sm);
+			this.createK (termCount);
 		}
 		ExtendedPowerLibrary<T> lib;
 
@@ -202,8 +201,8 @@ public class ModifiedSecondKind extends UnderlyingOperators
 abstract class KDescription<T> extends BesselDescription<T>
 {
 	KDescription
-	(T a, ExpressionSpaceManager<T> sm)
-	{ super (a, "K", "a", sm); }
+	(T a, OrderTypes orderType, ExpressionSpaceManager<T> sm)
+	{ super (a, orderType, "K", "a", sm); }
 }
 
 
@@ -217,7 +216,7 @@ class KaFunctionDescription<T> extends KDescription<T>
 
 	KaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
 	{
-		super (a, sm);
+		super (a, OrderTypes.NON_SPECIFIC, sm);
 		this.K = new Ka (sm.convertToDouble (a), termCount, parameters);
 		this.parameters = parameters;
 	}

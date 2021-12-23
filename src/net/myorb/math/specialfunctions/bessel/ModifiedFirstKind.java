@@ -2,7 +2,7 @@
 package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
-
+import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
@@ -71,7 +71,7 @@ public class ModifiedFirstKind extends BesselPrimitive
 			)
 		{
 			super (sm.toNumber (a), polynomial, sm);
-			this.setBesselDescription ("I", "a");
+			this.setBesselDescription ("I", "a", OrderTypes.NON_SPECIFIC);
 		}
 
 	}
@@ -179,7 +179,7 @@ abstract class IDescription<T> extends BesselDescription<T>
 {
 	IDescription
 	(T a, ExpressionSpaceManager<T> sm)
-	{ super (a, "I", "a", sm); }
+	{ super (a, OrderTypes.NON_SPECIFIC, "I", "a", sm); }
 }
 
 

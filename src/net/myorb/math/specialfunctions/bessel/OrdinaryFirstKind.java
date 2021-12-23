@@ -1,13 +1,13 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
+import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
-import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.math.ExtendedPowerLibrary;
 
-import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
 import net.myorb.math.Function;
 
@@ -35,7 +35,10 @@ public class OrdinaryFirstKind extends BesselPrimitive
 	public static <T> Polynomial.PowerFunction<T>
 		getJ (int n, int termCount, PolynomialSpaceManager<T> psm)
 	{
-		return ordinarySumOfTerms (n, termCount, psm);
+		Polynomial.PowerFunction<T>
+			J = ordinarySumOfTerms (Math.abs (n), termCount, psm);
+		if (n < 0 && n%2 == 1) return psm.negate (J);					// J#-n = -1^n * Jn
+		return J;
 	}
 
 
@@ -50,6 +53,16 @@ public class OrdinaryFirstKind extends BesselPrimitive
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getJ (T p, int termCount, PolynomialSpaceManager<T> psm)
 	{
+		Number n;
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		if (Library.isInteger (n = sm.toNumber (p)))
+		{
+			return new BesselDescription<T> (sm.newScalar (n.intValue ()), OrderTypes.INT, "J", "n", sm)
+			{
+				Polynomial.PowerFunction<T> J = getJ (n.intValue (), termCount, psm);
+				public T eval (T x) { return J.eval (x); }
+			};
+		}
 		return new JpFunction<T>(p, termCount, psm);
 	}
 
@@ -68,6 +81,7 @@ public class OrdinaryFirstKind extends BesselPrimitive
 			)
 		{
 			this (a, n, psm, getExpressionManager (psm));
+			this.setBesselDescription ("J", "p", OrderTypes.NON_SPECIFIC);
 		}
 	
 		JpFunction
@@ -90,28 +104,6 @@ public class OrdinaryFirstKind extends BesselPrimitive
 			super (sm.toNumber (p), polynomial, sm);
 		}
 
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
-		 */
-		public StringBuffer getFunctionDescription ()
-		{
-			return new StringBuffer ("Bessel: J(p=").append (displayParameter).append (")");
-		}
-		public StringBuffer getElaborateFunctionDescription () { return getFunctionDescription (); }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
-		 */
-		public String getRenderIdentifier () { return "J"; }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-		 */
-		public String getFunctionName ()
-		{
-			return "JP" + formatParameterDisplay (displayParameter.doubleValue ());
-		}
-		
 	}
 
 
@@ -142,7 +134,7 @@ public class OrdinaryFirstKind extends BesselPrimitive
 			super (p, n, psm);
 			this.lib = lib;
 		}
-		ExtendedPowerLibrary<T> lib;
+		protected ExtendedPowerLibrary<T> lib;
 	
 		/* (non-Javadoc)
 		 * @see net.myorb.math.specialfunctions.bessel.OrdinaryFirstKind.JpFunction#TraisedToT(java.lang.Object, java.lang.Object)
@@ -155,6 +147,9 @@ public class OrdinaryFirstKind extends BesselPrimitive
 	}
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.bessel.UnderlyingOperators#getFunction(java.lang.Object, int, net.myorb.math.ExtendedPowerLibrary, net.myorb.math.polynomial.PolynomialSpaceManager)
+	 */
 	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getFunction
 		(T parameter, int terms, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
@@ -165,6 +160,8 @@ public class OrdinaryFirstKind extends BesselPrimitive
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getJ (T p, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{
+		ExpressionSpaceManager<T> sm = getExpressionManager (psm);
+		if (Library.isInteger (sm.toNumber (p))) return getJ (p, termCount, psm);
 		return new JpExtendedFunction<T>(p, termCount, psm, lib);
 	}
 
@@ -210,13 +207,16 @@ public class OrdinaryFirstKind extends BesselPrimitive
  * Function Description for special case of Ja implementation.
  * @param <T> data type in use
  */
-class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
+class JaFunctionDescription<T> extends BesselDescription<T>
 {
 
 	JaFunctionDescription (T a, int termCount, Map<String,Object> parameters, ExpressionSpaceManager<T> sm)
-	{ this.J = new Ja (sm.convertToDouble (a), termCount, parameters); this.sm = sm; this.a = a; this.parameters = parameters; }
-	ExpressionSpaceManager<T> sm; Ja J; T a;
-	Map<String,Object> parameters;
+	{
+		super (a, OrderTypes.NON_SPECIFIC, "J", "a", sm);
+		this.J = new Ja (sm.convertToDouble (a), termCount, parameters);
+		this.parameters = parameters;
+	}
+	protected Map<String,Object> parameters;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
@@ -225,33 +225,12 @@ class JaFunctionDescription<T> implements SpecialFunctionFamilyManager.FunctionD
 	{
 		return sm.convertFromDouble ( J.eval ( sm.convertToDouble (x) ) );
 	}
+	protected Ja J;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionDescription()
+	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#getElaboration()
 	 */
-	public StringBuffer getFunctionDescription ()
-	{
-		return new StringBuffer ("Bessel: J(a=").append (a).append (")");
-	}
-	public StringBuffer getElaborateFunctionDescription ()
-	{ return getFunctionDescription ().append (getElaboration ()); }
 	public String getElaboration () { return "   " + parameters.toString (); }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
-	 */
-	public String getRenderIdentifier () { return "J"; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
-	 */
-	public String getFunctionName () { return "J_" + a; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceDescription<T> getSpaceDescription () { return sm; }
-	public SpaceManager<T> getSpaceManager () { return sm; }
 
 }
 
