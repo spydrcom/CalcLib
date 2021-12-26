@@ -29,6 +29,11 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	//                  ( z^n / ( 2^n * pi ) * SIGMA [0 <= k <= INFINITY] ( (psi(k+1) + psi(n+k+1)) * ( - z^2 / 4)^k / ( k! * (n+k)! ) ) ) +
 	//                  ( 2/pi * J#n(z) * ln (z/2) )
 
+	// Y#n(z) = 1/pi * INTEGRAL [0 <= theta <= pi] ( sin (x*sin theta - n*theta) * <*> theta ) -
+	//          1/pi * INTEGRAL [0 <= t <= INFINITY] ( exp (-x*sinh t) * ( exp (n*t) + -1^n * exp (-n*t) ) ) * <*> t) -
+
+	// Y#a(i*z) = exp ((a+1)*i*pi/2) * I#a(z) - 2/pi * exp (-a*i*pi/2) * K#a(z)
+
 	// Y#a(x) = ( J#a(x) * cos(a*pi) - J#-a(x) ) / sin(a*pi)
 	
 	// Y#n(x) = LIM [a -> n] Y#a { to avoid GAMMA(-n) }
@@ -171,6 +176,15 @@ public class OrdinarySecondKind extends UnderlyingOperators
 	}
 
 
+	/**
+	 * Ya extended to domain beyond Real
+	 * @param a the alpha order allowing real numbers
+	 * @param termCount the number of terms for the series
+	 * @param lib an extended library of primitive functions
+	 * @param psm the manager for the polynomial space
+	 * @return the function description
+	 * @param <T> data type manager
+	 */
 	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T>
 		getY (T a, int termCount, ExtendedPowerLibrary<T> lib, PolynomialSpaceManager<T> psm)
 	{ return new YaExtendedFunction<T>(a, termCount, lib, getExpressionManager (psm)); }
@@ -211,6 +225,28 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 
 	/**
+	 * Yn algorithm using integrals
+	 * @param order the value of (alpha) order which is integer
+	 * @param infinity the approximation to be used for infinity
+	 * @param parameters a hash of name/value pairs passed from configuration
+	 * @param psm the manager for polynomial processing
+	 * @return the function description
+	 * @param <T> data type manager
+	 */
+	public <T> SpecialFunctionFamilyManager.FunctionDescription<T> getSpecialCase
+		(
+			T order, int infinity, Map<String,Object> parameters,
+			PolynomialSpaceManager<T> psm
+		)
+	{
+		ExpressionSpaceManager<T>
+			sm = getExpressionManager (psm);
+		int n = sm.toNumber (order).intValue ();
+		return getY (n, infinity, parameters, sm);
+	}
+
+
+	/**
 	 * an alternative to the LIM [ a -&gt; n ]...
 	 *  the function evaluation algorithm uses digamma
 	 * @param n the value of (alpha) order which is integer
@@ -236,6 +272,35 @@ public class OrdinarySecondKind extends UnderlyingOperators
 			Yn<T> Y = new Yn<T> (n, termCount, lib, parameters, sm);
 		};
 	}
+
+
+	/**
+	 * Yn algorithm using integrals
+	 * @param n the value of (alpha) order which is integer
+	 * @param infinity the approximation to be used for infinity
+	 * @param parameters a hash of name/value pairs passed from configuration
+	 * @param sm the manager for the data type
+	 * @return the function description
+	 * @param <T> data type manager
+	 */
+	public static <T> SpecialFunctionFamilyManager.FunctionDescription<T> getY
+		(
+			int n, int infinity,
+			Map<String,Object> parameters,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		return new BesselDescription<T> (sm.newScalar (n), OrderTypes.INT, "Y", "n", sm)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+			 */
+			public T eval (T x) { return Y.eval (x); }
+			YnIntegral<T> Y = new YnIntegral<T>
+			(n, infinity, parameters, sm);
+		};
+	}
+
 
 }
 
@@ -920,5 +985,84 @@ c2 = [0 <= k <= n-1] ( (n - k - 1)! / ( 4^k * k! ) )
 	 */
 	public SpaceManager<T> getSpaceManager () { return sm; }
 
+}
+
+
+/**
+ * implement integral form of Yn
+ * @param <T> data type used
+ */
+class YnIntegral<T> implements Function<T>
+{
+
+	YnIntegral
+		(
+			double a, int infinity, Map<String,Object> parameters,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		I1 = new Quadrature (new YnPart1Integrand (a), parameters).getIntegral ();
+		I2 = new Quadrature (new YnPart2Integrand (a), parameters).getIntegral ();
+		this.a = a; this.infinity = infinity;
+		this.sm = sm;
+	}
+	ExpressionSpaceManager<T> sm;
+	protected double a;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public T eval (T x)
+	{
+		double digest = integral
+			(sm.convertToDouble (x));
+		return sm.convertFromDouble (digest);
+	}
+
+	/**
+	 * @param x parameter to Yn function
+	 * @return calculated result
+	 */
+	double integral (double x)
+	{
+		return I1.eval (x, 0.0, Math.PI) - I2.eval (x, 0.0, infinity);
+	}
+	protected Quadrature.Integral I1, I2;
+	protected int infinity;
+
+	public SpaceDescription<T> getSpaceDescription() { return sm; }
+	public SpaceManager<T> getSpaceManager() { return sm; }
+
+	// Y#n(z) = 1/pi * INTEGRAL [0 <= theta <= pi] ( sin (x*sin theta - n*theta) * <*> theta ) -
+	//          1/pi * INTEGRAL [0 <= t <= INFINITY] ( exp (-x*sinh t) * ( exp (n*t) + -1^n * exp (-n*t) ) ) * <*> t)
+
+	// !! y(x,a,t) = exp ( - x * sinh (t) ) * ( exp (a*t) + (-1)^a * exp (-a*t) )
+
+}
+
+/**
+ * part1 integral form of Yn
+ */
+class YnPart1Integrand extends RealIntegrandFunctionBase
+{
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public Double eval (Double t)
+	{ return Math.sin (x * Math.sin (t) - a * t); }
+	YnPart1Integrand (double a) { super (a); }
+}
+
+/**
+ * part2 integral form of Yn
+ */
+class YnPart2Integrand extends RealIntegrandFunctionBase
+{
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public Double eval (Double t)
+	{ return Math.exp ( - x * Math.sinh (t) ) * ( Math.exp (a*t) + Math.pow (-1, a) * Math.exp (-a*t) ); }
+	YnPart2Integrand (double a) { super (a); }
 }
 

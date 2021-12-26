@@ -23,6 +23,18 @@ public class OrdinaryFirstKind extends BesselPrimitive
 
 	// J#p = SUMMATION [ 0 <= k <= INFINITY ] ( (-1)^k * (x/2)^(2*k+p) / ( k! * GAMMA(k+p+1) ) )
 
+	// J#n = 1/(2*pi) * INTEGRAL [-pi <= t <= pi <> dt] (exp (i * (x * sin t - n*t)) * <*> t)
+
+	// J#a (i*z) = exp (a*i*pi/2) * I#a(z)
+	
+	/*
+	!! jap1 (x,a,t) = cos ( a * t - x * sin (t) ) )
+	!! jap2 (x,a,t) = exp ( - x * sinh (t) - a * t )
+
+	!! Ja (x,a) = 1/pi * ( INTEGRAL [0 <= t <= pi <> dt] (jap1 (x, a, t) * <*> t) -
+			sin (a * pi) * INTEGRAL [0 <= t <= INFINITY <> dt] (jap2 (x, a, t) * <*> t) )
+	 */
+
 
 	/**
 	 * build the integer exponent polynomial description of Jn

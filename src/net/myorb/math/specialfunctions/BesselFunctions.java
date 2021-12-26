@@ -123,6 +123,7 @@ public class BesselFunctions<T> implements SpecialFunctionsFamily<T>
 				case 'J': return new OrdinaryFirstKind ().getSpecialCase (order, terms, parameters, psm);
 				case 'K': return new ModifiedSecondKind ().getSpecialCase (order, terms, parameters, psm);
 				case 'I': return new ModifiedFirstKind ().getSpecialCase (order, terms, parameters, psm);
+				case 'Y': return new OrdinarySecondKind ().getSpecialCase (order, terms, parameters, psm);
 				}
 			case SPHERICAL:																					// Spherical functions
 				switch (kind.charAt (0))

@@ -24,6 +24,12 @@ public class HankelFunctions extends UnderlyingOperators
 	// H1#a(x) = J#a(x) + i * Y#a(x)
 	// H2#a(x) = J#a(x) - i * Y#a(x)
 
+	// H1#-a(x) = exp (alpha*pi*i) * H1#a(x)
+	// H2#-a(x) = exp (-alpha*pi*i) * H2#a(x)
+
+	// h1#a(x) = j#a(x) + i * y#a(x)		// spherical Hankel
+	// h2#a(x) = j#a(x) - i * y#a(x)
+
 
 	/**
 	 * describe a Bessel function Ha where a is a real number
