@@ -4,6 +4,7 @@ package net.myorb.math.specialfunctions.bessel;
 import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.GeneratingFunctions.Coefficients;
@@ -225,7 +226,7 @@ public class OrdinarySecondKind extends UnderlyingOperators
 
 
 	/**
-	 * Yn algorithm using integrals
+	 * Yn algorithm using numerical integration
 	 * @param order the value of (alpha) order which is integer
 	 * @param infinity the approximation to be used for infinity
 	 * @param parameters a hash of name/value pairs passed from configuration
@@ -662,37 +663,12 @@ class Yn<T> extends YnEquations<T>
 	}
 
 	/**
-	 * @param parameters a hash of name/value pairs passed from configuration
-	 * @return the method of calculation configured for the function
-	 */
-	public Methods identifyMethod (Map<String,Object> parameters)
-	{
-		Object specified;
-		if ((specified = parameters.get ("method")) != null)
-		{
-			try
-			{
-				String name = specified.toString ();
-				return Methods.valueOf (name.toUpperCase ());
-			}
-			catch (Exception e) {}
-		}
-		return Methods.SECTIONED;
-	}
-	public enum Methods
-	{
-		STRAIGHT,		// calculate every term for every function call
-		POLYNOMIAL,		// construct a polynomial with all coefficients calculated once
-		SECTIONED		// calculate the coefficients for each section and treat as 2 series
-	}
-
-	/**
 	 * construct the polynomial representation for the equations
 	 * @param parameters
 	 */
 	public void constructPolynomial (Map<String,Object> parameters)
 	{
-		switch (identifyMethod (parameters))
+		switch (BesselSectionedAlgorithm.IntegrationConfiguration.identifyApproach (parameters))
 		{
 			case POLYNOMIAL:
 				this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);
@@ -992,77 +968,69 @@ c2 = [0 <= k <= n-1] ( (n - k - 1)! / ( 4^k * k! ) )
  * implement integral form of Yn
  * @param <T> data type used
  */
-class YnIntegral<T> implements Function<T>
+class YnIntegral<T> extends BesselSectionedAlgorithm
 {
 
 	YnIntegral
 		(
-			double a, int infinity, Map<String,Object> parameters,
+			double a, int infinity,
+			Map<String,Object> parameters,
 			ExpressionSpaceManager<T> sm
 		)
 	{
-		I1 = new Quadrature (new YnPart1Integrand (a), parameters).getIntegral ();
-		I2 = new Quadrature (new YnPart2Integrand (a), parameters).getIntegral ();
-		this.a = a; this.infinity = infinity;
+		super
+		(
+			new YnPart1Integrand (a),
+			new YnPart2Integrand (a),
+			parameters, infinity
+		);
 		this.sm = sm;
 	}
 	ExpressionSpaceManager<T> sm;
-	protected double a;
 
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	/**
+	 * @param x parameter to function in T environment type
+	 * @return the calculated function result
 	 */
 	public T eval (T x)
 	{
-		double digest = integral
+		double digest = super.eval
 			(sm.convertToDouble (x));
 		return sm.convertFromDouble (digest);
 	}
 
-	/**
-	 * @param x parameter to Yn function
-	 * @return calculated result
-	 */
-	double integral (double x)
-	{
-		return I1.eval (x, 0.0, Math.PI) - I2.eval (x, 0.0, infinity);
-	}
-	protected Quadrature.Integral I1, I2;
-	protected int infinity;
-
-	public SpaceDescription<T> getSpaceDescription() { return sm; }
-	public SpaceManager<T> getSpaceManager() { return sm; }
-
 	// Y#n(z) = 1/pi * INTEGRAL [0 <= theta <= pi] ( sin (x*sin theta - n*theta) * <*> theta ) -
 	//          1/pi * INTEGRAL [0 <= t <= INFINITY] ( exp (-x*sinh t) * ( exp (n*t) + -1^n * exp (-n*t) ) ) * <*> t)
-
-	// !! y(x,a,t) = exp ( - x * sinh (t) ) * ( exp (a*t) + (-1)^a * exp (-a*t) )
 
 }
 
 /**
- * part1 integral form of Yn
- */
-class YnPart1Integrand extends RealIntegrandFunctionBase
+* part1 integral form of Yn
+*/
+class YnPart1Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{ return Math.sin (x * Math.sin (t) - a * t); }
+	{ return Math.sin ( x * Math.sin (t) - a * t ); }
 	YnPart1Integrand (double a) { super (a); }
 }
 
 /**
- * part2 integral form of Yn
- */
-class YnPart2Integrand extends RealIntegrandFunctionBase
+* part2 integral form of Yn
+*/
+class YnPart2Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
 	public Double eval (Double t)
-	{ return Math.exp ( - x * Math.sinh (t) ) * ( Math.exp (a*t) + Math.pow (-1, a) * Math.exp (-a*t) ); }
-	YnPart2Integrand (double a) { super (a); }
+	{ return Math.exp ( - x * Math.sinh (t) ) * expAT (t); }
+	public Double sgnOverTplusT (Double t) { return t + SGN / t; }
+	public Double expAT (Double t) { return sgnOverTplusT (Math.exp ( a * t )); }
+	// !! y(x,a,t) = exp ( - x * sinh (t) ) * ( exp (a*t) + (-1)^a * exp (-a*t) )
+	YnPart2Integrand (double a) { super (a); this.SGN = Math.pow (-1, a); }
+	protected final double SGN;
 }
 

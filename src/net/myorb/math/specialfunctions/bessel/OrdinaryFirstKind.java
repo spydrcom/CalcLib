@@ -251,17 +251,16 @@ class JaFunctionDescription<T> extends BesselDescription<T>
  * provide real version of Ja using integral algorithm.
  * TanhSinh Quadrature is used to provide numerical integration
  */
-class Ja extends SectionedAlgorithm
+class Ja extends BesselCommonSectionedAlgorithm
 {
 
 	Ja (double a, int infinity, Map<String,Object> parameters)
 	{
 		super
 		(
-			a, infinity,
 			new JalphaPart1Integrand (a),
 			new JalphaPart2Integrand (a),
-			parameters
+			parameters, infinity
 		);
 	}
 
@@ -279,7 +278,7 @@ class Ja extends SectionedAlgorithm
 /**
  * part1 integral form of Ja
  */
-class JalphaPart1Integrand extends RealIntegrandFunctionBase
+class JalphaPart1Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
@@ -293,7 +292,7 @@ class JalphaPart1Integrand extends RealIntegrandFunctionBase
 /**
  * part2 integral form of Ja
  */
-class JalphaPart2Integrand extends RealIntegrandFunctionBase
+class JalphaPart2Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)

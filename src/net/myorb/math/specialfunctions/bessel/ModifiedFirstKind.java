@@ -222,17 +222,16 @@ class IaFunctionDescription<T> extends IDescription<T>
  * provide real version of Ia using integral algorithm.
  * TanhSinh Quadrature is used to provide numerical integration
  */
-class Ia extends SectionedAlgorithm
+class Ia extends BesselCommonSectionedAlgorithm
 {
 
 	Ia (double a, int infinity, Map<String,Object> parameters)
 	{
 		super
 		(
-			a, infinity,
 			new IalphaPart1Integrand (a),
 			new IalphaPart2Integrand (a),
-			parameters
+			parameters, infinity
 		);
 	}
 
@@ -250,7 +249,7 @@ class Ia extends SectionedAlgorithm
 /**
  * part1 integral form of Ia
  */
-class IalphaPart1Integrand extends RealIntegrandFunctionBase
+class IalphaPart1Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
@@ -264,7 +263,7 @@ class IalphaPart1Integrand extends RealIntegrandFunctionBase
 /**
  * part2 integral form of Ia
  */
-class IalphaPart2Integrand extends RealIntegrandFunctionBase
+class IalphaPart2Integrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)

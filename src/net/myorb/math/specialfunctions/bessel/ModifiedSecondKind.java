@@ -1,6 +1,7 @@
 
 package net.myorb.math.specialfunctions.bessel;
 
+import net.myorb.math.computational.integration.Quadrature;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
@@ -274,7 +275,7 @@ class Ka
 /**
  * integral form of Ka
  */
-class KalphaIntegrand extends RealIntegrandFunctionBase
+class KalphaIntegrand extends BesselSectionedAlgorithm.BesselSectionIntegrand
 {
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
