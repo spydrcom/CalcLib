@@ -202,16 +202,16 @@ class IaFunctionDescription<T> extends IDescription<T>
 		this.I = new Ia (sm.convertToDouble (a), termCount, parameters);
 		this.parameters = parameters;
 	}
-	Ia I;
+	protected Ia I;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#getElaboration()
 	 */
 	public String getElaboration () { return "   " + parameters.toString (); }
-	Map<String,Object> parameters;
+	protected Map<String,Object> parameters;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#evalReal(double)
+	 * @see net.myorb.math.computational.integration.RealDomainImplementation#evalReal(double)
 	 */
 	public double evalReal (double x) { return I.eval (x); }
 

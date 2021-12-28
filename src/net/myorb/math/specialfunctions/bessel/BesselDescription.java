@@ -3,16 +3,17 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+
+import net.myorb.math.computational.integration.RealDomainImplementation;
 import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.data.abstractions.SpaceDescription;
-import net.myorb.math.SpaceManager;
 
 /**
  * a reporting object for description of special functions
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class BesselDescription<T> implements SpecialFunctionFamilyManager.FunctionDescription<T>
+public class BesselDescription<T> extends RealDomainImplementation<T>
+	implements SpecialFunctionFamilyManager.FunctionDescription<T>
 {
 
 	public enum OrderTypes {NON_SPECIFIC, INT, REAL, COMPLEX, LIM}
@@ -24,7 +25,8 @@ public class BesselDescription<T> implements SpecialFunctionFamilyManager.Functi
 			ExpressionSpaceManager<T> sm
 		)
 	{
-		this.a = a; this.sm = sm;
+		super (sm);
+		this.a = a;
 		this.orderType = orderType;
 		this.orderIdentifier = orderId;
 		this.functionIidentifier = functionId;
@@ -99,23 +101,5 @@ public class BesselDescription<T> implements SpecialFunctionFamilyManager.Functi
 	void formatTypedValue (T value) { formatValue (sm.convertToDouble (a)); }
 	void formatValue (double value) { formattedValue = UnderlyingOperators.formatParameterDisplay (value); }
 	protected String formattedValue;
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
-	 */
-	public T eval (T x)
-	{ return sm.convertFromDouble ( evalReal ( sm.convertToDouble (x) ) ); }
-	public double evalReal (double x) { return 0.0; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceDescription<T> getSpaceDescription () { return sm; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.Function#getSpaceManager()
-	 */
-	public SpaceManager<T> getSpaceManager () { return sm; }
-	protected ExpressionSpaceManager<T> sm;
 
 }

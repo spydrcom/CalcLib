@@ -53,7 +53,7 @@ public class ModifiedSecondKind extends UnderlyingOperators
 			this.lib = lib; this.processParameter (a, sm);
 			this.createK (termCount);
 		}
-		ExtendedPowerLibrary<T> lib;
+		protected ExtendedPowerLibrary<T> lib;
 
 		protected void createK (int termCount)
 		{
@@ -96,11 +96,6 @@ public class ModifiedSecondKind extends UnderlyingOperators
 				), multiplier
 			);
 		}
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.specialfunctions.bessel.BesselDescription#evalReal(double)
-		 */
-		public double evalReal (double x) { return 0; }
 	
 	}
 

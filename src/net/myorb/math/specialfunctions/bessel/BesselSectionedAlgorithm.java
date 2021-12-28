@@ -125,4 +125,3 @@ class BesselCommonSectionedAlgorithm extends BesselSectionedAlgorithm
 	}
 
 }
-

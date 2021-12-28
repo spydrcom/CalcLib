@@ -231,12 +231,9 @@ class JaFunctionDescription<T> extends BesselDescription<T>
 	protected Map<String,Object> parameters;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 * @see net.myorb.math.computational.integration.RealDomainImplementation#evalReal(double)
 	 */
-	public T eval (T x)
-	{
-		return sm.convertFromDouble ( J.eval ( sm.convertToDouble (x) ) );
-	}
+	public double evalReal (double parameter) { return J.eval (parameter); }
 	protected Ja J;
 
 	/* (non-Javadoc)

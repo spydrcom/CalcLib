@@ -4,6 +4,7 @@ package net.myorb.math.specialfunctions.bessel;
 import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
+import net.myorb.math.computational.integration.RealDomainImplementation;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
@@ -968,7 +969,7 @@ c2 = [0 <= k <= n-1] ( (n - k - 1)! / ( 4^k * k! ) )
  * implement integral form of Yn
  * @param <T> data type used
  */
-class YnIntegral<T> extends BesselSectionedAlgorithm
+class YnIntegral<T> extends RealDomainImplementation<T>
 {
 
 	YnIntegral
@@ -978,26 +979,22 @@ class YnIntegral<T> extends BesselSectionedAlgorithm
 			ExpressionSpaceManager<T> sm
 		)
 	{
-		super
+		super (sm);
+
+		algorithm = new BesselSectionedAlgorithm
 		(
 			new YnPart1Integrand (a),
 			new YnPart2Integrand (a),
 			parameters, infinity
 		);
-		this.sm = sm;
 	}
-	ExpressionSpaceManager<T> sm;
 
-	/**
-	 * @param x parameter to function in T environment type
-	 * @return the calculated function result
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.RealDomainImplementation#evalReal(double)
 	 */
-	public T eval (T x)
-	{
-		double digest = super.eval
-			(sm.convertToDouble (x));
-		return sm.convertFromDouble (digest);
-	}
+	public double evalReal
+	(double parameter) { return algorithm.eval (parameter); }
+	protected BesselSectionedAlgorithm algorithm;
 
 	// Y#n(z) = 1/pi * INTEGRAL [0 <= theta <= pi] ( sin (x*sin theta - n*theta) * <*> theta ) -
 	//          1/pi * INTEGRAL [0 <= t <= INFINITY] ( exp (-x*sinh t) * ( exp (n*t) + -1^n * exp (-n*t) ) ) * <*> t)
