@@ -105,6 +105,7 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 	{
 		String name;
 		LibraryObject<T> lib = getLib (name = tokens.get (1).getTokenImage ());
+		if (lib == null) throw new RuntimeException ("Unrecognized library: " + name);
 		Map<String, Object> parameters = lib.getParameterization ();
 		configure (name, tokens, parameters);
 	}

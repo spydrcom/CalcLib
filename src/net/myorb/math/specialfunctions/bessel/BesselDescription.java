@@ -20,17 +20,17 @@ public class BesselDescription<T> extends RealDomainImplementation<T>
 
 	public BesselDescription
 		(
-			T a, OrderTypes orderType,
+			T alpha, OrderTypes orderType,
 			String functionId, String orderId,
 			ExpressionSpaceManager<T> sm
 		)
 	{
 		super (sm);
-		this.a = a;
+		this.a = alpha;
 		this.orderType = orderType;
 		this.orderIdentifier = orderId;
 		this.functionIidentifier = functionId;
-		this.formatTypedValue (a);
+		this.formatTypedValue (alpha);
 	}
 	protected T a;
 
