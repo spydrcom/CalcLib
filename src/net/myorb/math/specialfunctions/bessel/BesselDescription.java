@@ -29,7 +29,7 @@ public class BesselDescription<T> extends RealDomainImplementation<T>
 		this.a = alpha;
 		this.orderType = orderType;
 		this.orderIdentifier = orderId;
-		this.functionIidentifier = functionId;
+		this.functionIdentifier = functionId;
 		this.formatTypedValue (alpha);
 	}
 	protected T a;
@@ -42,11 +42,11 @@ public class BesselDescription<T> extends RealDomainImplementation<T>
 		Number order = sm.toNumber (a);
 		switch (orderType)
 		{
-		case INT:	return orderAsInt (order);
+		case INT: return orderAsInt (order);
 		case NON_SPECIFIC:
 			if (Library.isInteger (order))
 				return orderAsInt (order);
-		default:	return order.toString ();
+		default: return order.toString ();
 		}
 	}
 	protected String orderAsInt (Number order)
@@ -73,7 +73,7 @@ public class BesselDescription<T> extends RealDomainImplementation<T>
 		}
 
 		return new StringBuffer ().append ("Bessel: ")
-		.append (functionIidentifier).append (display);
+		.append (functionIdentifier).append (display);
 	}
 
 	/* (non-Javadoc)
@@ -90,14 +90,14 @@ public class BesselDescription<T> extends RealDomainImplementation<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getRenderIdentifier()
 	 */
-	public String getRenderIdentifier () { return functionIidentifier; }
-	protected String functionIidentifier, orderIdentifier;
+	public String getRenderIdentifier () { return functionIdentifier; }
+	protected String functionIdentifier, orderIdentifier;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.specialfunctions.SpecialFunctionFamilyManager.FunctionDescription#getFunctionName()
 	 */
 	public String getFunctionName ()
-	{ return functionIidentifier + orderIdentifier + formattedValue; }
+	{ return functionIdentifier + orderIdentifier + formattedValue; }
 	void formatTypedValue (T value) { formatValue (sm.convertToDouble (a)); }
 	void formatValue (double value) { formattedValue = UnderlyingOperators.formatParameterDisplay (value); }
 	protected String formattedValue;

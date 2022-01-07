@@ -229,10 +229,8 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 	{
 		if (gardener != null && expression == null)
 		{
-			//System.out.print ("Enabling ");
 			gardener.completeSemanticAnalysis (symbols, spaceManager);
 			expression = gardener.getExpression ();
-			//System.out.println (expression);
 			semanticallyComplete = true;
 		}
 	}

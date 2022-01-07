@@ -2,9 +2,8 @@
 package net.myorb.math.expressions;
 
 import net.myorb.math.matrices.Matrix;
-import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.complexnumbers.ComplexWrapper;
 import net.myorb.math.complexnumbers.ComplexMarker;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
@@ -95,11 +94,7 @@ public class ExtendedDataConversions<T> extends DataConversions<T>
 		{
 			return convertNumber (object);
 		}
-		else if (object instanceof ComplexMarker)
-		{
-			return valueManager.newStructure (new ComplexWrapper ((ComplexMarker) object));
-		}
-		else if (type == null)
+		else if (object instanceof ComplexMarker || type == null)
 		{
 			return valueManager.newStructure (object);
 		}
@@ -136,7 +131,9 @@ public class ExtendedDataConversions<T> extends DataConversions<T>
 	{
 		if (type == Types.COMPLEX)
 		{
-			return new ComplexWrapper ((ComplexMarker) value);
+			if (value instanceof DiscreteValueStorage)
+			{ return storedContents (value); }
+			else return value;
 		}
 
 		Number number = spaceManager.convertToDouble (value);
@@ -152,12 +149,17 @@ public class ExtendedDataConversions<T> extends DataConversions<T>
 			default: return number.doubleValue ();
 		}
 	}
+	@SuppressWarnings("unchecked")
+	public Object storedContents (T value)
+	{
+		return ((DiscreteValueStorage<T>)value).value;
+	}
+
 	public Object convertToType (ValueManager.GenericValue value, Types type)
 	{
 		switch (type)
 		{
 			case MAT: return valueManager.toMatrix (value).toRawCells ();
-			//case COMPLEX: return new ComplexWrapper ((ComplexMarker) valueManager.toDiscrete (value));
 			case VEC: return doubleArray (valueManager.toDimensionedValue (value).getValues ());
 			default:  return convertToType (valueManager.toDiscrete (value), type);
 		}

@@ -122,7 +122,8 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 	{
 		try
 		{
-			return returnValueFor (function.invoke (enclosingClass, actualParametersFor (parameters)));
+			Object[] actual = actualParametersFor (parameters);
+			return returnValueFor (function.invoke (enclosingClass, actual));
 		}
 		catch (Exception e)
 		{

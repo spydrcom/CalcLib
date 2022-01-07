@@ -2,6 +2,8 @@
 package net.myorb.math.specialfunctions;
 
 import net.myorb.math.computational.ADSplineRealSegmentManager;
+import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
+import net.myorb.math.computational.integration.CCQuadrature;
 
 import net.myorb.math.Function;
 
@@ -43,16 +45,53 @@ public class Si
 	}
 
 	/**
+	 * Si function eval
 	 * @param x parameter value
 	 * @return INTEGRAL [ 0 : x ] sin t / t dt
 	 */
-	public static double si (double x)
+	public static double si (double x)	// Java convention breaks nomenclature
 	{
 		if (spline == null)
 		{ spline = new Segments ().newSplineInstance (); }
 		return spline.eval (x);
 	}
 	static Function<Double> spline = null;
+	// Si(x) - si(x) = pi/2
+
+	/**
+	 * @param x parameter value
+	 * @return INTEGRAL [ 0 : x ] ( sinh t / t ) dt
+	 */
+	public static double Shi (double x)
+	{
+		if (ccqShi == null)
+		{ ccqShi = new CCQuadrature (new ShiIntegrand (), null); }
+		return ccqShi.eval (x, 0, x);
+	}
+	static CCQuadrature ccqShi = null;
+
+	/**
+	 * Ci function eval
+	 * @param x parameter value
+	 * @return calculated result
+	 */
+	public static double Ci (double x)
+	{
+		return gamma + Math.log (x) - Cin (x);
+	}
+	static final double gamma = 0.57721566; // Euler-Masheroni
+
+	/**
+	 * @param x parameter value
+	 * @return INTEGRAL [ 0 : x ] ( 1 - cos t / t ) dt
+	 */
+	public static double Cin (double x)
+	{
+		if (ccqCin == null)
+		{ ccqCin = new CCQuadrature (new CinIntegrand (), null); }
+		return ccqCin.eval (x, 0, x);
+	}
+	static CCQuadrature ccqCin = null;
 
 	/**
 	 * @param x parameter to function
@@ -63,4 +102,26 @@ public class Si
 		return Math.sin (x) / x;
 	}
 
+}
+
+/**
+ * Integrand for calculation of Cin
+ */
+class CinIntegrand extends RealIntegrandFunctionBase
+{
+	public Double eval (Double t)
+	{
+		return ( 1.0 - Math.cos (t) ) / t;
+	}
+}
+
+/**
+ * Integrand for calculation of Shi
+ */
+class ShiIntegrand extends RealIntegrandFunctionBase
+{
+	public Double eval (Double t)
+	{
+		return Math.sinh (t) / t;
+	}
 }
