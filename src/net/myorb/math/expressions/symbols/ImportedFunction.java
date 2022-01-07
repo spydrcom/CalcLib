@@ -1,9 +1,13 @@
 
 package net.myorb.math.expressions.symbols;
 
-import net.myorb.math.expressions.*;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
+
+import net.myorb.math.expressions.ExtendedDataConversions;
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.SymbolMap;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -29,18 +33,29 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 		)
 	{
 		super (name, parameterNames, functionTokens);
+		connectTo (environment); doParse ();
+	}
+
+
+	/**
+	 * track exceptions from function parser
+	 */
+	public void doParse ()
+	{
+		try { parseFunction (); }
+		catch (Exception e) { e.printStackTrace (); }
+	}
+
+
+	/**
+	 * get conversion and symbol objects
+	 * @param environment source of control objects
+	 */
+	public void connectTo (Environment<T> environment)
+	{
 		this.converter = new ExtendedDataConversions<T>(environment);
 		this.valueManager = environment.getValueManager ();
 		this.symbols = environment.getSymbolMap ();
-
-		try
-		{
-			parseFunction ();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace ();
-		}
 	}
 	protected ExtendedDataConversions<T> converter;
 	protected ValueManager<T> valueManager;
@@ -91,6 +106,7 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 		{
 			if (i > 0) declaration.append (", ");
 			String t = parameterTypes[i].toString ();
+
 			switch (parameterType[i] = getTypeFor (t))
 			{
 				case MAT: case VEC: case TXT: 
@@ -201,14 +217,23 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 
 	// show the import with original library and formal parameters
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Subroutine#toFormatted(boolean)
+	 */
 	public String toFormatted (boolean pretty) { return toString (); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Subroutine#toPrettyText()
+	 */
 	public String toPrettyText () { return toString (); }
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Subroutine#toString()
 	 */
 	public String toString () { return declaration.toString (); }
-	StringBuffer declaration = new StringBuffer ();
+	protected StringBuffer declaration = new StringBuffer ();
 
 
 }
+

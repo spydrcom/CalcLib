@@ -171,6 +171,7 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 	{
 		SymbolMap.Named n;
 		if (symbols.containsKey (name)) return;
+
 		// look for used tokens to copy in symbol table
 		if ((n = parent.lookup (name)) == null) return;
 		symbols.add (n);
