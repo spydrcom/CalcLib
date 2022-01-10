@@ -59,15 +59,14 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 
 	/**
 	 * create a symbol entry for a library
-	 * @param tokens the tokens of the definition string
+	 * @param libraryName symbol name to be assigned to library
+	 * @param classPath full path to object to be treated as library
+	 * @param environment the environment object driving the processing
+	 * @param <T> type on which operations are to be executed
 	 */
-	public void defineLibrary (List<TokenParser.TokenDescriptor> tokens)
+	public static <T> void defineLibrary
+	(String libraryName, String classPath, Environment<T> environment)
 	{
-		tokens.remove (0);
-		String libraryName = processName (tokens.get (0));
-
-		tokens.remove (0);
-		String classPath = TokenParser.toString (tokens).replace (" ", "");
 		LibraryObject<T> library;
 
 		try
@@ -82,6 +81,39 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 		}
 
 		environment.getSymbolMap ().add (library);
+	}
+
+
+	/**
+	 * reset all configured parameters of a library object
+	 * @param libraryName the name of the library symbol
+	 */
+	public void resetLibrary (String libraryName)
+	{
+		LibraryObject<T> lib = getLib (libraryName);
+		lib.getParameterization ().clear ();
+	}
+
+
+	/**
+	 * process a library command
+	 * @param tokens the tokens of the command string
+	 */
+	public void processLibrary (List<TokenParser.TokenDescriptor> tokens)
+	{
+		String libraryName, parameter;
+
+		tokens.remove (0); libraryName = processName (tokens.get (0));
+		tokens.remove (0); parameter = TokenParser.toString (tokens).replace (" ", "");
+
+		if (parameter.toUpperCase ().equals ("RESET"))
+		{
+			resetLibrary (libraryName);
+		}
+		else
+		{
+			defineLibrary (libraryName, parameter, environment);
+		}
 	}
 
 

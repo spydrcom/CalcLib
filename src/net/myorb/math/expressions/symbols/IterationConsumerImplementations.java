@@ -3,7 +3,8 @@ package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
+import net.myorb.math.expressions.tree.NumericalAnalysis;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.math.SpaceManager;
 
@@ -22,7 +23,7 @@ public class IterationConsumerImplementations
 	 */
 	public enum Names
 	{
-		AggregateConsumer, SummationConsumer, IntegralConsumer, ProductConsumer, PlotConsumer
+		AggregateConsumer, SummationConsumer, IntegralConsumer, QuadratureConsumer, ProductConsumer, PlotConsumer
 	}
 
 
@@ -37,11 +38,12 @@ public class IterationConsumerImplementations
 	{
 		switch (Names.valueOf (named))
 		{
+			case PlotConsumer: return getPlotIterationConsumer (using);
 			case AggregateConsumer: return getArrayIterationConsumer (using);
 			case SummationConsumer: return getSummationIterationConsumer (using);
-			case IntegralConsumer: return getIntegralIterationConsumer (using);
 			case ProductConsumer: return getProductIterationConsumer (using);
-			case PlotConsumer: return getPlotIterationConsumer (using);
+			case IntegralConsumer: return getIntegralIterationConsumer (using);
+			case QuadratureConsumer: return getQuadratureConsumer ();
 			default: throw new RuntimeException ("Internal Error");
 		}
 	}
@@ -77,6 +79,14 @@ public class IterationConsumerImplementations
 	public static <T> IterationConsumer
 	getIntegralIterationConsumer (SpaceManager<T> manager)
 	{ return new IntegralConsumer<T>(manager); }
+
+	/**
+	 * consumer object for numerical integration using quadrature
+	 * @return the new consumer object
+	 * @param <T> data type
+	 */
+	public static <T> IterationConsumer getQuadratureConsumer ()
+	{ return new QuadratureConsumer<T>(); }
 
 	/**
 	 * result of iterations is product of values
@@ -127,6 +137,12 @@ abstract class AbstractConsumer<T> implements IterationConsumer
 	 * @param initialValue the value to start the evaluation from
 	 */
 	public void init (T initialValue) { aggregateValue = initialValue; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#setCurrentValue(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public void setCurrentValue (GenericValue currentValue)
+	{ aggregateValue = valueManager.toDiscrete (currentValue); }
 	protected T aggregateValue;
 
 	/* (non-Javadoc)
@@ -188,12 +204,55 @@ class IntegralConsumer<T> extends AbstractConsumer<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.symbols.IterationConsumer#init()
 	 */
-	public void init () { init (manager.getZero ()); }
+	public void init () { init (manager.getZero ()); 
+	System.out.println ("IntegralConsumer");
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString () { return "INTEGRAL"; }
+
+}
+
+
+/**
+ * sum of iteration values (QUADRATURE operator)
+ * @param <T> data type
+ */
+class QuadratureConsumer<T> extends AbstractConsumer<T>
+	implements NumericalAnalysis<T>
+{
+
+	QuadratureConsumer () { super (null); }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "QUADRATURE"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#accept(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public void accept (GenericValue value) {}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#init()
+	 */
+	public void init () {}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.tree.NumericalAnalysis#evaluate(net.myorb.math.expressions.tree.RangeNodeDigest)
+	 */
+	public GenericValue evaluate (RangeNodeDigest<T> digest) 
+	{ return analyzer.evaluate (digest); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.tree.NumericalAnalysis#setAnalyzer(net.myorb.math.expressions.tree.NumericalAnalysis)
+	 */
+	public void setAnalyzer
+	(NumericalAnalysis<T> analyzer) { this.analyzer = analyzer; }
+	protected NumericalAnalysis<T> analyzer;
 
 }
 

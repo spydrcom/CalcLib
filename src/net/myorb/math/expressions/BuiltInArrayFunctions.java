@@ -294,6 +294,7 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 		public void accept (GenericValue value) { iterationConsumer.accept (value); }
 		public void setIterationValue (GenericValue value) { iterationConsumer.setIterationValue (value); }
 		public GenericValue getCalculatedResult () { return iterationConsumer.getCalculatedResult (); }
+		public void setCurrentValue (GenericValue currentValue) {}
 		public abstract IterationConsumer getIterationConsumer ();
 		public void init () { iterationConsumer.init (); }
 		protected IterationConsumer iterationConsumer;

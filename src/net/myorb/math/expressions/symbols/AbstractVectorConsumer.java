@@ -42,6 +42,11 @@ public abstract class AbstractVectorConsumer
 	 */
 	public GenericValue getCalculatedResult () { return iterationConsumer.getCalculatedResult (); }
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#setCurrentValue(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public void setCurrentValue (GenericValue currentValue) {}
+
 	/**
 	 * @return the consumer algorithm to be used
 	 */

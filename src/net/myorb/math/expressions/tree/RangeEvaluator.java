@@ -1,11 +1,9 @@
 
 package net.myorb.math.expressions.tree;
 
-import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.symbols.IterationConsumer;
-
-import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.math.expressions.SymbolMap;
 
 /**
  * run calculation of aggregate of iterations over described range
@@ -27,66 +25,57 @@ public class RangeEvaluator<T>
 			CalculationEngine<T> calculator, SymbolMap symbols
 		)
 	{
-		this.symbols = symbols;
-		this.calculator = calculator;
-		this.descriptor = rangeDescriptor;
-		this.consumer = rangeDescriptor.iterationConsumer;
-
-		this.loBnd = calculator.evaluate (rangeDescriptor.loExpr);
-		this.hiBnd = calculator.evaluate (rangeDescriptor.hiExpr);
-		this.delta = calculator.evaluate (rangeDescriptor.delta);
-
-		this.incrementLoBound =
-			RangeAttributes.LT.equals (rangeDescriptor.lbndOp.getSymbolProperties ().getName ());
-		this.hiCompare = symbolFor (rangeDescriptor.hbndOp.getSymbolProperties ().getName ());
-		this.incrementation = symbolFor ("+");
-		this.target = descriptor.target;
+		this.digest = new RangeNodeDigest<T> (rangeDescriptor, calculator, symbols);
 	}
-	protected LexicalAnalysis.RangeDescriptor<T> descriptor;
-	protected GenericValue loBnd, hiBnd, delta;
-	protected CalculationEngine<T> calculator;
-	protected IterationConsumer consumer;
-	protected Expression<T> target;
-	protected SymbolMap symbols;
+	protected RangeNodeDigest<T> digest;
 
 
 	/**
-	 * find operator in symbol table
-	 * @param name the name of the operator
-	 * @return the symbol table entry object
+	 * @return the value computed from the range description
 	 */
-	public SymbolMap.BinaryOperator symbolFor (String name)
+	public GenericValue evaluateRangeExpression ()
 	{
-		SymbolMap.BinaryOperator op =
-		SimpleUtilities.verifyClass (symbols.lookup (name), SymbolMap.BinaryOperator.class);
-		if (op == null) throw new RuntimeException ("Internal error: BAD OPERATOR");
-		return op;
+		IterationConsumer
+			consumer = digest.getConsumer ();
+		if (digest.isNumericalAnalysisConsumer ())
+		{ return digest.applyNumericalAnalysis (); }
+		return evaluateLoop (consumer);
 	}
 
 
 	/**
+	 * @param consumer the object used to digest the iteration results
 	 * @return aggregated value of all iterations consumed
 	 */
-	public GenericValue evaluateLoop ()
+	public GenericValue evaluateLoop (IterationConsumer consumer)
 	{
 		consumer.init ();
+		doIterativeLoopEvaluation (consumer);
+		GenericValue v = consumer.getCalculatedResult ();
+		return v;
+	}
+
+
+	/**
+	 * standard delta iterative loop
+	 * @param consumer the object used to digest the iteration results
+	 */
+	public void doIterativeLoopEvaluation (IterationConsumer consumer)
+	{
 		GenericValue iterator, result;
 		initializeLocalVariable ();
-		if (incrementLoBound)
-		{ increment (); }
+
+		if (digest.incrementLoBound ()) { digest.increment (); }
 
 		while (inRange ())
 		{
 			consumer.setIterationValue
-				(iterator = localVariable.getValue ());
-			showIteration (iterator, result = calculator.evaluate (target));
+				(iterator = digest.getLocalVariableValue ());
+			showIteration (iterator, result = digest.evaluateTarget ());
 			consumer.accept (result);
-			increment ();
+			digest.increment ();
 		}
-
-		return consumer.getCalculatedResult ();
 	}
-	protected boolean incrementLoBound = false;
 
 
 	/**
@@ -103,15 +92,6 @@ public class RangeEvaluator<T>
 	public static final boolean LOOP_TRACE = false;
 
 
-	/**
-	 * dump for local variable attributes
-	 */
-	public void dumpLocal ()
-	{
-		System.out.print ("local var: "); System.out.print (variableName); System.out.print (" = ");
-		System.out.print (localVariable); System.out.print (" ; "); System.out.println (localVariable.getSymbolType ());
-		System.out.println (localIdentifier + " " + localIdentifier.getTypeManager ().getType ());
-	}
 
 
 	/**
@@ -123,28 +103,10 @@ public class RangeEvaluator<T>
 		iteration = 0; every = 10000;
 		startTime = System.nanoTime ();
 
-		// construct symbols
-		variableName = descriptor.variableName;
-		localVariable = new LocalVariable (variableName);
-		deltaVariable = new LocalVariable ("\u2202" + variableName);
-
-		// symbol table links
-		localIdentifier = descriptor.target.identifiers.get (variableName);
-		localIdentifier.getSymbolProperties ().setSymbolReference (localVariable);
-		localIdentifier.getIdentifierProperties ().setAsLocalType ();
-
-		// set identifier values
-		localVariable.setValue (loBnd);
-		deltaVariable.setValue (delta);
-
-		// add to symbol table
-		symbols.add (localVariable);
-		symbols.add (deltaVariable);
+		// perform initialization in digest
+		digest.initializeLocalVariable ();
 	}
 	protected long startTime, iteration, every;
-	protected LexicalAnalysis.Identifier<T> localIdentifier;
-	protected LocalVariable localVariable, deltaVariable;
-	protected String variableName;
 
 
 	/**
@@ -154,11 +116,8 @@ public class RangeEvaluator<T>
 	public boolean inRange ()
 	{
 		if (++iteration > every) { runStats (); }
-		GenericValue varValue = localVariable.getValue ();
-		GenericValue comparison = hiCompare.execute (varValue, hiBnd);
-		return ! calculator.isZero (comparison);
+		return digest.inRange ();
 	}
-	protected SymbolMap.BinaryOperator hiCompare;
 
 
 	/**
@@ -183,60 +142,6 @@ public class RangeEvaluator<T>
 	protected long iterations = 0;
 	protected float average;
 
-
-	/**
-	 * increment local variable with delta
-	 */
-	public void increment ()
-	{
-		GenericValue sum =
-			incrementation.execute (localVariable.getValue (), delta);
-		localVariable.setValue (sum);
-	}
-	protected SymbolMap.BinaryOperator incrementation;
-
-
-}
-
-
-/**
- * symbol table representation of local variable
- */
-class LocalVariable implements SymbolMap.VariableLookup
-{
-
-	/**
-	 * @param name the name assigned to local variable
-	 */
-	LocalVariable (String name) { this.name = name; }
-	protected String name;
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
-	 */
-	public String getName () { return name; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.Named#getSymbolType()
-	 */
-	public SymbolMap.SymbolType getSymbolType () { return SymbolMap.SymbolType.IDENTIFIER; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#getValue()
-	 */
-	public GenericValue getValue () { return value; }
-	public void setValue (GenericValue value) { this.value = value; }
-	protected GenericValue value;
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString () { return value.toString (); }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#rename(java.lang.String)
-	 */
-	public void rename (String to) {}
 
 }
 

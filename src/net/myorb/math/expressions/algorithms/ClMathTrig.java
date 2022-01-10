@@ -142,7 +142,7 @@ class TrigPowParameterManager<T> implements
 	 */
 	TrigPowParameterManager (Map<String,Object> parameters, Environment<T> environment)
 	{
-		this (parameters.get ("OP"), parameters.get ("POW"), environment);
+		this (parameters.get ("OP"), parameters.get ("POW"), parameters.get ("ARC"), environment);
 	}
 	TrigPowParameterManager (String parameters, Environment<T> environment)
 	{
@@ -150,19 +150,32 @@ class TrigPowParameterManager<T> implements
 	}
 	TrigPowParameterManager (String[] parameters, Environment<T> environment)
 	{
-		this (parameters[0], parameters[1], environment);
+		this (parameters[0], parameters[1], parameters.length>2? parameters[2]: null, environment);
 	}
-	TrigPowParameterManager (Object OP, Object POW, Environment<T> environment)
+	TrigPowParameterManager (Object OP, Object POW, Object ARC, Environment<T> environment)
 	{
-		this.pow = POW.toString ();
 		this.identifier = OP.toString ();
-		this.exponent = Integer.parseInt (pow);
 		this.op = Operations.valueOf (this.identifier);
 		this.space = environment.getSpaceManager ();
+		this.exponent = 1;
+		this.pow = "";
+		
+		if (ARC != null)
+		{
+			this.arc = ARC.toString ();
+		}
+		else
+		{
+			if (pow != null)
+			{
+				this.pow = POW.toString ();
+				this.exponent = Integer.parseInt (pow);
+			}
+			this.arc = null;
+		}
 	}
-	protected String pow, identifier;
-	protected Operations op;
-	protected int exponent;
+	protected Operations op; protected int exponent;
+	protected String pow, identifier, arc;
 
 
 	/**
@@ -180,10 +193,14 @@ class TrigPowParameterManager<T> implements
 	 */
 	public String render (NodeFormatting using)
 	{
+		String op = this.identifier, exp = this.pow;
+
+		if (arc != null) { op = arc; exp = "-1"; }
+
 		return using.formatSuperScript
 			(
-				using.formatIdentifierReference (this.identifier),
-				using.formatNumericReference (this.pow)
+				using.formatIdentifierReference (op),
+				using.formatNumericReference (exp)
 			);
 	}
 

@@ -191,7 +191,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 			{ return "Construct a library of functions"; }
 
 			public void execute (CommandSequence tokens)
-			{ engine.getFunctionManager ().defineLibrary (tokens); }
+			{ engine.getFunctionManager ().processLibrary (tokens); }
 		};
 	}
 

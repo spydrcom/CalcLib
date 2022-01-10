@@ -9,6 +9,7 @@ import net.myorb.math.expressions.ValueManager.GenericValue;
  */
 public interface IterationConsumer
 {
+
 	/**
 	 * establish initial value
 	 */
@@ -20,6 +21,11 @@ public interface IterationConsumer
 	void accept (GenericValue value);
 
 	/**
+	 * @param currentValue the new value for the aggregate
+	 */
+	void setCurrentValue (GenericValue currentValue);
+
+	/**
 	 * @param value the local variable value
 	 */
 	void setIterationValue (GenericValue value);
@@ -28,4 +34,6 @@ public interface IterationConsumer
 	 * @return the aggregate of the iterations
 	 */
 	GenericValue getCalculatedResult ();
+
 }
+

@@ -189,7 +189,7 @@ public class CalculationEngine<T>
 	public GenericValue evaluateRangeDescriptor (LexicalAnalysis.RangeDescriptor<T> element)
 	{
 		if (element.iterationConsumer == null) element.iterationConsumer = getNewArrayConsumer ();
-		return new RangeEvaluator<T> (element, this, symbols).evaluateLoop ();
+		return new RangeEvaluator<T> (element, this, symbols).evaluateRangeExpression ();
 	}
 
 
