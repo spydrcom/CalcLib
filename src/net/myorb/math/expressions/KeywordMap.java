@@ -191,7 +191,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 			{ return "Construct a library of functions"; }
 
 			public void execute (CommandSequence tokens)
-			{ engine.getFunctionManager ().processLibrary (tokens); }
+			{ engine.getFunctionManager ().getLibrarian ().processLibrary (tokens); }
 		};
 	}
 
@@ -208,7 +208,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 			{ return "Configure a library of functions"; }
 
 			public void execute (CommandSequence tokens)
-			{ engine.getFunctionManager ().configureLibrary (tokens); }
+			{ engine.getFunctionManager ().getLibrarian ().configureLibrary (tokens); }
 		};
 	}
 
@@ -225,7 +225,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 			{ return "Import polynomial power functions for named family"; }
 
 			public void execute (CommandSequence tokens)
-			{ engine.getFunctionManager ().importFamily (tokens); }
+			{ engine.getFunctionManager ().getLibrarian ().importFamily (tokens); }
 		};
 	}
 

@@ -2,7 +2,6 @@
 package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 
 import net.myorb.math.expressions.ExtendedDataConversions;
 import net.myorb.math.expressions.ValueManager;
@@ -75,7 +74,7 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 		}
 		else
 		{
-			methods = FunctionDefinition.getMethodMap (source.getClass ());
+			methods = LibraryManager.getMethodMap (source.getClass ());
 			this.setContainerObject (source);
 		}
 		return methods;

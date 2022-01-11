@@ -5,7 +5,6 @@ import net.myorb.math.computational.*;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.polynomial.PolynomialOptimizer;
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
-import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 import net.myorb.math.polynomial.families.HyperGeometricPolynomial;
 import net.myorb.math.expressions.commands.CommandSequence;
@@ -13,12 +12,8 @@ import net.myorb.data.abstractions.Function;
 import net.myorb.math.expressions.*;
 import net.myorb.math.*;
 
-import java.lang.reflect.Method;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * processing of function definition statements
@@ -33,154 +28,18 @@ public class FunctionDefinition<T> extends DeclarationSupport<T>
 	 * function definition processing as required by the environment
 	 * @param environment the environment object driving the processing
 	 */
-	public FunctionDefinition (Environment<T> environment) { super (environment); }
-
-
-	/**
-	 * import polynomial power functions
-	 * @param tokens the token list being processed
-	 */
-	public void importFamily (List<TokenParser.TokenDescriptor> tokens)
+	public FunctionDefinition (Environment<T> environment)
 	{
-		String kind = null;
-		String name = tokens.get (1).getTokenImage ();
-		String count = tokens.get (2).getTokenImage ();
-
-		int tokenCount = tokens.size ();
-		if (tokenCount > 3) kind = tokens.get (3).getTokenImage ();
-		for (int i=4; i<tokenCount; i++) kind += tokens.get (i).getTokenImage ();
-
-		SpecialFunctionFamilyManager.importFamilyFunctions
-		(
-			name, kind, Integer.parseInt (count), environment
-		);
+		super (environment); this.librarian = new LibraryManager<T> (environment, this);
 	}
 
 
 	/**
-	 * create a symbol entry for a library
-	 * @param libraryName symbol name to be assigned to library
-	 * @param classPath full path to object to be treated as library
-	 * @param environment the environment object driving the processing
-	 * @param <T> type on which operations are to be executed
+	 * the library manager controls symbols imported from library objects
+	 * @return access to a library manager
 	 */
-	public static <T> void defineLibrary
-	(String libraryName, String classPath, Environment<T> environment)
-	{
-		LibraryObject<T> library;
-
-		try
-		{
-			Map<String,Method> methods = getMethodMap (Class.forName (classPath));
-			library = new LibraryObject<T> (classPath, libraryName, methods);
-			library.setEnvironment (environment);
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException ("Requested library not available");
-		}
-
-		environment.getSymbolMap ().add (library);
-	}
-
-
-	/**
-	 * reset all configured parameters of a library object
-	 * @param libraryName the name of the library symbol
-	 */
-	public void resetLibrary (String libraryName)
-	{
-		LibraryObject<T> lib = getLib (libraryName);
-		lib.getParameterization ().clear ();
-	}
-
-
-	/**
-	 * process a library command
-	 * @param tokens the tokens of the command string
-	 */
-	public void processLibrary (List<TokenParser.TokenDescriptor> tokens)
-	{
-		String libraryName, parameter;
-
-		tokens.remove (0); libraryName = processName (tokens.get (0));
-		tokens.remove (0); parameter = TokenParser.toString (tokens).replace (" ", "");
-
-		if (parameter.toUpperCase ().equals ("RESET"))
-		{
-			resetLibrary (libraryName);
-		}
-		else
-		{
-			defineLibrary (libraryName, parameter, environment);
-		}
-	}
-
-
-	/**
-	 * @param c class to be mapped
-	 * @return a Map of methods from name
-	 */
-	public static Map<String,Method> getMethodMap (Class<?> c)
-	{
-		Map<String,Method> methods = new HashMap<String,Method> ();
-		for (Method m : c.getMethods ()) { methods.put (m.getName (), m); }
-		return methods;
-	}
-
-
-	/**
-	 * supply configuration parameters for library
-	 * @param tokens the tokens of the configuration string
-	 */
-	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
-	{
-		String name;
-		LibraryObject<T> lib = getLib (name = tokens.get (1).getTokenImage ());
-		if (lib == null) throw new RuntimeException ("Unrecognized library: " + name);
-		Map<String, Object> parameters = lib.getParameterization ();
-		configure (name, tokens, parameters);
-	}
-	LibraryObject<T> getLib (String name)
-	{
-		@SuppressWarnings("unchecked")
-		LibraryObject<T> lib = (LibraryObject<T>) environment
-			.getSymbolMap ().get (name);
-		return lib;
-	}
-	void configure
-		(
-			String name,
-			List<TokenParser.TokenDescriptor> tokens,
-			Map<String, Object> parameters
-		)
-	{
-		int n = 2;
-		String sym, val;
-		while (n+1 < tokens.size())
-		{
-			sym = tokens.get (n++).getTokenImage ();
-			val = strip (tokens.get (n++).getTokenImage ());
-			parameters.put (sym, val);
-		}
-		System.out.println ("Lib " + name + " config " + parameters);
-	}
-	String strip (String text) { return TokenParser.stripQuotes (text); }
-
-
-	/**
-	 * supply configuration parameters for library
-	 * @param tokens the tokens of the configuration string
-	 */
-	public void instanceSymbol (List<TokenParser.TokenDescriptor> tokens)
-	{
-		LibraryObject.newInstance
-		(
-			tokens.get (1).getTokenImage (),
-			tokens.get (2).getTokenImage (),
-			environment
-		);
-	}
+	public LibraryManager<T> getLibrarian () { return librarian; }
+	protected LibraryManager<T> librarian;
 
 
 	/**
