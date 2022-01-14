@@ -51,6 +51,18 @@ public class DataConversions<T>
 	 */
 	public Double convert (T value) { return spaceManager.convertToDouble (value); }
 
+	/**
+	 * @param value managed generic value
+	 * @return float equivalent
+	 */
+	public Double convert (ValueManager.GenericValue value) { return spaceManager.convertToDouble (valueManager.toDiscrete (value)); }
+
+	/**
+	 * @param value float value as double
+	 * @return managed generic equivalent
+	 */
+	public ValueManager.GenericValue convert (double value) { return valueManager.newDiscreteValue (spaceManager.convertFromDouble (value)); }
+
 
 	/*
 	 * generic to real and real to generic

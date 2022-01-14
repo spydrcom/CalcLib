@@ -2,8 +2,10 @@
 package net.myorb.math.expressions.tree;
 
 import net.myorb.math.expressions.tree.LexicalAnalysis.Identifier;
-import net.myorb.math.expressions.tree.LexicalAnalysis.Operator;
 import net.myorb.math.expressions.tree.SemanticAnalysis.SemanticError;
+import net.myorb.math.expressions.tree.LexicalAnalysis.Operator;
+
+import net.myorb.math.expressions.OperatorNomenclature;
 
 import java.util.List;
 
@@ -32,10 +34,10 @@ public class RangeAttributes
 
 		System.out.print   ("Lbound: " + dsc.loExpr);
 		System.out.println ("    op: " + dsc.lbndOp);
-		System.out.println ("var: " + dsc.variableName);
+		System.out.println ("   var: " + dsc.variableName);
 		System.out.print   ("Ubound: " + dsc.hiExpr);
 		System.out.println ("    op: " + dsc.hbndOp);
-		System.out.println ("delta: " + dsc.delta);
+		System.out.println (" delta: " + dsc.delta);
 	}
 	public static <T> void dumpComponents (List<SubExpression<T>> subs)
 	{
@@ -114,7 +116,7 @@ public class RangeAttributes
 			rngDesc.setEndpoints (endpoints.subList (0, endpoints.indexOf (op)), endpoints);
 		}
 	}
-	public static final String DELTA = "<>";
+	public static final String DELTA = OperatorNomenclature.DELTA_INCREMENT_OPERATOR;
 
 
 	/**
@@ -234,7 +236,9 @@ public class RangeAttributes
 		}
 		return false;
 	}
-	public static final String LT = "<", LE = "<=";
+	public static final String
+	LT = OperatorNomenclature.LT_OPERATOR,
+	LE = OperatorNomenclature.LE_OPERATOR;
 
 
 }

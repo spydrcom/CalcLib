@@ -5,16 +5,17 @@ import net.myorb.math.computational.DCT;
 import net.myorb.math.computational.GeneralQuadrature;
 import net.myorb.math.computational.ClenshawCurtisQuadrature;
 
-import net.myorb.math.expressions.symbols.DefinedTransform;
-import net.myorb.math.expressions.symbols.GenericWrapper;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+
+import net.myorb.math.expressions.symbols.DefinedTransform;
+import net.myorb.math.expressions.symbols.GenericWrapper;
+
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.data.abstractions.Function;
-//import net.myorb.math.Function;
 import net.myorb.math.SpaceManager;
 
 import java.util.List;

@@ -44,6 +44,17 @@ public class RangeNodeDigest<T>
 
 
 	/**
+	 * @return value computed from lo-bound expression
+	 */
+	public GenericValue getLoBnd () { return loBnd; }
+
+	/**
+	 * @return value computed from hi-bound expression
+	 */
+	public GenericValue getHiBnd () { return hiBnd; }
+
+
+	/**
 	 * @return TRUE when consumer implements NumericalAnalysis
 	 */
 	public boolean isNumericalAnalysisConsumer ()
@@ -109,6 +120,15 @@ public class RangeNodeDigest<T>
 		return calculator.evaluate (target);
 	}
 	protected Expression<T> target;
+
+
+	/**
+	 * @param value new value to be assigned
+	 */
+	public void setLocalVariableValue (GenericValue value)
+	{
+		localVariable.setValue (value);
+	}
 
 
 	/**

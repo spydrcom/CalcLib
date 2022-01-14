@@ -3,6 +3,7 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.OperatorNomenclature;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
@@ -54,7 +55,17 @@ public class QuadratureBase<T> extends AbstractVectorConsumer
 	 * @see net.myorb.math.expressions.symbols.AbstractVectorReduction#markupForDisplay(java.lang.String, net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 	 */
 	public String markupForDisplay (String operator, Range range, String parameters, NodeFormatting using)
-	{ return using.rangeSpecificationNotation (using.integralRange (operator, range), parameters); }
+	{
+		return using.rangeSpecificationNotation
+			(
+				using.integralRange
+				(
+					OperatorNomenclature.INTEGRAL_OPERATOR,
+					range
+				),
+				parameters
+			);
+	}
 
 
 	/* (non-Javadoc)

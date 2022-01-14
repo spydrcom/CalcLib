@@ -1,22 +1,15 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ImplementedFeatures;
-import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ParameterizationManager;
-import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Renderer;
+import net.myorb.math.computational.integration.Quadrature;
+import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.gui.rendering.NodeFormatting;
-
-import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.SymbolMap.Named;
-
-import net.myorb.math.ExtendedPowerLibrary;
-
-import net.myorb.math.SpaceManager;
-import net.myorb.math.Function;
-
-import net.myorb.data.abstractions.SpaceDescription;
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.symbols.LibraryObject;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
+import net.myorb.math.expressions.DataConversions;
 
 import java.util.Map;
 
@@ -27,15 +20,6 @@ import java.util.Map;
  */
 public class ClMathQuad<T> extends AlgorithmImplementationAbstraction<T>
 {
-
-
-	/**
-	 * 
-	 */
-	public ClMathQuad ()
-	{
-		
-	}
 
 
 	/* (non-Javadoc)
@@ -50,169 +34,74 @@ public class ClMathQuad<T> extends AlgorithmImplementationAbstraction<T>
 	/**
 	 * Quad function object base class
 	 */
-	public class QuadAbstraction extends ImplementationAbstraction
+	public class QuadAbstraction extends QuadratureBase<T>
 	{
 
 		QuadAbstraction (String sym, LibraryObject<T> lib)
 		{
-			super (sym, lib);
+			super (sym, environment);
+			this.options = lib.getParameterization ();
+			this.cvt = environment.getConversionManager ();
 		}
+		protected Map<String, Object> options;
 
-	}
-
-
-	/**
-	 * @return allocate an object that manages configuration from start-up XML source
-	 */
-	public CommonFunctionImplementation getConfigurableQuadImplementation ()
-	{
-		return new ConfigurableQuadImplementation ();
-	}
-
-
-	/**
-	 * an object that manages configuration from start-up XML source
-	 */
-	class ConfigurableQuadImplementation extends Implementation
-	{
 		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.CommonOperatorLibrary.CommonFunctionImplementation#configure(java.lang.String)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#evaluate(net.myorb.math.expressions.tree.RangeNodeDigest)
 		 */
-		public void configure (String parameters) { establishImplementedFeatures (configureQuadManager (parameters)); }
+		public GenericValue evaluate (RangeNodeDigest<T> digest)
+		{
+			Quadrature.Integral algorithm = new Quadrature
+					( new QuadIntegrand<T> (digest, environment), options ).getIntegral ();
+			double lo = cvt.convert (digest.getLoBnd ()), hi = cvt.convert (digest.getHiBnd ());
+			return cvt.convert (algorithm.eval (0.0, lo, hi));
+		}
+		protected DataConversions<T> cvt;
+
 	}
-
-
-	/**
-	 * allocate manager object for function
-	 * @param parameters the parameter text supplied in configuration
-	 * @return a configured function wrapper
-	 */
-	public QuadParameterManager<T> configureQuadManager (String parameters)
-	{ return configureQuadManager (new QuadParameterManager<T> (parameters, environment)); }
-
-
-	/**
-	 * allocate manager object for function
-	 * @param parameters the parameter map supplied in configuration
-	 * @return a configured function wrapper
-	 */
-	public QuadParameterManager<T> configureQuadManager (Map<String,Object> parameters)
-	{ return configureQuadManager (new QuadParameterManager<T> (parameters, environment)); }
-
-
-	/**
-	 * configure a parameter manager to represent a function
-	 * @param quad manager for parameters of quad function
-	 * @return the manager being configured
-	 */
-	public QuadParameterManager<T> configureQuadManager (QuadParameterManager<T> quad)
-	{ return quad.buildFunction (manager, library); }
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#configureManager(java.util.Map)
 	 */
-	public Configuration<T> configureManager (Map<String, Object> parameterMap) { return configureQuadManager (parameterMap); }
+	public net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration<T>
+	configureManager (Map<String, Object> parameterMap)
+	{ return null; }
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#provideImplementation()
 	 */
-	public Implementation provideImplementation () { return new ConfigurableQuadImplementation (); }
+	public AlgorithmImplementationAbstraction<T>.Implementation
+	provideImplementation ()
+	{ return null; }
+
 
 }
 
 
-class QuadParameterManager<T> implements
-	AlgorithmImplementationAbstraction.ImplementedFeatures<T>,
-	AlgorithmImplementationAbstraction.Configuration<T>,
-	AlgorithmImplementationAbstraction.Renderer,
-	Function<T>
+/**
+ * function description of expression in integral target
+ */
+class QuadIntegrand<T> extends RealIntegrandFunctionBase
 {
 
-
-	QuadParameterManager (Map<String,Object> parameters, Environment<T> environment)
+	QuadIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
 	{
-		this (parameters.get ("OP"), parameters.get ("POW"), environment);
+		digest.initializeLocalVariable ();
+		this.cvt = environment.getConversionManager ();
+		this.digest = digest;
 	}
-	QuadParameterManager (String parameters, Environment<T> environment)
+	protected RangeNodeDigest<T> digest;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.RealIntegrandFunctionBase#eval(java.lang.Double)
+	 */
+	public Double eval (Double t)
 	{
-		this (parameters.split (";"), environment);
+		digest.setLocalVariableValue (cvt.convert (t));
+		return cvt.convert (digest.evaluateTarget ());
 	}
-	QuadParameterManager (String[] parameters, Environment<T> environment)
-	{
-		this (parameters[0], parameters[1], environment);
-	}
-	QuadParameterManager (Object OP, Object POW, Environment<T> environment)
-	{
-		
-	}
-
-
-	/**
-	 * @param manager the description of the domain space
-	 * @param library the library holding the model for the function
-	 * @return THIS for chaining
-	 */
-	QuadParameterManager<T> buildFunction (SpaceManager<T> manager, ExtendedPowerLibrary<T> library)
-	{
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ImplementedFeatures#getFunction()
-	 */
-	public Function<T> getFunction () { return this; }
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration#getImplementedFeatures()
-	 */
-	public ImplementedFeatures<T> getImplementedFeatures () { return this; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.ImplementedFeatures#getFormatter()
-	 */
-	public Renderer getFormatter () { return this; }
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration#getParameterizationManager()
-	 */
-	public ParameterizationManager<T> getParameterizationManager ()
-	{
-		return new ParameterizationManager<T> ()
-		{
-			public ParameterManager<T> getManagerFor (String symbol)
-			{
-				return null;
-			};
-		};
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
-	 */
-	public T eval (T x) { return null; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Renderer#render(net.myorb.math.expressions.gui.rendering.NodeFormatting)
-	 */
-	public String render (NodeFormatting using) { return null; }
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceDescription<T> getSpaceDescription () { return space; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.Function#getSpaceManager()
-	 */
-	public SpaceManager<T> getSpaceManager () { return space; }
-	protected SpaceManager<T> space;
-
+	protected DataConversions<T> cvt;
 
 }
 

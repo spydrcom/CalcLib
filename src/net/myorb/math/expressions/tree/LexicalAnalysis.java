@@ -995,12 +995,12 @@ public class LexicalAnalysis<T>
 				case OPR:
 					switch (image.charAt (0))  /* special case for parenthesis, brackets, and comma */
 					{
-						case OPEN: subExpression = subExpression.spawn (); break;					// open new child sub-expression
+						case OPEN:  subExpression = subExpression.spawn (); break;					// open new child sub-expression
 						case CLOSE: subExpression = mature (subExpression); break;					// closing parenthesis ends sub-expression
 						case COMMA: subExpression = aggregate (subExpression); break;				// mark value as aggregate child
-						case OBRK: subExpression = startRangeDescriptor (subExpression); break;		// start of range description
-						case CBRK: subExpression = endOfRangeDescriptor (subExpression); break;		// end of range description
-						default: describe (image, root.operators, subExpression, opFactory);		// describe operator
+						case OBRK:  subExpression = startRangeDescriptor (subExpression); break;	// start of range description
+						case CBRK:  subExpression = endOfRangeDescriptor (subExpression); break;	// end of range description
+						default:    describe (image, root.operators, subExpression, opFactory);		// describe operator
 					}
 					root = subExpression.root;
 				break;
