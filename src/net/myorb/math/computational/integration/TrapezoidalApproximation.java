@@ -46,7 +46,6 @@ public class TrapezoidalApproximation implements Quadrature.Integral
 	{
 		this.approximation = new TrapezoidIntegration<Double> (integrand, adjusted);
 		this.delta = Double.parseDouble (parameters.get ("delta").toString ());
-		//System.out.println ("TrapezoidalApproximation " + delta);
 		this.integrand = integrand;
 	}
 	protected TrapezoidIntegration<Double> approximation;

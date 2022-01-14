@@ -252,8 +252,8 @@ public class DisplayGraphAtomic extends DisplayGraphTypes
 	{
 		return domain
 		(
-			conversion.convert (arrayDescriptor.getLo ()), conversion.convert (arrayDescriptor.getHi ()), 
-			conversion.convert (arrayDescriptor.getDelta ())
+			conversion.toDouble (arrayDescriptor.getLo ()), conversion.toDouble (arrayDescriptor.getHi ()), 
+			conversion.toDouble (arrayDescriptor.getDelta ())
 		);
 	}
 

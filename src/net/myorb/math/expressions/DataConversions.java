@@ -4,20 +4,19 @@ package net.myorb.math.expressions;
 import net.myorb.math.computational.Fourier;
 import net.myorb.math.computational.Regression;
 
+import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
-import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
-
 import net.myorb.math.expressions.charting.DisplayGraph;
 
 import net.myorb.math.matrices.*;
-import net.myorb.data.abstractions.Function;
-import net.myorb.data.abstractions.DataSequence2D;
-import net.myorb.data.abstractions.DataSequence;
 import net.myorb.math.*;
 
+import net.myorb.data.abstractions.Function;
 import net.myorb.data.abstractions.ManagedSpace;
+import net.myorb.data.abstractions.DataSequence2D;
+import net.myorb.data.abstractions.DataSequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +48,25 @@ public class DataConversions<T>
 	 * @param value a generic value
 	 * @return the equivalent double float
 	 */
-	public Double convert (T value) { return spaceManager.convertToDouble (value); }
+	public Double toDouble (T value) { return spaceManager.convertToDouble (value); }
 
 	/**
 	 * @param value managed generic value
 	 * @return float equivalent
 	 */
-	public Double convert (ValueManager.GenericValue value) { return spaceManager.convertToDouble (valueManager.toDiscrete (value)); }
+	public Double toDouble (ValueManager.GenericValue value) { return toDouble (valueManager.toDiscrete (value)); }
 
 	/**
 	 * @param value float value as double
 	 * @return managed generic equivalent
 	 */
-	public ValueManager.GenericValue convert (double value) { return valueManager.newDiscreteValue (spaceManager.convertFromDouble (value)); }
+	public ValueManager.GenericValue toGeneric (double value) { return valueManager.newDiscreteValue (fromDouble (value)); }
+
+	/**
+	 * @param value a real value as Double
+	 * @return a value represented as type T
+	 */
+	public T fromDouble (double value) { return spaceManager.convertFromDouble (value); }
 
 
 	/*
@@ -75,10 +80,10 @@ public class DataConversions<T>
 	 * @param generic the converted generic list
 	 */
 	public void convertToGeneric (List<Double> real, List<T> generic)
-	{ for (Double v : real) generic.add (spaceManager.convertFromDouble (v)); }
+	{ for (Double v : real) generic.add (fromDouble (v)); }
 
 	public void convertToGeneric (double[] real, List<T> generic)
-	{ for (Double v : real) generic.add (spaceManager.convertFromDouble (v)); }
+	{ for (Double v : real) generic.add (fromDouble (v)); }
 
 
 	/**
@@ -87,7 +92,7 @@ public class DataConversions<T>
 	 * @param real the converted real list
 	 */
 	public void convertToReal (List<T> generic, List<Double> real)
-	{ for (T v : generic) real.add (convert (v)); }
+	{ for (T v : generic) real.add (toDouble (v)); }
 
 
 	/**

@@ -18,7 +18,7 @@ import java.util.Map;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class ClMathQuad<T> extends AlgorithmImplementationAbstraction<T>
+public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 {
 
 
@@ -50,30 +50,28 @@ public class ClMathQuad<T> extends AlgorithmImplementationAbstraction<T>
 		 */
 		public GenericValue evaluate (RangeNodeDigest<T> digest)
 		{
-			Quadrature.Integral algorithm = new Quadrature
-					( new QuadIntegrand<T> (digest, environment), options ).getIntegral ();
-			double lo = cvt.convert (digest.getLoBnd ()), hi = cvt.convert (digest.getHiBnd ());
-			return cvt.convert (algorithm.eval (0.0, lo, hi));
+			Quadrature algorithm = new Quadrature
+			(
+				new QuadIntegrand<T>
+				(
+					digest, environment
+				),
+				options
+			);
+
+			return cvt.toGeneric
+			(
+				algorithm.getIntegral ().eval
+				(
+					0.0,
+					cvt.toDouble (digest.getLoBnd ()),
+					cvt.toDouble (digest.getHiBnd ())
+				)
+			);
 		}
 		protected DataConversions<T> cvt;
 
 	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#configureManager(java.util.Map)
-	 */
-	public net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Configuration<T>
-	configureManager (Map<String, Object> parameterMap)
-	{ return null; }
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction#provideImplementation()
-	 */
-	public AlgorithmImplementationAbstraction<T>.Implementation
-	provideImplementation ()
-	{ return null; }
 
 
 }
@@ -98,8 +96,8 @@ class QuadIntegrand<T> extends RealIntegrandFunctionBase
 	 */
 	public Double eval (Double t)
 	{
-		digest.setLocalVariableValue (cvt.convert (t));
-		return cvt.convert (digest.evaluateTarget ());
+		digest.setLocalVariableValue (cvt.toGeneric (t));
+		return cvt.toDouble (digest.evaluateTarget ());
 	}
 	protected DataConversions<T> cvt;
 

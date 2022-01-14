@@ -225,7 +225,6 @@ class BesselParameterManager<T> implements
 	}
 	public Function<T> getFunction () { return function; }
 	protected SpecialFunctionFamilyManager.FunctionDescription<T> function;
-	//protected Function<T> function;
 	protected String identifier;
 
 
