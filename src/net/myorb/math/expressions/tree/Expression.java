@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions.tree;
 
+import net.myorb.math.expressions.SymbolMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,6 +27,7 @@ public class Expression<T> extends SubExpression<T>
 	 */
 	protected Map<String,LexicalAnalysis.Identifier<T>> identifiers = new HashMap<> ();
 	protected Map<String,LexicalAnalysis.Operator> operators = new HashMap<> ();
+	protected Map<String,SymbolMap.Named> imports = new HashMap<> ();
 
 	/**
 	 * components list provides initial inspection of sub-expressions

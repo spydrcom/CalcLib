@@ -2,7 +2,7 @@
 package net.myorb.math.expressions.gui.rendering;
 
 import net.myorb.math.expressions.symbols.UndefinedFunctionSpecification;
-//import net.myorb.math.expressions.symbols.AssignedVariableStorage;
+import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 
 import net.myorb.math.expressions.SymbolMap;
 
@@ -34,11 +34,13 @@ public class SymbolProcessing extends SubExpressionProcessing
 	 */
 	public SymbolMap.Operation identifyOperation (SymbolMap.Named namedSymbol)
 	{
-		//TODO: AssignedVariableStorage
-//		if (namedSymbol instanceof AssignedVariableStorage)
-//		{
-//			return (SymbolMap.Operation) s.lookup ("#");
-//		}
+		if (namedSymbol instanceof AssignedVariableStorage)
+		{
+			//TODO: AssignedVariableStorage
+			System.out.println ("Variable seen: " + namedSymbol.getName ());
+			throw new RuntimeException ("Variable seen in render: " + namedSymbol.getName ());
+			//return (SymbolMap.Operation) s.lookup ("#");
+		}
 		return (SymbolMap.Operation) namedSymbol;
 	}
 

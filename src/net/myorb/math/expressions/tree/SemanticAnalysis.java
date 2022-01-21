@@ -1097,8 +1097,10 @@ public class SemanticAnalysis<T>
 	{
 		for (String name : expression.operators.keySet ())
 		{
+			trace ("OP: "+name); //TODO: OP
 			SymbolMap.Named item = symbols.lookup (name);
 			if (item == null) throw new SemanticError ("Operator not recognized: " + name);
+
 			if (item instanceof SymbolMap.BinaryOperator)
 			{
 				set (expression, name, LexicalAnalysis.OperatorType.Binary, item);
@@ -1107,11 +1109,13 @@ public class SemanticAnalysis<T>
 			{
 				set (expression, name, LexicalAnalysis.OperatorType.PostFixUnary, item);
 			}
+			else if (item instanceof SymbolMap.CalculusOperator)
+			{
+				set (expression, name, LexicalAnalysis.OperatorType.Calculus, item);
+			}
 			else if (item instanceof SymbolMap.UnaryOperator)
 			{
-				LexicalAnalysis.OperatorType type = LexicalAnalysis.OperatorType.PreFixUnary;
-				if (item instanceof SymbolMap.CalculusOperator) type = LexicalAnalysis.OperatorType.Calculus;
-				set (expression, name, type, item);
+				set (expression, name, LexicalAnalysis.OperatorType.PreFixUnary, item);
 			}
 			else throw new SemanticError ("Unrecognized operator type");
 		}
@@ -1126,6 +1130,12 @@ public class SemanticAnalysis<T>
 		SymbolMap.Operation op = (SymbolMap.Operation) symbolRef;
 		expression.operators.get (operatorName).getOperatorProperties ()
 		.setType (type).setPrecedence (op.getPrecedence ()).setSymbolReference (symbolRef);
+	}
+
+
+	public static void trace (String item)
+	{
+		// System.out.println (item);
 	}
 
 
@@ -1145,29 +1155,48 @@ public class SemanticAnalysis<T>
 	{
 		if (expression.identifiers == null) return;
 		SymbolMap.Named item; LexicalAnalysis.Operator op;
+
 		for (String name : expression.identifiers.keySet ())
 		{
+			trace ("ID: "+name); //TODO: ID
 			if ((item = symbols.lookup (name)) == null)
 			{
+				trace (" - NULL");
 				// mark as unknown, may be in declarative context, i.e. [0 < i < 9]
-				set (expression, name, LexicalAnalysis.IdentifierType.Unknown, null, null);
+				set (expression, name, LexicalAnalysis.IdentifierType.Unknown, null, false, null);
+			}
+			else if (item instanceof SymbolMap.ImportedConsumer)
+			{
+				trace (" - IMPORTED CONSUMER"); //TODO: this is the CONSUMER hook
+				set (expression, name, LexicalAnalysis.IdentifierType.Consumer, null, true, item);
+			}
+			else if (item instanceof IterationConsumer)
+			{
+				trace (" - CONSUMER");
+				set (expression, name, LexicalAnalysis.IdentifierType.Consumer, null, false, item);
+			}
+			else if (item instanceof SymbolMap.ImportedFunction)
+			{
+				trace (" - IMPORTED FUNCTION"); //TODO: this is the IMPORT hook
+				set (expression, name, LexicalAnalysis.IdentifierType.Function, null, true, item);
 			}
 			else if (item instanceof SymbolMap.ParameterizedFunction)
 			{
-				LexicalAnalysis.IdentifierType type = LexicalAnalysis.IdentifierType.Function;
-				if (item instanceof IterationConsumer) type = LexicalAnalysis.IdentifierType.Consumer;
-				set (expression, name, type, null, item);
+				trace (" - FUN");
+				set (expression, name, LexicalAnalysis.IdentifierType.Function, null, false, item);
 			}
 			else if (item instanceof SymbolMap.Operation)
 			{
+				trace (" - OP");
 				expression.operators.put
 					(name, op = new LexicalAnalysis.Operator (name));
 				set (expression, name, LexicalAnalysis.OperatorType.PreFixUnary, item);
-				set (expression, name, LexicalAnalysis.IdentifierType.NamedOperator, op, item);
+				set (expression, name, LexicalAnalysis.IdentifierType.NamedOperator, op, false, item);
 			}
 			else if (item instanceof SymbolMap.VariableLookup)
 			{
-				set (expression, name, LexicalAnalysis.IdentifierType.Variable, null, item);
+				trace (" - VAR");
+				set (expression, name, LexicalAnalysis.IdentifierType.Variable, null, false, item);
 			}
 			else throw new SemanticError ("Unrecognized identifier type");
 		}
@@ -1176,9 +1205,11 @@ public class SemanticAnalysis<T>
 		(
 			Expression<T> expression, String identifierName,
 			LexicalAnalysis.IdentifierType type, LexicalAnalysis.Operator op,
-			SymbolMap.Named symbolRef
+			boolean imported, SymbolMap.Named symbolRef
 		)
 	{
+		//TODO: imported symbols must provide JSON configuration
+		if (imported) { expression.imports.put (identifierName, symbolRef); }
 		expression.identifiers.get (identifierName).getIdentifierProperties ()
 		.setType (type).setOperator (op).setSymbolReference (symbolRef);
 	}

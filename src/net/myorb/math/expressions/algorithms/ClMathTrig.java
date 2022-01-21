@@ -10,7 +10,7 @@ import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.
 import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.Renderer;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.LibraryObject;
-import net.myorb.math.expressions.SymbolMap.Named;
+import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
@@ -27,7 +27,16 @@ import java.util.Map;
  * @author Michael Druckman
  */
 public class ClMathTrig<T> extends AlgorithmImplementationAbstraction<T>
+	implements SymbolMap.FactoryForImports
 {
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
+	 */
+	public SymbolMap.Named importSymbolFrom
+	(String named, Map<String, Object> configuration)
+	{ return new TrigAbstraction (named, configuration); }
 
 
 	/**
@@ -38,10 +47,18 @@ public class ClMathTrig<T> extends AlgorithmImplementationAbstraction<T>
 	protected TrigPowImplementation<T> trigPowImpl;
 
 
+	/**
+	 * @param classPath the path to the factory object for JSON load/restore
+	 */
+	public void setFactory (String classPath)
+	{ this.factoryClassPath = classPath; }
+	protected String factoryClassPath;
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)
 	 */
-	public Named getInstance (String sym, LibraryObject<T> lib)
+	public SymbolMap.Named getInstance (String sym, LibraryObject<T> lib)
 	{
 		return new TrigAbstraction (sym, lib);
 	}
@@ -51,11 +68,28 @@ public class ClMathTrig<T> extends AlgorithmImplementationAbstraction<T>
 	 * TrigPow function object base class
 	 */
 	public class TrigAbstraction extends ImplementationAbstraction
+		implements SymbolMap.ImportedFunction
 	{
 
-		TrigAbstraction (String sym, LibraryObject<T> lib)
+		public TrigAbstraction (String sym, LibraryObject<T> lib)
 		{
-			super (sym, lib);
+			this (sym, lib.getParameterization ());
+		}
+
+		public TrigAbstraction (String sym, Map<String, Object> configuration)
+		{
+			super (sym, configuration);
+			this.configuration = configurationDescriptionFor
+			(factoryClassPath, configuration);
+		}
+		Map<String, Object> configuration;
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
+		 */
+		public Map<String, Object> getConfiguration ()
+		{
+			return configuration;
 		}
 
 	}

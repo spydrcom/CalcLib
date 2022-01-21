@@ -9,7 +9,7 @@ public interface Element
 {
 
 	/**
-	 * the types oof elements in expression trees
+	 * the types of elements in expression trees
 	 */
 	public enum Types
 	{

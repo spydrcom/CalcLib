@@ -135,6 +135,7 @@ public class SubExpression<T> extends ArrayList<Element>
 	 */
 	public JsonSemantics.JsonValue toJson ()
 	{
+		if (this.size() == 0) return JsonSemantics.getNull ();
 		return JsonBinding.toJson (this.get (0));
 	}
 	public Element fromJson (JsonSemantics.JsonValue context, JsonRestore<T> restoreManager) throws Exception { return null; }

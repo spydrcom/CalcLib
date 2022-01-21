@@ -34,18 +34,48 @@ import java.util.Map;
  * @author Michael Druckman
  */
 public class ClMathDerivative<T> extends AlgorithmImplementationAbstraction<T>
+	implements SymbolMap.FactoryForImports
 {
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
+	 */
+	public SymbolMap.Named importSymbolFrom
+	(String named, Map<String, Object> configuration)
+	{
+		return new DerivativeAbstraction (named, configuration);
+	}
 
 
 	/**
 	 * Derivative function object base class
 	 */
 	public class DerivativeAbstraction extends ImplementationAbstraction
+		implements SymbolMap.ImportedFunction
 	{
 
-		DerivativeAbstraction (String sym, LibraryObject<T> lib)
-		{ super (sym, lib); runManager = getParameterCalled ("run"); }
+		public DerivativeAbstraction (String sym, LibraryObject<T> lib)
+		{ this (sym, lib.getParameterization ()); }
+
+		public DerivativeAbstraction
+		(String sym, Map<String,Object> parameterMap)
+		{
+			super (sym, parameterMap);
+			this.configuration = configurationDescriptionFor
+					(ClMathDerivative.class.getCanonicalName (), parameterMap);
+			this.runManager = getParameterCalled ("run");
+		}
 		protected ParameterManager<T> runManager;
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
+		 */
+		public Map<String, Object> getConfiguration ()
+		{
+			return configuration;
+		}
+		Map<String, Object> configuration;
 
 	}
 

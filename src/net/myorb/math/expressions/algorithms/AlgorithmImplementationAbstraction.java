@@ -2,10 +2,12 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 
 import net.myorb.math.Function;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +139,23 @@ public abstract class AlgorithmImplementationAbstraction<T>
 		{ return manager.toNumber (parameter.eval ()).doubleValue (); }
 		protected ParameterizationManager<T> parameterizationManager;
 
+
+		/**
+		 * describe configuration of implemented abstraction
+		 * @param factoryClassPath the class-path for the factory building objects
+		 * @param parameters the hash of configuration description parameters
+		 * @return a configuration hash for use by the factory
+		 */
+		protected Map<String, Object> configurationDescriptionFor
+			(String factoryClassPath, Map<String, Object> parameters)
+		{
+			Map<String, Object> configuration = new HashMap<String, Object>();
+			configuration.put ("FACTORY", factoryClassPath);
+			configuration.putAll (parameters);
+			return configuration;
+		}
+
+
 	}
 
 
@@ -180,6 +199,8 @@ public abstract class AlgorithmImplementationAbstraction<T>
 
 	}
 
+	public IterationConsumer buildIterationConsumer (Map<String, Object> options) { return null; }
+	public Map<String, Object> getIterationConsumerDescription ()  { return null; }
 
 }
 

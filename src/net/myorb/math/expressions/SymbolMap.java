@@ -287,6 +287,35 @@ public class SymbolMap extends HashMap <String, Object>
 		String formatPretty ();
 	}
 
+
+	/**
+	 * description of symbols that are in-line configured imports from libraries
+	 */
+	public interface ConfiguredImport
+	{
+		/**
+		 * @return hash of parameters that specify the symbol
+		 */
+		public Map<String, Object> getConfiguration ();
+	}
+	public interface ImportedConsumer extends ConfiguredImport {}
+	public interface ImportedFunction extends ConfiguredImport {}
+
+	
+	/**
+	 * provide a factory for importing symbols
+	 */
+	public interface FactoryForImports
+	{
+		/**
+		 * @param named the name to assign to the symbol
+		 * @param configuration the hash of parameters that specify the symbol
+		 * @return a Named symbol configured as specified
+		 */
+		public Named importSymbolFrom (String named, Map<String, Object> configuration);
+	}
+
+
 	/**
 	 * force render to use markupForDisplay for function
 	 */

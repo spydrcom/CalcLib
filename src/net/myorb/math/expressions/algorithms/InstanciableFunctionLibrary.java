@@ -2,8 +2,11 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.SymbolMap.Named;
+
+import java.util.Map;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
@@ -30,12 +33,41 @@ public abstract class InstanciableFunctionLibrary<T> extends CommonOperatorLibra
 	protected Environment<T> environment;
 	protected SpaceManager<T> manager;
 
+
 	/**
 	 * @param sym the name for the symbol
 	 * @param lib the library managing the parameterization
 	 * @return a newly constructed Named Symbol
 	 */
 	public abstract Named getInstance (String sym, LibraryObject<T> lib);
+
+	/**
+	 * @param options the consumer description hash
+	 * @return the recreated consumer object
+	 */
+	public abstract IterationConsumer buildIterationConsumer (Map<String, Object> options);
+
+	/**
+	 * @return a hash of objects needed to recreate the consumer
+	 */
+	public abstract Map<String, Object> getIterationConsumerDescription ();
+
+	/**
+	 * @param options a hash of objects that define the consumer
+	 * @return an instance of the described consumer
+	 * @param <T> type of data
+	 */
+	public static <T> IterationConsumer recreateIterationConsumer (Map<String, Object> options)
+	{
+		try
+		{
+			@SuppressWarnings("unchecked")
+			InstanciableFunctionLibrary<T> lib = (InstanciableFunctionLibrary<T>) Class
+				.forName (options.get ("CLASSPATH").toString ()).newInstance ();
+			return lib.buildIterationConsumer (options);
+		} catch (Exception e) { return null; }
+	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.symbols.LibraryObject.InstanceGenerator#newInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)

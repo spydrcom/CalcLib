@@ -15,6 +15,7 @@ import net.myorb.math.expressions.algorithms.AlgorithmImplementationAbstraction.
 
 import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.SymbolMap.Named;
+import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
@@ -29,7 +30,18 @@ import java.util.Map;
  * @author Michael Druckman
  */
 public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
+	implements SymbolMap.FactoryForImports
 {
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
+	 */
+	public SymbolMap.Named importSymbolFrom
+	(String named, Map<String, Object> configuration)
+	{
+		return new BesselAbstraction (named, configuration);
+	}
 
 
 	/* (non-Javadoc)
@@ -45,12 +57,19 @@ public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
 	 * Bessel function object base class
 	 */
 	public class BesselAbstraction extends ImplementationAbstraction
+		implements SymbolMap.ImportedFunction
 	{
 
-		BesselAbstraction (String sym, LibraryObject<T> lib)
+		public BesselAbstraction (String sym, LibraryObject<T> lib)
+		{ this (sym, lib.getParameterization ()); }
+
+		public BesselAbstraction
+		(String sym, Map<String,Object> parameterMap)
 		{
-			super (sym, lib);
-			alphaManager = getParameterCalled ("alpha");
+			super (sym, parameterMap);
+			this.configuration = configurationDescriptionFor
+				(ClMathBessel.class.getCanonicalName (), parameterMap);
+			this.alphaManager = getParameterCalled ("alpha");
 		}
 		ParameterManager<T> alphaManager;
 
@@ -61,6 +80,15 @@ public class ClMathBessel<T> extends AlgorithmImplementationAbstraction<T>
 		{
 			return getValueFor (alphaManager);
 		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
+		 */
+		public Map<String, Object> getConfiguration ()
+		{
+			return configuration;
+		}
+		Map<String, Object> configuration;
 
 	}
 
