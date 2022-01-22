@@ -5,6 +5,7 @@ import net.myorb.math.expressions.tree.JsonBinding.Node;
 import net.myorb.data.notations.json.JsonSemantics;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * a formal definition of the Profile Node
@@ -17,7 +18,7 @@ public class Profile extends JsonBinding.Node
 	/**
 	 * the names of the Profile node members
 	 */
-	public enum ProfileMembers {Name, Parameter, Parameters, Expression, Description}
+	public enum ProfileMembers {Name, Parameter, Parameters, Imports, Expression, Description}
 
 
 	/**
@@ -53,6 +54,36 @@ public class Profile extends JsonBinding.Node
 	public void setExpression (Element element)
 	{
 		addMember (ProfileMembers.Expression, JsonBinding.toJson (element));
+	}
+
+
+	/**
+	 * add an imports member to the profile
+	 * @param imports hash of configuration parameters for imported symbols
+	 */
+	public void addImports (Map<String,Map<String,String>> imports)
+	{
+		if (imports == null || imports.size () == 0) return;
+//		System.out.println ("PROFILE IMPORTED SYMBOLS - " + imports);
+		addMember (ProfileMembers.Imports, hashForImports (imports));
+	}
+	public JsonSemantics.JsonObject hashForImports (Map<String,Map<String,String>> imports)
+	{
+		JsonSemantics.JsonObject importHash = new JsonSemantics.JsonObject ();
+		for (String item : imports.keySet ())
+		{
+			importHash.addMemberNamed (item, hashForConfig (imports.get (item)));
+		}
+		return importHash;
+	}
+	public JsonSemantics.JsonObject hashForConfig (Map<String,String> config)
+	{
+		JsonSemantics.JsonObject configHash = new JsonSemantics.JsonObject ();
+		for (String item : config.keySet ())
+		{
+			configHash.addMemberNamed (item, new JsonSemantics.JsonString (config.get (item)));
+		}
+		return configHash;
 	}
 
 
@@ -207,7 +238,7 @@ public class Profile extends JsonBinding.Node
 	public static final Object[] ORDERED_MEMBER_LIST = new Object[]
 	{
 		ProfileMembers.Name, ProfileMembers.Parameters, ProfileMembers.Description,
-		ProfileMembers.Expression, Node.DISCRIMINATOR
+		ProfileMembers.Imports, ProfileMembers.Expression, Node.DISCRIMINATOR
 	};
 
 

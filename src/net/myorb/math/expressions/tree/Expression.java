@@ -27,7 +27,6 @@ public class Expression<T> extends SubExpression<T>
 	 */
 	protected Map<String,LexicalAnalysis.Identifier<T>> identifiers = new HashMap<> ();
 	protected Map<String,LexicalAnalysis.Operator> operators = new HashMap<> ();
-	protected Map<String,SymbolMap.Named> imports = new HashMap<> ();
 
 	/**
 	 * components list provides initial inspection of sub-expressions
@@ -49,6 +48,35 @@ public class Expression<T> extends SubExpression<T>
 		expression.invocations = invocations;
 		expression.operators = operators;
 	}
+
+	/**
+	 * @return hash of symbols with configuration parameters
+	 */
+	public Map<String,Map<String,String>> describeImports ()
+	{
+		Map<String,Map<String,String>> hash = null;
+		if (imports.size () != 0) hash = hashOfImports ();
+		return hash;
+	}
+	public Map<String,Map<String,String>> hashOfImports ()
+	{
+		Map<String,Map<String,String>> hash =
+				new HashMap<String,Map<String,String>>();
+		for (String name : imports.keySet ())
+		{
+			SymbolMap.Named sym = imports.get (name);
+			SymbolMap.ConfiguredImport parms = (SymbolMap.ConfiguredImport) sym;
+			hash.put (name, describeImport (parms.getConfiguration ()));
+		}
+		return hash;
+	}
+	public Map<String,String> describeImport (Map<String,Object> config)
+	{
+		Map<String,String> items = new HashMap<String,String>();
+		for (String item : config.keySet ()) { items.put (item, config.get (item).toString ()); }
+		return items;
+	}
+	protected Map<String,SymbolMap.Named> imports = new HashMap<> ();
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.tree.SubExpression#toString()

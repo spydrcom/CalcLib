@@ -225,7 +225,7 @@ public class LexicalAnalysis<T>
 	/**
 	 * name the members of the Identifier node type
 	 */
-	public enum IdentifierNodeMembers {Name, Operator, Kind, Symbol, Config};
+	public enum IdentifierNodeMembers {Name, Operator, Kind, Symbol};
 
 	/**
 	 * enumeration of types of identifiers
@@ -287,10 +287,6 @@ public class LexicalAnalysis<T>
 		 */
 		public void setAsLocalType () { typeManager.setType (IdentifierType.Local); }
 
-		public IdentifierProperties setImported (boolean flag) { isImported = flag; return this; }
-		public boolean isImported () { return isImported; }
-		boolean isImported = false;
-
 		/**
 		 * @return a JSON description of the identifier
 		 */
@@ -300,16 +296,9 @@ public class LexicalAnalysis<T>
 				new JsonBinding.Node (JsonBinding.NodeTypes.Identifier);
 			node.addMember (IdentifierNodeMembers.Symbol, JsonSemantics.stringOrNull (getReference ()));
 			node.addMember (IdentifierNodeMembers.Operator, JsonSemantics.stringOrNull (getOpName ()));
-			if (isImported) node.addMember (IdentifierNodeMembers.Config, getIdConfig ());
 			node.addMember (IdentifierNodeMembers.Kind, typeManager.getJsonType ());
 			node.addMember (IdentifierNodeMembers.Name, getJsonName ());
 			return node;
-		}
-
-		JsonSemantics.JsonValue getIdConfig ()
-		{
-			//TODO: add map of import attrs
-			return JsonSemantics.getNull ();
 		}
 
 	}
@@ -613,7 +602,6 @@ public class LexicalAnalysis<T>
 		 */
 		public JsonSemantics.JsonValue toJson ()
 		{
-			//TODO: add consumer stuff
 			JsonBinding.Node node = new JsonBinding.Node (JsonBinding.NodeTypes.Range);
 			node.addMember (RangeNodeMembers.Variable, new JsonSemantics.JsonString (variableName));
 			node.addMember (RangeNodeMembers.Consumer, JsonSemantics.stringOrNull (getConsumerType ()));

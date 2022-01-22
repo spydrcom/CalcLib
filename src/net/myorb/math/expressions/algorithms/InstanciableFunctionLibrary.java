@@ -52,22 +52,6 @@ public abstract class InstanciableFunctionLibrary<T> extends CommonOperatorLibra
 	 */
 	public abstract Map<String, Object> getIterationConsumerDescription ();
 
-	/**
-	 * @param options a hash of objects that define the consumer
-	 * @return an instance of the described consumer
-	 * @param <T> type of data
-	 */
-	public static <T> IterationConsumer recreateIterationConsumer (Map<String, Object> options)
-	{
-		try
-		{
-			@SuppressWarnings("unchecked")
-			InstanciableFunctionLibrary<T> lib = (InstanciableFunctionLibrary<T>) Class
-				.forName (options.get ("CLASSPATH").toString ()).newInstance ();
-			return lib.buildIterationConsumer (options);
-		} catch (Exception e) { return null; }
-	}
-
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.symbols.LibraryObject.InstanceGenerator#newInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)

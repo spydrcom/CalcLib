@@ -1097,7 +1097,7 @@ public class SemanticAnalysis<T>
 	{
 		for (String name : expression.operators.keySet ())
 		{
-			trace ("OP: "+name); //TODO: OP
+			trace ("OP: "+name);
 			SymbolMap.Named item = symbols.lookup (name);
 			if (item == null) throw new SemanticError ("Operator not recognized: " + name);
 
@@ -1158,7 +1158,7 @@ public class SemanticAnalysis<T>
 
 		for (String name : expression.identifiers.keySet ())
 		{
-			trace ("ID: "+name); //TODO: ID
+			trace ("ID: "+name);
 			if ((item = symbols.lookup (name)) == null)
 			{
 				trace (" - NULL");
@@ -1167,7 +1167,7 @@ public class SemanticAnalysis<T>
 			}
 			else if (item instanceof SymbolMap.ImportedConsumer)
 			{
-				trace (" - IMPORTED CONSUMER"); //TODO: this is the CONSUMER hook
+				trace (" - IMPORTED CONSUMER");
 				set (expression, name, LexicalAnalysis.IdentifierType.Consumer, null, true, item);
 			}
 			else if (item instanceof IterationConsumer)
@@ -1177,7 +1177,7 @@ public class SemanticAnalysis<T>
 			}
 			else if (item instanceof SymbolMap.ImportedFunction)
 			{
-				trace (" - IMPORTED FUNCTION"); //TODO: this is the IMPORT hook
+				trace (" - IMPORTED FUNCTION");
 				set (expression, name, LexicalAnalysis.IdentifierType.Function, null, true, item);
 			}
 			else if (item instanceof SymbolMap.ParameterizedFunction)
@@ -1208,7 +1208,6 @@ public class SemanticAnalysis<T>
 			boolean imported, SymbolMap.Named symbolRef
 		)
 	{
-		//TODO: imported symbols must provide JSON configuration
 		if (imported) { expression.imports.put (identifierName, symbolRef); }
 		expression.identifiers.get (identifierName).getIdentifierProperties ()
 		.setType (type).setOperator (op).setSymbolReference (symbolRef);

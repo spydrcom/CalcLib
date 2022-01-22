@@ -143,23 +143,7 @@ public class Gardener<T>
 	 */
 	public void completeSemanticAnalysis
 	(SymbolMap symbols, ExpressionSpaceManager<T> spaceManager) throws SemanticError
-	{ this.spaceManager = spaceManager; completeSemanticAnalysis (symbols); doImports (symbols); }
-
-
-	/**
-	 * @param symbols the symbol map for the expression
-	 */
-	void doImports (SymbolMap symbols)
-	{
-		for (String name : expression.imports.keySet ())
-		{
-			System.out.println ("IMPORT " + name);
-			SymbolMap.Named sym = expression.imports.get (name);
-			System.out.println (" - " + sym.getClass ().getCanonicalName ());
-			SymbolMap.ConfiguredImport parms = (SymbolMap.ConfiguredImport) sym;
-			System.out.println (" - " + parms.getConfiguration ());
-		}
-	}
+	{ this.spaceManager = spaceManager; completeSemanticAnalysis (symbols); }
 
 
 	/**
@@ -431,6 +415,7 @@ public class Gardener<T>
 		Profile.ParameterList parameterList =
 				new Profile.ParameterList (parameters);
 		Profile profile = Profile.representing (name, parameterList);
+		profile.addImports (expression.describeImports ());
 		profile.setProfileDescription (description);
 		profile.setExpression (expression);
 		return profile;
