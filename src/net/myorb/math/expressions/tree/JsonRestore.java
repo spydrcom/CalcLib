@@ -4,9 +4,12 @@ package net.myorb.math.expressions.tree;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
+import net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary;
+
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.notations.json.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -193,6 +196,7 @@ public class JsonRestore <T>
 	public void setProfile (JsonSemantics.JsonValue value)
 	{
 		profile = Profile.representing (value);
+		restoreImportsFromProfile ();
 	}
 	public void setProfile (Profile profile)
 	{
@@ -210,6 +214,57 @@ public class JsonRestore <T>
 		return toExpression (profile.getExpression ());
 	}
 
+
+	/**
+	 * construct imported symbols listed in profile
+	 */
+	public void restoreImportsFromProfile ()
+	{
+		JsonSemantics.JsonValue imports = profile.getImports ();
+
+		if (!JsonSemantics.isNull (imports))
+		{
+			System.out.println ("IMPORTS:");
+			Map<String,Object> configHash = new HashMap<String,Object>();
+			JsonSemantics.JsonObject importHash = (JsonSemantics.JsonObject) imports;
+			for (String member : importHash.getMemberNames ())
+			{
+				configHash.clear ();
+				System.out.println (" - " + member);
+				JsonSemantics.JsonObject config = (JsonSemantics.JsonObject) importHash.getMemberCalled (member);
+				for (String item : config.getMemberNames ())
+				{
+					String configText = config.getMemberString (item);
+					System.out.println (" - - " + item + " = " + configText);
+					configHash.put (item, configText);
+				}
+				importFromProfile (member, configHash);
+			}
+		}
+	}
+
+
+	/**
+	 * identify factory and generate symbol
+	 * @param symbol the name to be given to the symbol
+	 * @param config the hash of configuration parameters for the symbol
+	 */
+	public void importFromProfile (String symbol, Map<String,Object> config)
+	{
+		Object factory;
+		String factoryName = config.get ("FACTORY").toString ();
+		try { factory = Class.forName (factoryName).newInstance (); }
+		catch (Exception e) { throw new RuntimeException ("Error running import factory", e); }
+		SymbolMap.FactoryForImports symbolBuilder = (SymbolMap.FactoryForImports) factory;
+		if (factory instanceof InstanciableFunctionLibrary) fixLib (symbolBuilder);
+		symbols.add (symbolBuilder.importSymbolFrom (symbol, config));
+	}
+	void fixLib (Object factory)
+	{
+		@SuppressWarnings("unchecked")
+		InstanciableFunctionLibrary<T> lib = (InstanciableFunctionLibrary<T>) factory;
+		lib.setEnvironment (spaceManager.getEvaluationControl ().getEngine ().getEnvironment ());
+	}
 
 }
 

@@ -88,6 +88,16 @@ public class Profile extends JsonBinding.Node
 
 
 	/**
+	 * get the import hash attached to the profile
+	 * @return the member Value labeled as Imports
+	 */
+	public JsonSemantics.JsonValue getImports ()
+	{
+		return getMember (ProfileMembers.Imports);
+	}
+
+
+	/**
 	 * get the expression attached to the profile
 	 * @return the member Value labeled as Expression
 	 */
