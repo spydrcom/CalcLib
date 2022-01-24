@@ -174,12 +174,25 @@ public class LibraryManager<T>
 	 */
 	public void instanceSymbol (List<TokenParser.TokenDescriptor> tokens)
 	{
+		String lib;
+		String newSymbol = tokens.get (1).getTokenImage ();
+		String next = tokens.get (2).getTokenImage ();
+
+		if (next.equals ("'"))
+		{
+			newSymbol += "'";
+			next = tokens.get (3).getTokenImage ();
+		}
+
+		if (!next.equals ("'")) lib = next;
+		else
+		{
+			newSymbol += "'";
+			lib = tokens.get (4).getTokenImage ();
+		}
+
 		LibraryObject.newInstance
-		(
-			tokens.get (1).getTokenImage (),
-			tokens.get (2).getTokenImage (),
-			environment
-		);
+		(newSymbol, lib, environment);
 	}
 
 

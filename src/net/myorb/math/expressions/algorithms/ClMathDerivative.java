@@ -181,6 +181,14 @@ class DerivativeParameterManager<T> implements
 	AlgorithmImplementationAbstraction.Renderer
 {
 
+	/*
+	 * render syntax options
+	 * * Euler		Dx f(x)
+	 * * Lagrange	f'(x)
+	 * * Leibniz	df/dx
+	 * */
+	public enum Syntax {Euler, Lagrange, Leibniz}
+
 	/**
 	 * @param parameters map of configured parameters
 	 * @param environment description of the session
@@ -189,8 +197,8 @@ class DerivativeParameterManager<T> implements
 	{
 		this
 		(
-			parameters.get ("symbol"), parameters.get ("order"),
-			parameters.get ("function"), parameters.get ("variable"), parameters.get ("run"),
+			parameters.get ("symbol"), parameters.get ("order"), parameters.get ("function"),
+			parameters.get ("variable"), parameters.get ("run"), parameters.get ("syntax"),
 			environment
 		);
 	}
@@ -200,25 +208,42 @@ class DerivativeParameterManager<T> implements
 	}
 	DerivativeParameterManager (String[] parameters, Environment<T> environment)
 	{
-		this (parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], environment);
+		this (parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5], environment);
 	}
 	DerivativeParameterManager
 		(
-			Object symbol, Object order,
-			Object function, Object variable, Object run,
+			Object symbol, Object order, Object function,
+			Object variable, Object run, Object syntax,
 			Environment<T> environment
 		)
 	{
-		this.symbolName = symbol.toString ();
 		this.variableName = variable.toString ();
 		this.symbols = environment.getSymbolMap ();
 		this.parseRun (run.toString (), environment);
-		this.order = Integer.parseInt (order.toString ());
 		this.identifyFunction (function.toString ());
+
+		if (symbol != null) this.symbolName = symbol.toString ();
+		if (order != null) this.order = Integer.parseInt (order.toString ());
+
+		if (syntax != null)
+		{
+			try { this.syntax = Syntax.valueOf (syntax.toString ()); }
+			catch (Exception e) { throw new RuntimeException (BAD_REQUEST); }
+		}
+
+		switch (this.syntax)
+		{
+			case Euler:		if (this.symbolName == null) this.symbolName = "D"; break;
+			case Leibniz:	if (this.symbolName == null) this.symbolName = "d"; break;
+			default:
+		}
 	}
-	protected String symbolName, variableName;
+	static final String BAD_REQUEST =
+		"Requested render syntax not recognized";
+	protected String symbolName = null, variableName;
+	protected Syntax syntax = Syntax.Leibniz;
 	protected SymbolMap symbols;
-	protected int order;
+	protected int order = 1;
 
 
 	/**
@@ -296,22 +321,66 @@ class DerivativeParameterManager<T> implements
 	 */
 	public String render (NodeFormatting using)
 	{
-		String
-			symId = using.formatIdentifierReference (symbolName),
-			funId = using.formatIdentifierReference (functionName),
-			varId = using.formatIdentifierReference (variableName),
-			symIdN = symId;
-		if (order > 1)
+		String symId, funId, varId, fn;
+
+		switch (syntax)
 		{
-			String orderSup = using.formatNumericReference (Integer.toString (order));
-			symIdN = using.formatSuperScript (symIdN, orderSup);
-			varId = using.formatSuperScript (varId, orderSup);
+			case Euler: // Dx (n) f(x)
+
+				symId = using.formatIdentifierReference (symbolName);
+				funId = using.formatIdentifierReference (functionName);
+				varId = using.formatIdentifierReference (variableName);
+				fn = using.formatSubScript (symId, varId);
+
+				if (order > 1)
+				{
+					String orderSup = using.formatParenthetical
+						(using.formatNumericReference (Integer.toString (order)));
+					fn = using.formatSuperScript (fn, orderSup);
+				}
+
+				return fn + funId + using.formatParenthetical (using.formatIdentifierReference (variableName));
+
+			case Lagrange: // f'(x)
+
+				if (order == 1)
+				{
+					fn = using.formatIdentifierReference (functionName + "'"); // \u2032
+				}
+				else if (order == 2)
+				{
+					fn = using.formatIdentifierReference (functionName + "''");
+				}
+				else
+				{
+					String orderSup = using.formatParenthetical (using.formatNumericReference (Integer.toString (order)));
+					fn = using.formatSuperScript (using.formatIdentifierReference (functionName), orderSup);
+				}
+
+				return fn + using.formatParenthetical (using.formatIdentifierReference (variableName));
+
+			case Leibniz: // df/dx
+
+				symId = using.formatIdentifierReference (symbolName);
+				funId = using.formatIdentifierReference (functionName);
+				varId = using.formatIdentifierReference (variableName);
+				String symIdN = symId;
+
+				if (order > 1)
+				{
+					String orderSup = using.formatNumericReference (Integer.toString (order));
+					symIdN = using.formatSuperScript (symIdN, orderSup);
+					varId = using.formatSuperScript (varId, orderSup);
+				}
+
+				return using.formatOverUnderOperation
+				(
+					symIdN + funId,
+					symId + varId
+				);
 		}
-		return using.formatOverUnderOperation
-		(
-				symIdN + funId,
-				symId + varId
-		);
+
+		throw new RuntimeException (BAD_REQUEST);
 	}
 
 

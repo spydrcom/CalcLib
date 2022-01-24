@@ -151,8 +151,9 @@ public class JsonBinding
 		{
 			return ((JsonRepresentation<T>) element).toJson ();
 		}
-		System.out.println ("JSON conversion error: " + element.toString ());
-		return null;
+		System.out.println
+		("JSON conversion error: " + element.toString () + " - " + element.getElementType ());
+		return new LexicalAnalysis.Identifier<T> ("'").toJson ();
 	}
 
 
