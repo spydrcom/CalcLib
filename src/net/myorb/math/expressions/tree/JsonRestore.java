@@ -3,13 +3,11 @@ package net.myorb.math.expressions.tree;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.ExpressionSpaceManager;
-
-import net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.notations.json.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,6 +17,19 @@ import java.util.Map;
  */
 public class JsonRestore <T>
 {
+
+
+	/**
+	 * builder object for symbol factories
+	 */
+	public interface FactoryBuilder
+	{
+		/**
+		 * @param path class-path to factory
+		 * @return an import factory
+		 */
+		SymbolMap.FactoryForImports getFactory (String path);
+	}
 
 
 	public JsonRestore (ExpressionSpaceManager <T> spaceManager, SymbolMap symbols)
@@ -220,25 +231,16 @@ public class JsonRestore <T>
 	 */
 	public void restoreImportsFromProfile ()
 	{
-		JsonSemantics.JsonValue imports = profile.getImports ();
-
-		if (!JsonSemantics.isNull (imports))
+		JsonSemantics.JsonValue imports;
+		if (!JsonSemantics.isNull (imports = profile.getImports ()))
 		{
-			System.out.println ("IMPORTS:");
-			Map<String,Object> configHash = new HashMap<String,Object>();
-			JsonSemantics.JsonObject importHash = (JsonSemantics.JsonObject) imports;
-			for (String member : importHash.getMemberNames ())
+			JsonSemantics.JsonObject importHash =
+					(JsonSemantics.JsonObject) imports;
+			for (String name : importHash.getMemberNames ())
 			{
-				configHash.clear ();
-				System.out.println (" - " + member);
-				JsonSemantics.JsonObject config = (JsonSemantics.JsonObject) importHash.getMemberCalled (member);
-				for (String item : config.getMemberNames ())
-				{
-					String configText = config.getMemberString (item);
-					System.out.println (" - - " + item + " = " + configText);
-					configHash.put (item, configText);
-				}
-				importFromProfile (member, configHash);
+				JsonSemantics.JsonObject config =
+					(JsonSemantics.JsonObject) importHash.getMemberCalled (name);
+				importFromProfile (name, JsonTools.toObjectMap (config));
 			}
 		}
 	}
@@ -251,20 +253,50 @@ public class JsonRestore <T>
 	 */
 	public void importFromProfile (String symbol, Map<String,Object> config)
 	{
-		Object factory;
-		String factoryName = config.get ("FACTORY").toString ();
-		try { factory = Class.forName (factoryName).newInstance (); }
-		catch (Exception e) { throw new RuntimeException ("Error running import factory", e); }
-		SymbolMap.FactoryForImports symbolBuilder = (SymbolMap.FactoryForImports) factory;
-		if (factory instanceof InstanciableFunctionLibrary) fixLib (symbolBuilder);
-		symbols.add (symbolBuilder.importSymbolFrom (symbol, config));
+		String factoryPath = config.get ("FACTORY").toString ();
+		SymbolMap.FactoryForImports factory = getFactoryBuilder ().getFactory (factoryPath);
+		symbols.add (factory.importSymbolFrom (symbol, config));
 	}
-	void fixLib (Object factory)
+
+
+	/**
+	 * @return a builder for the imported symbols factory
+	 */
+	public FactoryBuilder getFactoryBuilder ()
 	{
-		@SuppressWarnings("unchecked")
-		InstanciableFunctionLibrary<T> lib = (InstanciableFunctionLibrary<T>) factory;
-		lib.setEnvironment (spaceManager.getEvaluationControl ().getEngine ().getEnvironment ());
+		return new FactoryBuilder ()
+		{
+			public SymbolMap.FactoryForImports getFactory (String path)
+			{
+				SymbolMap.FactoryForImports factory = JsonRestore.getFactory (path);
+				Environment.provideAccess (factory, spaceManager);
+				return factory;
+			}
+		};
 	}
+
+
+	/**
+	 * find a name in the symbol table
+	 * @param name the name of the symbol
+	 * @return the named object
+	 */
+	public SymbolMap.Named find (String name)
+	{
+		return (SymbolMap.Named) symbols.get (name);
+	}
+
+
+	/**
+	 * @param from the class-path to the factory
+	 * @return an imported symbols factory
+	 */
+	public static SymbolMap.FactoryForImports getFactory (String from)
+	{
+		try { return (SymbolMap.FactoryForImports) Class.forName (from).newInstance (); }
+		catch (Exception e) { throw new RuntimeException ("Import factory instance error", e); }
+	}
+
 
 }
 

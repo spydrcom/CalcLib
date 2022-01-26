@@ -227,7 +227,7 @@ class QuadratureConsumer<T> extends AbstractConsumer<T>
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString () { return "QUADRATURE"; }
+	public String toString () { return "INTEGRAL"; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.symbols.IterationConsumer#accept(net.myorb.math.expressions.ValueManager.GenericValue)
@@ -248,8 +248,12 @@ class QuadratureConsumer<T> extends AbstractConsumer<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.tree.NumericalAnalysis#setAnalyzer(net.myorb.math.expressions.tree.NumericalAnalysis)
 	 */
-	public void setAnalyzer
-	(NumericalAnalysis<T> analyzer) { this.analyzer = analyzer; }
+	public void setAnalyzer (NumericalAnalysis<T> analyzer) { this.analyzer = analyzer; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.tree.NumericalAnalysis#getAnalyzer()
+	 */
+	public NumericalAnalysis<T> getAnalyzer () { return analyzer; }
 	protected NumericalAnalysis<T> analyzer;
 
 }

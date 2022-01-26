@@ -17,7 +17,7 @@ import net.myorb.math.SpaceManager;
  * @author Michael Druckman
  */
 public abstract class InstanciableFunctionLibrary<T> extends CommonOperatorLibrary<T>
-			implements LibraryObject.InstanceGenerator<T>
+			implements LibraryObject.InstanceGenerator<T>, Environment.AccessAcceptance<T>
 {
 
 	/* (non-Javadoc)

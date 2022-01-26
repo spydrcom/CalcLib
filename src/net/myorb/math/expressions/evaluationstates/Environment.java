@@ -13,6 +13,32 @@ public class Environment<T> extends OperatorProcessing<T>
 
 
 	/**
+	 * access to the application core is required
+	 * @param <T> data type for the access needs
+	 */
+	public interface AccessAcceptance <T>
+	{
+		/**
+		 * provide access to implementing object
+		 * @param environment access to the core application structures
+		 */
+		void setEnvironment (Environment<T> environment);
+	}
+
+	/**
+	 * provide access to objects marked as in need
+	 * @param object an object that may require access
+	 * @param environment access to the core application structures
+	 * @param <S> data type for the access needs
+	 */
+	@SuppressWarnings("unchecked")
+	public static <S> void provideAccess (Object object, Environment<S> environment)
+	{ if (object instanceof AccessAcceptance) ((AccessAcceptance<S>) object).setEnvironment (environment); }
+	public static <S> void provideAccess (Object object, ExpressionSpaceManager<S> manager)
+	{ provideAccess (object, manager.getEvaluationControl ().getEngine ().getEnvironment ()); }
+
+
+	/**
 	 * construct the environment for expression evaluation
 	 * @param symbols the table of symbols available for use in evaluation
 	 * @param spaceManager the type manager for computation atomics

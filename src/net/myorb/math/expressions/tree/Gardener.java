@@ -21,8 +21,8 @@ import net.myorb.math.computational.CommonSplineDescription;
 import net.myorb.math.GeneratingFunctions.Coefficients;
 
 import net.myorb.data.notations.json.JsonPrettyPrinter;
-import net.myorb.data.notations.json.JsonReader;
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonReader;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.abstractions.ZipSource;

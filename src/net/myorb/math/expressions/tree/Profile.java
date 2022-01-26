@@ -2,7 +2,9 @@
 package net.myorb.math.expressions.tree;
 
 import net.myorb.math.expressions.tree.JsonBinding.Node;
+
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonTools;
 
 import java.util.List;
 import java.util.Map;
@@ -64,26 +66,7 @@ public class Profile extends JsonBinding.Node
 	public void addImports (Map<String,Map<String,String>> imports)
 	{
 		if (imports == null || imports.size () == 0) return;
-//		System.out.println ("PROFILE IMPORTED SYMBOLS - " + imports);
-		addMember (ProfileMembers.Imports, hashForImports (imports));
-	}
-	public JsonSemantics.JsonObject hashForImports (Map<String,Map<String,String>> imports)
-	{
-		JsonSemantics.JsonObject importHash = new JsonSemantics.JsonObject ();
-		for (String item : imports.keySet ())
-		{
-			importHash.addMemberNamed (item, hashForConfig (imports.get (item)));
-		}
-		return importHash;
-	}
-	public JsonSemantics.JsonObject hashForConfig (Map<String,String> config)
-	{
-		JsonSemantics.JsonObject configHash = new JsonSemantics.JsonObject ();
-		for (String item : config.keySet ())
-		{
-			configHash.addMemberNamed (item, new JsonSemantics.JsonString (config.get (item)));
-		}
-		return configHash;
+		addMember (ProfileMembers.Imports, JsonTools.symbolHash (imports));
 	}
 
 

@@ -8,8 +8,9 @@ import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
-import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
 import net.myorb.math.expressions.symbols.AbstractVectorConsumer;
+import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
+import net.myorb.math.expressions.symbols.IterationConsumerImporter;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 
 import net.myorb.math.expressions.tree.NumericalAnalysis;
@@ -21,7 +22,7 @@ import net.myorb.math.expressions.tree.RangeNodeDigest;
  * @author Michael Druckman
  */
 public class QuadratureBase<T> extends AbstractVectorConsumer
-			implements NumericalAnalysis<T>
+			implements NumericalAnalysis<T>, IterationConsumerImporter
 {
 
 
@@ -48,6 +49,15 @@ public class QuadratureBase<T> extends AbstractVectorConsumer
 		@SuppressWarnings("unchecked") NumericalAnalysis<T> link = (NumericalAnalysis<T>) consumer;
 		link.setAnalyzer (this);
 		return consumer;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.tree.NumericalAnalysis#getAnalyzer()
+	 */
+	public NumericalAnalysis<T> getAnalyzer ()
+	{
+		return this;
 	}
 
 

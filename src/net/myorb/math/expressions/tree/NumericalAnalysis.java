@@ -24,4 +24,10 @@ public interface NumericalAnalysis<T>
 	 */
 	void setAnalyzer (NumericalAnalysis<T> analyzer);
 
+	/**
+	 * get access to analyzer configuration
+	 * @return the analyzer used by this object
+	 */
+	NumericalAnalysis<T> getAnalyzer ();
+
 }

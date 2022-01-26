@@ -3,10 +3,13 @@ package net.myorb.math.expressions.tree;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.symbols.IterationConsumer;
+import net.myorb.math.expressions.symbols.IterationConsumerImporter;
 import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
 import net.myorb.math.expressions.tree.JsonBinding.JsonRepresentation;
 
+import net.myorb.data.notations.json.JsonTools;
 import net.myorb.data.notations.json.JsonSemantics;
+
 import net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor;
 import net.myorb.data.abstractions.SimpleUtilities;
 
@@ -597,6 +600,20 @@ public class LexicalAnalysis<T>
 			else return iterationConsumer.toString ();
 		}
 
+		/**
+		 * @return NULL or an object with the configuration
+		 */
+		public JsonSemantics.JsonValue getConsumerConfig ()
+		{
+			if (iterationConsumer instanceof NumericalAnalysis)
+			{
+				@SuppressWarnings("unchecked")
+				NumericalAnalysis<T> na = ((NumericalAnalysis<T>) iterationConsumer).getAnalyzer ();
+				SymbolMap.ImportedConsumer imported = (SymbolMap.ImportedConsumer) na;
+				return JsonTools.toJsonObject (imported.getConfiguration ());
+			} else return JsonSemantics.getNull ();
+		}
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.tree.JsonBinding.JsonRepresentation#getJson()
 		 */
@@ -609,6 +626,7 @@ public class LexicalAnalysis<T>
 			node.addMember (RangeNodeMembers.Lo, loExpr); node.addMember (RangeNodeMembers.Hi, hiExpr);
 			node.addMember (RangeNodeMembers.Lbnd, lbndOp.getSymbolProperties ().getJsonName ());
 			node.addMember (RangeNodeMembers.Hbnd, hbndOp.getSymbolProperties ().getJsonName ());
+			node.addMember (RangeNodeMembers.Config, getConsumerConfig ());
 			return node;
 		}
 
@@ -623,19 +641,24 @@ public class LexicalAnalysis<T>
 		public Element fromJson (JsonSemantics.JsonValue context, JsonRestore<T> restoreManager) throws Exception
 		{
 			JsonBinding.Node node = new JsonBinding.Node (context);
+
 			hiExpr = fromMember (RangeNodeMembers.Hi, node, restoreManager);
 			delta  = fromMember (RangeNodeMembers.Delta, node, restoreManager);
 			hbndOp = Operator.restore (node.getMemberString (RangeNodeMembers.Hbnd), restoreManager);
 			lbndOp = Operator.restore (node.getMemberString (RangeNodeMembers.Lbnd), restoreManager);
 			loExpr = fromMember (RangeNodeMembers.Lo, node, restoreManager);
 
-			iterationConsumer = IterationConsumerImplementations.getIterationConsumer
-			(node.getMemberString (RangeNodeMembers.Consumer), restoreManager.spaceManager);
-			variableName = node.getMemberString (RangeNodeMembers.Variable);
+			JsonSemantics.JsonValue config =
+					node.getMember (RangeNodeMembers.Config);
+			if (JsonSemantics.isNull (config))
+			{
+				iterationConsumer = IterationConsumerImplementations.getIterationConsumer
+					(node.getMemberString (RangeNodeMembers.Consumer), restoreManager.spaceManager);
+			}
+			else { iterationConsumer = importFromNode ((JsonSemantics.JsonObject) config, restoreManager); }
 
-			Identifier<T> id =
-				restoreManager.getIdentifier
-					(variableName);
+			variableName = node.getMemberString (RangeNodeMembers.Variable);
+			Identifier<T> id = restoreManager.getIdentifier (variableName);
 			if (id == null)
 			{
 				id = Identifier.restore (variableName, restoreManager);
@@ -646,6 +669,37 @@ public class LexicalAnalysis<T>
 			target.identifiers.put (variableName, id);
 
 			return this;
+		}
+
+		/**
+		 * @param config the configuration object that identifies the consumer
+		 * @param restoreManager a manager object for the restore process
+		 * @return a new instance of the described consumer
+		 */
+		public IterationConsumer importFromNode
+		(JsonSemantics.JsonObject config, JsonRestore<T> restoreManager)
+		{
+			SymbolMap.Named item;
+			String sym = config.getMemberString ("SYMBOL");
+			if ((item = (SymbolMap.Named) restoreManager.find (sym)) == null)
+			{
+				item = getFactory (config, restoreManager).importSymbolFrom
+						(sym, JsonTools.toObjectMap (config));
+			}
+			return ((IterationConsumerImporter) item).getIterationConsumer ();
+		}
+
+		/**
+		 * get an instance of the consumer factory
+		 * @param config the configuration object that identifies the consumer
+		 * @param restoreManager a manager object for the restore process
+		 * @return the factory object for the consumer
+		 */
+		public SymbolMap.FactoryForImports getFactory
+		(JsonSemantics.JsonObject config, JsonRestore<T> restoreManager)
+		{
+			String factoryPath = config.getMemberString ("FACTORY");
+			return restoreManager.getFactoryBuilder ().getFactory (factoryPath);
 		}
 
 		/**

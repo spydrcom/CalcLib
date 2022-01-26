@@ -87,6 +87,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 			this.cvt = environment.getConversionManager ();
 			this.configuration = new HashMap<String, Object>();
 			this.configuration.put ("FACTORY", ClMathQuad.class.getCanonicalName ());
+			this.configuration.put ("SYMBOL", sym);
 			this.configuration.putAll (options);
 		}
 
