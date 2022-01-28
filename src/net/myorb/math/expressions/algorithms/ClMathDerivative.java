@@ -345,11 +345,11 @@ class DerivativeParameterManager<T> implements
 
 				if (order == 1)
 				{
-					fn = using.formatIdentifierReference (functionName + "'"); // \u2032
+					fn = using.formatIdentifierReference (functionName + "\u00B4");
 				}
 				else if (order == 2)
 				{
-					fn = using.formatIdentifierReference (functionName + "''");
+					fn = using.formatIdentifierReference (functionName + "\u00B4\u00B4");
 				}
 				else
 				{

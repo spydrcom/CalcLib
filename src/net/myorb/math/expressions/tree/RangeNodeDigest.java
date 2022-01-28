@@ -53,6 +53,11 @@ public class RangeNodeDigest<T>
 	 */
 	public GenericValue getHiBnd () { return hiBnd; }
 
+	/**
+	 * @return value computed from delta expression
+	 */
+	public GenericValue getDelta () { return delta; }
+
 
 	/**
 	 * @return TRUE when consumer implements NumericalAnalysis
