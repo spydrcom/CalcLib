@@ -28,6 +28,7 @@ public class ClMathFourier extends InstanciableFunctionLibrary<ComplexValue<Doub
 	implements SymbolMap.FactoryForImports
 {
 
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
 	 */
@@ -95,6 +96,11 @@ public class ClMathFourier extends InstanciableFunctionLibrary<ComplexValue<Doub
 			this.configuration.putAll (options);
 		}
 
+		/**
+		 * @param integrand the integrand to use in the integral computation
+		 * @param over the range object providing the parameters to the integration
+		 * @return the computed integral value
+		 */
 		public ComplexValue<Double> integralOf
 			(FourierIntegrand integrand, RangeNodeDigest<ComplexValue<Double>> over)
 		{
@@ -102,6 +108,12 @@ public class ClMathFourier extends InstanciableFunctionLibrary<ComplexValue<Doub
 					new TrapezoidIntegration<ComplexValue<Double>>(integrand);
 			return compute (integral, over);
 		}
+
+		/**
+		 * @param integral the integral approximation object
+		 * @param over the range object providing the parameters to the integration
+		 * @return the computed integral value
+		 */
 		public ComplexValue<Double> compute
 			(
 				TrapezoidIntegration<ComplexValue<Double>> integral,
@@ -150,12 +162,12 @@ class FourierIntegrand extends FourierNucleus
 
 	FourierIntegrand
 		(
-			RangeNodeDigest<ComplexValue<Double>> digest,
-			Environment<ComplexValue<Double>> environment,
-			Map<String, Object> configuration
+			RangeNodeDigest <ComplexValue <Double>> digest,
+			Environment <ComplexValue <Double>> environment,
+			Map <String, Object> configuration
 		)
 	{
-		super (environment, configuration.get ("basis").toString ());
+		super (environment, configuration);
 		this.manager = environment.getSpaceManager ();
 		digest.initializeLocalVariable ();
 		this.digest = digest;

@@ -1,10 +1,9 @@
 
 package net.myorb.math.complexnumbers;
 
+import net.myorb.math.expressions.algorithms.CyclicAndPowerLibrary;
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.OptimizedMathLibrary;
-import net.myorb.math.ExtendedPowerLibrary;
-
-import net.myorb.math.TrigPowImplementation;
 import net.myorb.math.PowerPrimitives;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
@@ -17,8 +16,7 @@ import net.myorb.data.abstractions.SpaceConversion;
  * @author Michael Druckman
  */
 public class ComplexLibrary<T> extends Arithmetic<T>
-	implements TrigPowImplementation.SubAtomic<ComplexValue<T>>,
-		ExtendedPowerLibrary<ComplexValue<T>>
+		implements CyclicAndPowerLibrary<ComplexValue<T>>
 {
 
 	/**
@@ -35,6 +33,16 @@ public class ComplexLibrary<T> extends Arithmetic<T>
 	}
 	protected SpaceConversion<ComplexValue<T>> conversion;
 	protected ComplexFieldManager<T> complexmanager;
+
+	@SuppressWarnings("unchecked")
+	public ComplexLibrary (Environment<ComplexValue<T>> environment)
+	{
+		this
+		(
+			environment.getSpaceManager ().getComponentManager (),
+			environment.getSpaceManager ()
+		);
+	}
 
 	/**
 	 * build a complex value from

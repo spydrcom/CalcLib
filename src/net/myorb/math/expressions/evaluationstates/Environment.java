@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.evaluationstates;
 
+import net.myorb.math.expressions.algorithms.CyclicAndPowerLibrary;
 import net.myorb.math.expressions.*;
 import net.myorb.math.*;
 
@@ -61,6 +62,15 @@ public class Environment<T> extends OperatorProcessing<T>
 	(ExpressionSpaceManager<T> spaceManager, ExtendedPowerLibrary<T> powerLibrary) { this (spaceManager); setLibrary (powerLibrary); }
 	public Environment (SymbolMap symbols, ExpressionSpaceManager<T> spaceManager, ExtendedPowerLibrary<T> powerLibrary)
 	{ this (symbols, spaceManager); setLibrary (powerLibrary); }
+
+
+	/**
+	 * establish a math library to be used
+	 * @param lib library to be used
+	 */
+	public void setCyclicAndPowerLibrary (CyclicAndPowerLibrary<T> lib) { this.cyclicAndPowerLibrary = lib; }
+	public CyclicAndPowerLibrary<T> getCyclicAndPowerLibrary () { return cyclicAndPowerLibrary; }
+	protected CyclicAndPowerLibrary<T> cyclicAndPowerLibrary;
 
 
 	/*

@@ -101,7 +101,7 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 	{
 		if (gardener == null)
 		{ throw new RuntimeException ("Function not enabled as expression tree implementation"); }
-		if (!semanticallyComplete) { System.out.println ("complete"); gardener.completeSemanticAnalysis (symbols, spaceManager); }
+		if (!semanticallyComplete) { gardener.completeSemanticAnalysis (symbols, spaceManager); }
 		gardener.profiledTransplant (functionName, parameterNames, symbols.getDescription (functionName));
 	}
 

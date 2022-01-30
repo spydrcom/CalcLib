@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="/Mpmath/bin" sourcepath="/Mpmath/src"/>
 	<classpathentry kind="lib" path="/Colt/bin" sourcepath="/Colt/src"/>
 	<classpathentry kind="lib" path="/Anaconda/bin" sourcepath="/Anaconda/src"/>
-	<classpathentry kind="lib" path="lib/jmtex-0224.zip"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/IOLIB"/>
+	<classpathentry kind="lib" path="lib/jmtex-0224.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

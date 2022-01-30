@@ -13,7 +13,7 @@ import net.myorb.math.TrigPowImplementation;
  * @author Michael Druckman
  */
 public class TrigPowJREImpl extends TrigPowImplementation<Double>
-	implements TrigPowImplementation.SubAtomic<Double>
+		implements CyclicAndPowerLibrary<Double>
 {
 
 	public TrigPowJREImpl

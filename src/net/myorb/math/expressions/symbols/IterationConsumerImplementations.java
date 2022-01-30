@@ -38,12 +38,12 @@ public class IterationConsumerImplementations
 	{
 		switch (Names.valueOf (named))
 		{
-			case PlotConsumer: return getPlotIterationConsumer (using);
-			case AggregateConsumer: return getArrayIterationConsumer (using);
-			case SummationConsumer: return getSummationIterationConsumer (using);
-			case ProductConsumer: return getProductIterationConsumer (using);
-			case IntegralConsumer: return getIntegralIterationConsumer (using);
-			case QuadratureConsumer: return getQuadratureConsumer ();
+			case PlotConsumer:			return getPlotIterationConsumer (using);
+			case AggregateConsumer: 	return getArrayIterationConsumer (using);
+			case SummationConsumer: 	return getSummationIterationConsumer (using);
+			case ProductConsumer:		return getProductIterationConsumer (using);
+			case IntegralConsumer:		return getIntegralIterationConsumer (using);
+			case QuadratureConsumer:	return getQuadratureConsumer ();
 			default: throw new RuntimeException ("Internal Error");
 		}
 	}
