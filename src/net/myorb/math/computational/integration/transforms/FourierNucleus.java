@@ -4,25 +4,17 @@ package net.myorb.math.computational.integration.transforms;
 import net.myorb.math.specialfunctions.bessel.OrdinaryFirstKind;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
-import net.myorb.math.expressions.algorithms.CyclicAndPowerLibrary;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
-import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.SymbolMap;
-
-import net.myorb.math.SpaceManager;
-import net.myorb.math.Function;
-
 /**
- * complex evaluation of the Fourier Transform nucleus function
+ * generic evaluation of the Fourier Transform nucleus function
  *  e ^ ( - 2 * PI * i * Xi * t ), or alternatively SIN and COS,
  *  also Hartley and Hankel are available in configuration
  * @param <T> data type for calculations
  * @author Michael Druckman
  */
-public class FourierNucleus<T> implements Function<T>
+public class FourierNucleus<T> extends NucleusCore<T>
 {
 
 
@@ -32,32 +24,12 @@ public class FourierNucleus<T> implements Function<T>
 			TransformParameters parameters
 		)
 	{
-		this.parameters = parameters;
-		this.processEnvironment (environment);
+		super (environment, parameters);
 	}
-	protected TransformParameters parameters;
 
 
-	/**
-	 * @param environment the core resource for application managers
-	 */
-	public void processEnvironment (Environment<T> environment)
-	{
-		this.lib = environment.getCyclicAndPowerLibrary ();
-		this.manager = environment.getSpaceManager ();
-		this.vm = environment.getValueManager ();
-		this.environment = environment;
-		this.establishVariable ();
-		this.setConstants ();
-	}
-	protected ExpressionSpaceManager<T> manager;
-	protected CyclicAndPowerLibrary<T> lib;
-	protected Environment<T> environment;
-	protected ValueManager<T> vm;
-
-
-	/**
-	 * compute appropriate constant(s) based on Kernel type
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#setConstants()
 	 */
 	public void setConstants ()
 	{
@@ -104,7 +76,7 @@ public class FourierNucleus<T> implements Function<T>
 
 
 	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#eval(java.lang.Object)
 	 */
 	public T eval (T t)
 	{
@@ -156,37 +128,6 @@ public class FourierNucleus<T> implements Function<T>
 		Jv = OrdinaryFirstKind.getJ (v, terms, lib, psm);
 	}
 	protected SpecialFunctionFamilyManager.FunctionDescription<T> Jv;
-
-
-	/**
-	 * @return the value of the transform variable
-	 */
-	public T getU ()
-	{
-		return vm.toDiscrete (transformVariable.getValue ());
-	}
-
-
-	/**
-	 * prepare the transform variable
-	 */
-	public void establishVariable ()
-	{
-		this.transformVariable = (SymbolMap.VariableLookup) environment
-				.getSymbolMap ().get (parameters.getBasis ());
-	}
-	protected SymbolMap.VariableLookup transformVariable;
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.Function#getSpaceManager()
-	 */
-	public SpaceManager<T> getSpaceManager () { return manager; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
-	 */
-	public SpaceManager<T> getSpaceDescription () { return manager; }
 
 
 }
