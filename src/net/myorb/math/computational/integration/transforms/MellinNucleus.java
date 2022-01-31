@@ -12,6 +12,7 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 public class MellinNucleus<T> extends NucleusCore<T>
 {
 
+
 	/*
 	 * !! K_M(u,t) = t ^ (u-1)
 	 * !! KI_M(t,u) = t ^ (-u) / (2*pi*i)

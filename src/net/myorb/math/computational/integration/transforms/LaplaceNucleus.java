@@ -12,6 +12,7 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 public class LaplaceNucleus<T> extends NucleusCore<T>
 {
 
+
 	/*
 	 * !! K_L(u,t) = exp (-u*t)
 	 * !! KI_L(t,u) = exp (u*t) / (2*pi*i)
