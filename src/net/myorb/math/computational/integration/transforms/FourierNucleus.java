@@ -98,7 +98,7 @@ public class FourierNucleus<T> extends NucleusCore<T>
 				return manager.multiply (S2PI, lib.sin (ut));
 
 			case COS:
-				return manager.multiply (S2PI, lib.cos (ut));
+				return  manager.multiply (S2PI, lib.cos (ut));
 
 		}
 

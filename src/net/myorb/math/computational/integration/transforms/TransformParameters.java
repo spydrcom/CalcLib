@@ -1,6 +1,7 @@
 
 package net.myorb.math.computational.integration.transforms;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,12 +20,12 @@ public class TransformParameters
 	/**
 	 * transform identity based on author
 	 */
-	public enum TransformKind {FOURIER, HANKEL, HERMITE, HILBERT, JACOBI, LAPLACE, LEGENDRE, LAGUERRE}
+	public enum TransformKind {FOURIER, HANKEL, HERMITE, HILBERT, JACOBI, LAPLACE, LEGENDRE, LAGUERRE, MELLIN}
 
 	/**
 	 * Fourier transform sub-types
 	 */
-	public enum TransformType {COMPLEX, SIN, COS, HARTLEY, BESSEL}
+	public enum FourierTransformType {COMPLEX, SIN, COS, HARTLEY, BESSEL}
 
 
 	/**
@@ -32,9 +33,11 @@ public class TransformParameters
 	 */
 	public TransformParameters (Map<String, Object> configuration)
 	{
-		this.configuration = configuration;
+		this.configuration =
+			new HashMap<String, Object>();
+		this.configuration.putAll (configuration);
 		this.nucleusType = NucleusType.valueOf (getParameter ("nucleus").toUpperCase ());
-		this.transformType = TransformType.valueOf (getParameter ("type").toUpperCase ());
+		this.transformType = FourierTransformType.valueOf (getParameter ("type").toUpperCase ());
 	}
 
 
@@ -73,8 +76,8 @@ public class TransformParameters
 	/**
 	 * @return the Fourier transform sub-type
 	 */
-	public TransformType getTransformType () { return transformType; }
-	protected TransformType transformType;
+	public FourierTransformType getTransformType () { return transformType; }
+	protected FourierTransformType transformType;
 
 	/**
 	 * @return KERNEL or INVERSE

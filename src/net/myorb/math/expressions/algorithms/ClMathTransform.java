@@ -2,14 +2,17 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.TrapezoidIntegration;
-import net.myorb.math.computational.integration.transforms.FourierNucleus;
-import net.myorb.math.computational.integration.transforms.TransformParameters;
-import net.myorb.math.expressions.tree.RangeNodeDigest;
+import net.myorb.math.computational.integration.Quadrature;
+import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
+import net.myorb.math.computational.integration.transforms.*;
+
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -35,8 +38,7 @@ public class ClMathTransform<T>
 	public SymbolMap.Named importSymbolFrom
 	(String named, Map<String, Object> configuration)
 	{
-		this.sym = named;
-		this.options = configuration;
+		this.sym = named; this.copy (configuration);
 		return new TransformAbstraction (named);
 	}
 
@@ -46,12 +48,21 @@ public class ClMathTransform<T>
 	 */
 	public SymbolMap.Named getInstance (String sym, LibraryObject<T> lib)
 	{
-		this.sym = sym;
-		this.options = lib.getParameterization ();
+		this.sym = sym; this.copy (lib.getParameterization ());
 		return new TransformAbstraction (sym);
 	}
-	protected Map<String, Object> options;
 	protected String sym;
+
+
+	/**
+	 * @param configuration the parameter hash for the transform
+	 */
+	public void copy (Map<String, Object> configuration)
+	{
+		this.options = new HashMap<String, Object>();
+		this.options.putAll (configuration);
+	}
+	protected Map<String, Object> options;
 
 
 	/* (non-Javadoc)
@@ -133,7 +144,7 @@ public class ClMathTransform<T>
 		 */
 		void setKernel ()
 		{
-			TransformParameters parameters = new TransformParameters (configuration);
+			parameters = new TransformParameters (configuration);
 			
 			switch (parameters.getKind ())
 			{
@@ -141,10 +152,23 @@ public class ClMathTransform<T>
 					kernel = new FourierNucleus<T> (environment, parameters);
 					break;
 
+				case HILBERT:
+					kernel = new HilbertNucleus<T> (environment, parameters);
+					break;
+
+				case LAPLACE:
+					kernel = new LaplaceNucleus<T> (environment, parameters);
+					break;
+
+				case MELLIN:
+					kernel = new MellinNucleus<T> (environment, parameters);
+					break;
+
 				default:
-					throw new RuntimeException ("Kernel kind not recognized");
+					throw new RuntimeException ("Kernel specified is not implemented");
 			}
 		}
+		protected TransformParameters parameters;
 
 		/**
 		 * compute integral of the integrand function over digest bounds
@@ -154,9 +178,47 @@ public class ClMathTransform<T>
 		 */
 		public GenericValue integralOf (Function<T> integrand, RangeNodeDigest<T> digest)
 		{
-			TrapezoidIntegration<T> integral =
-					new TrapezoidIntegration<T>(integrand);
-			return vm.newDiscreteValue (compute (integral, digest));
+			T result = null;
+			String method = parameters.getParameter ("method");
+
+			if (method == null)
+			{
+				TrapezoidIntegration<T> integral =
+						new TrapezoidIntegration<T>(integrand);
+				result = compute (integral, digest);
+			}
+			else
+			{
+				ExpressionSpaceManager<T> sm = environment.getSpaceManager ();
+				RealIntegrandFunctionBase quadIg = new QuadIntegrandWrapper<T> (integrand, sm);
+				result = compute (new Quadrature (quadIg, options).getIntegral (), digest, sm);
+			}
+
+			return vm.newDiscreteValue (result);
+		}
+
+		/**
+		 * approximation of integral using real-number Quadrature
+		 * @param integral the Quadrature approximation object based on Double data type
+		 * @param over the range object providing the parameters to the integration
+		 * @param sm a space manager for the integrand data type
+		 * @return the computed Quadrature value
+		 */
+		public T compute
+			(
+				Quadrature.Integral integral, RangeNodeDigest<T> over,
+				ExpressionSpaceManager<T> sm
+			)
+		{
+			return sm.convertFromDouble
+			(
+				integral.eval
+				(
+					0.0,
+					sm.convertToDouble (vm.toDiscrete (over.getLoBnd ())),
+					sm.convertToDouble (vm.toDiscrete (over.getHiBnd ()))
+				)
+			);
 		}
 
 		/**
@@ -190,5 +252,37 @@ public class ClMathTransform<T>
 	}
 
 
+}
+
+
+/**
+ * wrap a typed function as operating on real numbers
+ * @param <T> the specified data type
+ */
+class QuadIntegrandWrapper<T> extends RealIntegrandFunctionBase
+{
+
+	QuadIntegrandWrapper
+		(
+			Function<T> integrand,
+			ExpressionSpaceManager<T> sm
+		)
+	{
+		this.integrand = integrand;
+		this.sm = sm;
+	}
+	protected ExpressionSpaceManager<T> sm;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.RealIntegrandFunctionBase#eval(java.lang.Double)
+	 */
+	public Double eval (Double t)
+	{
+		T result =
+			integrand.eval (sm.convertFromDouble (t));
+		return sm.convertToDouble (result);
+	}
+	protected Function<T> integrand;
+	
 }
 

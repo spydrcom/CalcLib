@@ -44,7 +44,8 @@ public class Quadrature
 			Map<String,Object> parameters
 		)
 	{
-		this.integrand = integrand; this.parameters = parameters;
+		this.integrand = integrand;
+		this.parameters = parameters;
 		this.method = Configuration.getMethod (parameters);
 	}
 	protected Map<String,Object> parameters;
