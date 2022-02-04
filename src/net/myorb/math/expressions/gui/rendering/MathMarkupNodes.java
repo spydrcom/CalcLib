@@ -69,7 +69,9 @@ public class MathMarkupNodes implements NodeFormatting
 	 */
 	public String formatIdentifierReference (String nodeContents)
 	{
-		return enclose (nodeContents, IDENTIFIER_TAG);
+		String id = nodeContents.replaceAll
+			(OperatorNomenclature.PRIME_OPERATOR, OperatorNomenclature.PRIME_RENDER);
+		return enclose (id, IDENTIFIER_TAG);
 	}
 
 	/* (non-Javadoc)

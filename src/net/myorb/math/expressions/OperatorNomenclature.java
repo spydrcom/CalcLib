@@ -320,7 +320,9 @@ public class OperatorNomenclature
 	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			incrementation {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation
-	PRIME_OPERATOR				= "'"			// f'(x)			first derivative evaluation
+	PRIME_OPERATOR				= "'",			// f'(x)			first derivative evaluation
+
+	PRIME_RENDER				= "\u00B4"		// f'(x)			render chanacter for prime
 		;
 
 

@@ -16,6 +16,7 @@ import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.symbols.GenericWrapper;
 import net.myorb.math.expressions.symbols.LibraryObject;
 
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -345,11 +346,11 @@ class DerivativeParameterManager<T> implements
 
 				if (order == 1)
 				{
-					fn = using.formatIdentifierReference (functionName + "\u00B4");
+					fn = using.formatIdentifierReference (functionName + OperatorNomenclature.PRIME_RENDER);
 				}
 				else if (order == 2)
 				{
-					fn = using.formatIdentifierReference (functionName + "\u00B4\u00B4");
+					fn = using.formatIdentifierReference (functionName + DOUBLE_PRIME);
 				}
 				else
 				{
@@ -382,6 +383,7 @@ class DerivativeParameterManager<T> implements
 
 		throw new RuntimeException (BAD_REQUEST);
 	}
+	public static final String DOUBLE_PRIME = OperatorNomenclature.PRIME_RENDER+OperatorNomenclature.PRIME_RENDER;
 
 
 	/* (non-Javadoc)
