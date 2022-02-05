@@ -29,6 +29,15 @@ public class HilbertNucleus<T> extends NucleusCore<T>
 
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#getKernelName()
+	 */
+	public String getKernelName ()
+	{
+		return "KI_H";
+	}
+
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#setConstants()
 	 */
 	public void setConstants ()

@@ -38,6 +38,13 @@ public class Environment<T> extends OperatorProcessing<T>
 	public static <S> void provideAccess (Object object, ExpressionSpaceManager<S> manager)
 	{ provideAccess (object, manager.getEvaluationControl ().getEngine ().getEnvironment ()); }
 
+	/**
+	 * use THIS environment to provide access
+	 * @param object the object that needs access
+	 */
+	public void provideAccessTo (Object object)
+	{ provideAccess (object, this); }
+
 
 	/**
 	 * construct the environment for expression evaluation

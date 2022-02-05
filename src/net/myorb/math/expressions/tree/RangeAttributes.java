@@ -58,14 +58,23 @@ public class RangeAttributes
 		)
 		throws SemanticError
 	{
-		attributeRangeDescriptorDelta (rngDesc);
-		attributeRangeDescriptorLbound (rngDesc);
-		attributeRangeDescriptorHbound (rngDesc);
+		performEvaluationAssignmentCheck (rngDesc);
 
-		SemanticAnalysis.reduceExpression (rngDesc.delta);
-		SemanticAnalysis.reduceExpression (rngDesc.loExpr);
-		SemanticAnalysis.reduceExpression (rngDesc.hiExpr);
+		if (rngDesc.describesRange ())
+		{
+
+			attributeRangeDescriptorDelta (rngDesc);
+			attributeRangeDescriptorLbound (rngDesc);
+			attributeRangeDescriptorHbound (rngDesc);
+
+			SemanticAnalysis.reduceExpression (rngDesc.delta);
+			SemanticAnalysis.reduceExpression (rngDesc.loExpr);
+			SemanticAnalysis.reduceExpression (rngDesc.hiExpr);
+
+		}
+
 		SemanticAnalysis.reduceExpression (rngDesc.target);
+		//System.out.println (rngDesc);
 	}
 
 
@@ -83,6 +92,45 @@ public class RangeAttributes
 			rngDesc.endpoints.identifiers.get (rngDesc.variableName);
 		id.getIdentifierProperties ().setAsLocalType ();
 	}
+
+
+	/**
+	 * check for evaluation point description syntax
+	 * @param rngDesc range descriptor to be evaluated
+	 * @param <T> data type to be used processing range
+	 * @throws SemanticError for incomplete descriptor
+	 */
+	public static <T> void performEvaluationAssignmentCheck
+		(
+			LexicalAnalysis.RangeDescriptor<T> rngDesc
+		)
+		throws SemanticError
+	{
+		Expression<T> endpoints = rngDesc.endpoints;
+		if (endpoints.size () < 3) throw new SemanticError ("Descriptor is incomplete");
+
+		if (ASSIGNS.equals (endpoints.get (1)))
+		{
+			rngDesc.variableName = attributeRangeDescriptorVar (endpoints.get (0));
+			rngDesc.setDescriptionType (LexicalAnalysis.RangeDescriptor.DescriptionType.EVALUATION_POINT);
+			captureEvalPoint (rngDesc); SemanticAnalysis.reduceExpression (rngDesc.evalExpr);
+			rngDesc.endpoints.clear ();
+			return;
+		}
+
+		rngDesc.setDescriptionType (LexicalAnalysis.RangeDescriptor.DescriptionType.RANGE_SPAN);
+	}
+	public static <T> void captureEvalPoint
+		(
+			LexicalAnalysis.RangeDescriptor<T> rngDesc
+		)
+		throws SemanticError
+	{
+		rngDesc.endpoints.remove (0); rngDesc.endpoints.remove (0);
+		rngDesc.evalExpr = rngDesc.newSub (rngDesc.endpoints, rngDesc.endpoints);
+		rngDesc.endpoints.clear ();
+	}
+	public static final String ASSIGNS = OperatorNomenclature.ASSIGNMENT_DELIMITER;
 
 
 	/**

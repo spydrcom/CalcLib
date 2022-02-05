@@ -61,6 +61,7 @@ public class Quadrature
 		{
 			case TSQ:	return new TSQuadrature (integrand, parameters);
 			case CCQ:	return new CCQuadrature (integrand, parameters);
+			case GAUSS:	return new GaussQuadrature (integrand, parameters).getIntegral ();
 			case CTA:	return new TrapezoidalApproximation (integrand, parameters, false);
 			case CTAA:	return new TrapezoidalApproximation (integrand, parameters, true);
 			default: throw new RuntimeException ("Integration method not recognized");

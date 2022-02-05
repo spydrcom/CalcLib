@@ -51,6 +51,14 @@ public class NucleusCore<T> implements Function<T>
 
 
 	/**
+	 * @return name to use in transform render
+	 */
+	public String getKernelName () { return "K"; }
+
+	public boolean isKernelInverse () { return parameters.isInverse (); }
+
+
+	/**
 	 * compute appropriate constant(s) based on Kernel type
 	 */
 	public void setConstants () {}

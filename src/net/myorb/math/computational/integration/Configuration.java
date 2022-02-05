@@ -49,6 +49,7 @@ public class Configuration
 		CCQ,	// Clenshaw-Curtis Quadrature
 		CTA,	// Common Trapezoidal Approximation, no adjustment
 		CTAA,	// Common Trapezoidal Approximation, using adjustment
+		GAUSS,	// Gauss algorithms including Laguerre and Lagrange
 		UNKNOWN
 	}
 

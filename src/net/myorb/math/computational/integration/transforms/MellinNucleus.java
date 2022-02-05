@@ -29,6 +29,17 @@ public class MellinNucleus<T> extends NucleusCore<T>
 
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#getKernelName()
+	 */
+	public String getKernelName ()
+	{
+		if ( ! parameters.isInverse () )
+		{ return "K_M"; }
+		return "KI_M";
+	}
+
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#setConstants()
 	 */
 	public void setConstants ()

@@ -105,9 +105,12 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 				configuration
 			);
 
+			Quadrature.Integral integral = algorithm.getIntegral ();
+			environment.provideAccessTo (integral);
+
 			return cvt.toGeneric
 			(
-				algorithm.getIntegral ().eval
+				integral.eval
 				(
 					0.0,
 					cvt.toDouble (digest.getLoBnd ()),

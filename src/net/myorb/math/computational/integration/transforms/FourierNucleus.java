@@ -29,6 +29,32 @@ public class FourierNucleus<T> extends NucleusCore<T>
 
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#getKernelName()
+	 */
+	public String getKernelName ()
+	{
+		switch (parameters.getTransformType ())
+		{
+
+			case SIN:		return "K_Fs";
+			case COS:		return "K_Fc";
+			case HARTLEY:	return "K_Fh";
+
+			case BESSEL:
+				if ( ! parameters.isInverse () )
+				{ return "K_Fb"; }
+				return "KI_Fb";
+
+			default:
+				if ( ! parameters.isInverse () )
+				{ return "K_F"; }
+				return "KI_F";
+
+		}
+	}
+
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#setConstants()
 	 */
 	public void setConstants ()

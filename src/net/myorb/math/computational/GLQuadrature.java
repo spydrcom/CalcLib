@@ -32,6 +32,9 @@ public class GLQuadrature
 		x#i is i-th root of L#n(x) and w#i is:
 		w#i = x#i / [ (n+1)^2 * ( L#(n+1) (x#i) )^2 ]
 
+		generalized:
+		w#i = GAMMA (n+alpha+1) * x#i / [ n! * (n+1)^2 * ( L#(n+1)^(alpha) (x#i) )^2 ]
+		for the form x^alpha * f(x) * exp (-x)
 	 *
 	 */
 
@@ -198,8 +201,10 @@ public class GLQuadrature
 	public static void main (String... args)
 	{
 		computeGamma (new L20 ());
-		//computeL30 ();
-		//checkRoots ();
+		computeGamma (new L25 ());
+		computeGamma (new L30 ());
+//		computeL30 ();
+//		checkRoots ();
 	}
 
 

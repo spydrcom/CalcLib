@@ -7,12 +7,14 @@ import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 import net.myorb.math.computational.integration.transforms.*;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
-
+import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -105,6 +107,7 @@ public class ClMathTransform<T>
 			this.configuration.put ("FACTORY", ClMathTransform.class.getCanonicalName ());
 			this.configuration.put ("SYMBOL", sym);
 			this.configuration.putAll (options);
+			this.setKernel ();
 		}
 		protected ValueManager<T> vm;
 
@@ -137,7 +140,7 @@ public class ClMathTransform<T>
 				public SpaceManager<T> getSpaceManager () { return manager; }
 			};
 		}
-		protected Function<T> kernel;
+		protected NucleusCore<T> kernel;
 
 		/**
 		 * identify Transform kind and construct a kernel object
@@ -238,6 +241,47 @@ public class ClMathTransform<T>
 					vm.toDiscrete (over.getHiBnd ()),
 					vm.toDiscrete (over.getDelta ())
 				);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#markupForDisplay(java.lang.String, net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+		 */
+		public String markupForDisplay (String operator, Range range, String parameters, NodeFormatting using)
+		{
+			String transformRender =
+				reference (kernel.getKernelName (), using) +
+				parameterList (range.getIdentifier (), using) +
+				multiplicationOperatorReference (using);
+			return using.rangeSpecificationNotation
+				(
+					using.integralRange
+					(
+						OperatorNomenclature.INTEGRAL_OPERATOR,
+						range
+					),
+					transformRender + parameters
+				);
+		}
+		public String parameterList (String rangeIdentifier, NodeFormatting using)
+		{
+			StringBuffer references = new StringBuffer ();
+			String rangeId = reference (rangeIdentifier, using),
+					basis = reference (options.get ("basis").toString (), using);
+			if (kernel.isKernelInverse ()) references.append (rangeId).append (",").append (basis);
+			else references.append (basis).append (",").append (rangeId);
+			return using.formatParenthetical (references.toString ());
+		}
+		public String reference (String symbol, NodeFormatting using)
+		{
+			String identifier =
+				ConventionalNotations.determineNotationFor (symbol);
+			return using.formatIdentifierReference (identifier);
+		}
+		public String multiplicationOperatorReference (NodeFormatting using)
+		{
+			String renderAs = OperatorNomenclature.MULTIPLICATION_OPERATOR;
+			String identifiedNotation = ConventionalNotations.findMarkupFor (renderAs);
+			return using.formatOperatorReference (identifiedNotation==null? renderAs: identifiedNotation);
 		}
 
 		/* (non-Javadoc)

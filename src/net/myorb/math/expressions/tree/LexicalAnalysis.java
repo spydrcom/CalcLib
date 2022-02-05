@@ -502,6 +502,8 @@ public class LexicalAnalysis<T>
 		implements Element, JsonRepresentation<T>
 	{
 
+		public enum DescriptionType {UNDETERMINED, EVALUATION_POINT, RANGE_SPAN}
+
 		public RangeDescriptor ()
 		{
 			this.iterationConsumer = null;
@@ -578,9 +580,26 @@ public class LexicalAnalysis<T>
 		public Expression<T> getEndpoints () { return endpoints; }
 		public void setTarget (Expression<T> target) { this.target = target; }
 		public void setEndpoints (Expression<T> endpoints) { this.endpoints = endpoints; }
-		protected Expression<T> delta = null, loExpr = null, hiExpr = null;
+		protected Expression<T> delta = null, loExpr = null, hiExpr = null, evalExpr = null;
+		protected DescriptionType descriptionType = DescriptionType.UNDETERMINED;
 		protected IterationConsumer iterationConsumer;
 		protected SubExpression<T> parent;
+
+		/**
+		 * @param descriptionType the identified type of descriptor
+		 */
+		public void setDescriptionType (DescriptionType descriptionType)
+		{
+			this.descriptionType = descriptionType;
+		}
+
+		/**
+		 * @return TRUE if identified as a range
+		 */
+		public boolean describesRange ()
+		{
+			return this.descriptionType == DescriptionType.RANGE_SPAN;
+		}
 
 		/**
 		 * @return identifier for consumer type
@@ -720,11 +739,23 @@ public class LexicalAnalysis<T>
 		public String toString ()
 		{
 			StringBuffer buf = new StringBuffer ();
-			buf.append (getConsumerName ()).append (" [ ").append (loExpr);
-			buf.append (lbndOp.getSymbolProperties ().getName ()).append (" ").append (variableName).append (" ");
-			buf.append (hbndOp.getSymbolProperties ().getName ()).append (" ").append (hiExpr);
-			buf.append (" <> ").append (delta).append (" ] ");
-			buf.append ("( ").append (target).append (" )");
+			buf.append (getConsumerName ()).append (" [ ");
+			
+			if (descriptionType == DescriptionType.EVALUATION_POINT)
+			{
+				buf.append (variableName).append (" = ").append (evalExpr);
+			}
+			else
+			{
+				buf.append (loExpr)
+				.append (lbndOp.getSymbolProperties ().getName ());
+				buf.append (" ").append (variableName).append (" ");
+				buf.append (hbndOp.getSymbolProperties ().getName ())
+				.append (" ").append (hiExpr).append (" <> ")
+				.append (delta);
+			}
+
+			buf.append (" ] ").append ("( ").append (target).append (" )");
 			return buf.toString ();
 		}
 
