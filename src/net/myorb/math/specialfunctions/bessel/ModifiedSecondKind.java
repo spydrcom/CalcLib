@@ -241,7 +241,7 @@ class Ka
 
 	Ka (double a, int infinity, Map<String,Object> parameters)
 	{
-		I = new Quadrature (new KalphaIntegrand (a), parameters).getIntegral ();
+		I = new Quadrature (parameters).getIntegral (new KalphaIntegrand (a));
 		this.a = a; this.infinity = infinity;
 	}
 	protected double a;

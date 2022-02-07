@@ -3,8 +3,6 @@ package net.myorb.math.computational.integration;
 
 import net.myorb.math.computational.TrapezoidIntegration;
 
-import java.util.Map;
-
 /**
  * integration by Trapezoidal Approximation
  * @author Michael Druckman
@@ -40,12 +38,12 @@ public class TrapezoidalApproximation implements Quadrature.Integral
 	public TrapezoidalApproximation
 		(
 			RealIntegrandFunctionBase integrand,
-			Map<String,Object> parameters,
+			Configuration parameters,
 			boolean adjusted
 		)
 	{
 		this.approximation = new TrapezoidIntegration<Double> (integrand, adjusted);
-		this.delta = Double.parseDouble (parameters.get ("delta").toString ());
+		this.delta = parameters.getValue ("delta").doubleValue ();
 		this.integrand = integrand;
 	}
 	protected TrapezoidIntegration<Double> approximation;

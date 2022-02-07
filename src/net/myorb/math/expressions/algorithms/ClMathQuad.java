@@ -1,14 +1,18 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.integration.Quadrature;
 import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
+
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -78,39 +82,27 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	/**
 	 * Quad function object base class
 	 */
-	public class QuadAbstraction extends QuadratureBase<T> implements SymbolMap.ImportedConsumer
+	public class QuadAbstraction extends QuadratureBase<T>
+			implements SymbolMap.ImportedConsumer
 	{
 
 		QuadAbstraction (String sym)
 		{
 			super (sym, environment);
+			this.processConfiguration ();
 			this.cvt = environment.getConversionManager ();
-			this.configuration = new HashMap<String, Object>();
-			this.configuration.put ("FACTORY", ClMathQuad.class.getCanonicalName ());
-			this.configuration.put ("SYMBOL", sym);
-			this.configuration.putAll (options);
+			this.algorithm = new Quadrature (this.configuration);
 		}
+		protected Quadrature algorithm;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#evaluate(net.myorb.math.expressions.tree.RangeNodeDigest)
 		 */
 		public GenericValue evaluate (RangeNodeDigest<T> digest)
 		{
-			Quadrature algorithm = new Quadrature
-			(
-				new QuadIntegrand<T>
-				(
-					digest, environment
-				),
-				configuration
-			);
-
-			Quadrature.Integral integral = algorithm.getIntegral ();
-			environment.provideAccessTo (integral);
-
 			return cvt.toGeneric
 			(
-				integral.eval
+				integralFor (digest).eval
 				(
 					0.0,
 					cvt.toDouble (digest.getLoBnd ()),
@@ -120,6 +112,24 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		}
 		protected DataConversions<T> cvt;
 
+		/**
+		 * @param digest description of integral target
+		 * @return the quadrature object
+		 */
+		public Quadrature.Integral integralFor (RangeNodeDigest<T> digest)
+		{
+			Quadrature.Integral integral;
+			integral = algorithm.getIntegral (new QuadIntegrand<T>(digest, environment));
+			environment.provideAccessTo (integral);
+			return integral;
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#specialCaseRenderSection(net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+		 */
+		public String specialCaseRenderSection (Range range, NodeFormatting using)
+		{ return algorithm.specialCaseRenderSection (range, using); }
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
 		 */
@@ -127,7 +137,12 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		{
 			return configuration;
 		}
-		Map<String, Object> configuration;
+		public void processConfiguration ()
+		{
+			this.configuration = new Parameterization.Hash
+			(sym, "FACTORY", ClMathQuad.class, options);
+		}
+		protected Parameterization.Hash configuration;
 
 	}
 

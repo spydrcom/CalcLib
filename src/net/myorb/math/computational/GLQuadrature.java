@@ -39,6 +39,26 @@ public class GLQuadrature
 	 */
 
 
+	public enum Lists {L20, L25, L30}
+
+	/**
+	 * @param name the name of an available list
+	 * @return the object holding the requested list
+	 */
+	public static LaguerreLists getListCalled (String name)
+	{
+		Lists requested = Lists.valueOf (name);
+
+		switch (requested)
+		{
+			case L25: return new L25 ();
+			case L20: return new LaguerreLists (new L20 ());
+			case L30: return new L30 ();
+			default: return null;
+		}
+	}
+
+
 	/**
 	 * an object that holds pairs of roots and weights
 	 */
@@ -75,6 +95,7 @@ public class GLQuadrature
 				this.weights = new double[weights.size ()]
 			);
 		}
+		public LaguerreLists (Laguerre L) { super (L.roots, L.weights); }
 		public LaguerreLists () { super (null, null); }
 	}
 

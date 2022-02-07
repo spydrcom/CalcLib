@@ -7,8 +7,6 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.data.abstractions.DataSequence2D;
 
-import java.util.Map;
-
 /**
  * configuration object for Gauss-Lagrange quadrature implementations
  * @author Michael Druckman
@@ -20,7 +18,7 @@ public class LagrangeQuadrature extends CommonQuadrature
 	public LagrangeQuadrature
 		(
 			RealIntegrandFunctionBase integrand,
-			Map<String,Object> parameters
+			Configuration parameters
 		)
 	{
 		super (integrand, parameters);
@@ -51,8 +49,7 @@ public class LagrangeQuadrature extends CommonQuadrature
 	 */
 	public DataSequence2D<Double> sequenceFor (double lo, double hi)
 	{
-		double delta =
-			Double.parseDouble (parameters.get ("delta").toString ());
+		double delta = parameters.getValue ("delta").doubleValue ();
 		DataSequence2D<Double> s = new DataSequence2D<Double>();
 		return fill (s, lo, hi, delta);
 	}

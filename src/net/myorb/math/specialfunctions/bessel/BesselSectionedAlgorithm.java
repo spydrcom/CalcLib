@@ -3,7 +3,6 @@ package net.myorb.math.specialfunctions.bessel;
 
 import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 import net.myorb.math.computational.integration.SectionedAlgorithm;
-import net.myorb.math.computational.integration.Configuration;
 
 import net.myorb.utilities.Clib;
 
@@ -15,8 +14,6 @@ import java.util.Map;
  */
 public class BesselSectionedAlgorithm extends SectionedAlgorithm
 {
-
-	public static class IntegrationConfiguration extends Configuration {}
 
 	/**
 	 * extended Bessel integrand holds value of order (alpha)

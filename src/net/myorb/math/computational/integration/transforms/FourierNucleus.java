@@ -18,6 +18,12 @@ public class FourierNucleus<T> extends NucleusCore<T>
 {
 
 
+	/**
+	 * Fourier transform sub-types
+	 */
+	public enum FourierTransformType {COMPLEX, SIN, COS, HARTLEY, BESSEL}
+
+
 	public FourierNucleus
 		(
 			Environment<T> environment,
@@ -29,11 +35,19 @@ public class FourierNucleus<T> extends NucleusCore<T>
 
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#setType(java.lang.String)
+	 */
+	public void setType (String type)
+	{ transformType = FourierTransformType.valueOf (parameters.getType ().toUpperCase ()); }
+	protected FourierTransformType transformType;
+
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.transforms.NucleusCore#getKernelName()
 	 */
 	public String getKernelName ()
 	{
-		switch (parameters.getTransformType ())
+		switch (transformType)
 		{
 
 			case SIN:		return "K_Fs";
@@ -59,7 +73,7 @@ public class FourierNucleus<T> extends NucleusCore<T>
 	 */
 	public void setConstants ()
 	{
-		switch (parameters.getTransformType ())
+		switch (transformType)
 		{
 
 			case SIN:
@@ -108,7 +122,7 @@ public class FourierNucleus<T> extends NucleusCore<T>
 	{
 		T ut = manager.multiply (getU (), t);
 
-		switch (parameters.getTransformType ())
+		switch (transformType)
 		{
 
 			case BESSEL:

@@ -1,6 +1,9 @@
 
 package net.myorb.math.computational.integration;
 
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
+
 import java.util.Map;
 
 /**
@@ -35,29 +38,26 @@ public class Quadrature
 	}
 
 	/**
-	 * @param integrand the function to be the subject of the numerical integration
 	 * @param parameters the parameter hash that contains configuration for the algorithm
 	 */
 	public Quadrature
 		(
-			RealIntegrandFunctionBase integrand,
 			Map<String,Object> parameters
 		)
 	{
-		this.integrand = integrand;
-		this.parameters = parameters;
-		this.method = Configuration.getMethod (parameters);
+		this.parameters = new Configuration (parameters);
 	}
-	protected Map<String,Object> parameters;
+	protected Configuration parameters;
 
 	/**
 	 * given the quadrature configuration parameters
 	 *  build an object that will provide numerical integration for the integrand
+	 * @param integrand the function to be the subject of the numerical integration
 	 * @return a newly constructed Integral object
 	 */
-	public Integral getIntegral ()
+	public Integral getIntegral (RealIntegrandFunctionBase integrand)
 	{
-		switch (method)
+		switch (parameters.getMethod ())
 		{
 			case TSQ:	return new TSQuadrature (integrand, parameters);
 			case CCQ:	return new CCQuadrature (integrand, parameters);
@@ -67,7 +67,24 @@ public class Quadrature
 			default: throw new RuntimeException ("Integration method not recognized");
 		}
 	}
-	protected RealIntegrandFunctionBase integrand;
-	protected Configuration.Methods method;
+
+	/**
+	 * format a special case portion of a render
+	 * @param range the range descriptor that introduced the integral
+	 * @param using the node formatting support object supplied for the render
+	 * @return mark-up for section specific to an algorithm
+	 */
+	public String specialCaseRenderSection (Range range, NodeFormatting using)
+	{
+		switch (parameters.getMethod ())
+		{
+			case GAUSS:
+				if (GaussQuadrature.getType (parameters) == GaussQuadrature.GaussTypes.LAGUERRE)
+				{
+					return LaguerreQuadrature.specialCaseRenderSection (range, using);
+				}
+			default: return "";
+		}
+	}
 
 }

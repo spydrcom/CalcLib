@@ -1,8 +1,6 @@
 
 package net.myorb.math.computational.integration;
 
-import java.util.Map;
-
 /**
  * configuration object for Gauss quadrature implementations
  * @author Michael Druckman
@@ -10,15 +8,24 @@ import java.util.Map;
 public class GaussQuadrature
 {
 
-	public enum Type {LAGRANGE, LAGUERRE}
+	public enum GaussTypes {LAGRANGE, LAGUERRE}
+
+	/**
+	 * @param parameters Configuration parameters for the algorithm
+	 * @return the sub-type of the Gauss Quadrature being implemented
+	 */
+	public static GaussTypes getType (Configuration parameters)
+	{
+		return GaussTypes.valueOf (parameters.getType ());
+	}
 
 	public GaussQuadrature
 		(
 			RealIntegrandFunctionBase integrand,
-			Map<String,Object> parameters
+			Configuration parameters
 		)
 	{
-		switch (Type.valueOf (parameters.get ("type").toString ().toUpperCase ()))
+		switch (getType (parameters))
 		{
 			case LAGRANGE: integral = new LagrangeQuadrature (integrand, parameters); break;
 			case LAGUERRE: integral = new LaguerreQuadrature (integrand, parameters); break;

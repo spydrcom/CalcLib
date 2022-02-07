@@ -5,6 +5,7 @@ import net.myorb.math.specialfunctions.Library;
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.specialfunctions.bessel.BesselDescription.OrderTypes;
 import net.myorb.math.computational.integration.RealDomainImplementation;
+import net.myorb.math.computational.integration.Configuration;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
@@ -669,7 +670,7 @@ class Yn<T> extends YnEquations<T>
 	 */
 	public void constructPolynomial (Map<String,Object> parameters)
 	{
-		switch (BesselSectionedAlgorithm.IntegrationConfiguration.identifyApproach (parameters))
+		switch (new Configuration (parameters).identifyApproach ())
 		{
 			case POLYNOMIAL:
 				this.yPoly = new YnPolynomial<T> (n, infinity, psm, sm);

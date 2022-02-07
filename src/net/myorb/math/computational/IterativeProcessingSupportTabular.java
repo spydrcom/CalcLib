@@ -42,6 +42,10 @@ public class IterativeProcessingSupportTabular<T> extends IterativeProcessingSup
 	{ if (table == null) return; table.extendBy (1); table.appendRow (new Object[]{count, change, approx, timeStamp ()}); }
 	protected Table table = null;
 
+
+	public static void enableDisplay () { TableFrame.enableDisplay(); }
+
+
 	/**
 	 * table component for display
 	 */
@@ -88,12 +92,15 @@ public class IterativeProcessingSupportTabular<T> extends IterativeProcessingSup
 		{
 			Panel p = new Panel ();
 			adapter.addTableToPanel (p);
-			frame = show (p, title + " (working...)", 600, 300);
+			if (showing) frame = show (p, title + " (working...)", 600, 300);
 			this.title = title;
 		}
 
-		public void done () { frame.setTitle (title); }
+		public void done () { if (showing) frame.setTitle (title); }
 		protected Frame frame; String title;
+
+		public static void enableDisplay () { showing = true; }
+		static boolean showing = false;
 
 	}
 

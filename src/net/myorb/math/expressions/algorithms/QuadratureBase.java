@@ -3,6 +3,7 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+
 import net.myorb.math.expressions.OperatorNomenclature;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -73,9 +74,20 @@ public class QuadratureBase<T> extends AbstractVectorConsumer
 					OperatorNomenclature.INTEGRAL_OPERATOR,
 					range
 				),
-				parameters
+				specialCaseRenderSection (range, using) + parameters
 			);
 	}
+
+
+	/**
+	 * format a special case portion of a render
+	 * @param range the range descriptor that introduced the integral
+	 * @param using the node formatting support object supplied for the render
+	 * @return mark-up for section specific to an algorithm
+	 */
+	public String specialCaseRenderSection
+	(Range range, NodeFormatting using)
+	{ return ""; }
 
 
 	/* (non-Javadoc)

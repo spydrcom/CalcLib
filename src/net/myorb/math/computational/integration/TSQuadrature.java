@@ -4,13 +4,12 @@ package net.myorb.math.computational.integration;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.computational.TanhSinhQuadratureTables;
 
-import java.util.Map;
-
 /**
  * quadrature using Tanh-Sinh algorithm
  * @author Michael Druckman
  */
-public class TSQuadrature implements Quadrature.Integral
+public class TSQuadrature extends CommonQuadrature
+		implements Quadrature.Integral
 {
 
 	/* (non-Javadoc)
@@ -22,6 +21,7 @@ public class TSQuadrature implements Quadrature.Integral
 		return TanhSinhQuadratureAlgorithms.Integrate
 		(integrand, lo, hi, targetAbsoluteError, stats);
 	}
+	protected double targetAbsoluteError;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.Quadrature.Integral#getErrorEstimate()
@@ -38,20 +38,17 @@ public class TSQuadrature implements Quadrature.Integral
 	{
 		return stats.numFunctionEvaluations;
 	}
+	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
 
 	public TSQuadrature
 		(
 			RealIntegrandFunctionBase integrand,
-			Map<String,Object> parameters
+			Configuration parameters
 		)
 	{
-		this.targetAbsoluteError =
-			Configuration.getPrecision (parameters);
+		super (integrand, parameters);
+		this.targetAbsoluteError = parameters.getPrecision ();
 		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
-		this.integrand = integrand;
 	}
-	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
-	protected RealIntegrandFunctionBase integrand;
-	protected double targetAbsoluteError;
 
 }

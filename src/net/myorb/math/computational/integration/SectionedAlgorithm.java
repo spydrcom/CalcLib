@@ -38,7 +38,7 @@ public class SectionedAlgorithm implements Function<Double>
 			)
 		{
 			this.coefficient = coefficient; this.dependentFunction = dependentFunction;
-			this.integral = new Quadrature (integrand, parameters).getIntegral ();
+			this.integral = new Quadrature (parameters).getIntegral (integrand);
 			this.integrand = integrand; this.lo = lo; this.hi = hi;
 		}
 		Quadrature.Integral integral;

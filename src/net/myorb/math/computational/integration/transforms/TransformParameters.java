@@ -22,22 +22,14 @@ public class TransformParameters
 	 */
 	public enum TransformKind {FOURIER, HANKEL, HERMITE, HILBERT, JACOBI, LAPLACE, LEGENDRE, LAGUERRE, MELLIN}
 
-	/**
-	 * Fourier transform sub-types
-	 */
-	public enum FourierTransformType {COMPLEX, SIN, COS, HARTLEY, BESSEL}
-
 
 	/**
 	 * @param configuration map supplied by source configuration statement
 	 */
 	public TransformParameters (Map<String, Object> configuration)
 	{
-		this.configuration =
-			new HashMap<String, Object>();
-		this.configuration.putAll (configuration);
-		this.nucleusType = NucleusType.valueOf (getParameter ("nucleus").toUpperCase ());
-		this.transformType = FourierTransformType.valueOf (getParameter ("type").toUpperCase ());
+		(this.configuration = new HashMap<String, Object>()).putAll (configuration);
+		this.nucleusType = NucleusType.valueOf (getParameterUC ("nucleus"));
 	}
 
 
@@ -49,6 +41,7 @@ public class TransformParameters
 	{
 		return Double.parseDouble (getParameter (named));
 	}
+
 
 	/**
 	 * @param named the name of the parameter
@@ -64,25 +57,46 @@ public class TransformParameters
 
 
 	/**
+	 * @param named the name of the parameter
+	 * @return UC text of named parameter or NULL if null
+	 */
+	public String getParameterUC (String named)
+	{
+		String p = getParameter (named);
+		return p==null? null: p.toUpperCase ();
+	}
+
+
+	/**
+	 * @return value of type parameter
+	 */
+	public String getType ()
+	{
+		return getParameter ("type");
+	}
+
+
+	/**
 	 * @return the kind of transform specified as KIND
 	 */
 	public TransformKind getKind ()
 	{
-		String kind =
-			getParameter ("kind").toUpperCase ();
+		String kind = getParameterUC ("kind");
 		return TransformKind.valueOf (kind);
 	}
 
-	/**
-	 * @return the Fourier transform sub-type
-	 */
-	public FourierTransformType getTransformType () { return transformType; }
-	protected FourierTransformType transformType;
 
 	/**
 	 * @return KERNEL or INVERSE
 	 */
 	public NucleusType getNucleusType () { return nucleusType; }
+
+
+	/**
+	 * @return TRUE for inverse, otherwise FALSE
+	 */
+	public boolean isInverse ()
+	{ return nucleusType == NucleusType.INVERSE; }
 	protected NucleusType nucleusType;
 
 
@@ -90,11 +104,6 @@ public class TransformParameters
 	 * @return the name of the parameter of the transform
 	 */
 	public String getBasis () { return getParameter ("basis"); }
-
-	/**
-	 * @return TRUE for inverse, otherwise FALSE
-	 */
-	public boolean isInverse () { return nucleusType == NucleusType.INVERSE; }
 
 
 }

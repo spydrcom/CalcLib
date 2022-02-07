@@ -1,8 +1,6 @@
 
 package net.myorb.math.computational.integration;
 
-import java.util.Map;
-
 /**
  * common base for Integral object
  * @author Michael Druckman
@@ -13,14 +11,14 @@ public class CommonQuadrature implements Quadrature.Integral
 	public CommonQuadrature
 		(
 			RealIntegrandFunctionBase integrand,
-			Map<String,Object> parameters
+			Configuration parameters
 		)
 	{
 		this.parameters = parameters;
 		this.integrand = integrand;
 	}
 	protected RealIntegrandFunctionBase integrand;
-	protected Map<String,Object> parameters;
+	protected Configuration parameters;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.Quadrature.Integral#eval(double, double, double)

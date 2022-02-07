@@ -1,27 +1,29 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.TrapezoidIntegration;
+
 import net.myorb.math.computational.integration.Quadrature;
 import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 import net.myorb.math.computational.integration.transforms.*;
 
-import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+import net.myorb.math.expressions.gui.rendering.Atomics;
+
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
-import net.myorb.math.expressions.ConventionalNotations;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.OperatorNomenclature;
+import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -40,9 +42,11 @@ public class ClMathTransform<T>
 	public SymbolMap.Named importSymbolFrom
 	(String named, Map<String, Object> configuration)
 	{
-		this.sym = named; this.copy (configuration);
+		this.sym = named;
+		this.options = Parameterization.copy (configuration);
 		return new TransformAbstraction (named);
 	}
+	protected Parameterization.Hash options;
 
 
 	/* (non-Javadoc)
@@ -50,21 +54,11 @@ public class ClMathTransform<T>
 	 */
 	public SymbolMap.Named getInstance (String sym, LibraryObject<T> lib)
 	{
-		this.sym = sym; this.copy (lib.getParameterization ());
+		this.sym = sym;
+		this.options = Parameterization.copy (lib.getParameterization ());
 		return new TransformAbstraction (sym);
 	}
 	protected String sym;
-
-
-	/**
-	 * @param configuration the parameter hash for the transform
-	 */
-	public void copy (Map<String, Object> configuration)
-	{
-		this.options = new HashMap<String, Object>();
-		this.options.putAll (configuration);
-	}
-	protected Map<String, Object> options;
 
 
 	/* (non-Javadoc)
@@ -72,11 +66,7 @@ public class ClMathTransform<T>
 	 */
 	public Map<String, Object> getIterationConsumerDescription ()
 	{
-		Map<String, Object> description = new HashMap<String, Object>();
-		description.put ("CLASSPATH", ClMathTransform.class.getCanonicalName ());
-		description.put ("SYMBOL", sym);
-		description.putAll (options);
-		return description;
+		return new Parameterization.Hash (sym, "CLASSPATH", ClMathTransform.class, options);
 	}
 
 
@@ -85,10 +75,10 @@ public class ClMathTransform<T>
 	 */
 	public IterationConsumer buildIterationConsumer (Map<String, Object> options)
 	{
-		this.options = options;
-		this.sym = options.get ("SYMBOL").toString ();
-		TransformAbstraction transform = new TransformAbstraction (sym);
-		return transform.getIterationConsumer ();
+		this.sym =
+			options.get ("SYMBOL").toString ();
+		this.options = Parameterization.copy (options);
+		return new TransformAbstraction (sym).getIterationConsumer ();
 	}
 
 
@@ -103,10 +93,7 @@ public class ClMathTransform<T>
 		{
 			super (sym, environment);
 			this.vm = environment.getValueManager ();
-			this.configuration = new HashMap<String, Object>();
-			this.configuration.put ("FACTORY", ClMathTransform.class.getCanonicalName ());
-			this.configuration.put ("SYMBOL", sym);
-			this.configuration.putAll (options);
+			this.processConfiguration ();
 			this.setKernel ();
 		}
 		protected ValueManager<T> vm;
@@ -194,7 +181,7 @@ public class ClMathTransform<T>
 			{
 				ExpressionSpaceManager<T> sm = environment.getSpaceManager ();
 				RealIntegrandFunctionBase quadIg = new QuadIntegrandWrapper<T> (integrand, sm);
-				result = compute (new Quadrature (quadIg, options).getIntegral (), digest, sm);
+				result = compute (new Quadrature (options).getIntegral (quadIg), digest, sm);
 			}
 
 			return vm.newDiscreteValue (result);
@@ -244,44 +231,25 @@ public class ClMathTransform<T>
 		}
 
 		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#markupForDisplay(java.lang.String, net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#specialCaseRenderSection(net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 		 */
-		public String markupForDisplay (String operator, Range range, String parameters, NodeFormatting using)
+		public String specialCaseRenderSection (Range range, NodeFormatting using)
 		{
-			String transformRender =
-				reference (kernel.getKernelName (), using) +
-				parameterList (range.getIdentifier (), using) +
-				multiplicationOperatorReference (using);
-			return using.rangeSpecificationNotation
-				(
-					using.integralRange
-					(
-						OperatorNomenclature.INTEGRAL_OPERATOR,
-						range
-					),
-					transformRender + parameters
-				);
+			return	kernelReference (range, using) + Atomics.multiplicationOperatorReference (using);
+		}
+		public String kernelReference (Range range, NodeFormatting using)
+		{
+			return	Atomics.reference (kernel.getKernelName (), using) +
+					parameterList (range.getIdentifier (), using);
 		}
 		public String parameterList (String rangeIdentifier, NodeFormatting using)
 		{
 			StringBuffer references = new StringBuffer ();
-			String rangeId = reference (rangeIdentifier, using),
-					basis = reference (options.get ("basis").toString (), using);
+			String rangeId = Atomics.reference (rangeIdentifier, using),
+					basis = Atomics.reference (options.get ("basis").toString (), using);
 			if (kernel.isKernelInverse ()) references.append (rangeId).append (",").append (basis);
 			else references.append (basis).append (",").append (rangeId);
 			return using.formatParenthetical (references.toString ());
-		}
-		public String reference (String symbol, NodeFormatting using)
-		{
-			String identifier =
-				ConventionalNotations.determineNotationFor (symbol);
-			return using.formatIdentifierReference (identifier);
-		}
-		public String multiplicationOperatorReference (NodeFormatting using)
-		{
-			String renderAs = OperatorNomenclature.MULTIPLICATION_OPERATOR;
-			String identifiedNotation = ConventionalNotations.findMarkupFor (renderAs);
-			return using.formatOperatorReference (identifiedNotation==null? renderAs: identifiedNotation);
 		}
 
 		/* (non-Javadoc)
@@ -291,7 +259,12 @@ public class ClMathTransform<T>
 		{
 			return configuration;
 		}
-		protected Map<String, Object> configuration;
+		public void processConfiguration ()
+		{
+			this.configuration = new Parameterization.Hash
+			(sym, "FACTORY", ClMathTransform.class, options);
+		}
+		protected Parameterization.Hash configuration;
 
 	}
 

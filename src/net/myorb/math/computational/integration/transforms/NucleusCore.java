@@ -27,9 +27,16 @@ public class NucleusCore<T> implements Function<T>
 		)
 	{
 		this.parameters = parameters;
+		this.setType (parameters.getType ());
 		this.processEnvironment (environment);
 	}
 	protected TransformParameters parameters;
+
+
+	/**
+	 * @param type the value of the type parameter
+	 */
+	public void setType (String type) {}
 
 
 	/**

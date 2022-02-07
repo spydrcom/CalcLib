@@ -1,6 +1,8 @@
 
 package net.myorb.math.computational.integration;
 
+import net.myorb.math.computational.Parameterization;
+
 import java.util.Map;
 
 /**
@@ -8,8 +10,13 @@ import java.util.Map;
  *  establish integration implementation
  * @author Michael Druckman
  */
-public class Configuration
+public class Configuration extends Parameterization
 {
+
+	public Configuration (Map<String, Object> hash)
+	{
+		super (hash);
+	}
 
 	/**
 	 * identification of series evaluation approaches
@@ -22,19 +29,15 @@ public class Configuration
 	}
 
 	/**
-	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @return the method of calculation configured for the function
 	 */
-	public static Approaches identifyApproach (Map<String,Object> parameters)
+	public Approaches identifyApproach ()
 	{
-		Object specified;
-		if ((specified = parameters.get ("method")) != null)
+		String method;
+		if ((method = getMethood ()) != null)
 		{
 			try
-			{
-				String name = specified.toString ();
-				return Approaches.valueOf (name.toUpperCase ());
-			}
+			{ return Approaches.valueOf (method); }
 			catch (Exception e) {}
 		}
 		return Approaches.SECTIONED;
@@ -55,17 +58,15 @@ public class Configuration
 
 	/**
 	 * identify method of computation
-	 * @param parameters the configuration parameters being used
 	 * @return the method identified in the configuration
 	 */
-	public static Methods getMethod (Map<String,Object> parameters)
+	public Methods getMethod ()
 	{
 		try
 		{
-			Object methodName =
-					parameters.get ("method");
+			String methodName = getMethood ();
 			if (methodName == null) return Methods.CCQ;
-			return Methods.valueOf (methodName.toString ());
+			return Methods.valueOf (methodName);
 		}
 		catch (Exception e)
 		{
@@ -75,14 +76,13 @@ public class Configuration
 
 	/**
 	 * get a value of precision to be used either as specified or defaulted
-	 * @param parameters a hash of name/value pairs passed from configuration
 	 * @return the precision value to be used
 	 */
-	public static double getPrecision (Map<String,Object> parameters)
+	public double getPrecision ()
 	{
+		Number p = getValue ("precision");
 		double precision = DEFAULT_PRECISION;
-		Object p = parameters.get ("precision");
-		if (p != null) precision = Double.parseDouble (p.toString ());
+		if (p != null) precision = p.doubleValue ();
 		return precision;
 	}
 	static final double DEFAULT_PRECISION = 1E-4;
