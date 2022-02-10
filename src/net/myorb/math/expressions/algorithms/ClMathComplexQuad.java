@@ -5,14 +5,17 @@ import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.integration.Quadrature;
 import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
 
-import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -23,7 +26,7 @@ import java.util.Map;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
+public class ClMathComplexQuad<T> extends InstanciableFunctionLibrary<T>
 	implements SymbolMap.FactoryForImports
 {
 
@@ -38,8 +41,8 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		this.options = Parameterization.copy (configuration);
 		return new QuadAbstraction (named);
 	}
-
-
+	
+	
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)
 	 */
@@ -51,17 +54,17 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	}
 	protected Parameterization.Hash options;
 	protected String sym;
-
-
+	
+	
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getIterationConsumerDescription()
 	 */
 	public Map<String, Object> getIterationConsumerDescription ()
 	{
-		return new Parameterization.Hash (sym, "CLASSPATH", ClMathQuad.class, options);
+		return new Parameterization.Hash (sym, "CLASSPATH", ClMathComplexQuad.class, options);
 	}
-
-
+	
+	
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#buildIterationConsumer(java.util.Map)
 	 */
@@ -73,15 +76,15 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		QuadAbstraction quad = new QuadAbstraction (sym);
 		return quad.getIterationConsumer ();
 	}
-
-
+	
+	
 	/**
 	 * Quad function object base class
 	 */
 	public class QuadAbstraction extends QuadratureBase<T>
 			implements SymbolMap.ImportedConsumer
 	{
-
+	
 		QuadAbstraction (String sym)
 		{
 			super (sym, environment);
@@ -90,42 +93,37 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 			this.algorithm = new Quadrature (this.configuration);
 		}
 		protected Quadrature algorithm;
-
+	
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#evaluate(net.myorb.math.expressions.tree.RangeNodeDigest)
 		 */
 		public GenericValue evaluate (RangeNodeDigest<T> digest)
 		{
-			return cvt.toGeneric
-			(
-				integralFor (digest).eval
-				(
-					0.0,
-					cvt.toDouble (digest.getLoBnd ()),
-					cvt.toDouble (digest.getHiBnd ())
-				)
-			);
+			QuadAxisIntegrand<T> integrand = new QuadAxisIntegrand<T>(digest, environment);
+			double lo = cvt.toDouble (digest.getLoBnd ()), hi = cvt.toDouble (digest.getHiBnd ());
+			integrand.setAxisComponentNumber (0); double real = integralFor (integrand).eval (0.0, lo, hi);
+			integrand.setAxisComponentNumber (1); double imag = integralFor (integrand).eval (0.0, lo, hi);
+			return integrand.construct (real, imag);
 		}
 		protected DataConversions<T> cvt;
-
+	
 		/**
-		 * @param digest description of integral target
+		 * @param integrand  description of integral target
 		 * @return the quadrature object
 		 */
-		public Quadrature.Integral integralFor (RangeNodeDigest<T> digest)
+		public Quadrature.Integral integralFor (QuadAxisIntegrand<T> integrand)
 		{
-			Quadrature.Integral integral;
-			integral = algorithm.getIntegral (new QuadIntegrand<T>(digest, environment));
+			Quadrature.Integral integral = algorithm.getIntegral (integrand);
 			environment.provideAccessTo (integral);
 			return integral;
 		}
-
+	
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#specialCaseRenderSection(net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 		 */
 		public String specialCaseRenderSection (Range range, NodeFormatting using)
 		{ return algorithm.specialCaseRenderSection (range, using); }
-
+	
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
 		 */
@@ -136,10 +134,10 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		public void processConfiguration ()
 		{
 			this.configuration = new Parameterization.Hash
-			(sym, "FACTORY", ClMathQuad.class, options);
+			(sym, "FACTORY", ClMathComplexQuad.class, options);
 		}
 		protected Parameterization.Hash configuration;
-
+	
 	}
 
 
@@ -149,26 +147,41 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 /**
  * function description of expression in integral target
  */
-class QuadIntegrand<T> extends RealIntegrandFunctionBase
+class QuadAxisIntegrand<T> extends RealIntegrandFunctionBase
 {
 
-	QuadIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
+	QuadAxisIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
 	{
-		digest.initializeLocalVariable ();
-		this.cvt = environment.getConversionManager ();
-		this.digest = digest;
+		this.mgr = (ExpressionComponentSpaceManager<T>) environment.getSpaceManager ();
+		(this.digest = digest).initializeLocalVariable ();
+		this.vm = environment.getValueManager ();
 	}
+	protected ExpressionComponentSpaceManager<T> mgr;
 	protected RangeNodeDigest<T> digest;
+	protected ValueManager<T> vm;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.RealIntegrandFunctionBase#eval(java.lang.Double)
 	 */
 	public Double eval (Double t)
 	{
-		digest.setLocalVariableValue (cvt.toGeneric (t));
-		return cvt.toDouble (digest.evaluateTarget ());
+		digest.setLocalVariableValue
+		(vm.newDiscreteValue (mgr.convertFromDouble (t)));
+		T result = vm.toDiscrete (digest.evaluateTarget ());
+		return mgr.component (result, componentNumber);
 	}
-	protected DataConversions<T> cvt;
+	public void setAxisComponentNumber (int componentNumber)
+	{ this.componentNumber = componentNumber; }
+	protected int componentNumber;
+
+	/**
+	 * @param components the components collected
+	 * @return the constructed result as generic value
+	 */
+	public GenericValue construct (double... components)
+	{
+		return vm.newDiscreteValue (mgr.construct (components));
+	}
 
 }
 
