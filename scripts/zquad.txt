@@ -1,0 +1,32 @@
+
+
+//* GL quad testing
+
+
+z1 = 0.5+14.0*i
+z1g = -4.0537030780372815e-10 -i*5.7732998345536051e-10
+z1z = 0.022241142609993589 -0.10325812326645006*i
+INFINITY = 10
+
+
+configure QUAD method "GAUSS" type "LAGRANGE" description "custom quadrature using Gauss-Lagrange"
+configure QUAD delta "0.1"
+instance GLQ QUAD
+
+
+!! ig(x,t) = exp(-t) * t^(x-1)
+RENDERF ig
+
+!! igz1 (t) = ig(z1,t)
+plotri igz1 [0 < x < INFINITY <> 0.05]
+
+
+!! G (x) = GLQ [ 0.01 < t < INFINITY ] ( ig(x,t) * <*> t ) ; express G
+RENDERF G
+
+
+Gz1 = G z1
+prettyprint Gz1
+
+calcErrZ1 = Gz1 - z1g
+prettyprint calcErrZ1

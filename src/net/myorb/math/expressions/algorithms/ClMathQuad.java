@@ -114,8 +114,9 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		 */
 		public Quadrature.Integral integralFor (RangeNodeDigest<T> digest)
 		{
-			Quadrature.Integral integral;
-			integral = algorithm.getIntegral (new QuadIntegrand<T>(digest, environment));
+			QuadIntegrand<T> target =
+					new QuadIntegrand<T>(digest, environment);
+			Quadrature.Integral integral = algorithm.getIntegral (target);
 			environment.provideAccessTo (integral);
 			return integral;
 		}
@@ -148,6 +149,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 
 /**
  * function description of expression in integral target
+ * @param <T> data type being processed
  */
 class QuadIntegrand<T> extends RealIntegrandFunctionBase
 {

@@ -153,6 +153,14 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#getComponentCount()
+	 */
+	public int getComponentCount ()
+	{
+		return 2;
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#magnitude(java.lang.Object)
 	 */
 	public double magnitude (ComplexValue<Double> value)

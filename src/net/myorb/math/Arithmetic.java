@@ -174,7 +174,7 @@ public class Arithmetic<T> extends ComputationConfiguration<T>
 	/**
 	 * compute internal representation for scalar
 	 * @param value simple integer value to convert
-	 * @param negative TRUE for negative value, FALSE forpositive
+	 * @param negative TRUE for negative value, FALSE for positive
 	 * @return internal representation for value
 	 */
 	public Value<T> forValue (T value, boolean negative)

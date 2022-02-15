@@ -11,6 +11,12 @@ public interface ExpressionComponentSpaceManager<T>
 {
 
 	/**
+	 * get the number of components making this structure
+	 * @return the number of components
+	 */
+	int getComponentCount ();
+
+	/**
 	 * construct the generic structure from components
 	 * @param components the components to use for the process
 	 * @return a new structured generic item

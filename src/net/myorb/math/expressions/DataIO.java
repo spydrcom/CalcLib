@@ -23,14 +23,18 @@ public class DataIO<T>
 {
 
 
-	public DataIO (Environment<T> environment)
+	public DataIO (ExpressionSpaceManager<T> spaceManager)
 	{
-		this.spaceManager =
-			environment.getSpaceManager ();
-		this.environment = environment;
+		this.spaceManager = spaceManager;
 	}
 	protected ExpressionSpaceManager<T> spaceManager;
-	protected Environment<T> environment;
+
+	public DataIO (Environment<T> environment)
+	{
+		this (environment.getSpaceManager ());
+		this.environment = environment;
+	}
+	protected Environment<T> environment = null;
 
 
 	/**

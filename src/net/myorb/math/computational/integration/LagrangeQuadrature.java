@@ -4,6 +4,7 @@ package net.myorb.math.computational.integration;
 import net.myorb.math.computational.GaussQuadrature;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
 import net.myorb.data.abstractions.DataSequence2D;
 
@@ -29,7 +30,8 @@ public class LagrangeQuadrature extends CommonQuadrature
 	 */
 	public void setEnvironment (Environment<Double> environment)
 	{
-		this.q = new GaussQuadrature<Double> (environment);
+		//.q = new GaussQuadrature<Double> (environment);
+		this.q = new GaussQuadrature<Double> (new ExpressionFloatingFieldManager());
 	}
 	protected GaussQuadrature<Double> q;
 

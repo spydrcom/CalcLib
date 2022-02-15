@@ -368,6 +368,7 @@ public class PowerPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public T computeXtoY (T x, T y, final ExtendedPowerLibrary<T> powerLibrary)
 	{
+		if (spaceManager.isZero (x)) return spaceManager.getZero ();
 		return powerLibrary.exp ( spaceManager.multiply ( y, powerLibrary.ln (x) ) );
 	}
 

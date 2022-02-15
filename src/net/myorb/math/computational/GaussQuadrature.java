@@ -41,7 +41,7 @@ public class GaussQuadrature<T> extends LagrangeInterpolationUsingCalculus<T>
 		return f;
 	}
 	protected String title = "Lagrange (Calculus) Interpolation";
-	protected Environment<T> environment = null;
+	//protected Environment<T> environment = null;
 	protected Regression<T> regression = null;
 
 	/**
@@ -70,7 +70,7 @@ public class GaussQuadrature<T> extends LagrangeInterpolationUsingCalculus<T>
 	{
 		this (environment.getSpaceManager ());
 		this.regression = new Regression<T>(environment);
-		this.environment = environment;
+		//this.environment = environment;
 	}
 	public GaussQuadrature (ExpressionSpaceManager<T> sm) { super (sm); }
 

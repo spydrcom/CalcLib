@@ -146,6 +146,7 @@ public class ClMathComplexQuad<T> extends InstanciableFunctionLibrary<T>
 
 /**
  * function description of expression in integral target
+ * @param <T> data type being processed
  */
 class QuadAxisIntegrand<T> extends RealIntegrandFunctionBase
 {
