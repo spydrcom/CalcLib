@@ -366,7 +366,7 @@ public class Regression<T> extends Statistics<T>
 
 /**
  * an extended version of the power function wrapper
- *  describing additional regression characteristics pertinant to the building of the model
+ *  describing additional regression characteristics pertinent to the building of the model
  * @param <T> type of component values on which operations are to be executed
  */
 class ModelWrapper<T> extends Statistics<T> implements Regression.Model<T>
@@ -497,6 +497,9 @@ class ModelWrapper<T> extends Statistics<T> implements Regression.Model<T>
 		return "\nPC  = " + pearsonCoefficient ();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString ()
 	{
 		return new StringBuffer ().
