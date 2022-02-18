@@ -55,20 +55,44 @@ public class VC31ComponentSpline<T> implements Function<T>
 			);
 		}
 
+		/**
+		 * @param models the spline models for the components
+		 * @param lo the lo end of the range described by this sequence
+		 * @param hi the hi end of the range described by this sequence
+		 */
 		public ComponentSpline
 			(
 				SegmentModels models,
 				double lo, double hi
 			)
 		{
-			this.models = models;
-			this.lo = lo; this.hi = hi;
 			this.functionCoordinatesDelta = deltaFor (lo, hi);
+			this.splineSlope = functionCoordinatesDelta / SPLINE_DELTA;
+			this.models = models; this.lo = lo; this.hi = hi;
 			this.restricted = new boolean[models.size ()];
 			Arrays.fill (restricted, false);
 		}
-		protected double lo, hi, functionCoordinatesDelta;
+		protected double functionCoordinatesDelta, splineSlope;
 		protected SegmentModels models;
+		protected double lo, hi;
+
+		/**
+		 * @return get the value of th slope used for coordinate translation
+		 */
+		public double getSlope ()
+		{
+			return splineSlope;
+		}
+
+		/**
+		 * get a model for a specific component
+		 * @param component the index identifying a component
+		 * @return the model to use for the component
+		 */
+		public Regression.Model<Double> modelFor (int component)
+		{
+			return models.get (component);
+		}
 
 		/**
 		 * compute function coordinate tick size
@@ -88,8 +112,7 @@ public class VC31ComponentSpline<T> implements Function<T>
 		 */
 		double translate (double from)
 		{
-			double offset = (from - lo) / functionCoordinatesDelta;
-			return SPLINE_LO + offset * SPLINE_DELTA;
+			return SPLINE_LO + (from - lo) / splineSlope;
 		}
 
 		/**
@@ -103,6 +126,11 @@ public class VC31ComponentSpline<T> implements Function<T>
 	}
 
 
+	/**
+	 * @param f a multi-dimensional unary function
+	 * @param mgr a space manager for the data type enabled for component manipulation
+	 * @param configuration a hash of configuration parameters
+	 */
 	public VC31ComponentSpline
 		(
 			Function<T> f,
@@ -145,8 +173,8 @@ public class VC31ComponentSpline<T> implements Function<T>
 		for (int c = 0; c < mgr.getComponentCount (); c++)
 		{
 			DataSequence<Double> axis = new DataSequence<Double>();
-			Vector<Double> v = calculateComponentAxis (c, points, axis);
-			models.add (performRegression (v, axis));
+			Vector<Double> toBeSolved = calculateComponentAxis (c, points, axis);
+			models.add (performRegression (toBeSolved, axis));
 		}
 		
 		splineSegments.add (new ComponentSpline (models, lo, hi));
@@ -227,7 +255,9 @@ public class VC31ComponentSpline<T> implements Function<T>
 
 
 	/**
-	 * @param x parameter to evaluation
+	 * use Chebyshev calculus to
+	 *  compute integral of polynomial at specified point
+	 * @param x point at which to perform evaluation
 	 * @return the computed integral value
 	 */
 	public T evalIntegral (T x)
@@ -239,21 +269,28 @@ public class VC31ComponentSpline<T> implements Function<T>
 		{
 			ComponentSpline spline = getComponentSplineFor (c, p);
 			ChebyshevPolynomial.Coefficients<Double> cs = spline.models.get (c).getCoefficients ();
-			resultComponents[c] = calculus.evaluatePolynomialIntegral (cs, spline.translate (p));
+			resultComponents[c] = spline.getSlope () * calculus.evaluatePolynomialIntegral (cs, spline.translate (p));
 		}
 		return mgr.construct (resultComponents);
 	}
+
+	/**
+	 * use Chebyshev calculus to
+	 *  compute integral of polynomial over range
+	 * @param from lo end of integration range
+	 * @param to hi end of integration range
+	 * @return computed integral for range
+	 */
 	public T evalIntegral (T from, T to)
 	{
-		double
-			hi = mgr.convertToDouble (to),
-			lo = mgr.convertToDouble (from),
-			resultComponents[] = new double[components];
+		double resultComponents[] = new double[components],
+			hi = mgr.convertToDouble (to), lo = mgr.convertToDouble (from);
 		for (int c = 0; c < components; c++)
 		{
 			ComponentSpline spline = getComponentSplineFor (c, lo);
 			ChebyshevPolynomial.Coefficients<Double> cs = spline.models.get (c).getCoefficients ();
-			resultComponents[c] = calculus.evaluatePolynomialIntegral (cs, spline.translate (lo), spline.translate (hi));
+			double l = spline.translate (lo), h = spline.translate (hi), s = spline.getSlope ();
+			resultComponents[c] = s * calculus.evaluatePolynomialIntegral (cs, l, h);
 		}
 		return mgr.construct (resultComponents);
 	}
