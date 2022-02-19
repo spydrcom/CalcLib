@@ -12,47 +12,58 @@ import net.myorb.data.abstractions.SpaceDescription;
 public class ComplexSpline extends CommonComplex
 {
 
-	static double LO = 0, HI = 20;
+	static int segments = 7, segmentSize = 5, base = 0;
 
 	public static void main (String[] a) throws Exception
 	{
+
 		Gamma G = new Gamma ();
-		VC31ComponentSpline<ComplexValue<Double>> s =
-				new VC31ComponentSpline<ComplexValue<Double>> (G, mgr, null);
-		s.addSegment (LO, HI);
+		VC31ComponentSpline<ComplexValue<Double>> s;
+		s = new VC31ComponentSpline<ComplexValue<Double>> (G, mgr, null);
+
+		base = 0;
+		for (int snum = 0; snum < segments; snum++)
+		{
+			s.addSegment (base, base + segmentSize);
+			base += segmentSize;
+		}
+
+
+		// quadrature of GAMMA
 
 		System.out.println ();
-		ComplexValue<Double> integralApprox = integralOf (G);
-		System.out.println ("TSQ f: " + integralApprox.toString () + " = GAMMA (5+5i)");
-		// -0.97439524180523907 + i*2.0066898827226298  === 6.66 * ( -0.146 + 0.3j )
-		// (-0.7899469746553125 + 0.15526327173426324*i)
-		// (-0.4399712490253549 + 0.7095952274041064*i)
+		System.out.println ("GAMMA (5+5i) = -0.97439524180523907 + 2.0066898827226298*i");
+		// -0.97439524180523907 + i*2.0066898827226298 per MPMATH.GAMMA
 
 		System.out.println ();
-		ComplexValue<Double> lo = C (LO, 0.0), hi = C (HI, 0.0);
-		ComplexValue<Double> integralEvaluation = s.evalIntegral (hi);
-		ComplexValue<Double> integralEvaluation2 = s.evalIntegral (lo, hi);
-		System.out.println ("CHEB Calculus spline (hi): " + integralEvaluation);
-		System.out.println ("CHEB Calculus spline (lo,hi): " + integralEvaluation2);
+		System.out.println ("TSQ f: " + integralOf (G));
+
+
+		// integral of spline polynomial using Chebyshev calculus
 
 		System.out.println ();
-		SplineQuad sq = new SplineQuad (s, LO);
-		ComplexValue<Double> integral = sq.integrate
-				(
-					VC31ComponentSpline.ComponentSpline.SPLINE_LO,
-					VC31ComponentSpline.ComponentSpline.SPLINE_HI
-				);
-		System.out.println ("spline TSQ ( -1.5 .. 1.5 ) = " + integral);
-		ComplexValue<Double> timesSlope = mgr.multiply (integral, C (20.0/3, 0.0));
-		System.out.println (" * 6.66 : " + timesSlope);
+		System.out.print ("CHEB Calculus spline: ");
+		System.out.println (s.evalIntegral ());
 
-		System.out.println ();
-		System.out.println ("TSQ spline ( 0 .. 20 ): " + integralOf (s).toString ());
 	}
 
 	static ComplexValue<Double> integralOf (Function<ComplexValue<Double>> f)
 	{
-		return integralOf (f, LO, HI);
+		ComplexValue<Double> integralApprox = C (0, 0);
+
+		base = 0;
+		for (int snum = 0; snum < segments; snum++)
+		{
+			integralApprox =
+				mgr.add
+				(
+					integralApprox,
+					integralOf (f, base, base + segmentSize)
+				);
+			base += segmentSize;
+		}
+
+		return integralApprox;
 	}
 
 }

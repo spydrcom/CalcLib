@@ -255,23 +255,38 @@ public class VC31ComponentSpline<T> implements Function<T>
 
 
 	/**
-	 * use Chebyshev calculus to
-	 *  compute integral of polynomial at specified point
-	 * @param x point at which to perform evaluation
-	 * @return the computed integral value
+	 * evaluate integral over all segments
+	 * @return computed integral
 	 */
-	public T evalIntegral (T x)
+	public T evalIntegral ()
 	{
-		double
-			p = mgr.convertToDouble (x),
-			resultComponents[] = new double[components];
-		for (int c = 0; c < components; c++)
+		double resultComponents[] = new double[components];
+		Arrays.fill (resultComponents, 0, components-1, 0.0);
+
+		for (ComponentSpline seg : splineSegments)
 		{
-			ComponentSpline spline = getComponentSplineFor (c, p);
-			ChebyshevPolynomial.Coefficients<Double> cs = spline.models.get (c).getCoefficients ();
-			resultComponents[c] = spline.getSlope () * calculus.evaluatePolynomialIntegral (cs, spline.translate (p));
+			for (int component = 0; component < components; component++)
+			{
+				resultComponents[component] += evalComponentIntegral (seg, component, seg.lo, seg.hi);
+			}
 		}
+
 		return mgr.construct (resultComponents);
+	}
+
+	/**
+	 * @param seg the ComponentSpline for a segment
+	 * @param component the index of the component to evaluate
+	 * @param lo the lo end of the range for evaluation
+	 * @param hi the hi end of the range for evaluation
+	 * @return the computed value
+	 */
+	public double evalComponentIntegral (ComponentSpline seg, int component, double lo, double hi)
+	{
+		ChebyshevPolynomial.Coefficients<Double>
+			coefficients = seg.models.get (component).getCoefficients ();
+		double l = seg.translate (lo), h = seg.translate (hi), s = seg.getSlope ();
+		return s * calculus.evaluatePolynomialIntegral (coefficients, l, h);
 	}
 
 	/**
@@ -287,10 +302,27 @@ public class VC31ComponentSpline<T> implements Function<T>
 			hi = mgr.convertToDouble (to), lo = mgr.convertToDouble (from);
 		for (int c = 0; c < components; c++)
 		{
-			ComponentSpline spline = getComponentSplineFor (c, lo);
+			resultComponents[c] = evalComponentIntegral (getComponentSplineFor (c, lo), c, lo, hi);
+		}
+		return mgr.construct (resultComponents);
+	}
+
+	/**
+	 * use Chebyshev calculus to
+	 *  compute integral of polynomial at specified point
+	 * @param x point at which to perform evaluation
+	 * @return the computed integral value
+	 */
+	public T evalIntegral (T x)
+	{
+		double
+			p = mgr.convertToDouble (x),
+			resultComponents[] = new double[components];
+		for (int c = 0; c < components; c++)
+		{
+			ComponentSpline spline = getComponentSplineFor (c, p);
 			ChebyshevPolynomial.Coefficients<Double> cs = spline.models.get (c).getCoefficients ();
-			double l = spline.translate (lo), h = spline.translate (hi), s = spline.getSlope ();
-			resultComponents[c] = s * calculus.evaluatePolynomialIntegral (cs, l, h);
+			resultComponents[c] = spline.getSlope () * calculus.evaluatePolynomialIntegral (cs, spline.translate (p));
 		}
 		return mgr.construct (resultComponents);
 	}
