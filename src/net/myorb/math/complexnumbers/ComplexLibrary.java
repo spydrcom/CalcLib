@@ -520,4 +520,35 @@ public class ComplexLibrary<T> extends Arithmetic<T>
 		throw new RuntimeException ("Atan2 not implemented for Complex domain");
 	}
 
+	/**
+	 * Euler reflection formula
+	 *  GAMMA(z) * GAMMA(1-z) = PI / sin (PI * z)
+	 * @param z the parameter to GAMMA being sought
+	 * @return GAMMA(z)
+	 */
+	public ComplexValue<T> reflect (ComplexValue<T> z)
+	{
+		ComplexValue<T>
+			PI = conversion.convertFromDouble (Math.PI), zPI = complexmanager.multiply (PI, z),
+			isinZPI = complexmanager.invert (sin (zPI)), piCsc = complexmanager.multiply (PI, isinZPI),
+			negzP1 = complexmanager.add (complexmanager.negate (z), complexmanager.getOne ());
+		return complexmanager.multiply (piCsc, complexmanager.invert (gamma (negzP1)));
+	}
+
+	/**
+	 * Gamma recurrence formula
+	 *  GAMMA(z) = GAMMA(z+2) / ( z * (z+1) ) ...
+	 *  useful for eval of GAMMA for z LT 1 avoiding t^(z-1) integral
+	 * @param z the parameter to GAMMA being sought
+	 * @return GAMMA(z)
+	 */
+	public ComplexValue<T> recurrence (ComplexValue<T> z)
+	{
+		ComplexValue<T>
+			zp2 = complexmanager.add (z, complexmanager.newScalar (2)),
+			zp1 = complexmanager.add (z, complexmanager.newScalar (1)),
+			izzp1 = complexmanager.invert (complexmanager.multiply (z, zp1));
+		return complexmanager.multiply (gamma (zp2), izzp1);
+	}
+
 }

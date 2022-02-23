@@ -6,7 +6,6 @@ import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
-import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
 
@@ -24,6 +23,30 @@ import java.util.List;
 public class VC31ComponentSpline<T> implements Function<T>
 {
 
+
+	/**
+	 * a linear sequence of data points
+	 */
+	public class DataPoints extends ArrayList<T>
+	{ private static final long serialVersionUID = 5221548388129835361L; }
+
+	/**
+	 * sequence of single dimensional data points
+	 */
+	public static class Sequence extends DataSequence<Double>
+	{
+		Sequence () {}
+		Sequence (DataSequence<Double> data) { this.addAll (data); }
+		private static final long serialVersionUID = 6070890820039699046L;
+	}
+
+	/**
+	 * (X, Y) coordinate pairs describing a 2 dimensional function mapping
+	 */
+	public class TwoDimSpace extends DataSequence2D<Double>
+	{
+		public TwoDimSpace (Sequence x, Sequence y) { super (x, y); }
+	}
 
 	/**
 	 * component index maps to the spline coefficients
@@ -45,13 +68,17 @@ public class VC31ComponentSpline<T> implements Function<T>
 		public static final int SPLINE_TICKS = 31;
 		public static final double SPLINE_LO = -1.5, SPLINE_HI = 1.5;
 		public static final double SPLINE_DELTA = (SPLINE_HI - SPLINE_LO) / (SPLINE_TICKS - 1);
-		public static final DataSequence<Double> xAxis = getSplineAxis ();
+		public static final Sequence xAxisComb = getSplineDomain (SPLINE_LO + SPLINE_DELTA/2);
+		public static final Sequence xAxis = getSplineDomain (SPLINE_LO);
 
-		static DataSequence<Double> getSplineAxis ()
+		static Sequence getSplineDomain (double starting)
 		{
-			return DataSequence.evenlySpaced
+			return new Sequence
 			(
-				SPLINE_LO, SPLINE_HI, SPLINE_DELTA, VC31LUD.mgr
+				DataSequence.evenlySpaced
+				(
+					starting, SPLINE_DELTA, SPLINE_TICKS, VC31LUD.mgr
+				)
 			);
 		}
 
@@ -71,10 +98,25 @@ public class VC31ComponentSpline<T> implements Function<T>
 			this.models = models; this.lo = lo; this.hi = hi;
 			this.restricted = new boolean[models.size ()];
 			Arrays.fill (restricted, false);
+			this.traceSplineSegment ();
 		}
 		protected double functionCoordinatesDelta, splineSlope;
 		protected SegmentModels models;
 		protected double lo, hi;
+
+		/**
+		 * @return largest SSE found in component models
+		 */
+		public double maxModelError ()
+		{
+			double max = 0.0;
+			for (Regression.Model<Double> model : models)
+			{
+				double sse = model.computedSSE (); 
+				max = sse>max? sse: max;
+			}
+			return max;
+		}
 
 		/**
 		 * @return get the value of th slope used for coordinate translation
@@ -110,16 +152,26 @@ public class VC31ComponentSpline<T> implements Function<T>
 		 * @param from function parameter coordinate
 		 * @return spline parameter coordinate
 		 */
-		double translate (double from)
+		public double translate (double from)
 		{
 			return SPLINE_LO + (from - lo) / splineSlope;
+		}
+
+
+		/**
+		 * generate trace for new segment addition to spline
+		 */
+		public void traceSplineSegment ()
+		{
+			System.out.print (">> " + lo + " .. " + hi + ": SSE = ");
+			System.out.println (maxModelError ());
 		}
 
 		/**
 		 * @param component index of component
 		 * @return TRUE implies restriction
 		 */
-		boolean isRestricted (int component)
+		public boolean isRestricted (int component)
 		{ return restricted[component]; }
 		protected boolean[] restricted;
 
@@ -149,11 +201,11 @@ public class VC31ComponentSpline<T> implements Function<T>
 		this.components = mgr.getComponentCount ();
 	}
 	protected Function<T> f;
-	protected Regression<Double> regression;
 	protected Parameterization configuration;
 	protected ExpressionComponentSpaceManager<T> mgr;
 	protected ChebyshevPolynomialCalculus<Double> calculus;
 	protected ChebyshevPolynomial<Double> poly;
+	protected Regression<Double> regression;
 	protected int components;
 	protected VC31LUD lud;
 
@@ -166,20 +218,67 @@ public class VC31ComponentSpline<T> implements Function<T>
 	 */
 	public void addSegment (double lo, double hi)
 	{
-		ArrayList<T> points = new ArrayList<T> ();
+		ComponentSpline spline =
+				new ComponentSpline
+				(
+					generateModels (lo, hi),
+					lo, hi
+				);
+		splineSegments.add (spline);
+	}
+	protected List<ComponentSpline> splineSegments;
+
+
+	/**
+	 * generate segment models
+	 * @param lo the lo end of the range
+	 * @param hi the hi end of the range
+	 * @return the array of models for the segment
+	 */
+	public SegmentModels generateModels (double lo, double hi)
+	{
+		DataPoints points = new DataPoints (), combRange = new DataPoints ();
+		generateData (points, combRange, lo, ComponentSpline.deltaFor (lo, hi));
+		return generateModels (points, combRange);
+	}
+
+
+	/**
+	 * @param points data points collection lo + delta
+	 * @param combRange data points collection lo + delta/2
+	 * @param lo the starting value for the sequence
+	 * @param delta the space between samples
+	 */
+	public void generateData
+		(
+			DataPoints points, DataPoints combRange,
+			double lo, double delta
+		)
+	{
+		calculatePoints (lo + delta/2, delta, combRange);
+		calculatePoints (lo, delta, points);
+	}
+
+
+	/**
+	 * @param points data points collection lo + delta
+	 * @param combRange data points collection lo + delta/2
+	 * @return the models from the components regressions
+	 */
+	public SegmentModels generateModels (DataPoints points, DataPoints combRange)
+	{
+		Sequence axis, combSequence;
 		SegmentModels models = new SegmentModels ();
-		calculatePoints (lo, ComponentSpline.deltaFor (lo, hi), points);
 
 		for (int c = 0; c < mgr.getComponentCount (); c++)
 		{
-			DataSequence<Double> axis = new DataSequence<Double>();
-			Vector<Double> toBeSolved = calculateComponentAxis (c, points, axis);
-			models.add (performRegression (toBeSolved, axis));
+			calculateComponentAxis (c, combRange, combSequence = new Sequence ());
+			Vector<Double> toBeSolved = calculateComponentAxis (c, points, axis = new Sequence ());
+			models.add (performRegression (toBeSolved, axis, combSequence));
 		}
-		
-		splineSegments.add (new ComponentSpline (models, lo, hi));
+
+		return models;
 	}
-	protected List<ComponentSpline> splineSegments;
 
 
 	/**
@@ -190,7 +289,7 @@ public class VC31ComponentSpline<T> implements Function<T>
 	 * @return the vector to be solved via LUxB
 	 */
 	public Vector<Double> calculateComponentAxis
-	(int component, ArrayList<T> points, DataSequence<Double> axis)
+	(int component, DataPoints points, Sequence axis)
 	{
 		double computed; int ticks = ComponentSpline.SPLINE_TICKS;
 		Vector<Double> v = new Vector<Double>(ticks, VC31LUD.mgr);
@@ -210,7 +309,7 @@ public class VC31ComponentSpline<T> implements Function<T>
 	 * @param points the values found at the sample locations
 	 */
 	public void calculatePoints
-	(double lo, double delta, ArrayList<T> points)
+	(double lo, double delta, DataPoints points)
 	{
 		double x = lo;
 		for (int i = 0; i < ComponentSpline.SPLINE_TICKS; i++)
@@ -225,15 +324,32 @@ public class VC31ComponentSpline<T> implements Function<T>
 	 * get regression model
 	 * @param b vector to be solved
 	 * @param axis computed values for component being evaluated
+	 * @param comb computed values for half delta test points on axis
 	 * @return the regression model from the evaluation of the solution
 	 */
-	public Regression.Model<Double> performRegression (Vector<Double> b, DataSequence<Double> axis)
+	public Regression.Model<Double> performRegression
+		(
+			Vector<Double> b, Sequence axis, Sequence comb
+		)
 	{
-		GeneratingFunctions.Coefficients<Double> solution = lud.solve (b);
-		DataSequence2D<Double> dataSeq = new DataSequence2D<Double> (ComponentSpline.xAxis, axis);
-		Regression.Model<Double> r = regression.useChebyshevModel (solution, dataSeq);
-		System.out.println (r);
-		return r;
+		return regression.useChebyshevModel
+			(
+				lud.solve (b), mergeOf (axis, comb)
+			);
+	}
+	public TwoDimSpace mergeOf
+		(
+			Sequence regressionPoints,
+			Sequence regressionMidPoints
+		)
+	{
+		Sequence x = new Sequence (), y = new Sequence ();
+		for (int i = 0; i < ComponentSpline.SPLINE_TICKS; i++)
+		{
+			x.add (ComponentSpline.xAxis.get (i)); x.add (ComponentSpline.xAxisComb.get (i));
+			y.add (regressionPoints.get (i)); y.add (regressionMidPoints.get (i));
+		}
+		return new TwoDimSpace (x, y);
 	}
 
 
@@ -274,6 +390,7 @@ public class VC31ComponentSpline<T> implements Function<T>
 		return mgr.construct (resultComponents);
 	}
 
+
 	/**
 	 * @param seg the ComponentSpline for a segment
 	 * @param component the index of the component to evaluate
@@ -281,13 +398,15 @@ public class VC31ComponentSpline<T> implements Function<T>
 	 * @param hi the hi end of the range for evaluation
 	 * @return the computed value
 	 */
-	public double evalComponentIntegral (ComponentSpline seg, int component, double lo, double hi)
+	public double evalComponentIntegral
+	(ComponentSpline seg, int component, double lo, double hi)
 	{
 		ChebyshevPolynomial.Coefficients<Double>
 			coefficients = seg.models.get (component).getCoefficients ();
 		double l = seg.translate (lo), h = seg.translate (hi), s = seg.getSlope ();
 		return s * calculus.evaluatePolynomialIntegral (coefficients, l, h);
 	}
+
 
 	/**
 	 * use Chebyshev calculus to
@@ -306,6 +425,7 @@ public class VC31ComponentSpline<T> implements Function<T>
 		}
 		return mgr.construct (resultComponents);
 	}
+
 
 	/**
 	 * use Chebyshev calculus to
