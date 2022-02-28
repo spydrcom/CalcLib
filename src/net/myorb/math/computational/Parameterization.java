@@ -68,7 +68,11 @@ public class Parameterization
 	{
 		(this.configuration = new HashMap<String, Object>()).putAll (configuration);
 	}
+	public Parameterization () { this.configuration = new HashMap<String, Object>(); }
 	protected Map<String, Object> configuration;
+
+
+	public void set (String parameter, Object value) { configuration.put (parameter, value); }
 
 
 	/**
@@ -130,6 +134,19 @@ public class Parameterization
 		String p = getParameter (named);
 		if (p == null) return null;
 		return Double.parseDouble (p);
+	}
+
+
+	/**
+	 * @param named the name of the parameter
+	 * @param defaultValue a default to use absent specification
+	 * @return the value chosen for use
+	 */
+	public Number getValue (String named, Number defaultValue)
+	{
+		Number specified = getValue (named);
+		if (specified == null) return defaultValue;
+		return specified;
 	}
 
 
