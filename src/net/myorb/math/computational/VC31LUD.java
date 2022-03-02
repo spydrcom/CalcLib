@@ -24,6 +24,10 @@ public class VC31LUD
 {
 
 
+	public static final double SPLINE_LO = -1.5, SPLINE_HI = 1.5;
+	public static final double SPLINE_RANGE = SPLINE_HI - SPLINE_LO;
+
+
 	public VC31LUD
 		(
 			Parameterization configuration
