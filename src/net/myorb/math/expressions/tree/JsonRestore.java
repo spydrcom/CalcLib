@@ -228,6 +228,7 @@ public class JsonRestore <T>
 
 
 	/**
+	 * @param root JSON object holding the profile node of the expression tree
 	 * @return wrapper for spline function
 	 */
 	public SectionedSpline<T> getSectionedSpline (JsonSemantics.JsonValue root)
