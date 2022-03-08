@@ -25,14 +25,17 @@ public class FittedFunction<T> implements Function<T>
 
 	public FittedFunction
 		(
-			ExpressionComponentSpaceManager<T> mgr
+			ExpressionComponentSpaceManager<T> mgr,
+			SplineMechanisms spline
 		)
 	{
 		this.segments = new ArrayList<>();
+		this.spline = spline;
 		this.mgr = mgr;
 	}
 	protected ExpressionComponentSpaceManager<T> mgr;
 	protected List<Segment<T>> segments;
+	protected SplineMechanisms spline;
 
 
 	/* (non-Javadoc)
@@ -76,7 +79,7 @@ public class FittedFunction<T> implements Function<T>
 	 */
 	void processSplineSegment (JsonSemantics.JsonObject descriptor)
 	{
-		segments.add (new Segment<T> (descriptor, mgr));
+		segments.add (new Segment<T> (descriptor, mgr, spline));
 	}
 
 	/**
@@ -125,15 +128,18 @@ class Segment<T> implements SegmentRepresentation
 	Segment
 		(
 			JsonSemantics.JsonObject descriptor,
-			ExpressionComponentSpaceManager<T> mgr
+			ExpressionComponentSpaceManager<T> mgr,
+			SplineMechanisms spline
 		)
 	{
+		this.spline = spline;
 		this.lo = lookup (descriptor, "lo");
 		this.unit = lookup (descriptor, "unit");
 		this.processCoefficients (descriptor);
 		this.hi = lookup (descriptor, "hi");
 		this.connectFunction (mgr);
 	}
+	protected SplineMechanisms spline;
 
 
 	/**
@@ -141,7 +147,7 @@ class Segment<T> implements SegmentRepresentation
 	 * @param mgr the Component Manager for the data type
 	 */
 	void connectFunction (ExpressionComponentSpaceManager<T> mgr)
-	{ this.segmentFunction = new SegmentFunction<T> (this, mgr); }
+	{ this.segmentFunction = new SegmentFunction<T> (this, mgr, spline); }
 	protected SegmentFunction<T> segmentFunction;
 
 

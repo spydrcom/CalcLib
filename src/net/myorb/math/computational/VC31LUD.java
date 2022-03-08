@@ -3,7 +3,10 @@ package net.myorb.math.computational;
 
 import net.myorb.math.expressions.DataIO;
 import net.myorb.math.GeneratingFunctions;
+
 import net.myorb.math.computational.Parameterization;
+import net.myorb.math.computational.splines.ChebyshevSpline;
+
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
 import net.myorb.math.matrices.VectorOperations;
@@ -24,8 +27,9 @@ public class VC31LUD
 {
 
 
-	public static final double SPLINE_LO = -1.5, SPLINE_HI = 1.5;
-	public static final double SPLINE_RANGE = SPLINE_HI - SPLINE_LO;
+	public static final double
+		SPLINE_LO = ChebyshevSpline.SPLINE_LO, SPLINE_HI = ChebyshevSpline.SPLINE_HI;
+	public static final double SPLINE_RANGE = ChebyshevSpline.SPLINE_RANGE;
 
 
 	public VC31LUD

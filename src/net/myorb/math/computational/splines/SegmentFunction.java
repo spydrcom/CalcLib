@@ -1,7 +1,7 @@
 
 package net.myorb.math.computational.splines;
 
-import net.myorb.math.polynomial.families.ChebyshevPolynomial;
+//import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.data.abstractions.SpaceDescription;
 
@@ -21,21 +21,24 @@ public class SegmentFunction<T> implements Function<T>
 	public SegmentFunction
 		(
 			SegmentRepresentation representation,
-			ExpressionComponentSpaceManager<T> mgr
+			ExpressionComponentSpaceManager<T> mgr,
+			SplineMechanisms spline
 		)
 	{
-		this.setPolynomialManager (mgr);
+		this.spline = spline;
+//		this.setPolynomialManager (mgr);
 		this.representation = representation;
 		this.mgr = mgr;
 	}
 	protected ExpressionComponentSpaceManager<T> mgr;
 	protected SegmentRepresentation representation;
+	protected SplineMechanisms spline;
 
 
-	@SuppressWarnings("unchecked")
-	void setPolynomialManager (ExpressionComponentSpaceManager<T> mgr)
-	{ this.polynomial = new ChebyshevPolynomial<Double> (mgr.getComponentManager ()); }
-	protected ChebyshevPolynomial<Double> polynomial;
+//	@SuppressWarnings("unchecked")
+//	void setPolynomialManager (ExpressionComponentSpaceManager<T> mgr)
+//	{ this.polynomial = new ChebyshevPolynomial<Double> (mgr.getComponentManager ()); }
+//	protected ChebyshevPolynomial<Double> polynomial;
 
 
 	/* (non-Javadoc)
@@ -47,11 +50,12 @@ public class SegmentFunction<T> implements Function<T>
 		double[] results = new double[mgr.getComponentCount ()];
 		for (int c = 0; c < results.length; c++)
 		{
-			results[c] = polynomial.evaluatePolynomialV
-				(
-					getCoefficients (c), 
-					polynomial.forValue (realPart)
-				).getUnderlying ();
+			results[c] = spline.evalSplineAt (realPart, getCoefficients (c));
+//			results[c] = polynomial.evaluatePolynomialV
+//				(
+//					getCoefficients (c), 
+//					polynomial.forValue (realPart)
+//				).getUnderlying ();
 		}
 		return mgr.construct (results);
 	}
@@ -63,9 +67,10 @@ public class SegmentFunction<T> implements Function<T>
 	 */
 	double translate (double parameter)
 	{
-		return SPLINE_LO + (parameter - representation.getSegmentLo ()) * representation.getUnitSlope ();
+//		return SPLINE_LO + (parameter - representation.getSegmentLo ()) * representation.getUnitSlope ();
+		return spline.getSplineOptimalLo () + (parameter - representation.getSegmentLo ()) * representation.getUnitSlope ();
 	}
-	static final double SPLINE_LO = -1.5;
+//	static final double SPLINE_LO = -1.5;
 
 
 	/**
@@ -75,7 +80,7 @@ public class SegmentFunction<T> implements Function<T>
 	GeneratingFunctions.Coefficients<Double> getCoefficients (int component)
 	{
 		GeneratingFunctions.Coefficients<Double> c =
-				new GeneratingFunctions.Coefficients<Double>();
+			new GeneratingFunctions.Coefficients<Double>();
 		c.addAll (representation.getCoefficientsFor (component));
 		return c;
 	}

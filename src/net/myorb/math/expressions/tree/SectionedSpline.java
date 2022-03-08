@@ -2,11 +2,14 @@
 package net.myorb.math.expressions.tree;
 
 import net.myorb.math.computational.splines.FittedFunction;
+import net.myorb.math.computational.splines.ChebyshevSpline;
 
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
+
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager;
+
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.data.notations.json.*;
@@ -25,11 +28,13 @@ public class SectionedSpline<T>
 			ExpressionComponentSpaceManager<T> mgr
 		)
 	{
-		this.function = new FittedFunction<> (mgr);
+		this.spline = new ChebyshevSpline (mgr);
+		this.function = new FittedFunction<> (mgr, spline);
 		this.mgr = mgr;
 	}
 	protected ExpressionComponentSpaceManager<T> mgr;
 	protected FittedFunction<T> function;
+	protected ChebyshevSpline spline;
 
 
 	/**

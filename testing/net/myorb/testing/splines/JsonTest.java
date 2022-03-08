@@ -2,6 +2,7 @@
 package net.myorb.testing.splines;
 
 import net.myorb.math.complexnumbers.ComplexValue;
+import net.myorb.math.computational.splines.ChebyshevSpline;
 import net.myorb.math.computational.splines.FittedFunction;
 import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
 import net.myorb.data.abstractions.SimpleStreamIO;
@@ -14,8 +15,9 @@ public class JsonTest
 
 		SimpleStreamIO.TextSource source =
 			SimpleStreamIO.getFileSource ("expressions/GAMMA.json");
+		ChebyshevSpline spline = new ChebyshevSpline (mgr);
 		FittedFunction<ComplexValue<Double>> f =
-				new FittedFunction<> (mgr);
+			new FittedFunction<> (mgr, spline);
 		f.readFrom (source);
 
 		for (int i=1; i<10; i++)
