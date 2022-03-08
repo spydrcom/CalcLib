@@ -20,7 +20,7 @@ public class Profile extends JsonBinding.Node
 	/**
 	 * the names of the Profile node members
 	 */
-	public enum ProfileMembers {Name, Parameter, Parameters, Imports, Expression, Description}
+	public enum ProfileMembers {Name, Parameter, Parameters, Imports, Sections, Expression, Description}
 
 
 	/**
@@ -87,6 +87,16 @@ public class Profile extends JsonBinding.Node
 	public JsonSemantics.JsonValue getExpression ()
 	{
 		return getMember (ProfileMembers.Expression);
+	}
+
+
+	/**
+	 * get the spline attached to the profile
+	 * @return the member Value labeled as Sections
+	 */
+	public JsonSemantics.JsonValue getSections ()
+	{
+		return getMember (ProfileMembers.Sections);
 	}
 
 

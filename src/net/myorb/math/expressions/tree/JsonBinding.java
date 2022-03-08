@@ -16,7 +16,7 @@ public class JsonBinding
 	 */
 	public enum NodeTypes
 	{
-		Range, BinaryOP, Identifier, UnaryOP, Calculus, Segment, Spline, Profile
+		Range, BinaryOP, Identifier, UnaryOP, Calculus, Segment, Spline, Sectioned, Profile
 	}
 	// otherwise JsonArray, JsonNumber
 

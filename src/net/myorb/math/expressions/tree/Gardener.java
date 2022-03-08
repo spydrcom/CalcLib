@@ -194,6 +194,14 @@ public class Gardener<T>
 
 
 	/**
+	 * get access to the tree being managed
+	 * @return the tree being managed
+	 */
+	public SectionedSpline<T> getSectionedSpline () { return sectionedSpline; }
+	protected SectionedSpline<T> sectionedSpline;
+
+
+	/**
 	 * build tree from JSON version
 	 * @param source the JSON text source to read
 	 * @throws Exception for any errors
@@ -220,6 +228,9 @@ public class Gardener<T>
 				restore.setProfile (value);
 				expression = restore.getExpression ();
 				break;
+			case Sectioned:
+				sectionedSpline = restore.getSectionedSpline (value);
+				break;
 			case Segment: case Spline:
 				restore.setProfile (new Profile (jsonTree)); break;
 			default: throw new RuntimeException ("Invalid node type");
@@ -241,9 +252,10 @@ public class Gardener<T>
 	{
 		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
 		{
-			case   Spline:  defineSplineFunction ();			break;
-			case  Segment:  defineSegmentFunction (symbols);	break;
-			case  Profile:  defineUserFunction (symbols);		break;
+			case	 Spline: defineSplineFunction ();			break;
+			case 	Segment: defineSegmentFunction (symbols);	break;
+			case  Sectioned: defineSectionedFunction (symbols);	break;
+			case	Profile: defineUserFunction (symbols);		break;
 			default: throw new RuntimeException ("Invalid node type");
 		}
 	}
@@ -282,6 +294,16 @@ public class Gardener<T>
 		AbstractFunction<T> function = new PolynomialOptimizer<T> (environment)
 		.getOptimizedFunctionFrom (name, parameter, jsonTree.getMemberString ("Class"), coefficients);
 		environment.processDefinedFunction (function);
+	}
+
+
+	/**
+	 * add an imported sectioned spline function to the symbol table
+	 * @param symbols the symbol map for the environment
+	 */
+	public void defineSectionedFunction (SymbolMap symbols)
+	{
+		symbols.add (sectionedSpline.getFuntion (jsonTree));
 	}
 
 

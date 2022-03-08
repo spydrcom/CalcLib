@@ -12,6 +12,10 @@ import net.myorb.data.notations.json.JsonTools;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * helper class for conversion of Java objects to / from JSON
+ * @author Michael Druckman
+ */
 public class RepresentationTools
 {
 

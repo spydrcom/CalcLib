@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.tree;
 
 import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
@@ -206,8 +207,8 @@ public class JsonRestore <T>
 	 */
 	public void setProfile (JsonSemantics.JsonValue value)
 	{
-		profile = Profile.representing (value);
-		restoreImportsFromProfile ();
+		if ((profile = Profile.representing (value)) != null)
+		{ restoreImportsFromProfile (); }
 	}
 	public void setProfile (Profile profile)
 	{
@@ -223,6 +224,32 @@ public class JsonRestore <T>
 	public Expression<T> getExpression () throws Exception
 	{
 		return toExpression (profile.getExpression ());
+	}
+
+
+	/**
+	 * @return wrapper for spline function
+	 */
+	public SectionedSpline<T> getSectionedSpline (JsonSemantics.JsonValue root)
+	{
+		JsonSemantics.JsonObject profile = (JsonSemantics.JsonObject) root;
+		JsonSemantics.JsonValue sections = profile.getMemberCalled ("Sections");
+		return toSectionedSpline (sections);
+	}
+
+
+	/**
+	 * @param value the JSON object holding the spline description
+	 * @return wrapper for spline function
+	 */
+	public SectionedSpline<T> toSectionedSpline
+		(JsonSemantics.JsonValue value)
+	{
+		ExpressionComponentSpaceManager<T> mgr =
+				(ExpressionComponentSpaceManager<T>) spaceManager;
+		SectionedSpline<T> spline = new SectionedSpline<T> (mgr);
+		spline.constructFrom (value);
+		return spline;
 	}
 
 
