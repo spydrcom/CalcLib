@@ -30,7 +30,7 @@ public class ChebyshevSpline implements SplineMechanisms
 
 
 	@SuppressWarnings("unchecked")
-	void setPolynomialManager (ExpressionComponentSpaceManager<?> mgr)
+	public void setPolynomialManager (ExpressionComponentSpaceManager<?> mgr)
 	{ this.polynomial = new ChebyshevPolynomial<Double> (mgr.getComponentManager ()); }
 	protected ChebyshevPolynomial<Double> polynomial;
 

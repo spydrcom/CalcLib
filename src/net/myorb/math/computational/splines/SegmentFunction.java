@@ -53,7 +53,7 @@ public class SegmentFunction<T> implements Function<T>
 	 * @param parameter the parameter value in coordinates of original function
 	 * @return the parameter value in coordinates of the spline function
 	 */
-	double translate (double parameter)
+	public double translate (double parameter)
 	{
 		return spline.getSplineOptimalLo () + (parameter - representation.getSegmentLo ()) * representation.getUnitSlope ();
 	}
@@ -63,7 +63,8 @@ public class SegmentFunction<T> implements Function<T>
 	 * @param component index of the component being fit
 	 * @return the list of polynomial Coefficients
 	 */
-	GeneratingFunctions.Coefficients<Double> getCoefficients (int component)
+	public GeneratingFunctions.Coefficients<Double>
+			getCoefficients (int component)
 	{
 		GeneratingFunctions.Coefficients<Double> c =
 			new GeneratingFunctions.Coefficients<Double>();

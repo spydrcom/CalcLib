@@ -52,7 +52,7 @@ public class FittedFunction<T> implements Function<T>
 	 * @param x the parameter value to find a segment function for
 	 * @return the segment function that covers the parameter, or NULL if none
 	 */
-	SegmentFunction<T> findSegment (T x)
+	public SegmentFunction<T> findSegment (T x)
 	{
 		SegmentFunction<T> f;
 		double p = mgr.component (x, 0);
@@ -77,7 +77,7 @@ public class FittedFunction<T> implements Function<T>
 	 * add to segments list from a JSON descriptor node
 	 * @param descriptor the object node describing a segment
 	 */
-	void processSplineSegment (JsonSemantics.JsonObject descriptor)
+	public void processSplineSegment (JsonSemantics.JsonObject descriptor)
 	{
 		segments.add (new Segment<T> (descriptor, mgr, spline));
 	}
@@ -96,7 +96,7 @@ public class FittedFunction<T> implements Function<T>
 	/**
 	 * @param description the object node describing the spline segments
 	 */
-	void processSplineDescription (JsonSemantics.JsonObject description)
+	public void processSplineDescription (JsonSemantics.JsonObject description)
 	{
 		processSplineSegments ((JsonSemantics.JsonArray) description.getMemberCalled ("Sections"));
 	}
@@ -125,7 +125,7 @@ class Segment<T> implements SegmentRepresentation
 {
 
 
-	Segment
+	public Segment
 		(
 			JsonSemantics.JsonObject descriptor,
 			ExpressionComponentSpaceManager<T> mgr,
@@ -146,7 +146,7 @@ class Segment<T> implements SegmentRepresentation
 	 * allocate a segment function object for this segment
 	 * @param mgr the Component Manager for the data type
 	 */
-	void connectFunction (ExpressionComponentSpaceManager<T> mgr)
+	public void connectFunction (ExpressionComponentSpaceManager<T> mgr)
 	{ this.segmentFunction = new SegmentFunction<T> (this, mgr, spline); }
 	protected SegmentFunction<T> segmentFunction;
 
@@ -156,7 +156,7 @@ class Segment<T> implements SegmentRepresentation
 	 * @param member name of the member being read
 	 * @return the value of the named member
 	 */
-	double lookup (JsonSemantics.JsonObject descriptor, String member)
+	public double lookup (JsonSemantics.JsonObject descriptor, String member)
 	{
 		return ((JsonSemantics.JsonNumber) descriptor.getMemberCalled (member))
 				.getNumber ().doubleValue ();
@@ -166,7 +166,7 @@ class Segment<T> implements SegmentRepresentation
 	/**
 	 * @param descriptor node holding coefficients for all components
 	 */
-	void processCoefficients
+	public void processCoefficients
 		(JsonSemantics.JsonObject descriptor)
 	{
 		componentCoefficients = new ArrayList<List<Double>>();
@@ -183,7 +183,7 @@ class Segment<T> implements SegmentRepresentation
 	 * @param components the JSON array 
 	 * 			holding coefficients for all components
 	 */
-	void processCoefficients (JsonSemantics.JsonArray components)
+	public void processCoefficients (JsonSemantics.JsonArray components)
 	{
 		for (int i = 0; i < components.size (); i++)
 		{
@@ -200,7 +200,7 @@ class Segment<T> implements SegmentRepresentation
 	 * @param value the parameter value to find a segment for
 	 * @return the segment function for matches or NULL if no match
 	 */
-	SegmentFunction<T> checkFor (double value)
+	public SegmentFunction<T> checkFor (double value)
 	{
 		if (value >= lo && value <= hi)
 		{ return segmentFunction; }

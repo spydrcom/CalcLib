@@ -41,7 +41,9 @@ public class ASQuadrature extends CommonQuadrature
 	public double eval (double x, double lo, double hi)
 	{
 		integrand.setParameter (x);
-		return splineFactory.generateSpline (integrand, lo, hi, parameters).evalIntegral ();
+		QuadratureEnabledSpline s = splineFactory.generateSpline
+				(integrand, lo, hi, parameters);
+		return s.evalIntegral ();
 	}
 
 	/**

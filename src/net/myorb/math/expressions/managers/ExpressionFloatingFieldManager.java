@@ -4,6 +4,7 @@ package net.myorb.math.expressions.managers;
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
 
 import net.myorb.data.abstractions.ValueDisplayProperties;
+
 import net.myorb.math.expressions.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Michael Druckman
  */
 public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
-	implements ExpressionSpaceManager<Double> 
+	implements ExpressionComponentSpaceManager<Double> 
 {
 
 	public void setEvaluationControl
@@ -128,8 +129,28 @@ public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
 	public String formatToMode (Double value, String mode) { return format (value); }
 	
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#component(java.lang.Object, int)
+	 */
+	public double component (Double value, int componentNumber) { return value; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#construct(double[])
+	 */
+	public Double construct (double... components) { return components[0]; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#magnitude(java.lang.Object)
+	 */
+	public double magnitude (Double value) { return value; }
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionSpaceManager#getformattingModes()
 	 */
 	public String[] getformattingModes () { return null; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#getComponentCount()
+	 */
+	public int getComponentCount () { return 1; }
 
 }
