@@ -453,7 +453,10 @@ public class Gardener<T>
 	 */
 	public void profiledTransplant
 	(String name, List<String> parameters, String description) throws Exception
-	{ sinkToFile (name, getProfileFor (name, parameters, description)); }
+	{
+		Profile p = getProfileFor (name, parameters, description);
+		p.orderMembersList (); sinkToFile (name, p);
+	}
 
 
 	/**

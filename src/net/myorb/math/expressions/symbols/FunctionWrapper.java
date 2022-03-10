@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.tree.JsonBinding.JsonRepresentation;
+import net.myorb.math.expressions.tree.Profile;
 import net.myorb.math.expressions.evaluationstates.ParameterListDescription;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.Function;
@@ -100,6 +101,7 @@ public class FunctionWrapper <T> extends AbstractFunction <T>
 		object.addMemberNamed ("Class", JsonSemantics.stringOrNull (function.getClass ().getSimpleName ()));
 		object.addMemberNamed ("Parameter", JsonSemantics.stringOrNull (parameterName));
 		object.addMemberNamed ("Name", JsonSemantics.stringOrNull (name));
+		object.setOrderedMembersList (Profile.getNameList ());
 		return value;
 	}
 	public PrintStream getStream () throws Exception

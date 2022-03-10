@@ -6,6 +6,7 @@ import net.myorb.math.expressions.tree.JsonBinding.Node;
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonTools;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -177,10 +178,21 @@ public class Profile extends JsonBinding.Node
 	public static void addProfileMembers
 	(String name, ParameterList parameters, Node to)
 	{
-		JsonSemantics.JsonArray parameterArray =
-			new JsonSemantics.JsonArray ().includingStrings (parameters);
+		if (parameters.size () == 1)
+		{
+			to.addMember
+			(
+				ProfileMembers.Parameter,
+				new JsonSemantics.JsonString (parameters.get (0))
+			);
+		}
+		else
+		{
+			JsonSemantics.JsonArray parameterArray =
+					new JsonSemantics.JsonArray ().includingStrings (parameters);
+			to.addMember (ProfileMembers.Parameters, parameterArray);
+		}
 		to.addMember (ProfileMembers.Name, new JsonSemantics.JsonString (name));
-		to.addMember (ProfileMembers.Parameters, parameterArray);
 	}
 
 
@@ -231,6 +243,7 @@ public class Profile extends JsonBinding.Node
 	 */
 	public Object[] getMembers () { return ORDERED_MEMBER_LIST; }
 
+
 	/**
 	 * this constant list causes the members to come out in specified order.
 	 * this allows the name, parameters, and description to be seen at the top of the profile.
@@ -240,9 +253,39 @@ public class Profile extends JsonBinding.Node
 	 */
 	public static final Object[] ORDERED_MEMBER_LIST = new Object[]
 	{
-		ProfileMembers.Name, ProfileMembers.Parameters, ProfileMembers.Description,
+		ProfileMembers.Name, ProfileMembers.Parameters, ProfileMembers.Parameter, ProfileMembers.Description,
 		ProfileMembers.Imports, ProfileMembers.Expression, Node.DISCRIMINATOR
 	};
+
+
+	/**
+	 * @return an array holding the member names of the profile object
+	 */
+	public static String[] getNameList ()
+	{
+		int item = 0;
+		String[] names = new String[ORDERED_MEMBER_LIST.length];
+		for (Object name : ORDERED_MEMBER_LIST)
+		{ names[item++] = name.toString (); }
+		return names;
+	}
+
+
+	/**
+	 * prepare an ordered list of members present in object
+	 */
+	public void orderMembersList ()
+	{
+		List<String> names = new ArrayList<String>();
+
+		for (Object name : ORDERED_MEMBER_LIST)
+		{
+			if (getMemberCalled (name.toString ()) == null) continue;
+			names.add (name.toString ());
+		}
+
+		setOrderedMembersList (names.toArray (new String[]{}));
+	}
 
 
 }
