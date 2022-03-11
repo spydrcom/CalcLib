@@ -62,6 +62,28 @@ public class FittedFunction<T> implements Function<T>
 	}
 
 
+	/**
+	 * use the spline to compute the integral over a range
+	 * @param lo the lo end of integral range in function coordinates
+	 * @param hi the hi end of integral range in function coordinates
+	 * @return the computed value of the integral for the specified range
+	 */
+	public T evalIntegralOver
+		(
+			double lo, double hi
+		)
+	{
+		T result = mgr.getZero ();
+		for (Segment<T> segment : segments)
+		{
+			T portion = segment.segmentFunction
+					.evalIntegralContribution (lo, hi);
+			result = mgr.add (result, portion);
+		}
+		return result;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
 	 */
@@ -135,6 +157,9 @@ class Segment<T> implements SegmentRepresentation
 		this.spline = spline;
 		this.lo = lookup (descriptor, "lo");
 		this.unit = lookup (descriptor, "unit");
+		this.slope = lookup (descriptor, "slope");
+		this.delta = lookup (descriptor, "delta");
+		this.error = lookup (descriptor, "error");
 		this.processCoefficients (descriptor);
 		this.hi = lookup (descriptor, "hi");
 		this.connectFunction (mgr);
@@ -233,9 +258,10 @@ class Segment<T> implements SegmentRepresentation
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.SegmentRepresentation#getSegmentDelta()
 	 */
-	public double getSegmentDelta () { return 0; }
-	public double getSegmentError () { return 0; }
-	public double getSegmentSlope () { return 0; }
+	public double getSegmentDelta () { return delta; }
+	public double getSegmentError () { return error; }
+	public double getSegmentSlope () { return slope; }
+	protected double delta, error, slope;
 
 
 }

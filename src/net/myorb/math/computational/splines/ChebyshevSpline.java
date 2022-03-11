@@ -2,7 +2,9 @@
 package net.myorb.math.computational.splines;
 
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
+import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 
+import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
 import net.myorb.math.GeneratingFunctions;
@@ -15,11 +17,24 @@ public class ChebyshevSpline implements SplineMechanisms
 {
 
 
+	/**
+	 * data type manager for real number domain space
+	 */
+	public static ExpressionFloatingFieldManager realManager = new ExpressionFloatingFieldManager ();
+
+
+	/*
+	 * constants that describe the optimal Chebyshev T-Polynomial Spline
+	 */
+
 	public static final double SPLINE_LO = -1.5, SPLINE_HI = 1.5;
 	public static final double SPLINE_RANGE = SPLINE_HI - SPLINE_LO;
-	public static final int SPLINE_TICKS = 31;
+	public static final int SPLINE_TICKS = 31, SPLINE_SPACES = SPLINE_TICKS - 1;
 
 
+	/**
+	 * @param mgr the data type manage for the session
+	 */
 	public ChebyshevSpline
 		(
 			ExpressionComponentSpaceManager<?> mgr
@@ -29,10 +44,17 @@ public class ChebyshevSpline implements SplineMechanisms
 	}
 
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * construct objects implementing Chebyshev Polynomial functionalities
+	 * @param mgr the data type manage for the session
+	 */
 	public void setPolynomialManager (ExpressionComponentSpaceManager<?> mgr)
-	{ this.polynomial = new ChebyshevPolynomial<Double> (mgr.getComponentManager ()); }
-	protected ChebyshevPolynomial<Double> polynomial;
+	{
+		this.calculus = new ChebyshevPolynomialCalculus<Double>(realManager);
+		this.polynomial = new ChebyshevPolynomial<Double> (realManager);
+		this.mgr = mgr;
+	}
+	protected ExpressionComponentSpaceManager<?> mgr;
 
 
 	/* (non-Javadoc)
@@ -54,6 +76,43 @@ public class ChebyshevSpline implements SplineMechanisms
 					coefficients, 
 					polynomial.forValue (x)
 				).getUnderlying ();
+	}
+	protected ChebyshevPolynomial<Double> polynomial;
+
+
+	/*
+	 * polynomial calculus implementation
+	 */
+
+	public double evaluatePolynomialIntegral
+		(
+			GeneratingFunctions.Coefficients<Double> coefficients, 
+			double at
+		)
+	{
+		return calculus.evaluatePolynomialIntegral (coefficients, at);
+	}
+	public double evaluatePolynomialIntegral
+		(
+			GeneratingFunctions.Coefficients<Double> coefficients, 
+			double lo, double hi
+		)
+	{
+		return calculus.evaluatePolynomialIntegral (coefficients, lo, hi);
+	}
+	protected ChebyshevPolynomialCalculus<Double> calculus;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.SplineMechanisms#evalIntegralOver(double, double, net.myorb.math.GeneratingFunctions.Coefficients)
+	 */
+	public double evalIntegralOver
+		(
+			double lo, double hi,
+			GeneratingFunctions.Coefficients<Double> coefficients
+		)
+	{
+		return evaluatePolynomialIntegral (coefficients, lo, hi);
 	}
 
 

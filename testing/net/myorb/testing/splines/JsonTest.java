@@ -14,7 +14,7 @@ public class JsonTest
 	{
 
 		SimpleStreamIO.TextSource source =
-			SimpleStreamIO.getFileSource ("expressions/GAMMA.json");
+			SimpleStreamIO.getFileSource ("expressions/G55.json");
 		ChebyshevSpline spline = new ChebyshevSpline (mgr);
 		FittedFunction<ComplexValue<Double>> f =
 			new FittedFunction<> (mgr, spline);
@@ -24,6 +24,10 @@ public class JsonTest
 		{
 			System.out.println (f.eval (mgr.C ((double)i, 0.0)));
 		}
+
+		System.out.println ();
+		System.out.println ("integral");
+		System.out.println (f.evalIntegralOver (0, 100));
 
 	}
 

@@ -23,4 +23,12 @@ public interface SplineMechanisms
 	 */
 	double evalSplineAt (double x, GeneratingFunctions.Coefficients<Double> coefficients);
 
+	/**
+	 * @param lo the lo end of integration range
+	 * @param hi the hi end of integration range
+	 * @param coefficients the polynomial coefficients for this range
+	 * @return the computed integral
+	 */
+	double evalIntegralOver (double lo, double hi, GeneratingFunctions.Coefficients<Double> coefficients);
+
 }

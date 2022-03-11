@@ -50,12 +50,64 @@ public class SegmentFunction<T> implements Function<T>
 
 
 	/**
+	 * use the spline to compute the integral over a range
+	 * @param lo the lo end of integral range in function coordinates
+	 * @param hi the hi end of integral range in function coordinates
+	 * @return the computed value of the integral for the specified range
+	 */
+	public T evalIntegralOver
+		(
+			double lo, double hi
+		)
+	{
+		double slo = translate (lo), shi = translate (hi);
+		double[] results = new double[mgr.getComponentCount ()];
+		for (int c = 0; c < results.length; c++)
+		{
+			results[c] =
+				representation.getSegmentSlope () *
+				spline.evalIntegralOver (slo, shi, getCoefficients (c));
+		}
+		return mgr.construct (results);
+	}
+
+
+	/**
+	 * compute portion of function integral covered by segment range
+	 * @param lo the lo end of integral range in function coordinates
+	 * @param hi the hi end of integral range in function coordinates
+	 * @return the computed value of the integral contribution for the specified range
+	 */
+	public T evalIntegralContribution
+		(
+			double lo, double hi
+		)
+	{
+		double
+			segLo = representation.getSegmentLo (),
+			segHi = representation.getSegmentHi ();
+		if (lo > segHi || hi < segLo) return mgr.getZero ();
+
+		double rngLo = lo, rngHi = hi;
+		if (rngLo < segLo) rngLo = segLo;
+		if (rngHi > segHi) rngHi = segHi;
+
+		return evalIntegralOver (rngLo, rngHi);
+	}
+
+
+	/**
 	 * @param parameter the parameter value in coordinates of original function
 	 * @return the parameter value in coordinates of the spline function
 	 */
 	public double translate (double parameter)
 	{
-		return spline.getSplineOptimalLo () + (parameter - representation.getSegmentLo ()) * representation.getUnitSlope ();
+		return
+			spline.getSplineOptimalLo () +
+			representation.getUnitSlope () *
+			(
+				parameter - representation.getSegmentLo ()
+			);
 	}
 
 
