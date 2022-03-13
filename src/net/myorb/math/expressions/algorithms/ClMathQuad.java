@@ -27,6 +27,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	implements SymbolMap.FactoryForImports
 {
 
+
 	/**
 	 * allow integrand access to integral implementer
 	 * @param <T> data type being processed
@@ -38,6 +39,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 		 */
 		RangeNodeDigest<T> getTargetAccess ();
 	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)

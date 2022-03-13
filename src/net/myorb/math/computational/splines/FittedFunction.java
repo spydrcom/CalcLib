@@ -106,6 +106,7 @@ public class FittedFunction<T> implements Function<T>, RealDomainIntegration<T>
 	}
 
 	/**
+	 * process the arrayed elements of a JSON array
 	 * @param segments the JSON array of segment descriptors
 	 */
 	public void processSplineSegments (JsonSemantics.JsonArray segments)
@@ -117,6 +118,7 @@ public class FittedFunction<T> implements Function<T>, RealDomainIntegration<T>
 	}
 
 	/**
+	 * parse the sections node taken from a JSON object
 	 * @param description the object node describing the spline segments
 	 */
 	public void processSplineDescription (JsonSemantics.JsonObject description)
@@ -178,18 +180,21 @@ class Segment<T> implements SegmentRepresentation
 
 
 	/**
+	 * get the numeric value of a named member of a JSON object
 	 * @param descriptor the object being parsed
 	 * @param member name of the member being read
 	 * @return the value of the named member
 	 */
 	public double lookup (JsonSemantics.JsonObject descriptor, String member)
 	{
-		return ((JsonSemantics.JsonNumber) descriptor.getMemberCalled (member))
-				.getNumber ().doubleValue ();
+		return ((JsonSemantics.JsonNumber) descriptor
+				.getMemberCalled (member)).getNumber ()
+				.doubleValue ();
 	}
 
 
 	/**
+	 * get the coefficients array from a JSON object
 	 * @param descriptor node holding coefficients for all components
 	 */
 	public void processCoefficients
@@ -206,8 +211,8 @@ class Segment<T> implements SegmentRepresentation
 
 
 	/**
-	 * @param components the JSON array 
-	 * 			holding coefficients for all components
+	 * add a list of coefficients to the list held per component
+	 * @param components the JSON array holding coefficients for all components
 	 */
 	public void processCoefficients (JsonSemantics.JsonArray components)
 	{

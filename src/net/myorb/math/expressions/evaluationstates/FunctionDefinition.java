@@ -1,9 +1,9 @@
 
 package net.myorb.math.expressions.evaluationstates;
 
-import net.myorb.math.computational.*;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.polynomial.PolynomialOptimizer;
+import net.myorb.math.computational.FourierSeriesCalculus;
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 import net.myorb.math.polynomial.families.HyperGeometricPolynomial;
