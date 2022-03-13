@@ -63,6 +63,7 @@ public class Quadrature
 			case CCQ:	return new CCQuadrature (integrand, parameters);
 			case VCQ:	return new VCQuadrature (integrand, parameters);
 			case ASQ:	return new ASQuadrature (integrand, parameters);
+			case CPC:	return new CPQuadrature (integrand, parameters);
 			case GAUSS:	return new GaussQuadrature (integrand, parameters).getIntegral ();
 			case CTA:	return new TrapezoidalApproximation (integrand, parameters, false);
 			case CTAA:	return new TrapezoidalApproximation (integrand, parameters, true);

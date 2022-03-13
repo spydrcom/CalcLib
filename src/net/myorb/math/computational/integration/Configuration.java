@@ -51,6 +51,7 @@ public class Configuration extends Parameterization
 		TSQ,	// Tanh-Sinh Quadrature
 		CCQ,	// Clenshaw-Curtis Quadrature
 		ASQ,	// Adaptive Spline Quadrature
+		CPC,	// Chebychev Polynomial Calculus methods
 		VCQ,	// Vandermonde-Chebychev Quadrature (VanChe)
 		CTA,	// Common Trapezoidal Approximation, no adjustment
 		CTAA,	// Common Trapezoidal Approximation, using adjustment

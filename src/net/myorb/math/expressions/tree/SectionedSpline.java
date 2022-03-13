@@ -3,6 +3,7 @@ package net.myorb.math.expressions.tree;
 
 import net.myorb.math.computational.splines.FittedFunction;
 import net.myorb.math.computational.splines.ChebyshevSpline;
+import net.myorb.math.computational.integration.RealDomainIntegration;
 
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
@@ -65,7 +66,7 @@ public class SectionedSpline<T>
  * an Abstract Parameterized Function wrapper for the spline
  * @param <T> type on which operations are to be executed
  */
-class AbstractSectionedSpline<T> extends AbstractParameterizedFunction
+class AbstractSectionedSpline<T> extends AbstractParameterizedFunction implements RealDomainIntegration<T>
 {
 
 
@@ -89,6 +90,18 @@ class AbstractSectionedSpline<T> extends AbstractParameterizedFunction
 		);
 	}
 	protected ValueManager<T> vm;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.RealDomainIntegration#evalIntegralOver(double, double)
+	 */
+	public T evalIntegralOver
+		(
+			double lo, double hi
+		)
+	{
+		return function.evalIntegralOver (lo, hi);
+	}
 
 
 	/* (non-Javadoc)

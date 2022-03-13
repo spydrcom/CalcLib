@@ -30,7 +30,6 @@ public class LagrangeQuadrature extends CommonQuadrature
 	 */
 	public void setEnvironment (Environment<Double> environment)
 	{
-		//.q = new GaussQuadrature<Double> (environment);
 		this.q = new GaussQuadrature<Double> (new ExpressionFloatingFieldManager());
 	}
 	protected GaussQuadrature<Double> q;

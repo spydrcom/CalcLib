@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * expression is same as SubExpression except parent is null
@@ -27,6 +28,11 @@ public class Expression<T> extends SubExpression<T>
 	 */
 	protected Map<String,LexicalAnalysis.Identifier<T>> identifiers = new HashMap<> ();
 	protected Map<String,LexicalAnalysis.Operator> operators = new HashMap<> ();
+
+	/**
+	 * @return Set of identifier names used in expression
+	 */
+	public Set<String> getIdentifiers () { return identifiers.keySet (); }
 
 	/**
 	 * components list provides initial inspection of sub-expressions
@@ -86,6 +92,17 @@ public class Expression<T> extends SubExpression<T>
 		StringBuffer buf;
 		addElements (buf = new StringBuffer ());
 		return buf.toString ();
+	}
+
+	/**
+	 * sys-out print of identifiers and operators found
+	 */
+	public void dump ()
+	{
+		System.out.print ("identifiers: ");
+		System.out.println (identifiers);
+		System.out.print ("operators: ");
+		System.out.println (operators);
 	}
 
 	private static final long serialVersionUID = -3813116162860748886L;

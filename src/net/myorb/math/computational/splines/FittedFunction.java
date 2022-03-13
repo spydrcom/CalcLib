@@ -1,6 +1,7 @@
 
 package net.myorb.math.computational.splines;
 
+import net.myorb.math.computational.integration.RealDomainIntegration;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
@@ -19,7 +20,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class FittedFunction<T> implements Function<T>
+public class FittedFunction<T> implements Function<T>, RealDomainIntegration<T>
 {
 
 

@@ -27,6 +27,17 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	implements SymbolMap.FactoryForImports
 {
 
+	/**
+	 * allow integrand access to integral implementer
+	 * @param <T> data type being processed
+	 */
+	public interface AccessToTarget<T>
+	{
+		/**
+		 * @return the digest describing the integrand
+		 */
+		RangeNodeDigest<T> getTargetAccess ();
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
@@ -151,7 +162,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
  * function description of expression in integral target
  * @param <T> data type being processed
  */
-class QuadIntegrand<T> extends RealIntegrandFunctionBase
+class QuadIntegrand<T> extends RealIntegrandFunctionBase implements ClMathQuad.AccessToTarget<T>
 {
 
 	QuadIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
@@ -160,6 +171,11 @@ class QuadIntegrand<T> extends RealIntegrandFunctionBase
 		this.cvt = environment.getConversionManager ();
 		this.digest = digest;
 	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.ClMathQuad.AccessToTarget#getTargetAccess()
+	 */
+	public RangeNodeDigest<T> getTargetAccess () { return digest; }
 	protected RangeNodeDigest<T> digest;
 
 	/* (non-Javadoc)

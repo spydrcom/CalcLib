@@ -124,6 +124,14 @@ public class RangeNodeDigest<T>
 	{
 		return calculator.evaluate (target);
 	}
+
+	/**
+	 * @return the target object referenced by the digest
+	 */
+	public Expression<?> getTargetExpression ()
+	{
+		return target;
+	}
 	protected Expression<T> target;
 
 
