@@ -50,6 +50,20 @@ public class SegmentFunction<T> implements Function<T>
 
 
 	/**
+	 * compute integral for full segment range
+	 * @return integral computed for full segment range
+	 */
+	public T evalIntegral ()
+	{
+		return evalIntegralOver
+			(
+				representation.getSegmentLo (),
+				representation.getSegmentHi ()
+			);
+	}
+
+
+	/**
 	 * use the spline to compute the integral over a range
 	 * @param lo the lo end of integral range in function coordinates
 	 * @param hi the hi end of integral range in function coordinates

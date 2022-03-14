@@ -1,7 +1,7 @@
 
 package net.myorb.math.computational.splines;
 
-import net.myorb.math.computational.integration.RealDomainIntegration;
+import net.myorb.math.computational.Spline;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
@@ -10,7 +10,6 @@ import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.data.notations.json.*;
 
 import net.myorb.math.SpaceManager;
-import net.myorb.math.Function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class FittedFunction<T> implements Function<T>, RealDomainIntegration<T>
+public class FittedFunction<T> implements Spline.Operations<T>
 {
 
 
@@ -79,6 +78,21 @@ public class FittedFunction<T> implements Function<T>, RealDomainIntegration<T>
 		{
 			T portion = segment.segmentFunction
 					.evalIntegralContribution (lo, hi);
+			result = mgr.add (result, portion);
+		}
+		return result;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.Spline.Operations#evalIntegral()
+	 */
+	public T evalIntegral ()
+	{
+		T result = mgr.getZero ();
+		for (Segment<T> segment : segments)
+		{
+			T portion = segment.segmentFunction.evalIntegral ();
 			result = mgr.add (result, portion);
 		}
 		return result;
