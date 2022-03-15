@@ -8,6 +8,7 @@ import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.tree.Gardener;
 import net.myorb.math.expressions.tree.Expression;
 import net.myorb.math.expressions.commands.CommandSequence;
+import net.myorb.math.computational.Spline.Operations;
 
 import net.myorb.data.abstractions.SimpleUtilities;
 
@@ -248,6 +249,16 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 	}
 	public Expression<T> getExpression () { return expression; }
 	protected Expression<T> expression = null;
+
+
+	/**
+	 * @param splineFunctions the exported functionality from the spline generator
+	 */
+	public void attachSpline (Operations<T> splineFunctions)
+	{
+		this.splineFunctions = splineFunctions;
+	}
+	protected Operations<T> splineFunctions;
 
 
 	/**
