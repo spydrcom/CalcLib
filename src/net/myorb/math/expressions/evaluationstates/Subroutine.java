@@ -8,6 +8,7 @@ import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.tree.Gardener;
 import net.myorb.math.expressions.tree.Expression;
 import net.myorb.math.expressions.commands.CommandSequence;
+import net.myorb.math.computational.integration.RealDomainIntegration;
 import net.myorb.math.computational.Spline.Operations;
 
 import net.myorb.data.abstractions.SimpleUtilities;
@@ -20,7 +21,8 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class Subroutine<T> implements MultiDimensional.Function<T>
+public class Subroutine<T>
+	implements MultiDimensional.Function<T>, RealDomainIntegration<T>
 {
 
 
@@ -258,7 +260,16 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 	{
 		this.splineFunctions = splineFunctions;
 	}
-	protected Operations<T> splineFunctions;
+	protected Operations<T> splineFunctions = null;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.RealDomainIntegration#evalIntegralOver(double, double)
+	 */
+	public T evalIntegralOver (double lo, double hi)
+	{
+		return splineFunctions.evalIntegralOver (lo, hi);
+	}
 
 
 	/**
@@ -440,6 +451,8 @@ public class Subroutine<T> implements MultiDimensional.Function<T>
 		{
 			throw new RuntimeException ("Simple function must have excatly 1 parameter");
 		}
+
+		if (splineFunctions != null) return splineFunctions;
 
 		return new Function<T>()
 		{

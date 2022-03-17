@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.integration.Configuration;
+import net.myorb.math.computational.splines.SplineTool.Algorithm;
 
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
@@ -48,20 +49,20 @@ public class ClMathSpline<T> extends InstanciableFunctionLibrary<T>
 
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#buildIterationConsumer(java.util.Map)
-	 */
-	public IterationConsumer buildIterationConsumer (Map<String, Object> options)
-	{
-		return null;
-	}
-
-
-	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getIterationConsumerDescription()
 	 */
 	public Map<String, Object> getIterationConsumerDescription ()
 	{
 		return new Parameterization.Hash (sym, "CLASSPATH", ClMathSpline.class, options);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#buildIterationConsumer(java.util.Map)
+	 */
+	public IterationConsumer buildIterationConsumer (Map<String, Object> options)
+	{
+		return null;
 	}
 
 
@@ -72,9 +73,7 @@ public class ClMathSpline<T> extends InstanciableFunctionLibrary<T>
  * description of the tool as placed in the symbol table
  * @param <T> data type being processed
  */
-class SplineTool<T>
-	implements SymbolMap.Named,
-	net.myorb.math.computational.splines.SplineTool.Algorithm<T>
+class SplineTool<T> implements SymbolMap.Named, Algorithm<T>
 {
 
 	SplineTool (String name, Parameterization.Hash options)

@@ -152,6 +152,13 @@ public class FittedFunction<T> implements Spline.Operations<T>
 		processSplineDescription ((JsonSemantics.JsonObject) json);
 	}
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.Spline.Operations#getRepresentation()
+	 */
+	public Representation getRepresentation ()
+	{
+		throw new RuntimeException ("Representation not available");
+	}
 
 }
 

@@ -3,11 +3,14 @@ package net.myorb.math.computational.splines;
 
 import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.integration.Configuration;
+import net.myorb.math.computational.splines.ChebyshevFittedFunction;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.SymbolMap;
+import net.myorb.data.notations.json.JsonPrettyPrinter;
+import net.myorb.data.notations.json.JsonSemantics;
 
 import net.myorb.math.Function;
 
@@ -60,9 +63,11 @@ public class SplineTool<T>
 	public void buildFactory (Algorithm<T> fromAlgorithm)
 	{
 		this.configuration = fromAlgorithm.getConfiguration ();
+		this.showTree = configuration.getParameter ("show") != null;
 		this.factory = fromAlgorithm.buildFactory ();
 	}
 	protected Configuration configuration;
+	protected boolean showTree;
 
 
 	/**
@@ -92,9 +97,11 @@ public class SplineTool<T>
 	 */
 	public Function<T> lookupFunction (String functionName)
 	{
+		this.functionName = functionName;
 		this.udf = Subroutine.cast (symbols.get (functionName));
 		return (Function<T>) udf.toSimpleFunction ();
 	}
+	protected String functionName;
 	protected Subroutine<T> udf;
 
 
@@ -131,9 +138,53 @@ public class SplineTool<T>
 	 */
 	public void process (Spline.Operations<T> ops)
 	{
-		udf.attachSpline (ops);
-		System.out.println (ops);
+		udf.attachSpline (transplant (ops));
+	}
+
+
+	/**
+	 * prepare JSON tree representation
+	 * @param spline result from spline factory processing
+	 * @return JSON tree representation of spline
+	 */
+	public JsonSemantics.JsonObject toJson
+		(
+			Spline.Operations<T> spline
+		)
+	{
+		return (JsonSemantics.JsonObject) Spline.toJson
+		(
+			functionName, udf.getParameterNameList ().get (0), udf.toString (), spline
+		);
+	}
+
+
+	/**
+	 * translate spline to local representation
+	 * @param spline result from spline factory processing
+	 * @return a fitted-function representation
+	 */
+	public Spline.Operations<T> transplant
+		(
+			Spline.Operations<T> spline
+		)
+	{
+		JsonSemantics.JsonObject json = toJson (spline);
+
+		if (showTree)
+		try
+		{
+			JsonPrettyPrinter.sendTo
+			(
+				json, System.out
+			);
+		} catch (Exception e) {}
+
+		ChebyshevFittedFunction<T> f = new ChebyshevFittedFunction<T> (mgr);
+		f.processSplineDescription (json);
+		return f;
 	}
 
 
 }
+

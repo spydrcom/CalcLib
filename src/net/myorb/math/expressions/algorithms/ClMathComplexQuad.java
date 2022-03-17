@@ -149,6 +149,7 @@ public class ClMathComplexQuad<T> extends InstanciableFunctionLibrary<T>
  * @param <T> data type being processed
  */
 class QuadAxisIntegrand<T> extends RealIntegrandFunctionBase
+	implements ClMathQuad.AccessToTarget<T>
 {
 
 	QuadAxisIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
@@ -182,6 +183,14 @@ class QuadAxisIntegrand<T> extends RealIntegrandFunctionBase
 	public GenericValue construct (double... components)
 	{
 		return vm.newDiscreteValue (mgr.construct (components));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.ClMathQuad.AccessToTarget#getTargetAccess()
+	 */
+	public RangeNodeDigest<T> getTargetAccess ()
+	{
+		return digest;
 	}
 
 }
