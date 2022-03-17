@@ -1,10 +1,10 @@
 
 package net.myorb.math.computational.integration;
 
-import net.myorb.math.expressions.tree.RangeNodeDigest;
+import net.myorb.math.computational.splines.GenericSplineQuad;
+import net.myorb.math.computational.splines.GenericSplineQuad.AccessToTarget;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.algorithms.ClMathQuad;
-import net.myorb.math.expressions.SymbolMap;
 
 import java.util.Set;
 
@@ -33,39 +33,9 @@ public class CPQuadrature extends CommonQuadrature
 	 */
 	public void setEnvironment (Environment<Double> environment)
 	{
-		integral = findSymbol (environment.getSymbolMap ());
-		if (integral == null) throw new RuntimeException ("No spline found for integral");
-	}
-
-
-	/**
-	 * search the environment symbol map for the IDs in the digest.
-	 *  any spline object found in the named objects list will be used
-	 * @param symbols the symbol map for the session found in the environment object
-	 * @return the spline object found to be the target of the integration request
-	 */
-	@SuppressWarnings("unchecked")
-	RealDomainIntegration<Double> findSymbol (SymbolMap symbols)
-	{
-		for (String id : ids)
-		{
-			Object symbol = symbols.get (id);
-			if (symbol instanceof RealDomainIntegration)
-			{
-				return (RealDomainIntegration<Double>) symbol;
-			}
-		}
-		return null;
+		integral = GenericSplineQuad.findSymbol (ids, environment);
 	}
 	protected Set<String> ids;
-
-
-	/**
-	 * collect the identifiers used in the target of the integration request
-	 * @param digest the digest describing the integrand
-	 */
-	void connectIntegral (RangeNodeDigest<Double> digest)
-	{ ids = digest.getTargetExpression ().getIdentifiers (); }
 
 
 	/**
@@ -74,7 +44,9 @@ public class CPQuadrature extends CommonQuadrature
 	 */
 	@SuppressWarnings("unchecked")
 	void connect (RealIntegrandFunctionBase integrand)
-	{ connectIntegral (( (ClMathQuad.AccessToTarget<Double>) integrand ).getTargetAccess ()); }
+	{
+		ids = GenericSplineQuad.connect((AccessToTarget<Double>) integrand);
+	}
 
 
 	public CPQuadrature

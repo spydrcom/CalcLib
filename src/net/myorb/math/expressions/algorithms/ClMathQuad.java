@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.integration.Quadrature;
 import net.myorb.math.computational.integration.RealIntegrandFunctionBase;
+import net.myorb.math.computational.splines.GenericSplineQuad.AccessToTarget;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -26,19 +27,6 @@ import java.util.Map;
 public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	implements SymbolMap.FactoryForImports
 {
-
-
-	/**
-	 * allow integrand access to integral implementer
-	 * @param <T> data type being processed
-	 */
-	public interface AccessToTarget<T>
-	{
-		/**
-		 * @return the digest describing the integrand
-		 */
-		RangeNodeDigest<T> getTargetAccess ();
-	}
 
 
 	/* (non-Javadoc)
@@ -164,7 +152,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
  * function description of expression in integral target
  * @param <T> data type being processed
  */
-class QuadIntegrand<T> extends RealIntegrandFunctionBase implements ClMathQuad.AccessToTarget<T>
+class QuadIntegrand<T> extends RealIntegrandFunctionBase implements AccessToTarget<T>
 {
 
 	QuadIntegrand (RangeNodeDigest<T> digest, Environment<T> environment)
