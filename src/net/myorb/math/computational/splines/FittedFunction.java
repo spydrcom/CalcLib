@@ -23,9 +23,31 @@ public class FittedFunction<T> implements Spline.Operations<T>
 {
 
 
+	/**
+	 * a full descriptor of the structure of the spline fitted by the function
+	 * @param <T> type on which operations are to be executed
+	 */
+	public interface FittedSegmentRepresentation <T> 
+			extends SegmentRepresentation
+	{
+		/**
+		 * get a function that maps the segment
+		 * @return a function that maps the represented segment
+		 */
+		SegmentFunction<T> getSegmentFunction ();
+
+		/**
+		 * identify segment if maps to value
+		 * @param value the point to locate a segment for
+		 * @return the function for the segment, or NULL if not a match
+		 */
+		SegmentFunction<T> checkFor (double value);
+	}
+
+
 	public FittedFunction
 		(
-			ExpressionComponentSpaceManager<T> mgr,
+			ExpressionComponentSpaceManager <T> mgr,
 			SplineMechanisms spline
 		)
 	{
@@ -33,8 +55,8 @@ public class FittedFunction<T> implements Spline.Operations<T>
 		this.spline = spline;
 		this.mgr = mgr;
 	}
-	protected ExpressionComponentSpaceManager<T> mgr;
-	protected List<Segment<T>> segments;
+	protected List< FittedSegmentRepresentation <T> > segments;
+	protected ExpressionComponentSpaceManager <T> mgr;
 	protected SplineMechanisms spline;
 
 
@@ -56,7 +78,7 @@ public class FittedFunction<T> implements Spline.Operations<T>
 	{
 		SegmentFunction<T> f;
 		double p = mgr.component (x, 0);
-		for (Segment<T> segment : segments)
+		for (FittedSegmentRepresentation<T> segment : segments)
 		{ if ((f = segment.checkFor (p)) != null) return f; }
 		return null;
 	}
@@ -74,10 +96,10 @@ public class FittedFunction<T> implements Spline.Operations<T>
 		)
 	{
 		T result = mgr.getZero ();
-		for (Segment<T> segment : segments)
+		for (FittedSegmentRepresentation<T> segment : segments)
 		{
-			T portion = segment.segmentFunction
-					.evalIntegralContribution (lo, hi);
+			T portion = segment.getSegmentFunction ()
+				.evalIntegralContribution (lo, hi);
 			result = mgr.add (result, portion);
 		}
 		return result;
@@ -90,9 +112,9 @@ public class FittedFunction<T> implements Spline.Operations<T>
 	public T evalIntegral ()
 	{
 		T result = mgr.getZero ();
-		for (Segment<T> segment : segments)
+		for (FittedSegmentRepresentation<T> segment : segments)
 		{
-			T portion = segment.segmentFunction.evalIntegral ();
+			T portion = segment.getSegmentFunction ().evalIntegral ();
 			result = mgr.add (result, portion);
 		}
 		return result;
@@ -157,7 +179,15 @@ public class FittedFunction<T> implements Spline.Operations<T>
 	 */
 	public Representation getRepresentation ()
 	{
-		throw new RuntimeException ("Representation not available");
+		return new Representation ()
+		{
+			public List<SegmentRepresentation> getSegmentList ()
+			{
+				List<SegmentRepresentation> list = new ArrayList<>();
+				list.addAll (segments);
+				return list;
+			}
+		};
 	}
 
 }
@@ -167,7 +197,7 @@ public class FittedFunction<T> implements Spline.Operations<T>
  * a SegmentRepresentation parsed from a JSON tree node
  * @param <T> type on which operations are to be executed
  */
-class Segment<T> implements SegmentRepresentation
+class Segment<T> implements FittedFunction.FittedSegmentRepresentation<T>
 {
 
 
@@ -178,6 +208,7 @@ class Segment<T> implements SegmentRepresentation
 			SplineMechanisms spline
 		)
 	{
+		this.mgr = mgr;
 		this.spline = spline;
 		this.lo = lookup (descriptor, "lo");
 		this.unit = lookup (descriptor, "unit");
@@ -186,17 +217,18 @@ class Segment<T> implements SegmentRepresentation
 		this.error = lookup (descriptor, "error");
 		this.processCoefficients (descriptor);
 		this.hi = lookup (descriptor, "hi");
-		this.connectFunction (mgr);
+		this.connectFunction ();
 	}
+	protected ExpressionComponentSpaceManager<T> mgr;
 	protected SplineMechanisms spline;
 
 
 	/**
 	 * allocate a segment function object for this segment
-	 * @param mgr the Component Manager for the data type
 	 */
-	public void connectFunction (ExpressionComponentSpaceManager<T> mgr)
+	public void connectFunction ()
 	{ this.segmentFunction = new SegmentFunction<T> (this, mgr, spline); }
+	public SegmentFunction<T> getSegmentFunction () { return this.segmentFunction; }
 	protected SegmentFunction<T> segmentFunction;
 
 

@@ -3,6 +3,7 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.Parameterization;
+
 import net.myorb.math.computational.integration.Configuration;
 import net.myorb.math.computational.splines.SplineTool.Algorithm;
 
@@ -18,8 +19,8 @@ import java.util.Map;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class ClMathSpline<T> extends InstanciableFunctionLibrary<T>
-	implements SymbolMap.FactoryForImports
+public class ClMathSpline <T> extends InstanciableFunctionLibrary <T>
+		implements SymbolMap.FactoryForImports
 {
 
 
@@ -73,7 +74,7 @@ public class ClMathSpline<T> extends InstanciableFunctionLibrary<T>
  * description of the tool as placed in the symbol table
  * @param <T> data type being processed
  */
-class SplineTool<T> implements SymbolMap.Named, Algorithm<T>
+class SplineTool <T> implements SymbolMap.Named, Algorithm <T>
 {
 
 	SplineTool (String name, Parameterization.Hash options)
@@ -106,7 +107,7 @@ class SplineTool<T> implements SymbolMap.Named, Algorithm<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.SplineTool.Algorithm#buildFactory()
 	 */
-	public Spline.Factory<T> buildFactory () {
+	public Spline.Factory <T> buildFactory () {
 		return Spline.buildFactoryFrom (configuration);
 	}
 

@@ -8,12 +8,12 @@ import net.myorb.math.expressions.ExpressionComponentSpaceManager;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class ChebyshevFittedFunction<T> extends FittedFunction<T>
+public class ChebyshevFittedFunction <T> extends FittedFunction <T>
 {
 
 	public ChebyshevFittedFunction
 		(
-			ExpressionComponentSpaceManager<T> mgr
+			ExpressionComponentSpaceManager <T> mgr
 		)
 	{
 		super (mgr, new ChebyshevSpline (mgr));

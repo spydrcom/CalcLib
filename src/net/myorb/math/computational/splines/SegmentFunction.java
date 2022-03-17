@@ -11,17 +11,17 @@ import net.myorb.math.Function;
 
 /**
  * describe a function that maps the curve of best fit to a spline segment
- * @param <T> type on which operations are to be executed
+ * @param <T> data type on which operations are to be executed
  * @author Michael Druckman
  */
-public class SegmentFunction<T> implements Function<T>
+public class SegmentFunction <T> implements Function <T>
 {
 
 
 	public SegmentFunction
 		(
 			SegmentRepresentation representation,
-			ExpressionComponentSpaceManager<T> mgr,
+			ExpressionComponentSpaceManager <T> mgr,
 			SplineMechanisms spline
 		)
 	{
@@ -29,7 +29,7 @@ public class SegmentFunction<T> implements Function<T>
 		this.representation = representation;
 		this.mgr = mgr;
 	}
-	protected ExpressionComponentSpaceManager<T> mgr;
+	protected ExpressionComponentSpaceManager <T> mgr;
 	protected SegmentRepresentation representation;
 	protected SplineMechanisms spline;
 

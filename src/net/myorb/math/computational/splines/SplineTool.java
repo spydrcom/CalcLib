@@ -19,7 +19,7 @@ import net.myorb.math.Function;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class SplineTool<T>
+public class SplineTool <T>
 {
 
 
@@ -27,7 +27,7 @@ public class SplineTool<T>
 	 * construct the factory object to be used
 	 * @param <T> type on which operations are to be executed
 	 */
-	public interface Algorithm<T>
+	public interface Algorithm <T>
 	{
 		/**
 		 * @return the hash of parameters for the spline generation
@@ -37,7 +37,7 @@ public class SplineTool<T>
 		/**
 		 * @return a factory object based on specified parameters
 		 */
-		Spline.Factory<T> buildFactory ();
+		Spline.Factory <T> buildFactory ();
 	}
 
 
@@ -47,11 +47,11 @@ public class SplineTool<T>
 	public SplineTool
 	(Environment <T> environment)
 	{
-		this.mgr = (ExpressionComponentSpaceManager<T>) environment.getSpaceManager ();
+		this.mgr = (ExpressionComponentSpaceManager <T>) environment.getSpaceManager ();
 		this.symbols = environment.getSymbolMap ();
 		this.environment = environment;
 	}
-	protected ExpressionComponentSpaceManager<T> mgr;
+	protected ExpressionComponentSpaceManager <T> mgr;
 	protected Environment <T> environment;
 	protected SymbolMap symbols;
 
@@ -60,7 +60,7 @@ public class SplineTool<T>
 	 * construct the factory object for this tool
 	 * @param fromAlgorithm the algorithm container for the factory
 	 */
-	public void buildFactory (Algorithm<T> fromAlgorithm)
+	public void buildFactory (Algorithm <T> fromAlgorithm)
 	{
 		this.configuration = fromAlgorithm.getConfiguration ();
 		this.showTree = configuration.getParameter ("show") != null;
@@ -76,8 +76,8 @@ public class SplineTool<T>
 	 * @param range the domain to be made available by the spline
 	 * @return the spline object exporting identified operations
 	 */
-	public Spline.Operations<T> generateSpline
-		(Function<T> model, ArrayDescriptor<T> range)
+	public Spline.Operations <T> generateSpline
+		(Function <T> model, ArrayDescriptor <T> range)
 	{
 		return factory.generateSpline
 		(
@@ -87,7 +87,7 @@ public class SplineTool<T>
 			configuration
 		);
 	}
-	protected Spline.Factory<T> factory;
+	protected Spline.Factory <T> factory;
 
 
 	/**

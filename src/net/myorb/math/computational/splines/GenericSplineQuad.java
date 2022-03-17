@@ -18,14 +18,13 @@ public class GenericSplineQuad
 
 	/**
 	 * allow integrand access to integral implementer
-	 * @param <T> data type being processed
 	 */
-	public interface AccessToTarget<T>
+	public interface AccessToTarget
 	{
 		/**
 		 * @return the digest describing the integrand
 		 */
-		RangeNodeDigest<T> getTargetAccess ();
+		RangeNodeDigest <?> getTargetAccess ();
 	}
 
 
@@ -36,9 +35,9 @@ public class GenericSplineQuad
 	 * @return the spline object found to be the target of the integration request
 	 * @param <T> data type being processed
 	 */
-	public static <T> RealDomainIntegration<T> findSymbol (Set<String> ids, Environment<T> environment)
+	public static <T> RealDomainIntegration <T> findSymbol (Set <String> ids, Environment <T> environment)
 	{
-		RealDomainIntegration<T> quad = findSymbol (ids, environment.getSymbolMap ());
+		RealDomainIntegration <T> quad = findSymbol (ids, environment.getSymbolMap ());
 		if (quad == null) throw new RuntimeException ("No spline found for integral");
 		return quad;
 	}
@@ -52,15 +51,15 @@ public class GenericSplineQuad
 	 * @return the spline object found to be the target of the integration request
 	 * @param <T> data type being processed
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> RealDomainIntegration<T> findSymbol (Set<String> ids, SymbolMap symbols)
+	@SuppressWarnings ("unchecked")
+	public static <T> RealDomainIntegration <T> findSymbol (Set <String> ids, SymbolMap symbols)
 	{
 		for (String id : ids)
 		{
 			Object symbol = symbols.get (id);
 			if (symbol instanceof RealDomainIntegration)
 			{
-				return (RealDomainIntegration<T>) symbol;
+				return ( RealDomainIntegration <T> ) symbol;
 			}
 		}
 		return null;
@@ -71,9 +70,8 @@ public class GenericSplineQuad
 	 * collect the identifiers used in the target of the integration request
 	 * @param digest the digest describing the integrand of the integration request
 	 * @return the set of identifiers connected to that target
-	 * @param <T> data type being processed
 	 */
-	public static <T> Set<String> connectIntegral (RangeNodeDigest<T> digest)
+	public static Set <String> connectIntegral (RangeNodeDigest <?> digest)
 	{ return digest.getTargetExpression ().getIdentifiers (); }
 
 
@@ -81,9 +79,8 @@ public class GenericSplineQuad
 	 * process the target node of the integral request
 	 * @param access object with access to target containing spline reference
 	 * @return the set of identifiers connected to that target
-	 * @param <T> data type being processed
 	 */
-	public static <T> Set<String> connect (AccessToTarget<T> access)
+	public static Set <String> connect (AccessToTarget access)
 	{ return connectIntegral (access.getTargetAccess ()); }
 
 

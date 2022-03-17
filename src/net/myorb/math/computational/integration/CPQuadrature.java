@@ -13,7 +13,7 @@ import java.util.Set;
  * @author Michael Druckman
  */
 public class CPQuadrature extends CommonQuadrature
-	implements Quadrature.Integral, Environment.AccessAcceptance<Double>
+	implements Quadrature.Integral, Environment.AccessAcceptance <Double>
 {
 
 
@@ -42,10 +42,9 @@ public class CPQuadrature extends CommonQuadrature
 	 * process the target node of the integral request
 	 * @param integrand the target of the integration request
 	 */
-	@SuppressWarnings("unchecked")
-	void connect (RealIntegrandFunctionBase integrand)
+	void connect (Object integrand)
 	{
-		ids = GenericSplineQuad.connect((AccessToTarget<Double>) integrand);
+		ids = GenericSplineQuad.connect ( (AccessToTarget) integrand );
 	}
 
 

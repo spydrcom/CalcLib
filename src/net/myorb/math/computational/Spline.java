@@ -67,14 +67,14 @@ public class Spline
 	 * @return the constructed Spline factory
 	 * @param <T> data type for operations
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Spline.Factory<T> buildFactoryFrom (Configuration parameters)
+	@SuppressWarnings ("unchecked")
+	public static <T> Spline.Factory <T> buildFactoryFrom (Configuration parameters)
 	{
 		try
 		{
 			String factoryName = parameters.getParameter ("factory");
 			Object factory = Class.forName (factoryName).newInstance ();
-			return (Spline.Factory<T>) factory;
+			return ( Spline.Factory <T> ) factory;
 		}
 		catch (Exception e) { throw new RuntimeException ("Factory not available", e); }
 	}
@@ -91,7 +91,7 @@ public class Spline
 	public static JsonSemantics.JsonValue toJson
 		(
 			String name, String parameter, String description,
-			Spline.Operations<?> access
+			Spline.Operations <?> access
 		)
 	{
 		return StorageFormat.express (name, parameter, description, access.getRepresentation ());
