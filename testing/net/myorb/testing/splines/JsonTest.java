@@ -15,9 +15,9 @@ public class JsonTest
 
 		SimpleStreamIO.TextSource source =
 			SimpleStreamIO.getFileSource ("expressions/G55.json");
-		ChebyshevSpline spline = new ChebyshevSpline (mgr);
-		FittedFunction<ComplexValue<Double>> f =
-			new FittedFunction<> (mgr, spline);
+		ChebyshevSpline spline = new ChebyshevSpline ();
+		FittedFunction<ComplexValue <Double>> f =
+			new FittedFunction <> (mgr, spline);
 		f.readFrom (source);
 
 		for (int i=1; i<10; i++)

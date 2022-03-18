@@ -7,6 +7,8 @@ import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.integration.Configuration;
 import net.myorb.math.computational.splines.SplineTool.Algorithm;
 
+import net.myorb.math.expressions.evaluationstates.Environment;
+
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 
@@ -32,7 +34,7 @@ public class ClMathSpline <T> extends InstanciableFunctionLibrary <T>
 	{
 		this.sym = named;
 		this.options = Parameterization.copy (configuration);
-		return new SplineTool<T> (named, options);
+		return generateTool (sym);
 	}
 
 
@@ -43,10 +45,22 @@ public class ClMathSpline <T> extends InstanciableFunctionLibrary <T>
 	{
 		this.sym = sym;
 		this.options = Parameterization.copy (lib.getParameterization ());
-		return new SplineTool<T> (sym, options);
+		return generateTool (sym);
+	}
+	protected String sym;
+
+
+	/**
+	 * @param sym the name of the symbol
+	 * @return the created spline tool
+	 */
+	public SplineTool <T> generateTool (String sym)
+	{
+		SplineTool <T> tool = new SplineTool <T> (sym, options);
+		tool.setEnvironment (environment);
+		return tool;
 	}
 	protected Parameterization.Hash options;
-	protected String sym;
 
 
 	/* (non-Javadoc)
@@ -77,11 +91,17 @@ public class ClMathSpline <T> extends InstanciableFunctionLibrary <T>
 class SplineTool <T> implements SymbolMap.Named, Algorithm <T>
 {
 
-	SplineTool (String name, Parameterization.Hash options)
+	public SplineTool (String name, Parameterization.Hash options)
 	{
 		this.configuration = new Configuration (options);
 		this.name = name;
 	}
+
+	public void setEnvironment (Environment<T> environment)
+	{
+		this.environment = environment;
+	}
+	protected Environment<T> environment;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
@@ -108,7 +128,9 @@ class SplineTool <T> implements SymbolMap.Named, Algorithm <T>
 	 * @see net.myorb.math.computational.splines.SplineTool.Algorithm#buildFactory()
 	 */
 	public Spline.Factory <T> buildFactory () {
-		return Spline.buildFactoryFrom (configuration);
+		Spline.Factory <T> f = Spline.buildFactoryFrom (configuration);
+		environment.provideAccessTo (f);
+		return f;
 	}
 
 }

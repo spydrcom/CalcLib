@@ -3,12 +3,12 @@ package net.myorb.math.computational.splines;
 
 import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.integration.Configuration;
-import net.myorb.math.computational.splines.ChebyshevFittedFunction;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.SymbolMap;
+
 import net.myorb.data.notations.json.JsonPrettyPrinter;
 import net.myorb.data.notations.json.JsonSemantics;
 
@@ -164,11 +164,12 @@ public class SplineTool <T>
 	 * @param spline result from spline factory processing
 	 * @return a fitted-function representation
 	 */
-	public Spline.Operations<T> transplant
+	public Spline.Operations <T> transplant
 		(
-			Spline.Operations<T> spline
+			Spline.Operations <T> spline
 		)
 	{
+		FittedFunction <T> fitted;
 		JsonSemantics.JsonObject json = toJson (spline);
 
 		if (showTree)
@@ -180,9 +181,21 @@ public class SplineTool <T>
 			);
 		} catch (Exception e) {}
 
-		ChebyshevFittedFunction<T> f = new ChebyshevFittedFunction<T> (mgr);
-		f.processSplineDescription (json);
-		return f;
+		try
+		{
+			JsonSemantics.JsonString path =
+					(JsonSemantics.JsonString) json.getMemberCalled ("Interpreter");
+			SplineMechanisms mechanisms = (SplineMechanisms) Class.forName (path.getContent ()).newInstance ();
+			Environment.provideAccess (mechanisms, environment);
+			fitted = new FittedFunction <T> (mgr, mechanisms);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException ("Spline transplant failed", e);
+		}
+
+		fitted.processSplineDescription (json);
+		return fitted;
 	}
 
 

@@ -81,11 +81,12 @@ public class StorageFormat
 		tree.addMemberNamed ("Parameter", new JsonSemantics.JsonString (parameter));
 		tree.addMemberNamed ("Description", new JsonSemantics.JsonString (description));
 		tree.addMemberNamed ("NodeType", new JsonSemantics.JsonString (JsonBinding.NodeTypes.Sectioned.toString ()));
+		tree.addMemberNamed ("Interpreter", new JsonSemantics.JsonString (segments.getInterpretation ()));
 		tree.addMemberNamed ("Sections", describe (segments));
 		tree.setOrderedMembersList (EXPRESS_MEMBERS);
 		return tree;
 	}
-	public static final String[] EXPRESS_MEMBERS = {"Name", "Parameter", "Description", "NodeType", "Sections"};
+	public static final String[] EXPRESS_MEMBERS = {"Name", "Parameter", "Description", "Interpreter", "NodeType", "Sections"};
 
 
 }

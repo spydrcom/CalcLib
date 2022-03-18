@@ -69,13 +69,17 @@ public class QuadratureBase<T> extends AbstractVectorConsumer
 	{
 		return using.rangeSpecificationNotation
 			(
-				using.integralRange
-				(
-					OperatorNomenclature.INTEGRAL_OPERATOR,
-					range
-				),
+				integralRange (range, using),
 				specialCaseRenderSection (range, using) + parameters
 			);
+	}
+	public String integralRange (Range range, NodeFormatting using)
+	{
+		return using.integralRange
+		(
+			OperatorNomenclature.INTEGRAL_OPERATOR,
+			range
+		);
 	}
 
 

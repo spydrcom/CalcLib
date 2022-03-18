@@ -19,7 +19,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class FittedFunction<T> implements Spline.Operations<T>
+public class FittedFunction <T> implements Spline.Operations <T>
 {
 
 
@@ -186,6 +186,10 @@ public class FittedFunction<T> implements Spline.Operations<T>
 				List<SegmentRepresentation> list = new ArrayList<>();
 				list.addAll (segments);
 				return list;
+			}
+			public String getInterpretation ()
+			{
+				return spline.getInterpreterPath ();
 			}
 		};
 	}

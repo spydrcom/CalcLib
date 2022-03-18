@@ -31,4 +31,10 @@ public interface SplineMechanisms
 	 */
 	double evalIntegralOver (double lo, double hi, GeneratingFunctions.Coefficients<Double> coefficients);
 
+	/**
+	 * identify the object that will correctly interpret the spline description 
+	 * @return class-path for interpretation object
+	 */
+	String getInterpreterPath ();
+
 }

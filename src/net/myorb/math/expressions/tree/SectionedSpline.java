@@ -3,6 +3,7 @@ package net.myorb.math.expressions.tree;
 
 import net.myorb.math.computational.splines.FittedFunction;
 import net.myorb.math.computational.splines.ChebyshevSpline;
+
 import net.myorb.math.computational.integration.RealDomainIntegration;
 
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
@@ -20,21 +21,21 @@ import net.myorb.data.notations.json.*;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class SectionedSpline<T>
+public class SectionedSpline <T>
 {
 
 
 	public SectionedSpline
 		(
-			ExpressionComponentSpaceManager<T> mgr
+			ExpressionComponentSpaceManager <T> mgr
 		)
 	{
-		this.spline = new ChebyshevSpline (mgr);
-		this.function = new FittedFunction<> (mgr, spline);
+		this.spline = new ChebyshevSpline ();
+		this.function = new FittedFunction <> (mgr, spline);
 		this.mgr = mgr;
 	}
-	protected ExpressionComponentSpaceManager<T> mgr;
-	protected FittedFunction<T> function;
+	protected ExpressionComponentSpaceManager <T> mgr;
+	protected FittedFunction <T> function;
 	protected ChebyshevSpline spline;
 
 

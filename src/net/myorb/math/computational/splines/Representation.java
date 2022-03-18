@@ -15,4 +15,9 @@ public interface Representation
 	 */
 	List<SegmentRepresentation> getSegmentList ();
 
+	/**
+	 * @return class-path for interpretation object
+	 */
+	String getInterpretation ();
+
 }

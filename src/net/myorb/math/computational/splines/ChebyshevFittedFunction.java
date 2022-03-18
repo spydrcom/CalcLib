@@ -16,7 +16,7 @@ public class ChebyshevFittedFunction <T> extends FittedFunction <T>
 			ExpressionComponentSpaceManager <T> mgr
 		)
 	{
-		super (mgr, new ChebyshevSpline (mgr));
+		super (mgr, new ChebyshevSpline ());
 	}
 
 }

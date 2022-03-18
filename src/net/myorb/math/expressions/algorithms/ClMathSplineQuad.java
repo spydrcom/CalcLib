@@ -5,10 +5,10 @@ import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
-
+//import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.computational.integration.RealDomainIntegration;
@@ -119,6 +119,18 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 		{
 			Set<String> ids = GenericSplineQuad.connectIntegral (digest);
 			return GenericSplineQuad.findSymbol (ids, environment);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase#markupForDisplay(java.lang.String, net.myorb.math.expressions.symbols.AbstractVectorReduction.Range, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+		 */
+		public String markupForDisplay (String operator, Range range, String parameters, NodeFormatting using)
+		{
+			return using.rangeSpecificationNotation
+				(
+					integralRange (range, using),
+					specialCaseRenderSection (range, using) + parameters
+				);
 		}
 
 	}

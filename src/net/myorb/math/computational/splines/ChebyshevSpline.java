@@ -5,7 +5,6 @@ import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
-import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
 import net.myorb.math.GeneratingFunctions;
 
@@ -33,28 +32,13 @@ public class ChebyshevSpline implements SplineMechanisms
 
 
 	/**
-	 * @param mgr the data type manage for the session
-	 */
-	public ChebyshevSpline
-		(
-			ExpressionComponentSpaceManager<?> mgr
-		)
-	{
-		this.setPolynomialManager (mgr);
-	}
-
-
-	/**
 	 * construct objects implementing Chebyshev Polynomial functionalities
-	 * @param mgr the data type manage for the session
 	 */
-	public void setPolynomialManager (ExpressionComponentSpaceManager<?> mgr)
+	public ChebyshevSpline ()
 	{
 		this.calculus = new ChebyshevPolynomialCalculus<Double>(realManager);
 		this.polynomial = new ChebyshevPolynomial<Double> (realManager);
-		this.mgr = mgr;
 	}
-	protected ExpressionComponentSpaceManager<?> mgr;
 
 
 	/* (non-Javadoc)
@@ -69,7 +53,7 @@ public class ChebyshevSpline implements SplineMechanisms
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.SplineMechanisms#evalSplineAt(double, net.myorb.math.GeneratingFunctions.Coefficients)
 	 */
-	public double evalSplineAt (double x, GeneratingFunctions.Coefficients<Double> coefficients)
+	public double evalSplineAt (double x, GeneratingFunctions.Coefficients <Double> coefficients)
 	{
 		return polynomial.evaluatePolynomialV
 				(
@@ -77,7 +61,7 @@ public class ChebyshevSpline implements SplineMechanisms
 					polynomial.forValue (x)
 				).getUnderlying ();
 	}
-	protected ChebyshevPolynomial<Double> polynomial;
+	protected ChebyshevPolynomial <Double> polynomial;
 
 
 	/*
@@ -86,7 +70,7 @@ public class ChebyshevSpline implements SplineMechanisms
 
 	public double evaluatePolynomialIntegral
 		(
-			GeneratingFunctions.Coefficients<Double> coefficients, 
+			GeneratingFunctions.Coefficients <Double> coefficients, 
 			double at
 		)
 	{
@@ -94,13 +78,13 @@ public class ChebyshevSpline implements SplineMechanisms
 	}
 	public double evaluatePolynomialIntegral
 		(
-			GeneratingFunctions.Coefficients<Double> coefficients, 
+			GeneratingFunctions.Coefficients <Double> coefficients, 
 			double lo, double hi
 		)
 	{
 		return calculus.evaluatePolynomialIntegral (coefficients, lo, hi);
 	}
-	protected ChebyshevPolynomialCalculus<Double> calculus;
+	protected ChebyshevPolynomialCalculus <Double> calculus;
 
 
 	/* (non-Javadoc)
@@ -109,10 +93,19 @@ public class ChebyshevSpline implements SplineMechanisms
 	public double evalIntegralOver
 		(
 			double lo, double hi,
-			GeneratingFunctions.Coefficients<Double> coefficients
+			GeneratingFunctions.Coefficients <Double> coefficients
 		)
 	{
 		return evaluatePolynomialIntegral (coefficients, lo, hi);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.SplineMechanisms#getInterpreterPath()
+	 */
+	public String getInterpreterPath ()
+	{
+		return ChebyshevSpline.class.getCanonicalName ();
 	}
 
 
