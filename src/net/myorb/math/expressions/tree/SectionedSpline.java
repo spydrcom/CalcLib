@@ -2,7 +2,7 @@
 package net.myorb.math.expressions.tree;
 
 import net.myorb.math.computational.splines.FittedFunction;
-import net.myorb.math.computational.splines.ChebyshevSpline;
+import net.myorb.math.computational.splines.SplineMechanisms;
 
 import net.myorb.math.computational.integration.RealDomainIntegration;
 
@@ -27,16 +27,17 @@ public class SectionedSpline <T>
 
 	public SectionedSpline
 		(
+			SplineMechanisms spline,
 			ExpressionComponentSpaceManager <T> mgr
 		)
 	{
-		this.spline = new ChebyshevSpline ();
 		this.function = new FittedFunction <> (mgr, spline);
+		this.spline = spline;
 		this.mgr = mgr;
 	}
 	protected ExpressionComponentSpaceManager <T> mgr;
 	protected FittedFunction <T> function;
-	protected ChebyshevSpline spline;
+	protected SplineMechanisms spline;
 
 
 	/**

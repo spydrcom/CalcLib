@@ -136,7 +136,7 @@ public class SplineTool <T>
 	 * process the spline object generated
 	 * @param ops the spline object created by the factory tool
 	 */
-	public void process (Spline.Operations<T> ops)
+	public void process (Spline.Operations <T> ops)
 	{
 		udf.attachSpline (transplant (ops));
 	}
@@ -149,7 +149,7 @@ public class SplineTool <T>
 	 */
 	public JsonSemantics.JsonObject toJson
 		(
-			Spline.Operations<T> spline
+			Spline.Operations <T> spline
 		)
 	{
 		return (JsonSemantics.JsonObject) Spline.toJson
@@ -183,9 +183,7 @@ public class SplineTool <T>
 
 		try
 		{
-			JsonSemantics.JsonString path =
-					(JsonSemantics.JsonString) json.getMemberCalled ("Interpreter");
-			SplineMechanisms mechanisms = (SplineMechanisms) Class.forName (path.getContent ()).newInstance ();
+			SplineMechanisms mechanisms = getSplineMechanisms (json);
 			Environment.provideAccess (mechanisms, environment);
 			fitted = new FittedFunction <T> (mgr, mechanisms);
 		}
@@ -196,6 +194,28 @@ public class SplineTool <T>
 
 		fitted.processSplineDescription (json);
 		return fitted;
+	}
+
+
+	/**
+	 * @param profile a JSON profile object describing a spline
+	 * @return a SplineMechanisms object constructed from the path
+	 */
+	public static SplineMechanisms getSplineMechanisms (JsonSemantics.JsonObject profile)
+	{
+		try
+		{
+			String path = JsonSemantics.getStringOrNull
+				(profile.getMemberCalled ("Interpreter"));
+			if (path == null) { return new ChebyshevSpline (); }
+			SplineMechanisms mechanisms = (SplineMechanisms)
+				Class.forName (path).newInstance ();
+			return mechanisms;
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException ("Interpreter not found", e);
+		}
 	}
 
 

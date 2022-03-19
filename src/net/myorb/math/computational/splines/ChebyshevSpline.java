@@ -36,8 +36,8 @@ public class ChebyshevSpline implements SplineMechanisms
 	 */
 	public ChebyshevSpline ()
 	{
-		this.calculus = new ChebyshevPolynomialCalculus<Double>(realManager);
-		this.polynomial = new ChebyshevPolynomial<Double> (realManager);
+		this.calculus = new ChebyshevPolynomialCalculus <Double> (realManager);
+		this.polynomial = new ChebyshevPolynomial <Double> (realManager);
 	}
 
 

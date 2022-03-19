@@ -1,10 +1,12 @@
 
 package net.myorb.math.expressions.tree;
 
-import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.computational.splines.SplineTool;
+
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.notations.json.*;
@@ -203,6 +205,7 @@ public class JsonRestore <T>
 
 
 	/**
+	 * build Profile object from JSON tree
 	 * @param value the JSON object holding the profile
 	 */
 	public void setProfile (JsonSemantics.JsonValue value)
@@ -218,39 +221,58 @@ public class JsonRestore <T>
 
 
 	/**
+	 * build expression object from tree representation
 	 * @return an expression tree from the Profile object
 	 * @throws Exception for any errors
 	 */
-	public Expression<T> getExpression () throws Exception
+	public Expression <T> getExpression () throws Exception
 	{
 		return toExpression (profile.getExpression ());
 	}
 
 
 	/**
+	 * build sectioned spline from JSON tree
 	 * @param root JSON object holding the profile node of the expression tree
 	 * @return wrapper for spline function
 	 */
-	public SectionedSpline<T> getSectionedSpline (JsonSemantics.JsonValue root)
+	public SectionedSpline <T> getSectionedSpline (JsonSemantics.JsonValue root)
 	{
 		JsonSemantics.JsonObject profile = (JsonSemantics.JsonObject) root;
 		JsonSemantics.JsonValue sections = profile.getMemberCalled ("Sections");
-		return toSectionedSpline (sections);
+		return toSectionedSpline (sections, profile);
 	}
 
 
 	/**
-	 * @param value the JSON object holding the spline description
+	 * a sectioned spline is constructed from profile and filled from Sections member
+	 * @param sections the JSON object holding the spline description
+	 * @param profile a JSON profile object describing a spline
 	 * @return wrapper for spline function
 	 */
-	public SectionedSpline<T> toSectionedSpline
-		(JsonSemantics.JsonValue value)
+	public SectionedSpline <T> toSectionedSpline
+		(
+			JsonSemantics.JsonValue sections,
+			JsonSemantics.JsonObject profile
+		)
 	{
-		ExpressionComponentSpaceManager<T> mgr =
-				(ExpressionComponentSpaceManager<T>) spaceManager;
-		SectionedSpline<T> spline = new SectionedSpline<T> (mgr);
-		spline.constructFrom (value);
+		SectionedSpline<T> spline =
+				buildSectionedSpline (profile);
+		spline.constructFrom (sections);
 		return spline;
+	}
+
+
+	/**
+	 * a sectioned spline is built on the Interpreter member of the profile
+	 * @param profile a JSON profile object describing a spline
+	 * @return the new spline object
+	 */
+	public SectionedSpline<T> buildSectionedSpline (JsonSemantics.JsonObject profile)
+	{
+		ExpressionComponentSpaceManager <T> mgr =
+				(ExpressionComponentSpaceManager <T>) spaceManager;
+		return new SectionedSpline <T> (SplineTool.getSplineMechanisms (profile), mgr);
 	}
 
 
