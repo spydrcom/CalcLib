@@ -95,14 +95,14 @@ public class SplineTool <T>
 	 * @param functionName the name of the object in the symbol table
 	 * @return the object found in the symbol table cast to Function
 	 */
-	public Function<T> lookupFunction (String functionName)
+	public Function <T> lookupFunction (String functionName)
 	{
 		this.functionName = functionName;
 		this.udf = Subroutine.cast (symbols.get (functionName));
-		return (Function<T>) udf.toSimpleFunction ();
+		return (Function <T>) udf.toSimpleFunction ();
 	}
 	protected String functionName;
-	protected Subroutine<T> udf;
+	protected Subroutine <T> udf;
 
 
 	/**
@@ -111,9 +111,9 @@ public class SplineTool <T>
 	 * @return the object found in the symbol table cast to Algorithm
 	 */
 	@SuppressWarnings("unchecked")
-	public Algorithm<T> lookupAlgorithm (String algorithmName)
+	public Algorithm <T> lookupAlgorithm (String algorithmName)
 	{
-		return (Algorithm<T>) symbols.get (algorithmName);
+		return (Algorithm <T>) symbols.get (algorithmName);
 	}
 
 
@@ -124,9 +124,9 @@ public class SplineTool <T>
 	public void applyTool (CommandSequence tokens)
 	{
 		String algorithmName = tokens.get (1).getTokenImage ();
-		ExtendedArrayFeatures<T> parser = new ExtendedArrayFeatures<T> ();
-		ArrayDescriptor<T> range = parser.getArrayDescriptor (tokens, 3, environment);
-		Function<T> function = lookupFunction (tokens.get (2).getTokenImage ());
+		ExtendedArrayFeatures <T> parser = new ExtendedArrayFeatures <T> ();
+		ArrayDescriptor <T> range = parser.getArrayDescriptor (tokens, 3, environment);
+		Function <T> function = lookupFunction (tokens.get (2).getTokenImage ());
 		buildFactory (lookupAlgorithm (algorithmName));
 		process (generateSpline (function, range));
 	}
