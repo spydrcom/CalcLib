@@ -259,6 +259,7 @@ public class Subroutine<T>
 	public void attachSpline (Operations<T> splineFunctions)
 	{
 		this.splineFunctions = splineFunctions;
+		this.gardener.attachSpline (splineFunctions);
 	}
 	protected Operations<T> splineFunctions = null;
 

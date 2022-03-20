@@ -1,6 +1,9 @@
 
 package net.myorb.math.expressions.tree;
 
+import net.myorb.math.computational.splines.Representation;
+import net.myorb.math.computational.splines.StorageFormat;
+
 import net.myorb.data.notations.json.JsonSemantics;
 
 /**
@@ -154,6 +157,17 @@ public class JsonBinding
 		System.out.println
 		("JSON conversion error: " + element.toString () + " - " + element.getElementType ());
 		return new LexicalAnalysis.Identifier<T> ("'").toJson ();
+	}
+
+
+	/**
+	 * produce JSON representation of spline sections
+	 * @param representation the spline representation object
+	 * @return JSON representation of the spline sections
+	 */
+	public static JsonSemantics.JsonValue toJson (Representation representation)
+	{
+		return StorageFormat.describe (representation);
 	}
 
 

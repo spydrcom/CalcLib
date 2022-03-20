@@ -3,7 +3,7 @@ package net.myorb.math.expressions.tree;
 
 import net.myorb.math.computational.splines.FittedFunction;
 import net.myorb.math.computational.splines.SplineMechanisms;
-
+import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.integration.RealDomainIntegration;
 
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
@@ -38,6 +38,16 @@ public class SectionedSpline <T>
 	protected ExpressionComponentSpaceManager <T> mgr;
 	protected FittedFunction <T> function;
 	protected SplineMechanisms spline;
+
+
+	/**
+	 * get access to the representation of the spline
+	 * @return the spline operations descriptor
+	 */
+	public Spline.Operations <T> getSplineWrapper ()
+	{
+		return function;
+	}
 
 
 	/**

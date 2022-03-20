@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions.tree;
 
+import net.myorb.math.computational.Spline;
+import net.myorb.math.computational.splines.Representation;
 import net.myorb.math.expressions.tree.JsonBinding.Node;
 
 import net.myorb.data.notations.json.JsonSemantics;
@@ -21,7 +23,7 @@ public class Profile extends JsonBinding.Node
 	/**
 	 * the names of the Profile node members
 	 */
-	public enum ProfileMembers {Name, Parameter, Parameters, Imports, Sections, Expression, Description}
+	public enum ProfileMembers {Name, Parameter, Parameters, Imports, Interpreter, Sections, Expression, Description}
 
 
 	/**
@@ -57,6 +59,39 @@ public class Profile extends JsonBinding.Node
 	public void setExpression (Element element)
 	{
 		addMember (ProfileMembers.Expression, JsonBinding.toJson (element));
+	}
+
+
+	/**
+	 * attach a spline representation to the profile
+	 * @param spline the descriptor describing the spline
+	 */
+	public void setSpline (SectionedSpline <?> spline)
+	{
+		if (spline != null) setSpline (spline.getSplineWrapper ());
+	}
+
+
+	/**
+	 * attach a spline representation to the profile
+	 * @param spline the Operations object describing the spline
+	 */
+	public void setSpline (Spline.Operations <?> spline)
+	{
+		if (spline != null) setSpline (spline.getRepresentation ());
+	}
+
+
+	/**
+	 * attach a spline representation to the profile
+	 * @param representation the Representation object describing the spline
+	 */
+	public void setSpline (Representation representation)
+	{
+		if (representation == null) return;
+		addMember (ProfileMembers.Interpreter,
+			JsonSemantics.stringOrNull (representation.getInterpretation ()));
+		addMember (ProfileMembers.Sections, JsonBinding.toJson (representation));
 	}
 
 
@@ -254,7 +289,8 @@ public class Profile extends JsonBinding.Node
 	public static final Object[] ORDERED_MEMBER_LIST = new Object[]
 	{
 		ProfileMembers.Name, ProfileMembers.Parameters, ProfileMembers.Parameter, ProfileMembers.Description,
-		ProfileMembers.Imports, ProfileMembers.Expression, Node.DISCRIMINATOR
+		ProfileMembers.Imports, ProfileMembers.Interpreter, ProfileMembers.Expression,
+		ProfileMembers.Sections, Node.DISCRIMINATOR
 	};
 
 

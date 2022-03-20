@@ -240,7 +240,8 @@ public class JsonRestore <T>
 	{
 		JsonSemantics.JsonObject profile = (JsonSemantics.JsonObject) root;
 		JsonSemantics.JsonValue sections = profile.getMemberCalled ("Sections");
-		return toSectionedSpline (sections, profile);
+		if (sections != null) return toSectionedSpline (sections, profile);
+		else return null;
 	}
 
 

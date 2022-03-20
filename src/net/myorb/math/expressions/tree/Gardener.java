@@ -8,6 +8,7 @@ import net.myorb.math.expressions.tree.LexicalAnalysis.ParenthesisNestingError;
 import net.myorb.math.expressions.tree.SemanticAnalysis.SemanticError;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.symbols.AbstractFunction;
@@ -18,6 +19,9 @@ import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.computational.CommonSplineDescription;
+import net.myorb.math.computational.splines.Representation;
+import net.myorb.math.computational.Spline.Operations;
+
 import net.myorb.math.GeneratingFunctions.Coefficients;
 
 import net.myorb.data.notations.json.JsonPrettyPrinter;
@@ -183,22 +187,64 @@ public class Gardener<T>
 	 * identify the tree being managed
 	 * @param expression the expression to be associated
 	 */
-	public void setExpression (Expression<T> expression) { this.expression = expression; }
-
-	/**
-	 * get access to the tree being managed
-	 * @return the tree being managed
-	 */
-	public Expression<T> getExpression() { return expression; }
-	protected Expression<T> expression;
+	public void setExpression (Expression <T> expression) { this.expression = expression; }
 
 
 	/**
 	 * get access to the tree being managed
 	 * @return the tree being managed
 	 */
-	public SectionedSpline<T> getSectionedSpline () { return sectionedSpline; }
-	protected SectionedSpline<T> sectionedSpline;
+	public Expression <T> getExpression () { return expression; }
+	protected Expression <T> expression = null;
+
+
+	/**
+	 * attach a spline description
+	 * @param sectionedSpline the descriptor for the spline representation
+	 */
+	public void setSpline (SectionedSpline <T> sectionedSpline)
+	{
+		if ((this.sectionedSpline = sectionedSpline) == null) return;
+		this.attachSpline (sectionedSpline.getSplineWrapper ());
+	}
+
+
+	/**
+	 * attach a spline description
+	 * @param splineFunctions access to the spline description
+	 */
+	public void attachSpline (Operations<T> splineFunctions)
+	{
+		if ((this.splineFunctions = splineFunctions) == null) return;
+		this.setSpline (splineFunctions.getRepresentation ());
+	}
+	protected Operations<T> splineFunctions;
+
+
+	/**
+	 * attach a spline description
+	 * @param splineRepresentation access to the spline description
+	 */
+	public void setSpline (Representation splineRepresentation)
+	{
+		this.splineRepresentation = splineRepresentation;
+	}
+	
+
+	/**
+	 * get access to the tree being managed
+	 * @return the tree being managed
+	 */
+	public SectionedSpline <T> getSectionedSpline () { return sectionedSpline; }
+	protected SectionedSpline <T> sectionedSpline = null;
+
+
+	/**
+	 * get access to spline representation
+	 * @return representation for the spline
+	 */
+	public Representation getSplineRepresentation () { return splineRepresentation; }
+	protected Representation splineRepresentation = null;
 
 
 	/**
@@ -227,9 +273,10 @@ public class Gardener<T>
 			case Profile:
 				restore.setProfile (value);
 				expression = restore.getExpression ();
+				setSpline (restore.getSectionedSpline (value));
 				break;
 			case Sectioned:
-				sectionedSpline = restore.getSectionedSpline (value);
+				setSpline (restore.getSectionedSpline (value));
 				break;
 			case Segment: case Spline:
 				restore.setProfile (new Profile (jsonTree)); break;
@@ -323,13 +370,15 @@ public class Gardener<T>
 	}
 	void defineUserFunction (Profile profile, SymbolMap symbols)
 	{
+		Subroutine<T> s =
 		DefinedFunction.defineUserFunction
 		(
 			profile.getProfileIdentifier (),
 			profile.getProfileParameters (),
 			tokens, spaceManager, symbols
-		)
-		.useExpressionTree (this);
+		);
+		s.useExpressionTree (this);
+		s.attachSpline (splineFunctions);
 	}
 
 
@@ -439,6 +488,7 @@ public class Gardener<T>
 		Profile profile = Profile.representing (name, parameterList);
 		profile.addImports (expression.describeImports ());
 		profile.setProfileDescription (description);
+		profile.setSpline (splineRepresentation);
 		profile.setExpression (expression);
 		return profile;
 	}
