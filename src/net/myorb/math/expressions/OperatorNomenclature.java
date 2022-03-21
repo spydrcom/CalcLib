@@ -54,7 +54,8 @@ public class OperatorNomenclature
 	APPLY_KEYWORD = "APPLY",					// APPLY tool function	apply Spline tool fit to a user defined function
 	EXPRESS_KEYWORD = "EXPRESS",				// EXPRESS function		generate Expression Tree for a user defined function
 	SAVEJSON_KEYWORD = "SAVEJSON",				// SAVEJSON function	save Expression Tree to JSON file for later restore using load
-	LOADJSON_KEYWORD = "LOADJSON",				// EXPRESS function		load Expression Tree for a user defined function from JSON file
+	LOADJSON_KEYWORD = "LOADJSON",				// LOADJSON function	load Expression Tree for a user defined function from JSON file
+	LOADSPLINE_KEYWORD = "LOADSPLINE",			// LOADSPLINE function	load Spline description for a user defined function from JSON file
 	ENCODE_KEYWORD = "ENCODE",					// ENCODE function		generate Java code for a segmented function
 	MAXMINOF_KEYWORD = "MAXMINOF",				// MAXMINOF function	find min/max of function near specified value
 	ROOTOF_KEYWORD = "ROOTOF",					// ROOTOF function		find root of function near specified value 

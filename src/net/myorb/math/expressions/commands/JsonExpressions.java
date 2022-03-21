@@ -108,6 +108,16 @@ public class JsonExpressions <T> extends Utilities <T>
 
 
 	/**
+	 * @param tokens the command tokens used to identify source
+	 */
+	public void loadSpline (TokenParser.TokenSequence tokens)
+	{
+		try { Gardener.loadJsonSpline (getFunctionName (tokens), environment); }
+		catch (Exception e) { throw new RuntimeException ("Error loading spline", e); }
+	}
+
+
+	/**
 	 * @param functionSymbol the symbol to save as JSON tree
 	 */
 	public void saveJson (String functionSymbol)

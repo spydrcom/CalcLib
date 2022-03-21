@@ -86,6 +86,7 @@ public class Gardener<T>
 	 */
 	public Gardener () {}
 
+
 	/**
 	 * retain a space manager to use in evaluations
 	 * @param environment access to the utility methods
@@ -95,18 +96,29 @@ public class Gardener<T>
 		this.spaceManager = environment.getSpaceManager ();
 		this.environment = environment;
 	}
-	Environment<T> environment;
+	protected Environment<T> environment;
 
 
 	/**
 	 * get access to space manager
 	 * @return a space manager provided for expression evaluations
 	 */
-	public ExpressionSpaceManager<T> getExpressionSpaceManager ()
-	{
-		return this.spaceManager;
-	}
-	protected ExpressionSpaceManager<T> spaceManager;
+	public ExpressionSpaceManager <T>
+		getExpressionSpaceManager () { return this.spaceManager; }
+	protected ExpressionSpaceManager <T> spaceManager;
+
+
+	/**
+	 * allocate a Calculation Engine for a tree evaluation
+	 * @return a new instance of the engine
+	 */
+	public CalculationEngine <T> getCalculationEngine ()
+	{ return new CalculationEngine <T> (spaceManager); }
+
+
+	/*
+	 * tree status
+	 */
 
 
 	/**
@@ -159,12 +171,9 @@ public class Gardener<T>
 	{ SemanticAnalysis.attributeAndReduce (expression, spaceManager, symbols); }
 
 
-	/**
-	 * allocate a Calculation Engine for a tree evaluation
-	 * @return a new instance of the engine
+	/*
+	 * token processing
 	 */
-	public CalculationEngine<T> getCalculationEngine ()
-	{ return new CalculationEngine<T> (spaceManager); }
 
 
 	/**
@@ -175,6 +184,7 @@ public class Gardener<T>
 	public void setTokens (Object source) { setTokens (new StringBuffer (source.toString ())); }
 	public void setTokens (StringBuffer buffer) { setTokens (TokenParser.parse (buffer)); }
 
+
 	/**
 	 * get a list of tokens that represent the expression tree
 	 * @return the token sequence
@@ -183,19 +193,224 @@ public class Gardener<T>
 	protected TokenParser.TokenSequence tokens;
 
 
-	/**
-	 * identify the tree being managed
-	 * @param expression the expression to be associated
+	/*
+	 * UDF
 	 */
-	public void setExpression (Expression <T> expression) { this.expression = expression; }
 
 
 	/**
-	 * get access to the tree being managed
-	 * @return the tree being managed
+	 * prepare definition based on node type
+	 * @param symbols the symbol table for symbol resolution
+	 * @throws Exception for any errors
 	 */
-	public Expression <T> getExpression () { return expression; }
-	protected Expression <T> expression = null;
+	public void defineFunction
+		(
+			SymbolMap symbols
+		)
+	throws Exception
+	{
+		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
+		{
+			case	 Spline: defineSplineFunction ();			break;
+			case 	Segment: defineSegmentFunction (symbols);	break;
+			case  Sectioned: defineSectionedFunction (symbols);	break;
+			case	Profile: defineUserFunction (symbols);		break;
+			default: throw new RuntimeException ("Invalid node type");
+		}
+	}
+
+
+	/**
+	 * post a function found in a Java class into symbol table
+	 * @param name the name to be given to the function in the symbol table
+	 * @param parameter the name of the parameter in the function
+	 * @param coefficients the coefficient value array
+	 */
+	public void defineUserFunction
+		(
+			String name, String parameter, Coefficients <T> coefficients
+		)
+	{
+		AbstractFunction<T> function = new PolynomialOptimizer<T> (environment)
+		.getOptimizedFunctionFrom (name, parameter, jsonTree.getMemberString ("Class"), coefficients);
+		environment.processDefinedFunction (function);
+	}
+
+
+	/**
+	 * add expression tree to symbol map as function
+	 * @param symbols the symbol table to use locating symbol references
+	 */
+	public void defineUserFunction
+		(
+			SymbolMap symbols
+		)
+	{
+		setTokens (expression);
+		Profile profile = getRestoredProfile ();
+		defineUserFunction (profile, symbols);
+		applyDescription (profile, symbols);
+	}
+
+
+	/**
+	 * attach a spline to a subroutine
+	 * @param profile the descriptor for the tree profile node
+	 * @param symbols the session symbol table object
+	 */
+	public void defineUserFunction (Profile profile, SymbolMap symbols)
+	{
+		Subroutine<T> s =
+		DefinedFunction.defineUserFunction
+		(
+			profile.getProfileIdentifier (),
+			profile.getProfileParameters (),
+			tokens, spaceManager, symbols
+		);
+		s.useExpressionTree (this);
+		s.attachSpline (splineFunctions);
+	}
+
+
+	/**
+	 * use expression tree to calculate result
+	 * @param expression the tree to be used in calculation
+	 * @param symbols the symbols referenced in the expression
+	 * @return the value calculated using the expression
+	 * @throws Exception for any errors
+	 */
+	public GenericValue reap
+		(Expression<T> expression, SymbolMap symbols)
+	throws Exception
+	{
+		return getCalculationEngine ().evaluate (expression, symbols);
+	}
+
+
+	/**
+	 * run an evaluation of the tree being managed 
+	 * @param symbols the symbols referenced in the expression
+	 * @return the value calculated using the expression
+	 * @throws Exception for any errors
+	 */
+	public GenericValue reap (SymbolMap symbols) throws Exception
+	{ return reap (expression, symbols); }
+
+
+	/*
+	 * tree transplants
+	 */
+
+
+	/**
+	 * copy tree to new sink
+	 * @param expression the tree source
+	 * @param to the new sink point to receive JSON tree copy
+	 * @throws Exception for any errors
+	 * @param <T> data type
+	 */
+	public static <T> void transplant
+		(Expression<T> expression, SimpleStreamIO.TextSink to)
+	throws Exception
+	{
+		JsonPrettyPrinter.sinkTo (expression.toJson (), to);
+	}
+
+
+	/**
+	 * save expression to JSON file
+	 * @param name the name of the file to generate
+	 * @throws Exception for any errors
+	 */
+	public void standardTransplant (String name) throws Exception
+	{
+		sinkToFile (name, expression.toJson ());
+	}
+
+
+	/**
+	 * save function with profile
+	 * @param name the name of the function
+	 * @param parameters the list of formal parameter names
+	 * @param description a description for the function
+	 * @throws Exception for any errors
+	 */
+	public void profiledTransplant
+	(String name, List <String> parameters, String description)
+	throws Exception
+	{
+		Profile p = getProfileFor (name, parameters, description);
+		p.orderMembersList (); sinkToFile (name, p);
+	}
+
+
+	/*
+	 * profile specific
+	 */
+
+
+	/**
+	 * get the Profile descriptor of most-recently loaded expression
+	 * @return profile object recovered on restore
+	 */
+	public Profile getRestoredProfile ()
+	{
+		if (restore == null || restore.profile == null)
+		{ throw new RuntimeException ("Profile not available"); }
+		return restore.profile;
+	}
+	protected JsonRestore <T> restore = null;
+
+
+	/**
+	 * get the text representation of the profile
+	 * @return the profile found in the restore
+	 */
+	public String getProfile ()
+	{
+		if (restore != null && restore.profile != null)
+		{ return restore.profile.toString (); }
+		else return null;
+	}
+
+
+	/**
+	 * construct Profile object for expression
+	 * @param name the name of the function being profiled
+	 * @param parameters the list of formal parameter names
+	 * @param description a description for the function (or NULL)
+	 * @return a new Profile object for managed expression
+	 */
+	public Profile getProfileFor
+	(String name, List<String> parameters, String description)
+	{
+		Profile.ParameterList parameterList =
+				new Profile.ParameterList (parameters);
+		Profile profile = Profile.representing (name, parameterList);
+		profile.addImports (expression.describeImports ());
+		profile.setProfileDescription (description);
+		profile.setSpline (splineRepresentation);
+		profile.setExpression (expression);
+		return profile;
+	}
+
+
+	/**
+	 * description from profile goes into help table
+	 * @param profile the profile of the function being defined
+	 * @param symbols the symbol table to use locating symbol references
+	 */
+	public void applyDescription (Profile profile, SymbolMap symbols)
+	{
+		String description;;
+		if ((description = profile.getProfileDescription ()) == null) return;
+		symbols.addDescription (profile.getProfileIdentifier (), description);
+	}
+
+
+	/*
+	 * JSON spline processing
+	 */
 
 
 	/**
@@ -248,67 +463,6 @@ public class Gardener<T>
 
 
 	/**
-	 * build tree from JSON version
-	 * @param source the JSON text source to read
-	 * @throws Exception for any errors
-	 */
-	public void growFrom
-		(SimpleStreamIO.TextSource source)
-	throws Exception
-	{
-		restore = new JsonRestore<T> (spaceManager, environment.getSymbolMap ());
-		JsonSemantics.JsonValue value = JsonReader.readFrom (source);
-
-		if ( ! (value instanceof JsonSemantics.JsonObject) )
-		{ throw new RuntimeException ("JSON representation error"); }
-		jsonTree = new JsonBinding.Node ((JsonSemantics.JsonObject) value);
-
-		if ( ! JsonBinding.isNode (jsonTree) )
-		{
-			throw new RuntimeException ("Source is not a CalcLib representation");
-		}
-
-		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
-		{
-			case Profile:
-				restore.setProfile (value);
-				expression = restore.getExpression ();
-				setSpline (restore.getSectionedSpline (value));
-				break;
-			case Sectioned:
-				setSpline (restore.getSectionedSpline (value));
-				break;
-			case Segment: case Spline:
-				restore.setProfile (new Profile (jsonTree)); break;
-			default: throw new RuntimeException ("Invalid node type");
-		}
-	}
-	protected JsonBinding.NodeTypes nodeType;
-	protected JsonBinding.Node jsonTree;
-
-
-	/**
-	 * @param symbols the symbol table for symbol resolution
-	 * @throws Exception for any errors
-	 */
-	public void defineFunction
-		(
-			SymbolMap symbols
-		)
-	throws Exception
-	{
-		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
-		{
-			case	 Spline: defineSplineFunction ();			break;
-			case 	Segment: defineSegmentFunction (symbols);	break;
-			case  Sectioned: defineSectionedFunction (symbols);	break;
-			case	Profile: defineUserFunction (symbols);		break;
-			default: throw new RuntimeException ("Invalid node type");
-		}
-	}
-
-
-	/**
 	 * restore spline from JSON and post as functions
 	 * @throws Exception for restore errors
 	 */
@@ -333,14 +487,46 @@ public class Gardener<T>
 		String name = profile.getProfileIdentifier (), parameter = profile.getProfileParameters ().get (0);
 		defineUserFunction (name, parameter, coefficients);
 	}
-	public void defineUserFunction
+
+
+	/**
+	 * load spline description from JSON
+	 * @param functionName the name of the source file
+	 * @param environment access to utility methods
+	 * @return a gardener for the tree restored from the source
+	 * @throws Exception for errors found
+	 * @param <T> data type used
+	 */
+	public static <T> Gardener<T> loadJsonSpline
 		(
-			String name, String parameter, Coefficients <T> coefficients
+			String functionName,
+			Environment<T> environment
 		)
+	throws Exception
 	{
-		AbstractFunction<T> function = new PolynomialOptimizer<T> (environment)
-		.getOptimizedFunctionFrom (name, parameter, jsonTree.getMemberString ("Class"), coefficients);
-		environment.processDefinedFunction (function);
+		File file = fileCalled (functionName, SINGLE_TREE_EXTENSION);
+		return loadJsonSpline (file, environment);
+	}
+
+
+	/**
+	 * load spline description from JSON source
+	 * @param json a JSON source file for import
+	 * @param environment access to utility methods
+	 * @return a gardener for the tree restored from the source
+	 * @throws Exception for errors found
+	 * @param <T> data type used
+	 */
+	public static <T> Gardener <T> loadJsonSpline
+		(
+			File json, Environment <T> environment
+		)
+	throws Exception
+	{
+		Gardener <T> g;
+		(g = new Gardener <T> (environment)).parseSpline (json);
+		g.defineSectionedFunction (environment.getSymbolMap ());
+		return g;
 	}
 
 
@@ -351,235 +537,42 @@ public class Gardener<T>
 	public void defineSectionedFunction (SymbolMap symbols)
 	{
 		symbols.add (sectionedSpline.getFuntion (jsonTree));
+		// Util.dump (jsonTree);
 	}
 
 
 	/**
-	 * add expression tree to symbol map as function
-	 * @param symbols the symbol table to use locating symbol references
-	 */
-	public void defineUserFunction
-		(
-			SymbolMap symbols
-		)
-	{
-		setTokens (expression);
-		Profile profile = getRestoredProfile ();
-		defineUserFunction (profile, symbols);
-		applyDescription (profile, symbols);
-	}
-	void defineUserFunction (Profile profile, SymbolMap symbols)
-	{
-		Subroutine<T> s =
-		DefinedFunction.defineUserFunction
-		(
-			profile.getProfileIdentifier (),
-			profile.getProfileParameters (),
-			tokens, spaceManager, symbols
-		);
-		s.useExpressionTree (this);
-		s.attachSpline (splineFunctions);
-	}
-
-
-	/**
-	 * get the Profile descriptor of most-recently loaded expression
-	 * @return profile object recovered on restore
-	 */
-	public Profile getRestoredProfile ()
-	{
-		if (restore == null || restore.profile == null)
-		{ throw new RuntimeException ("Profile not available"); }
-		return restore.profile;
-	}
-	protected JsonRestore<T> restore = null;
-
-
-	/**
-	 * get the text representation of the profile
-	 * @return the profile found in the restore
-	 */
-	public String getProfile ()
-	{
-		if (restore != null && restore.profile != null)
-		{ return restore.profile.toString (); }
-		else return null;
-	}
-
-
-	/**
-	 * use expression tree to calculate result
-	 * @param expression the tree to be used in calculation
-	 * @param symbols the symbols referenced in the expression
-	 * @return the value calculated using the expression
-	 * @throws Exception for any errors
-	 */
-	public GenericValue reap
-		(Expression<T> expression, SymbolMap symbols)
-	throws Exception
-	{
-		return getCalculationEngine ().evaluate (expression, symbols);
-	}
-
-	/**
-	 * run an evaluation of the tree being managed 
-	 * @param symbols the symbols referenced in the expression
-	 * @return the value calculated using the expression
-	 * @throws Exception for any errors
-	 */
-	public GenericValue reap (SymbolMap symbols) throws Exception
-	{ return reap (expression, symbols); }
-
-
-	/**
-	 * copy tree to new sink
-	 * @param expression the tree source
-	 * @param to the new sink point to receive JSON tree copy
-	 * @throws Exception for any errors
-	 * @param <T> data type
-	 */
-	public static <T> void transplant
-		(Expression<T> expression, SimpleStreamIO.TextSink to)
-	throws Exception
-	{
-		JsonPrettyPrinter.sinkTo (expression.toJson (), to);
-	}
-
-
-	/**
-	 * save value to file
-	 * @param name the name of the file to generate
-	 * @param value the JSON Value to be saved
-	 * @throws Exception for any errors
-	 */
-	public static void sinkToFile
-	(String name, JsonSemantics.JsonValue value)
-	throws Exception
-	{
-		SimpleStreamIO.TextSink to =
-			new SimpleStreamIO.TextSink (fileCalled (name, SINGLE_TREE_EXTENSION));
-		JsonPrettyPrinter.sinkTo (value, to);
-	}
-
-
-	/**
-	 * save expression to JSON file
-	 * @param name the name of the file to generate
-	 * @throws Exception for any errors
-	 */
-	public void standardTransplant (String name) throws Exception
-	{
-		sinkToFile (name, expression.toJson ());
-	}
-
-
-	/**
-	 * construct Profile object for expression
-	 * @param name the name of the function being profiled
-	 * @param parameters the list of formal parameter names
-	 * @param description a description for the function (or NULL)
-	 * @return a new Profile object for managed expression
-	 */
-	public Profile getProfileFor
-	(String name, List<String> parameters, String description)
-	{
-		Profile.ParameterList parameterList =
-				new Profile.ParameterList (parameters);
-		Profile profile = Profile.representing (name, parameterList);
-		profile.addImports (expression.describeImports ());
-		profile.setProfileDescription (description);
-		profile.setSpline (splineRepresentation);
-		profile.setExpression (expression);
-		return profile;
-	}
-
-
-	/**
-	 * save function with profile
-	 * @param name the name of the function
-	 * @param parameters the list of formal parameter names
-	 * @param description a description for the function
-	 * @throws Exception for any errors
-	 */
-	public void profiledTransplant
-	(String name, List<String> parameters, String description) throws Exception
-	{
-		Profile p = getProfileFor (name, parameters, description);
-		p.orderMembersList (); sinkToFile (name, p);
-	}
-
-
-	/**
-	 * description from profile goes into help table
-	 * @param profile the profile of the function being defined
-	 * @param symbols the symbol table to use locating symbol references
-	 */
-	public void applyDescription (Profile profile, SymbolMap symbols)
-	{
-		String description;;
-		if ((description = profile.getProfileDescription ()) == null) return;
-		symbols.addDescription (profile.getProfileIdentifier (), description);
-	}
-
-
-	/**
-	 * ZIP file holds multiple trees, hence the forest analogy
-	 * @param path the path to tree source being processed
-	 * @return TRUE = path is forest
-	 */
-	public static boolean isForest (String path)
-	{ return path.toLowerCase ().endsWith (FOREST_EXTENSION); }
-
-
-	/**
-	 * load all entries in a ZIP file
-	 * @param name the name of the source file
-	 * @param environment access to utility methods
-	 * @return the Participants involved in the growing of trees
+	 * parse the spline nodes of a JSON descriptor
+	 * @param json reference to JSON source file
 	 * @throws Exception for errors found
-	 * @param <T> data type used
 	 */
-	public static <T> Associates<T> loadFromZip
-		(
-			String name, Environment<T> environment
-		)
-	throws Exception
+	public void parseSpline (File json) throws Exception
 	{
-		Gardener<T> gardener;
-		File file = fileCalled (name, FOREST_EXTENSION);
-		Associates<T> participants = new EmployedAssociates<T>();
-		ZipSource zip = new ZipSource (file);
-
-		while (zip.positionToNext () != null)
-		{
-			SimpleStreamIO.Source source = zip.getSource ();
-			if ( ! (source instanceof SimpleStreamIO.TextSource) ) continue;
-			gardener = loadFrom ((SimpleStreamIO.TextSource) source, environment);
-			gardener.setName (zip.getEntryProperties ().getName ());
-			participants.add (gardener);
-		}
-
-		return participants;
+		JsonSemantics.JsonValue v =
+			doRestore (SimpleStreamIO.getFileSource (json));
+		SectionedSpline <T> s = restore.getSectionedSpline (v);
+		setSpline (s);
 	}
 
 
-	/**
-	 * @param apparantName the name found in the source
+	/*
+	 * JSON expression processing
 	 */
-	public void setName (String apparantName)
-	{
-		expressionName = apparantName;
-		if (restore != null && restore.profile != null)
-		{ expressionName = restore.profile.getProfileIdentifier (); }
-		//System.out.println (expressionName);
-	}
 
 
 	/**
-	 * @return the name associated with the expression
+	 * identify the tree being managed
+	 * @param expression the expression to be associated
 	 */
-	public String getExpressionName () { return expressionName; }
-	protected String expressionName;
+	public void setExpression (Expression <T> expression) { this.expression = expression; }
+
+
+	/**
+	 * get access to the tree being managed
+	 * @return the tree being managed
+	 */
+	public Expression <T> getExpression () { return expression; }
+	protected Expression <T> expression = null;
 
 
 	/**
@@ -628,17 +621,165 @@ public class Gardener<T>
 	 * @throws Exception for errors found
 	 * @param <T> data type used
 	 */
-	public static <T> Gardener<T> loadFrom
+	public static <T> Gardener <T> loadFrom
 		(
 			SimpleStreamIO.TextSource source,
-			Environment<T> environment
+			Environment <T> environment
 		)
 	throws Exception
 	{
-		Gardener<T> g = new Gardener<T> (environment);
+		Gardener <T> g = new Gardener <> (environment);
 		g.growFrom (source); g.defineFunction (environment.getSymbolMap ());
 		return g;
 	}
+
+
+	/*
+	 * JSON restoration processing
+	 */
+
+
+	/**
+	 * read JSON source and verify pattern
+	 * @param source the JSON text source to read
+	 * @return the tree representation read from the source
+	 * @throws Exception for any errors
+	 */
+	public JsonSemantics.JsonValue doRestore (SimpleStreamIO.TextSource source) throws Exception
+	{
+		restore = new JsonRestore<T> (spaceManager, environment.getSymbolMap ());
+		JsonSemantics.JsonValue value = JsonReader.readFrom (source);
+
+		if ( ! (value instanceof JsonSemantics.JsonObject) )
+		{ throw new RuntimeException ("JSON representation error"); }
+		jsonTree = new JsonBinding.Node ((JsonSemantics.JsonObject) value);
+
+		if ( ! JsonBinding.isNode (jsonTree) )
+		{ throw new RuntimeException ("Source is not a CalcLib representation"); }
+		return value;
+	}
+
+
+	/**
+	 * build tree from JSON version
+	 * @param source the JSON text source to read
+	 * @throws Exception for any errors
+	 */
+	public void growFrom
+		(SimpleStreamIO.TextSource source)
+	throws Exception
+	{
+		JsonSemantics.JsonValue value = doRestore (source);
+
+		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
+		{
+			case Profile:
+				restore.setProfile (value);
+				expression = restore.getExpression ();
+				setSpline (restore.getSectionedSpline (value));
+				break;
+			case Sectioned:
+				setSpline (restore.getSectionedSpline (value));
+				break;
+			case Segment: case Spline:
+				restore.setProfile (new Profile (jsonTree)); break;
+			default: throw new RuntimeException ("Invalid node type");
+		}
+	}
+	protected JsonBinding.NodeTypes nodeType;
+	protected JsonBinding.Node jsonTree;
+
+
+	/*
+	 * JSON specific file processing
+	 */
+
+
+	/**
+	 * save value to file
+	 * @param name the name of the file to generate
+	 * @param value the JSON Value to be saved
+	 * @throws Exception for any errors
+	 */
+	public static void sinkToFile
+	(String name, JsonSemantics.JsonValue value)
+	throws Exception
+	{
+		SimpleStreamIO.TextSink to =
+			new SimpleStreamIO.TextSink (fileCalled (name, SINGLE_TREE_EXTENSION));
+		JsonPrettyPrinter.sinkTo (value, to);
+	}
+
+
+	/*
+	 * ZIP specific file processing
+	 */
+
+
+	/**
+	 * ZIP file holds multiple trees, hence the forest analogy
+	 * @param path the path to tree source being processed
+	 * @return TRUE = path is forest
+	 */
+	public static boolean isForest (String path)
+	{ return path.toLowerCase ().endsWith (FOREST_EXTENSION); }
+
+
+	/**
+	 * load all entries in a ZIP file
+	 * @param name the name of the source file
+	 * @param environment access to utility methods
+	 * @return the Participants involved in the growing of trees
+	 * @throws Exception for errors found
+	 * @param <T> data type used
+	 */
+	public static <T> Associates<T> loadFromZip
+		(
+			String name, Environment<T> environment
+		)
+	throws Exception
+	{
+		Gardener<T> gardener;
+		File file = fileCalled (name, FOREST_EXTENSION);
+		Associates<T> participants = new EmployedAssociates<T>();
+		ZipSource zip = new ZipSource (file);
+
+		while (zip.positionToNext () != null)
+		{
+			SimpleStreamIO.Source source = zip.getSource ();
+			if ( ! (source instanceof SimpleStreamIO.TextSource) ) continue;
+			gardener = loadFrom ((SimpleStreamIO.TextSource) source, environment);
+			gardener.setName (zip.getEntryProperties ().getName ());
+			participants.add (gardener);
+		}
+
+		return participants;
+	}
+
+
+	/**
+	 * @return the name associated with the expression
+	 */
+	public String getExpressionName () { return expressionName; }
+	protected String expressionName;
+
+
+	/**
+	 * determine name from profile
+	 * @param apparantName the name found in the source
+	 */
+	public void setName (String apparantName)
+	{
+		expressionName = apparantName;
+		if (restore != null && restore.profile != null)
+		{ expressionName = restore.profile.getProfileIdentifier (); }
+		//System.out.println (expressionName);
+	}
+
+
+	/*
+	 * debugging utilities
+	 */
 
 
 	/**

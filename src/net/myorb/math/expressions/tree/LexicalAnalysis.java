@@ -803,7 +803,7 @@ public class LexicalAnalysis<T>
 	public static SymbolMap.Named getSymbol (NamedSymbol from)
 	{
 		SymbolMap.Named symbol = from.getSymbolProperties ().getSymbolReference ();
-		if (symbol == null) throw new RuntimeException ("Symbol has no link established");
+		if (symbol == null) throw new RuntimeException ("Symbol has no link established: " + from);
 		return symbol;
 	}
 

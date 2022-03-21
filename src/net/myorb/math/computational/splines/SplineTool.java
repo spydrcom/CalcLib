@@ -8,8 +8,8 @@ import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.tree.*;
 
-import net.myorb.data.notations.json.JsonPrettyPrinter;
 import net.myorb.data.notations.json.JsonSemantics;
 
 import net.myorb.math.Function;
@@ -171,15 +171,7 @@ public class SplineTool <T>
 	{
 		FittedFunction <T> fitted;
 		JsonSemantics.JsonObject json = toJson (spline);
-
-		if (showTree)
-		try
-		{
-			JsonPrettyPrinter.sendTo
-			(
-				json, System.out
-			);
-		} catch (Exception e) {}
+		if (showTree) Util.dump (json);
 
 		try
 		{
