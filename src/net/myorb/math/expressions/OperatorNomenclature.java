@@ -70,6 +70,7 @@ public class OperatorNomenclature
 	REQUEST_KEYWORD = "REQUEST",				// REQUEST x			request value for symbol and verify result
 	VERIFY_KEYWORD = "VERIFY",					// VERIFY x				lookup symbol and verify present
 	HELP_KEYWORD = "HELP",						// HELP					list of operator descriptions
+	STOP_KEYWORD = "STOP",						// STOP					Stop Anaconda server
 	DOCS_KEYWORD = "DOCS",						// DOCS					show JavaDocs HTML
 	RPN_KEYWORD = "RPN"							// RPN					RPN calculator
 		;
