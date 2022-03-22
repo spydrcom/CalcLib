@@ -414,6 +414,16 @@ public class Gardener<T>
 
 
 	/**
+	 * attach sectioned spline from JSON restore
+	 * @param value JSON description of spline
+	 */
+	public void setSpline (JsonSemantics.JsonValue value)
+	{
+		setSpline (restore.getSectionedSpline (value));
+	}
+
+
+	/**
 	 * attach a spline description
 	 * @param sectionedSpline the descriptor for the spline representation
 	 */
@@ -428,12 +438,12 @@ public class Gardener<T>
 	 * attach a spline description
 	 * @param splineFunctions access to the spline description
 	 */
-	public void attachSpline (Operations<T> splineFunctions)
+	public void attachSpline (Operations <T> splineFunctions)
 	{
 		if ((this.splineFunctions = splineFunctions) == null) return;
 		this.setSpline (splineFunctions.getRepresentation ());
 	}
-	protected Operations<T> splineFunctions;
+	protected Operations <T> splineFunctions;
 
 
 	/**
@@ -497,7 +507,7 @@ public class Gardener<T>
 	 * @throws Exception for errors found
 	 * @param <T> data type used
 	 */
-	public static <T> Gardener<T> loadJsonSpline
+	public static <T> Gardener <T> loadJsonSpline
 		(
 			String functionName,
 			Environment<T> environment
@@ -640,6 +650,29 @@ public class Gardener<T>
 
 
 	/**
+	 * build profile from constructed JSON tree
+	 */
+	public void restoreProfile ()
+	{
+		restore.setProfile (new Profile (jsonTree));
+	}
+	protected JsonBinding.Node jsonTree;
+
+
+	/**
+	 * build profile from constructed JSON tree
+	 * @param source the JSON text with the description
+	 * @throws Exception for any errors
+	 */
+	public void restoreProfile (JsonSemantics.JsonValue source) throws Exception
+	{
+		restore.setProfile (source);
+		expression = restore.getExpression ();
+		setSpline (source);
+	}
+
+
+	/**
 	 * read JSON source and verify pattern
 	 * @param source the JSON text source to read
 	 * @return the tree representation read from the source
@@ -669,25 +702,24 @@ public class Gardener<T>
 		(SimpleStreamIO.TextSource source)
 	throws Exception
 	{
+
 		JsonSemantics.JsonValue value = doRestore (source);
 
 		switch (nodeType = JsonBinding.getNodeTypeOf (jsonTree))
 		{
-			case Profile:
-				restore.setProfile (value);
-				expression = restore.getExpression ();
-				setSpline (restore.getSectionedSpline (value));
-				break;
-			case Sectioned:
-				setSpline (restore.getSectionedSpline (value));
-				break;
-			case Segment: case Spline:
-				restore.setProfile (new Profile (jsonTree)); break;
+
+			case Sectioned: setSpline (value); break;
+
+			case Profile: restoreProfile (value); break;
+
+			case Segment: case Spline: restoreProfile (); break;
+
 			default: throw new RuntimeException ("Invalid node type");
+
 		}
+
 	}
 	protected JsonBinding.NodeTypes nodeType;
-	protected JsonBinding.Node jsonTree;
 
 
 	/*
