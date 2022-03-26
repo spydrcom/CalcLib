@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.complexnumbers.ComplexValue;
+import net.myorb.math.Function;
 import net.myorb.math.complexnumbers.ComplexLibrary;
 
 import net.myorb.math.complexnumbers.GammaLanczos;
@@ -70,6 +71,22 @@ public class CLmathComplexImplementations
 		GammaLanczos<Double> impl = new GammaLanczos<Double> (library);
 		impl.setPrecision (Integer.parseInt (parameter));
 		GAMMA = impl;
+	}
+
+
+	/**
+	 * identify a GAMMA implementation for this session
+	 * @param path the class-path to the GAMMA implementation
+	 */
+	public void initGammaAs (String path)
+	{
+		try { GAMMA = gammaInstance (path); }
+		catch (Exception e) { throw new RuntimeException ("GAMMA not found", e); }
+	}
+	@SuppressWarnings("unchecked")
+	Function <ComplexValue<Double>> gammaInstance (String path) throws Exception
+	{
+		return (Function <ComplexValue<Double>>) Class.forName (path).newInstance ();
 	}
 
 

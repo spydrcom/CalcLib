@@ -1,16 +1,15 @@
 
 package net.myorb.math.expressions.tree;
 
+import net.myorb.math.computational.Spline;
+
 import net.myorb.math.computational.splines.FittedFunction;
 import net.myorb.math.computational.splines.SplineMechanisms;
-import net.myorb.math.computational.Spline;
+
 import net.myorb.math.computational.integration.RealDomainIntegration;
 
-import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
+import net.myorb.math.expressions.symbols.ImportedFunctionWrapper;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
-
-import net.myorb.math.expressions.ValueManager.GenericValue;
-import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.math.expressions.SymbolMap;
 
@@ -78,30 +77,22 @@ public class SectionedSpline <T>
  * an Abstract Parameterized Function wrapper for the spline
  * @param <T> type on which operations are to be executed
  */
-class AbstractSectionedSpline<T> extends AbstractParameterizedFunction implements RealDomainIntegration<T>
+class AbstractSectionedSpline <T>
+	extends ImportedFunctionWrapper <T>
+	implements RealDomainIntegration <T>
 {
 
 
 	public AbstractSectionedSpline
-	(String name, String parameterName, FittedFunction<T> function)
-	{ super (name); this.parameterName = parameterName; this.vm = new ValueManager<T>(); this.function = function; }
-	protected FittedFunction<T> function;
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-	 */
-	public GenericValue execute (GenericValue parameter)
-	{
-		return vm.newDiscreteValue
 		(
-			function.eval
-			(
-				vm.toDiscrete (parameter)
-			)
-		);
+			String name, String parameterName,
+			FittedFunction <T> function
+		)
+	{
+		super (name, parameterName, function);
+		this.function = function;
 	}
-	protected ValueManager<T> vm;
+	protected FittedFunction <T> function;
 
 
 	/* (non-Javadoc)
@@ -116,13 +107,5 @@ class AbstractSectionedSpline<T> extends AbstractParameterizedFunction implement
 	}
 
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.symbols.AbstractParameterizedFunction#getParameterList()
-	 */
-	public String getParameterList () { return parameterName; }
-	protected String parameterName;
-
-
 }
-
 

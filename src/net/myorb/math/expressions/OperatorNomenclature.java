@@ -51,6 +51,7 @@ public class OperatorNomenclature
 	SETDOMAIN_KEYWORD = "SETDOMAIN",			// SETDOMAIN f,lo,hi	establish function domain constraints [lo,hi]
 	STDDOMAIN_KEYWORD = "STDDOMAIN",			// STDDOMAIN function	perform domain change to set standard [-1,1] domain
 	DCT_KEYWORD = "DCT",						// DCT function			apply discreet cosine transform to specified function
+	INIT_KEYWORD = "INIT",						// INIT path parameters	initialize an object imported from an external JAR source
 	APPLY_KEYWORD = "APPLY",					// APPLY tool function	apply Spline tool fit to a user defined function
 	EXPRESS_KEYWORD = "EXPRESS",				// EXPRESS function		generate Expression Tree for a user defined function
 	SAVEJSON_KEYWORD = "SAVEJSON",				// SAVEJSON function	save Expression Tree to JSON file for later restore using load

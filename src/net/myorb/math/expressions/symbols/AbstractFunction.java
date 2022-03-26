@@ -23,7 +23,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public abstract class AbstractFunction<T> extends Subroutine<T>
+public abstract class AbstractFunction <T> extends Subroutine <T>
 	implements SymbolMap.ParameterizedFunction
 {
 
@@ -32,7 +32,7 @@ public abstract class AbstractFunction<T> extends Subroutine<T>
 	 * describe constraints placed on function domains
 	 * @param <T> type on which operations are to be executed
 	 */
-	public interface DomainConstraints<T>
+	public interface DomainConstraints <T>
 	{
 		/**
 		 * the value pair

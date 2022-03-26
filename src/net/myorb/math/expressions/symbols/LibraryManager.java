@@ -3,10 +3,15 @@ package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 
+import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
+
+import net.myorb.math.expressions.symbols.ConfigurationParser;
+import net.myorb.math.expressions.symbols.Configurable;
+
 import java.lang.reflect.Method;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,11 +140,11 @@ public class LibraryManager<T>
 	 */
 	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
 	{
-		String name;
+		String name; Map<String, Object> parameters;
 		LibraryObject<T> lib = getLib (name = tokens.get (1).getTokenImage ());
 		if (lib == null) throw new RuntimeException ("Unrecognized library: " + name);
-		Map<String, Object> parameters = lib.getParameterization ();
-		configure (name, tokens, parameters);
+		ConfigurationParser.configure (tokens, parameters = lib.getParameterization ());
+		System.out.println ("Lib " + name + " config " + parameters);
 	}
 	LibraryObject<T> getLib (String name)
 	{
@@ -148,24 +153,6 @@ public class LibraryManager<T>
 			.getSymbolMap ().get (name);
 		return lib;
 	}
-	void configure
-		(
-			String name,
-			List<TokenParser.TokenDescriptor> tokens,
-			Map<String, Object> parameters
-		)
-	{
-		int n = 2;
-		String sym, val;
-		while (n+1 < tokens.size())
-		{
-			sym = tokens.get (n++).getTokenImage ();
-			val = strip (tokens.get (n++).getTokenImage ());
-			parameters.put (sym, val);
-		}
-		System.out.println ("Lib " + name + " config " + parameters);
-	}
-	String strip (String text) { return TokenParser.stripQuotes (text); }
 
 
 	/**
@@ -196,4 +183,39 @@ public class LibraryManager<T>
 	}
 
 
+	/**
+	 * initialize an imported object
+	 * @param tokens the tokens of the configuration string
+	 */
+	public void initObject (List<TokenParser.TokenDescriptor> tokens)
+	{
+		String path = null;
+		Object object = null;
+		Map<String, Object> parameters;
+
+		parameters = new HashMap<String, Object> ();
+
+		try
+		{
+			path = ConfigurationParser.strip
+				(tokens.get (1).getTokenImage ());
+			object = Class.forName (path).newInstance ();
+			Environment.provideAccess (object, environment);
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException ("Unable to construct " + path, e);
+		}
+
+		if (object instanceof Configurable)
+		{
+			ConfigurationParser.configure (tokens, parameters);
+			((Configurable) object).addConfiguration (parameters);
+		}
+
+		System.out.println ("Init " + path + " config " + parameters);
+	}
+
+
 }
+
