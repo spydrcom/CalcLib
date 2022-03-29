@@ -7,8 +7,8 @@ import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 
 import net.myorb.math.specialfunctions.SpecialFunctionFamilyManager;
 
-import net.myorb.math.expressions.symbols.ConfigurationParser;
-import net.myorb.math.expressions.symbols.Configurable;
+import net.myorb.data.abstractions.ConfigurationParser;
+import net.myorb.data.abstractions.Configurable;
 
 import java.lang.reflect.Method;
 
@@ -140,8 +140,9 @@ public class LibraryManager<T>
 	 */
 	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
 	{
+		tokens.remove (0);
 		String name; Map<String, Object> parameters;
-		LibraryObject<T> lib = getLib (name = tokens.get (1).getTokenImage ());
+		LibraryObject<T> lib = getLib (name = tokens.remove (0).getTokenImage ());
 		if (lib == null) throw new RuntimeException ("Unrecognized library: " + name);
 		ConfigurationParser.configure (tokens, parameters = lib.getParameterization ());
 		System.out.println ("Lib " + name + " config " + parameters);
@@ -197,10 +198,10 @@ public class LibraryManager<T>
 
 		try
 		{
+			tokens.remove (0);
 			path = ConfigurationParser.strip
-				(tokens.get (1).getTokenImage ());
+				(tokens.remove (0).getTokenImage ());
 			object = Class.forName (path).newInstance ();
-			Environment.provideAccess (object, environment);
 		}
 		catch (Exception e)
 		{
@@ -213,6 +214,7 @@ public class LibraryManager<T>
 			((Configurable) object).addConfiguration (parameters);
 		}
 
+		Environment.provideAccess (object, environment);
 		System.out.println ("Init " + path + " config " + parameters);
 	}
 
