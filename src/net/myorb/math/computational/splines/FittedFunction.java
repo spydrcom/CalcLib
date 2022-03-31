@@ -23,6 +23,9 @@ public class FittedFunction <T> implements Spline.Operations <T>
 {
 
 
+	public static int MARGINS = 8;
+
+
 	/**
 	 * a full descriptor of the structure of the spline fitted by the function
 	 * @param <T> type on which operations are to be executed
@@ -39,9 +42,10 @@ public class FittedFunction <T> implements Spline.Operations <T>
 		/**
 		 * identify segment if maps to value
 		 * @param value the point to locate a segment for
+		 * @param margins ID for margin amount to accommodate rounding error
 		 * @return the function for the segment, or NULL if not a match
 		 */
-		SegmentFunction<T> checkFor (double value);
+		SegmentFunction<T> checkFor (double value, int margins);
 	}
 
 
@@ -72,15 +76,20 @@ public class FittedFunction <T> implements Spline.Operations <T>
 	/**
 	 * find a segment descriptor that covers the parameter
 	 * @param x the parameter value to find a segment function for
-	 * @return the segment function that covers the parameter, or NULL if none
+	 * @return the segment function that covers the parameter
+	 * @throws RuntimeException failed segment search
 	 */
 	public SegmentFunction<T> findSegment (T x)
+			throws RuntimeException
 	{
 		SegmentFunction<T> f;
 		double p = mgr.component (x, 0);
-		for (FittedSegmentRepresentation<T> segment : segments)
-		{ if ((f = segment.checkFor (p)) != null) return f; }
-		return null;
+		for (int margin=0; margin<MARGINS; margin++)
+		{
+			for (FittedSegmentRepresentation<T> segment : segments)
+			{ if ((f = segment.checkFor (p, margin)) != null) return f; }
+		}
+		throw new RuntimeException ("Segment error");
 	}
 
 
@@ -214,14 +223,10 @@ class Segment<T> implements FittedFunction.FittedSegmentRepresentation<T>
 	{
 		this.mgr = mgr;
 		this.spline = spline;
-		this.lo = lookup (descriptor, "lo");
-		this.unit = lookup (descriptor, "unit");
-		this.slope = lookup (descriptor, "slope");
-		this.delta = lookup (descriptor, "delta");
-		this.error = lookup (descriptor, "error");
+		this.initFrom (descriptor);
 		this.processCoefficients (descriptor);
-		this.hi = lookup (descriptor, "hi");
 		this.connectFunction ();
+		this.setMargins ();
 	}
 	protected ExpressionComponentSpaceManager<T> mgr;
 	protected SplineMechanisms spline;
@@ -237,33 +242,14 @@ class Segment<T> implements FittedFunction.FittedSegmentRepresentation<T>
 
 
 	/**
-	 * get the numeric value of a named member of a JSON object
-	 * @param descriptor the object being parsed
-	 * @param member name of the member being read
-	 * @return the value of the named member
-	 */
-	public double lookup (JsonSemantics.JsonObject descriptor, String member)
-	{
-		return ((JsonSemantics.JsonNumber) descriptor
-				.getMemberCalled (member)).getNumber ()
-				.doubleValue ();
-	}
-
-
-	/**
 	 * get the coefficients array from a JSON object
 	 * @param descriptor node holding coefficients for all components
 	 */
 	public void processCoefficients
 		(JsonSemantics.JsonObject descriptor)
 	{
-		componentCoefficients = new ArrayList<List<Double>>();
-
-		processCoefficients
-		(
-			(JsonSemantics.JsonArray)
-			descriptor.getMemberCalled ("coefficients")
-		);
+		componentCoefficients = new ArrayList <List <Double>> ();
+		processCoefficients (JsonTools.getArrayFrom (descriptor, "coefficients"));
 	}
 
 
@@ -275,25 +261,38 @@ class Segment<T> implements FittedFunction.FittedSegmentRepresentation<T>
 	{
 		for (int i = 0; i < components.size (); i++)
 		{
-			JsonSemantics.JsonArray c =
-				(JsonSemantics.JsonArray) components.get (i);
-			List<Double> coefs = JsonTools.toFloatList (c);
-			componentCoefficients.add (coefs);
+			componentCoefficients.add
+			(
+				JsonTools.toFloatList (JsonTools.toArray (components.get (i)))
+			);
 		}
 	}
 
 
-	/**
-	 * check for the segment holding a give value mapping
-	 * @param value the parameter value to find a segment for
-	 * @return the segment function for matches or NULL if no match
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.FittedFunction.FittedSegmentRepresentation#checkFor(double, int)
 	 */
-	public SegmentFunction<T> checkFor (double value)
+	public SegmentFunction<T> checkFor (double value, int margins)
 	{
-		if (value >= lo && value <= hi)
-		{ return segmentFunction; }
-		else return null;
+		return isWithin (marginRange[margins], value) ?
+				segmentFunction : null;
 	}
+	public boolean isWithin (double[] range, double value)
+	{
+		return value >= range[0] && value <= range[1];
+	}
+	public void setMargins ()
+	{
+		for (int n = 0; n < marginRange.length; n++)
+		{
+			marginRange[n] = new double[]
+			{
+				lo - n*delta,
+				hi + n*delta
+			};
+		}
+	}
+	protected double [][] marginRange = new double [FittedFunction.MARGINS][2];
 
 
 	/* (non-Javadoc)
@@ -325,6 +324,31 @@ class Segment<T> implements FittedFunction.FittedSegmentRepresentation<T>
 	public double getSegmentError () { return error; }
 	public double getSegmentSlope () { return slope; }
 	protected double delta, error, slope;
+
+
+	/**
+	 * copy descriptor data to local properties
+	 * @param descriptor the JSON object holding the configured data items
+	 */
+	public void initFrom (JsonSemantics.JsonObject descriptor)
+	{
+		this.lo = lookup (descriptor, "lo");
+		this.unit = lookup (descriptor, "unit");
+		this.slope = lookup (descriptor, "slope");
+		this.delta = lookup (descriptor, "delta");
+		this.error = lookup (descriptor, "error");
+		this.hi = lookup (descriptor, "hi");
+	}
+
+
+	/**
+	 * get the numeric value of a named member of a JSON object
+	 * @param descriptor the object being parsed
+	 * @param member name of the member being read
+	 * @return the value of the named member
+	 */
+	public double lookup (JsonSemantics.JsonObject descriptor, String member)
+	{ return JsonTools.getValueFrom (descriptor, member); }
 
 
 }
