@@ -21,7 +21,7 @@ public interface SplineMechanisms
 	 * @param coefficients the polynomial coefficients for the spline being evaluated
 	 * @return the value of the spline at the specified domain point
 	 */
-	double evalSplineAt (double x, GeneratingFunctions.Coefficients<Double> coefficients);
+	double evalSplineAt (double x, GeneratingFunctions.Coefficients <Double> coefficients);
 
 	/**
 	 * @param lo the lo end of integration range
@@ -29,7 +29,7 @@ public interface SplineMechanisms
 	 * @param coefficients the polynomial coefficients for this range
 	 * @return the computed integral
 	 */
-	double evalIntegralOver (double lo, double hi, GeneratingFunctions.Coefficients<Double> coefficients);
+	double evalIntegralOver (double lo, double hi, GeneratingFunctions.Coefficients <Double> coefficients);
 
 	/**
 	 * identify the object that will correctly interpret the spline description 

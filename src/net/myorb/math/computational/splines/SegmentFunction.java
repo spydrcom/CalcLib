@@ -129,11 +129,11 @@ public class SegmentFunction <T> implements Function <T>
 	 * @param component index of the component being fit
 	 * @return the list of polynomial Coefficients
 	 */
-	public GeneratingFunctions.Coefficients<Double>
+	public GeneratingFunctions.Coefficients <Double>
 			getCoefficients (int component)
 	{
 		GeneratingFunctions.Coefficients<Double> c =
-			new GeneratingFunctions.Coefficients<Double>();
+			new GeneratingFunctions.Coefficients <Double> ();
 		c.addAll (representation.getCoefficientsFor (component));
 		return c;
 	}
@@ -142,8 +142,8 @@ public class SegmentFunction <T> implements Function <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
 	 */
-	public SpaceDescription<T> getSpaceDescription () { return mgr; }
-	public SpaceManager<T> getSpaceManager () { return mgr; }
+	public SpaceDescription <T> getSpaceDescription () { return mgr; }
+	public SpaceManager <T> getSpaceManager () { return mgr; }
 
 
 }

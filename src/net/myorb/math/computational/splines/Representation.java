@@ -13,7 +13,7 @@ public interface Representation
 	/**
 	 * @return a list of descriptions of the segments of a spline
 	 */
-	List<SegmentRepresentation> getSegmentList ();
+	List <SegmentRepresentation> getSegmentList ();
 
 	/**
 	 * @return class-path for interpretation object

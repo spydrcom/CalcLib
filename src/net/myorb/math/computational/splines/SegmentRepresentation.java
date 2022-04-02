@@ -10,6 +10,10 @@ import java.util.List;
 public interface SegmentRepresentation
 {
 
+	/*
+	 * coefficients of spline polynomials
+	 */
+
 	/**
 	 * @return number of components in the data format
 	 */
@@ -19,7 +23,22 @@ public interface SegmentRepresentation
 	 * @param component the index identifying the component of the data format
 	 * @return a list of the coefficients for the spline of specified component
 	 */
-	List<Double> getCoefficientsFor (int component);
+	List <Double> getCoefficientsFor (int component);
+
+	/**
+	 * @return full matrix of coefficients covering all lists for all components
+	 */
+	List < List <Double> > getCoefficients ();
+
+	/**
+	 * @param componentCoefficients the matrix of component coefficients to capture
+	 */
+	void setCoefficients (List < List <Double> > componentCoefficients);
+
+
+	/*
+	 * properties that describe a segment
+	 */
 
 	/**
 	 * @return the lo end of the range of the described segment
