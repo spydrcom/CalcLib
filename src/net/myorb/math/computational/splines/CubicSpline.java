@@ -59,7 +59,24 @@ public class CubicSpline <T>
 		 */
 		public boolean isInRange (T x) throws RuntimeException;		// t#(i-1) <= x <= t#i
 
+		/**
+		 * @param computer the function that can compute spline values
+		 */
+		public void setComputer (Function <T> computer);
+
+		/**
+		 * @return access to prior knot
+		 */
+		public Knot <T> prior ();
 	}
+
+
+	/**
+	 * the collection of knots that cover the domain of the spline
+	 * @param <T> type of component values on which operations are to be executed
+	 */
+	public static class KnotList <T> extends ArrayList < Knot <T> >
+	{ private static final long serialVersionUID = -5142967187147035547L; }
 
 
 	/**
@@ -71,11 +88,12 @@ public class CubicSpline <T>
 		/**
 		 * @return the description of underlying segment of the Interpolation
 		 */
-		List < Knot <T> > getKnots ();
+		KnotList <T> getKnots ();
 	}
 
 
-	public CubicSpline (SpaceManager <T> sm) { this.sm = sm; }
+	public CubicSpline
+	(SpaceManager <T> sm) { this.sm = sm; }
 	protected SpaceManager <T> sm;
 
 
@@ -100,7 +118,9 @@ public class CubicSpline <T>
  * description of the function section between 2 knots
  * @param <T> type of component values on which operations are to be executed
  */
-class CubicSplineSegment <T> implements CubicSpline.Knot <T>
+class CubicSplineSegment <T>
+	extends CubicSplineComputer <T>
+	implements CubicSpline.Knot <T>
 {
 
 
@@ -113,13 +133,13 @@ class CubicSplineSegment <T> implements CubicSpline.Knot <T>
 			SpaceManager <T> sm
 		)
 	{
-		this (t, f, f2);
+		this (t, f, f2); this.sm = sm;
 		if (prior == null) return;
+
 		this.h = sm.add (t, sm.negate (prior.t ()));
-		this.computeConstants (sm);
-		this.prior = prior;
+		this.computeConstants (sm); this.prior = prior;
+		this.setComputer (this);
 	}
-	protected CubicSplineSegment <T> prior = null;
 
 	CubicSplineSegment
 		(
@@ -132,18 +152,6 @@ class CubicSplineSegment <T> implements CubicSpline.Knot <T>
 		this.f = f.eval (t);
 		this.z = f2.eval (t);
 	}
-
-	public void computeConstants (SpaceManager <T> sm)
-	{
-		this.Ih = sm.invert (h);
-		this.SIX = sm.newScalar (6);
-		this.SIXTH = sm.invert (SIX);
-		this.I6h = sm.multiply (SIXTH, Ih);
-		this.sm = sm;
-	}
-	protected SpaceManager <T> sm;
-	protected T SIX, SIXTH;
-	protected T Ih, I6h;
 
 
 	/* (non-Javadoc)
@@ -170,35 +178,19 @@ class CubicSplineSegment <T> implements CubicSpline.Knot <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#S(java.lang.Object)
 	 */
-	public T S (T x)
-	{
-		T toKnot = sm.add (t, sm.negate (x));
-		T fromPrior = sm.add (x, sm.negate (prior.t));
+	public T S (T x) { return s.eval (x); }
 
-		T fromPrior3 = sm.multiply (fromPrior, fromPrior);
-		fromPrior3 = sm.multiply (fromPrior3, fromPrior);
-		T toKnot3 = sm.multiply (toKnot, toKnot);
-		toKnot3 = sm.multiply (toKnot3, toKnot);
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#prior()
+	 */
+	public Knot <T> prior () { return prior; }
 
-		T term1 = sm.multiply (sm.multiply (z, fromPrior3), I6h);
-		T term2 = sm.multiply (sm.multiply (prior.z, toKnot3), I6h);
-		T terms = sm.add (term1, term2);
-
-		T fOverH = sm.multiply (f, Ih);
-		T zhOver6 = sm.multiply (sm.multiply (z, h), SIXTH);
-		T dif = sm.add (fOverH, sm.negate (zhOver6));
-		T term3 = sm.multiply (fromPrior, dif);
-		terms = sm.add (terms, term3);
-
-		fOverH = sm.multiply (prior.f, Ih);
-		zhOver6 = sm.multiply (sm.multiply (prior.z, h), SIXTH);
-		dif = sm.add (fOverH, sm.negate (zhOver6));
-		T term4 = sm.multiply (toKnot, dif);
-		terms = sm.add (terms, term4);
-
-		return terms;
-	}
-	protected T t, h, f, z;
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#setComputer(net.myorb.data.abstractions.Function)
+	 */
+	public void setComputer
+	(Function <T> computer) { this.s = computer; }
+	protected Function <T> s;
 
 
 	/* (non-Javadoc)
@@ -206,9 +198,8 @@ class CubicSplineSegment <T> implements CubicSpline.Knot <T>
 	 */
 	public boolean isInRange (T x) throws RuntimeException
 	{
-		if (sm.lessThan (t, x)) return false;
-		if (prior == null) throw new RuntimeException ("Parameter falls below spline low limit");
-		if (sm.lessThan (prior.t, x)) return true;
+		if ( prior == null  ||  sm.lessThan (t, x) ) return false;
+		if ( ! sm.lessThan (x, prior.t) ) return true;
 		return false;
 	}
 
@@ -241,7 +232,7 @@ class Spline <T> extends DerivativeApproximation <T>
 
 		CubicSplineSegment <T> prior = null;
 		Function <T> f2 = secondDerivative (f, delta);
-		this.knots = new ArrayList <Knot <T>> ();
+		this.knots = new CubicSpline.KnotList <> ();
 
 		for (T t : knotPoints)
 		{
@@ -282,8 +273,8 @@ class Spline <T> extends DerivativeApproximation <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.CubicSpline.Interpolation#getKnots()
 	 */
-	public List <Knot <T>> getKnots () { return knots; }
-	protected List <Knot <T>> knots;
+	public CubicSpline.KnotList <T> getKnots () { return knots; }
+	protected CubicSpline.KnotList <T> knots;
 
 
 	/* (non-Javadoc)
@@ -295,6 +286,81 @@ class Spline <T> extends DerivativeApproximation <T>
 	 * @see net.myorb.math.Function#getSpaceManager()
 	 */
 	public SpaceManager <T> getSpaceManager () { return sm; }
+
+
+}
+
+
+/**
+ * cubic spline equation evaluated with the generic space manager object
+ * @param <T> type of component values on which operations are to be executed
+ */
+class CubicSplineComputer <T> implements Function <T>
+{
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+	 */
+	public T eval (T x)
+	{
+		T toKnot = sm.add (t, sm.negate (x));
+		T fromPrior = sm.add (x, sm.negate (prior.t));
+
+		T fromPrior3 = sm.multiply (fromPrior, fromPrior);
+		fromPrior3 = sm.multiply (fromPrior3, fromPrior);
+		T toKnot3 = sm.multiply (toKnot, toKnot);
+		toKnot3 = sm.multiply (toKnot3, toKnot);
+
+		T term1 = sm.multiply (sm.multiply (z, fromPrior3), I6h);
+		T term2 = sm.multiply (sm.multiply (prior.z, toKnot3), I6h);
+		T terms = sm.add (term1, term2);
+
+		T fOverH = sm.multiply (f, Ih);
+		T zhOver6 = sm.multiply (sm.multiply (z, h), SIXTH);
+		T dif = sm.add (fOverH, sm.negate (zhOver6));
+		T term3 = sm.multiply (fromPrior, dif);
+		terms = sm.add (terms, term3);
+
+		fOverH = sm.multiply (prior.f, Ih);
+		zhOver6 = sm.multiply (sm.multiply (prior.z, h), SIXTH);
+		dif = sm.add (fOverH, sm.negate (zhOver6));
+		T term4 = sm.multiply (toKnot, dif);
+		terms = sm.add (terms, term4);
+
+		return terms;
+	}
+	protected CubicSplineSegment <T> prior = null;
+	protected T t, h, f, z;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+	 */
+	public SpaceDescription <T> getSpaceDescription () { return sm; }
+	protected SpaceManager <T> sm;
+
+
+	public void computeConstants (SpaceManager <T> sm)
+	{
+		if (h == null) return;
+		this.Ih = sm.invert (h);
+		this.SIX = sm.newScalar (6);
+		this.SIXTH = sm.invert (SIX);
+		this.I6h = sm.multiply (SIXTH, Ih);
+		this.sm = sm;
+	}
+	protected T SIX, SIXTH;
+	protected T Ih, I6h;
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString ()
+	{
+		return "t=" + t + " z=" + z + " f=" + f;
+	}
 
 
 }
