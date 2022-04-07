@@ -27,11 +27,13 @@ public class SegmentFunction <T> implements Function <T>
 	{
 		this.spline = spline;
 		this.representation = representation;
+		this.flat = representation.getUnitSlope () == 0.0;
 		this.mgr = mgr;
 	}
 	protected ExpressionComponentSpaceManager <T> mgr;
 	protected SegmentRepresentation representation;
 	protected SplineMechanisms spline;
+	boolean flat;
 
 
 	/* (non-Javadoc)
@@ -116,12 +118,16 @@ public class SegmentFunction <T> implements Function <T>
 	 */
 	public double translate (double parameter)
 	{
-		return
-			spline.getSplineOptimalLo () +
-			representation.getUnitSlope () *
-			(
-				parameter - representation.getSegmentLo ()
-			);
+		if ( ! flat )							// translation is needed
+		{
+			return
+				spline.getSplineOptimalLo () +
+				representation.getUnitSlope () *
+				(
+					parameter - representation.getSegmentLo ()
+				);
+		}
+		else return parameter;					// no translation needed
 	}
 
 

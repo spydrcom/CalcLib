@@ -4,6 +4,8 @@ package net.myorb.math.computational.splines;
 import net.myorb.math.expressions.tree.JsonBinding;
 import net.myorb.data.notations.json.JsonSemantics;
 
+import java.util.List;
+
 /**
  * provide JSON representation for a function spline
  * @author Michael Druckman
@@ -38,14 +40,13 @@ public class StorageFormat
 	 */
 	public static JsonSemantics.JsonValue getCoefficientsFor (SegmentRepresentation rep)
 	{
+		List <Double> a;
 		JsonSemantics.JsonArray cmpnts =
 				new JsonSemantics.JsonArray ();
 		for (int i = 0; i < rep.getComponentCount (); i++)
 		{
-			JsonSemantics.JsonArray c =
-					new JsonSemantics.JsonArray
-						(rep.getCoefficientsFor (i));
-			cmpnts.add (c);
+			if ((a = rep.getCoefficientsFor (i)) == null) continue;
+			cmpnts.add (new JsonSemantics.JsonArray (a));
 		}
 		return cmpnts;
 	}
@@ -57,8 +58,11 @@ public class StorageFormat
 	 */
 	public static JsonSemantics.JsonValue describe (Representation segments)
 	{
+		List<SegmentRepresentation>
+			segmentList = segments.getSegmentList ();
+		if (segmentList == null) return JsonSemantics.getNull ();
 		JsonSemantics.JsonArray description = new JsonSemantics.JsonArray () ;
-		for (SegmentRepresentation s : segments.getSegmentList ()) description.add (describeSplineSegment (s));
+		for (SegmentRepresentation s : segmentList) description.add (describeSplineSegment (s));
 		return description;
 	}
 

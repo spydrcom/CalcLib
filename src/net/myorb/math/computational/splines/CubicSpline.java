@@ -19,6 +19,7 @@ import java.util.List;
 public class CubicSpline <T>
 {
 
+
 	/**
 	 * access to values that define the spline
 	 * @param <T> type of component values on which operations are to be executed
@@ -63,11 +64,13 @@ public class CubicSpline <T>
 		 * @param computer the function that can compute spline values
 		 */
 		public void setComputer (Function <T> computer);
+		public Function <T> getComputer ();
 
 		/**
 		 * @return access to prior knot
 		 */
 		public Knot <T> prior ();
+
 	}
 
 
@@ -133,7 +136,7 @@ class CubicSplineSegment <T>
 			SpaceManager <T> sm
 		)
 	{
-		this (t, f, f2); this.sm = sm;
+		this (t, f, f2, sm);
 		if (prior == null) return;
 
 		this.h = sm.add (t, sm.negate (prior.t ()));
@@ -145,62 +148,14 @@ class CubicSplineSegment <T>
 		(
 			T t,
 			Function <T> f,
-			Function <T> f2
+			Function <T> f2,
+			SpaceManager <T> sm
 		)
 	{
+		super (sm);
 		this.t = t;
 		this.f = f.eval (t);
 		this.z = f2.eval (t);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#t()
-	 */
-	public T t () { return t; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#h()
-	 */
-	public T h () { return h; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#f()
-	 */
-	public T f () { return f; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#z()
-	 */
-	public T z () { return z; }
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#S(java.lang.Object)
-	 */
-	public T S (T x) { return s.eval (x); }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#prior()
-	 */
-	public Knot <T> prior () { return prior; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#setComputer(net.myorb.data.abstractions.Function)
-	 */
-	public void setComputer
-	(Function <T> computer) { this.s = computer; }
-	protected Function <T> s;
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#isInRange(java.lang.Object)
-	 */
-	public boolean isInRange (T x) throws RuntimeException
-	{
-		if ( prior == null  ||  sm.lessThan (t, x) ) return false;
-		if ( ! sm.lessThan (x, prior.t) ) return true;
-		return false;
 	}
 
 
@@ -295,8 +250,13 @@ class Spline <T> extends DerivativeApproximation <T>
  * cubic spline equation evaluated with the generic space manager object
  * @param <T> type of component values on which operations are to be executed
  */
-class CubicSplineComputer <T> implements Function <T>
+class CubicSplineComputer <T> extends CubicSplineProperties <T> implements Function <T>
 {
+
+	CubicSplineComputer (SpaceManager <T> sm)
+	{
+		super (sm);
+	}
 
 
 	/* (non-Javadoc)
@@ -330,8 +290,6 @@ class CubicSplineComputer <T> implements Function <T>
 
 		return terms;
 	}
-	protected CubicSplineSegment <T> prior = null;
-	protected T t, h, f, z;
 
 
 	/* (non-Javadoc)
@@ -360,6 +318,77 @@ class CubicSplineComputer <T> implements Function <T>
 	public String toString ()
 	{
 		return "t=" + t + " z=" + z + " f=" + f;
+	}
+
+
+}
+
+
+class CubicSplineProperties <T> implements CubicSpline.Knot <T>
+{
+
+
+	public CubicSplineProperties (SpaceManager <T> sm)
+	{
+		this.t = sm.getZero ();
+		this.h = sm.getZero ();
+		this.f = sm.getZero ();
+		this.z = sm.getZero ();
+		this.sm = sm;
+	}
+	protected CubicSplineSegment <T> prior = null;
+	protected SpaceManager <T> sm;
+	protected T t, h, f, z;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#prior()
+	 */
+	public Knot <T> prior () { return prior; }
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#t()
+	 */
+	public T t () { return t; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#h()
+	 */
+	public T h () { return h; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#f()
+	 */
+	public T f () { return f; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#z()
+	 */
+	public T z () { return z; }
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#S(java.lang.Object)
+	 */
+	public T S (T x) { return s.eval (x); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#setComputer(net.myorb.data.abstractions.Function)
+	 */
+	public void setComputer
+	(Function <T> computer) { this.s = computer; }
+	public Function <T> getComputer () { return s; }
+	protected Function <T> s;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.CubicSpline.Knot#isInRange(java.lang.Object)
+	 */
+	public boolean isInRange (T x) throws RuntimeException
+	{
+		if ( prior == null  ||  sm.lessThan (t, x) ) return false;
+		return ! sm.lessThan (x, prior.t);
 	}
 
 

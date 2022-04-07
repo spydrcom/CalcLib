@@ -72,7 +72,7 @@ class PolynomialSpline <T> extends Spline <T>
 	public void generatePolynomialfor (CubicSpline.Knot <T> knot)
 	{
 		T H = knot.h ();
-		if (H == null) return;
+		if (H == null || sm.isZero (H)) return;
 
 		HSQ = sm.multiply (H, H); SIX = sm.newScalar (6);
 		T i6h = sm.invert (sm.multiply (SIX, H));

@@ -1,7 +1,11 @@
 
 package net.myorb.math.computational.splines;
 
+import net.myorb.math.computational.Spline;
+
 import net.myorb.math.GeneratingFunctions;
+
+import net.myorb.data.notations.json.JsonSemantics;
 
 /**
  * provide method to implement mechanisms of a spline algorithm
@@ -30,6 +34,13 @@ public interface SplineMechanisms
 	 * @return the computed integral
 	 */
 	double evalIntegralOver (double lo, double hi, GeneratingFunctions.Coefficients <Double> coefficients);
+
+	/**
+	 * @param json the JSON tree that describes the spline
+	 * @return an implementation of the function described
+	 * @param <T> data type for operations
+	 */
+	<T> Spline.Operations <T> constructSplineFrom (JsonSemantics.JsonObject json);
 
 	/**
 	 * identify the object that will correctly interpret the spline description 

@@ -1,24 +1,21 @@
 
 package net.myorb.math.computational.splines;
 
-import net.myorb.math.computational.Spline;
-
-import net.myorb.math.polynomial.families.ChebyshevPolynomial;
-import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
-
-import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
-
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
 
+import net.myorb.math.computational.Spline;
 import net.myorb.math.GeneratingFunctions;
 
+import net.myorb.math.Polynomial;
+
 /**
- * implement mechanisms of Chebyshev T-Polynomial spline algorithms
+ * implement mechanisms of Cubic Spline algorithms
  * @author Michael Druckman
  */
-public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcceptance <Double>
+public class CubicSplineInterpreter implements SplineMechanisms, Environment.AccessAcceptance <Double>
 {
 
 
@@ -26,34 +23,13 @@ public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcce
 	 * data type manager for real number domain space
 	 */
 	public static ExpressionFloatingFieldManager realManager = new ExpressionFloatingFieldManager ();
-
-
-	/*
-	 * constants that describe the optimal Chebyshev T-Polynomial Spline
-	 */
-
-	public static final double SPLINE_LO = -1.5, SPLINE_HI = 1.5;
-	public static final double SPLINE_RANGE = SPLINE_HI - SPLINE_LO;
-	public static final int SPLINE_TICKS = 31, SPLINE_SPACES = SPLINE_TICKS - 1;
-
-
-	/**
-	 * construct objects implementing Chebyshev Polynomial functionalities
-	 */
-	public ChebyshevSpline ()
-	{
-		this.calculus = new ChebyshevPolynomialCalculus <Double> (realManager);
-		this.polynomial = new ChebyshevPolynomial <Double> (realManager);
-	}
+	public static Polynomial<Double> polynomial = new Polynomial <> (realManager);
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.splines.SplineMechanisms#getSplineOptimalLo()
 	 */
-	public double getSplineOptimalLo ()
-	{
-		return SPLINE_LO;
-	}
+	public double getSplineOptimalLo () { return 0.0; }
 
 
 	/* (non-Javadoc)
@@ -61,13 +37,8 @@ public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcce
 	 */
 	public double evalSplineAt (double x, GeneratingFunctions.Coefficients <Double> coefficients)
 	{
-		return polynomial.evaluatePolynomialV
-				(
-					coefficients, 
-					polynomial.forValue (x)
-				).getUnderlying ();
+		return polynomial.evaluatePolynomial (coefficients, x);
 	}
-	protected ChebyshevPolynomial <Double> polynomial;
 
 
 	/*
@@ -80,7 +51,7 @@ public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcce
 			double at
 		)
 	{
-		return calculus.evaluatePolynomialIntegral (coefficients, at);
+		return 0.0;
 	}
 	public double evaluatePolynomialIntegral
 		(
@@ -88,9 +59,8 @@ public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcce
 			double lo, double hi
 		)
 	{
-		return calculus.evaluatePolynomialIntegral (coefficients, lo, hi);
+		return 0.0;
 	}
-	protected ChebyshevPolynomialCalculus <Double> calculus;
 
 
 	/* (non-Javadoc)
@@ -130,7 +100,7 @@ public class ChebyshevSpline implements SplineMechanisms, Environment.AccessAcce
 	 */
 	public String getInterpreterPath ()
 	{
-		return ChebyshevSpline.class.getCanonicalName ();
+		return CubicSplineInterpreter.class.getCanonicalName ();
 	}
 
 

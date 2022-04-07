@@ -5,6 +5,7 @@ import net.myorb.math.computational.Spline;
 import net.myorb.math.computational.integration.Configuration;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
+
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.SymbolMap;
@@ -169,23 +170,24 @@ public class SplineTool <T>
 			Spline.Operations <T> spline
 		)
 	{
-		FittedFunction <T> fitted;
-		JsonSemantics.JsonObject json = toJson (spline);
-		if (showTree) Util.dump (json);
-
+		return transplant (toJson (spline));
+	}
+	public Spline.Operations <T> transplant
+		(
+			JsonSemantics.JsonObject json
+		)
+	{
 		try
 		{
+			if (showTree) Util.dump (json);
 			SplineMechanisms mechanisms = getSplineMechanisms (json);
 			Environment.provideAccess (mechanisms, environment);
-			fitted = new FittedFunction <T> (mgr, mechanisms);
+			return mechanisms.constructSplineFrom (json);
 		}
 		catch (Exception e)
 		{
 			throw new RuntimeException ("Spline transplant failed", e);
 		}
-
-		fitted.processSplineDescription (json);
-		return fitted;
 	}
 
 
@@ -199,7 +201,6 @@ public class SplineTool <T>
 		{
 			String path = JsonSemantics.getStringOrNull
 				(profile.getMemberCalled ("Interpreter"));
-			if (path == null) { return new ChebyshevSpline (); }
 			SplineMechanisms mechanisms = (SplineMechanisms)
 				Class.forName (path).newInstance ();
 			return mechanisms;

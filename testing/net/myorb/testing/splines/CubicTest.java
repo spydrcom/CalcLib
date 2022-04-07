@@ -31,8 +31,8 @@ public class CubicTest
 		double delta = 0.00001;
 		List <Double> knotPoints = new ArrayList <> ();
 		for (double x = 0.0; x <= 10; x += 1) { knotPoints.add (x); }
-		CubicSpline <Double> csp = new CubicSplinePolynomial <> (sm);
-//		CubicSpline <Double> csp = new CubicSpline <> (sm);
+//		CubicSpline <Double> csp = new CubicSplinePolynomial <> (sm);
+		CubicSpline <Double> csp = new CubicSpline <> (sm);
 
 		double max = 0.0;
 		CubicSplinePolynomial.Interpolation <Double> i = csp.interpolationFor (j0, knotPoints, delta);
