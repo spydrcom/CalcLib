@@ -1,7 +1,7 @@
 
 package net.myorb.math.computational.splines;
 
-import net.myorb.math.Polynomial;
+import net.myorb.math.Polynomial.PowerFunction;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
 import net.myorb.data.abstractions.Function;
@@ -47,11 +47,9 @@ class PolynomialSpline <T> extends Spline <T>
 	public PolynomialSpline (SpaceManager <T> sm)
 	{
 		super (sm);
-		this.polynomial = new Polynomial <T> (sm);
-		this.psm = polynomial.getPolynomialSpaceManager ();
+		this.psm = new PolynomialSpaceManager <T> (sm);
 	}
 	protected PolynomialSpaceManager <T> psm;
-	protected Polynomial <T> polynomial;
 
 
 	/**
@@ -77,12 +75,12 @@ class PolynomialSpline <T> extends Spline <T>
 		HSQ = sm.multiply (H, H); SIX = sm.newScalar (6);
 		T i6h = sm.invert (sm.multiply (SIX, H));
 
-		Polynomial.PowerFunction <T>
+		PowerFunction <T>
 			toKnot = psm.linearFunctionOfX
 				(sm.newScalar (-1), knot.t ()),
 			fromPrior = psm.linearFunctionOfX
 				(sm.newScalar (1), sm.negate (knot.prior ().t ()));
-		Polynomial.PowerFunction <T> sum =
+		PowerFunction <T> sum =
 			psm.add
 			(
 				psm.times (knot.z (), psm.pow (fromPrior, 3)),
@@ -92,11 +90,10 @@ class PolynomialSpline <T> extends Spline <T>
 		sum = plusProduct (knot.prior (), toKnot, sum);
 		knot.setComputer (psm.times (i6h, sum));
 	}
-	Polynomial.PowerFunction <T> plusProduct
+	PowerFunction <T> plusProduct
 		(
-			CubicSpline.Knot<T> knot,
-			Polynomial.PowerFunction <T> f,
-			Polynomial.PowerFunction <T> sum
+			CubicSpline.Knot <T> knot,
+			PowerFunction <T> f, PowerFunction <T> sum
 		)
 	{
 		T f6 = sm.multiply (knot.f (), SIX);

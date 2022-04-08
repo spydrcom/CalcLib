@@ -299,6 +299,10 @@ class CubicSplineComputer <T> extends CubicSplineProperties <T> implements Funct
 	protected SpaceManager <T> sm;
 
 
+	/**
+	 * the calculation of 1/(6h) which is a factor of each term
+	 * @param sm manager for the data type
+	 */
 	public void computeConstants (SpaceManager <T> sm)
 	{
 		if (h == null) return;
@@ -324,6 +328,10 @@ class CubicSplineComputer <T> extends CubicSplineProperties <T> implements Funct
 }
 
 
+/**
+ * storage for data that describes spline segment
+ * @param <T> type of component values on which operations are to be executed
+ */
 class CubicSplineProperties <T> implements CubicSpline.Knot <T>
 {
 

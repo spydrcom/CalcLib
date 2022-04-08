@@ -3,13 +3,12 @@ package net.myorb.math.computational.splines;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+import net.myorb.math.polynomial.PolynomialCalculus;
 
 import net.myorb.data.notations.json.JsonSemantics;
 
 import net.myorb.math.computational.Spline;
 import net.myorb.math.GeneratingFunctions;
-
-import net.myorb.math.Polynomial;
 
 /**
  * implement mechanisms of Cubic Spline algorithms
@@ -23,7 +22,7 @@ public class CubicSplineInterpreter implements SplineMechanisms, Environment.Acc
 	 * data type manager for real number domain space
 	 */
 	public static ExpressionFloatingFieldManager realManager = new ExpressionFloatingFieldManager ();
-	public static Polynomial<Double> polynomial = new Polynomial <> (realManager);
+	public static PolynomialCalculus <Double> poly = new PolynomialCalculus <Double> (realManager);
 
 
 	/* (non-Javadoc)
@@ -37,29 +36,7 @@ public class CubicSplineInterpreter implements SplineMechanisms, Environment.Acc
 	 */
 	public double evalSplineAt (double x, GeneratingFunctions.Coefficients <Double> coefficients)
 	{
-		return polynomial.evaluatePolynomial (coefficients, x);
-	}
-
-
-	/*
-	 * polynomial calculus implementation
-	 */
-
-	public double evaluatePolynomialIntegral
-		(
-			GeneratingFunctions.Coefficients <Double> coefficients, 
-			double at
-		)
-	{
-		return 0.0;
-	}
-	public double evaluatePolynomialIntegral
-		(
-			GeneratingFunctions.Coefficients <Double> coefficients, 
-			double lo, double hi
-		)
-	{
-		return 0.0;
+		return poly.evaluatePolynomial (coefficients, x);
 	}
 
 
@@ -72,7 +49,12 @@ public class CubicSplineInterpreter implements SplineMechanisms, Environment.Acc
 			GeneratingFunctions.Coefficients <Double> coefficients
 		)
 	{
-		return evaluatePolynomialIntegral (coefficients, lo, hi);
+		return poly.evaluatePolynomialIntegral
+			(
+				poly.getPolynomialFunction
+					(coefficients),
+				lo, hi
+			);
 	}
 
 
@@ -86,6 +68,7 @@ public class CubicSplineInterpreter implements SplineMechanisms, Environment.Acc
 		spline.processSplineDescription (json);
 		return spline;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
