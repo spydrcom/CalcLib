@@ -44,12 +44,7 @@ class PolynomialSpline <T> extends Spline <T>
 {
 
 
-	public PolynomialSpline (SpaceManager <T> sm)
-	{
-		super (sm);
-		this.psm = new PolynomialSpaceManager <T> (sm);
-	}
-	protected PolynomialSpaceManager <T> psm;
+	public PolynomialSpline (SpaceManager <T> sm) { super (sm); }
 
 
 	/**
@@ -57,10 +52,10 @@ class PolynomialSpline <T> extends Spline <T>
 	 */
 	public void generatePolynomials ()
 	{
+		prepareScalarConstants ();
+		preparePolynomialManager ();
 		for (CubicSpline.Knot <T> k : this.getKnots ())
-		{
-			generatePolynomialfor (k);
-		}
+		{ generatePolynomialfor (k); }
 	}
 
 
@@ -69,28 +64,53 @@ class PolynomialSpline <T> extends Spline <T>
 	 */
 	public void generatePolynomialfor (CubicSpline.Knot <T> knot)
 	{
-		T H = knot.h ();
-		if (H == null || sm.isZero (H)) return;
+		/*
+		 * the initial knot of a sequence will be empty
+		 */
+		if (isNonNullRun (knot.h ()))
+		{
+			/*
+			 * following knots will have non-zero run values,
+			 * SO using 6H as the common denominator suggests
+			 * zero H values must be avoided, hence this test
+			 */
+			knot.setComputer (sumOfTerms (knot));
+		}
+	}
 
-		HSQ = sm.multiply (H, H); SIX = sm.newScalar (6);
-		T i6h = sm.invert (sm.multiply (SIX, H));
 
+	/**
+	 * construct a polynomial description of a knot
+	 * @param knot the knot object being treated as a polynomial
+	 * @return a description of the polynomial for the knot
+	 */
+	public PowerFunction <T> sumOfTerms (CubicSpline.Knot <T> knot)
+	{
 		PowerFunction <T>
-			toKnot = psm.linearFunctionOfX
-				(sm.newScalar (-1), knot.t ()),
 			fromPrior = psm.linearFunctionOfX
-				(sm.newScalar (1), sm.negate (knot.prior ().t ()));
+				(ONE, sm.negate (knot.prior ().t ())),
+			toKnot = psm.linearFunctionOfX (MINUS_ONE, knot.t ());
 		PowerFunction <T> sum =
 			psm.add
 			(
 				psm.times (knot.z (), psm.pow (fromPrior, 3)),
 				psm.times (knot.prior ().z (), psm.pow (toKnot, 3))
 			);
-		sum = plusProduct (knot, fromPrior, sum);
-		sum = plusProduct (knot.prior (), toKnot, sum);
-		knot.setComputer (psm.times (i6h, sum));
+		sum = plusProductTerm (knot, fromPrior, sum);
+		sum = plusProductTerm (knot.prior (), toKnot, sum);
+		return psm.times (sm.invert (SIXH), sum);
 	}
-	PowerFunction <T> plusProduct
+
+
+	/**
+	 * algebra applied to terms to force 
+	 *  common denominator of 6H across sums
+	 * @param knot the description of the knot
+	 * @param f the function part of the term being built
+	 * @param sum the sum of terms built so far
+	 * @return the sum including the new term
+	 */
+	public PowerFunction <T> plusProductTerm
 		(
 			CubicSpline.Knot <T> knot,
 			PowerFunction <T> f, PowerFunction <T> sum
@@ -101,7 +121,56 @@ class PolynomialSpline <T> extends Spline <T>
 		T dif = sm.add (f6, sm.negate (zh2));
 		return psm.add (sum, psm.times (dif, f));
 	}
-	protected T HSQ, SIX;
+
+
+	/**
+	 * the initial knot 
+	 *  of a sequence will have a null prior node
+	 * @param h the value of the run since prior knot
+	 * @return TRUE when knot not empty, FALSE otherwise
+	 */
+	public boolean isNonNullRun (T h)
+	{
+		if (h != null && ! sm.isZero (h))
+		{
+			computeKnotConstants (h);
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * compute HSQ and SIXH for a knot.
+	 *  SIXH is 6h to be used as denominator and HSQ is H^2
+	 * @param h value of run since prior knot
+	 */
+	public void computeKnotConstants (T h)
+	{
+		this.HSQ = sm.multiply (h, h);		// square of h, H^2
+		this.SIXH = sm.multiply (SIX, h);	// product 6 * h
+	}
+	protected T HSQ, SIXH;
+
+
+	/**
+	 * simple scalar constants
+	 */
+	public void prepareScalarConstants ()
+	{
+		this.SIX = sm.newScalar (6);		// simple scalar 6
+		this.MINUS_ONE = sm.newScalar (-1);	// negative one
+		this.ONE = sm.newScalar (1);
+	}
+	protected T SIX, ONE, MINUS_ONE;
+
+
+	/**
+	 * allocate Polynomial Manager object
+	 */
+	public void preparePolynomialManager ()
+	{ this.psm = new PolynomialSpaceManager <T> (sm); }
+	protected PolynomialSpaceManager <T> psm;
 
 
 }
