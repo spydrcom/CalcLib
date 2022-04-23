@@ -25,12 +25,15 @@ public class EvaluationEngine<T>
 	 */
 	public static class Messages extends RuntimeException
 	{
-		public Messages (String message) { super (message); }
+		public Messages (String message) { this (message, ""); }
+		public Messages (String message, String context)
+		{ super (message); this.context = context; }
+		protected String context;
 
 		public void show (PrintStream stream)
 		{
 			if (shown) return;
-			stream.println (getMessage ());
+			stream.println (context + getMessage ());
 			shown = true;
 		}
 
@@ -39,12 +42,12 @@ public class EvaluationEngine<T>
 	}
 	public static class Notification extends Messages
 	{
-		public Notification (String message) { super (message); }
+		public Notification (String message) { super (message, "%%% "); }
 		private static final long serialVersionUID = -414148295079134040L;
 	}
 	public static class Terminator extends Messages
 	{
-		public Terminator (String message) { super (message); }
+		public Terminator (String message) { super (message, "*** "); }
 		public Terminator () { this ("Termination event has been processed"); }
 		private static final long serialVersionUID = -739626212806356283L;
 	}
