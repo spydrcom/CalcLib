@@ -68,6 +68,14 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionSpaceManager#providesSupportFor(java.lang.String)
+	 */
+	public boolean providesSupportFor (String requiredType)
+	{
+		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.INTEGER;
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionSpaceManager#convertToDouble(java.lang.Object)
 	 */
 	public Double convertToDouble (Factorization value)

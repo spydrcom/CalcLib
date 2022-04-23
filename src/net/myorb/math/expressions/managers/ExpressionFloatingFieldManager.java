@@ -55,6 +55,14 @@ public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionSpaceManager#providesSupportFor(java.lang.String)
+	 */
+	public boolean providesSupportFor (String requiredType)
+	{
+		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.REAL;
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionSpaceManager#convertFromDouble(java.lang.Double)
 	 */
 	public Double convertFromDouble (Double value)

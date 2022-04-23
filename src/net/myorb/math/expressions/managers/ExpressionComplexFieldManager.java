@@ -63,6 +63,14 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionSpaceManager#providesSupportFor(java.lang.String)
+	 */
+	public boolean providesSupportFor (String requiredType)
+	{
+		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.COMPLEX;
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.SpaceConversion#convertFromDouble(java.lang.Double)
 	 */
 	public ComplexValue<Double> convertFromDouble (Double value)

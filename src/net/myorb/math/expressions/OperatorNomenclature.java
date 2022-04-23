@@ -41,6 +41,7 @@ public class OperatorNomenclature
 	RUNSIEVE_KEYWORD = "RUNSIEVE",				// RUNSIEVE 100			populate the prime factorization table
 	DUMPING_KEYWORD = "DUMPING",				// let DUMPING=1		trace enable flag (show value stack changes)
 	FAMILY_KEYWORD = "FAMILY",					// FAMILY name count	load polynomial power function of named family
+	REQUIRES_KEYWORD = "REQUIRES",				// REQUIRES name		verify support for the named data type
 	LIBRARY_KEYWORD = "LIBRARY",				// LIBRARY L java.Math	import a class as a library of functions
 	CONFIGURE_KEYWORD = "CONFIGURE",			// CONFIGURE L P1 ...	post symbols to a library of functions
 	INSTANCE_KEYWORD = "INSTANCE",				// INSTANCE NAME LIB	post symbol defined by a parameter library

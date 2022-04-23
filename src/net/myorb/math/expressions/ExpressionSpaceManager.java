@@ -59,6 +59,13 @@ public interface ExpressionSpaceManager<T>
 		REAL,		// within tolerance of a real value (insignificant (or no) imaginary component)
 		COMPLEX		// contains significant imaginary component (or no real component)
 	}
+	
+	/**
+	 * verify type is supported
+	 * @param requiredType the name of the type needing support
+	 * @return TRUE if supported otherwise FALSE
+	 */
+	boolean providesSupportFor (String requiredType);
 
 	/**
 	 * determine the nature of a value
