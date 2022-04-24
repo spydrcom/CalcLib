@@ -5,8 +5,8 @@ import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.computational.*;
 import net.myorb.math.expressions.*;
 
+import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.Function;
-//import net.myorb.math.*;
 
 import java.util.List;
 
@@ -199,7 +199,7 @@ class OperatorProcessing<T> extends Assignments<T>
 	{
 		T secondDerivativeValue = secondDerivative.eval (getDiscreteFrom (variableName));
 		String type = getSpaceManager ().isNegative (secondDerivativeValue) ? "Local Maximum" : "Local Minimum";
-		throw new EvaluationEngine.Notification (type + " has been identified");
+		throw new ErrorHandling.Notification (type + " has been identified");
 	}
 
 

@@ -59,7 +59,7 @@ public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
 	 */
 	public boolean providesSupportFor (String requiredType)
 	{
-		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.REAL;
+		return EvaluationEngine.supports (requiredType, ValueCharacterization.REAL);
 	}
 
 	/* (non-Javadoc)

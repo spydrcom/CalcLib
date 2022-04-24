@@ -5,6 +5,7 @@ import net.myorb.math.fractions.Representation;
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.EvaluationEngine;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.primenumbers.*;
 
@@ -72,7 +73,7 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 	 */
 	public boolean providesSupportFor (String requiredType)
 	{
-		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.INTEGER;
+		return EvaluationEngine.supports (requiredType, ValueCharacterization.INTEGER);
 	}
 
 	/* (non-Javadoc)

@@ -9,6 +9,7 @@ import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.data.abstractions.HelpTableCompiler;
 import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.Parameters;
 import net.myorb.data.abstractions.HtmlTable;
 
@@ -410,7 +411,7 @@ public class SymbolMap extends HashMap <String, Object>
 	{
 		Named n;
 		if ((n = lookup (name)) == null)
-		{ throw new EvaluationEngine.Terminator ("Symbol '" + name + "' is not available"); }
+		{ throw new ErrorHandling.Terminator ("Symbol '" + name + "' is not available"); }
 		return n;
 	}
 

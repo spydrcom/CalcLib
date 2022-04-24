@@ -7,6 +7,8 @@ import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.TokenParser;
 
+import net.myorb.data.abstractions.ErrorHandling;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,6 +222,7 @@ public class ExtendedArrayFeatures<T> extends Arrays<T>
 			}
 			catch (Exception e)
 			{
+				ErrorHandling.checkForTermination (e);
 				elements.add (valueManager.newAsymptoticReference());
 			}
 			current = spaceManager.add (current, delta);

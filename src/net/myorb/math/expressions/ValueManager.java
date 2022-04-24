@@ -1,9 +1,11 @@
 
 package net.myorb.math.expressions;
 
-import net.myorb.data.abstractions.SimpleUtilities;
-import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.matrices.Matrix;
+import net.myorb.math.GeneratingFunctions;
+
+import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.data.abstractions.ErrorHandling;
 
 /**
  * the central representation for all value types supported
@@ -319,7 +321,7 @@ public class ValueManager<T>
 	/**
 	 * exception for error in context expectations
 	 */
-	public static class Expected extends RuntimeException
+	public static class Expected extends ErrorHandling.Terminator
 	{
 		public Expected
 			(
@@ -337,7 +339,7 @@ public class ValueManager<T>
 	/**
 	 * inappropriate value found
 	 */
-	public static class UnableToConvert extends RuntimeException
+	public static class UnableToConvert extends ErrorHandling.Terminator
 	{
 		public UnableToConvert ()
 		{ super ("Value found was not appropriate for use in context"); }
@@ -348,7 +350,7 @@ public class ValueManager<T>
 	/**
 	 * identify undefined reference
 	 */
-	public static class UndefinedValueError extends Exception
+	public static class UndefinedValueError extends ErrorHandling.Terminator
 	{
 		public UndefinedValueError (GenericValue value)
 		{ super (UNDEFINED_VALUE_ERROR + value.getName ()); }
@@ -360,7 +362,7 @@ public class ValueManager<T>
 	/**
 	 * identify empty list
 	 */
-	public static class EmptyParameterList extends Exception
+	public static class EmptyParameterList extends ErrorHandling.Terminator
 	{
 		public EmptyParameterList () { super ("Empty parameter list"); }
 		private static final long serialVersionUID = -7662098745940318425L;
@@ -743,9 +745,15 @@ public class ValueManager<T>
 		check (GenericValue value)
 	throws UndefinedValueError, EmptyParameterList
 	{
-		if (isUndefinedValue (value))
-		{ throw new UndefinedValueError (value); }
-		return delist (value);
+		try
+		{
+			
+			if (isUndefinedValue (value))
+			{ throw new UndefinedValueError (value); }
+			return delist (value);
+
+		}
+		catch (Exception e) { e.printStackTrace();  throw e; }
 	}
 
 

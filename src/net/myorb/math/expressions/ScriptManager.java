@@ -10,6 +10,7 @@ import net.myorb.math.expressions.gui.DisplayFiles;
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.abstractions.ZipUtilities;
 import net.myorb.data.abstractions.ZipRecord;
+import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.FileSource;
 import net.myorb.data.abstractions.ZipSource;
 import net.myorb.gui.components.FileDrop;
@@ -315,7 +316,15 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	{
 		Script script = find (filename);
 		if (script == null) return;
-		execute (script, true);
+
+		try { execute (script, true); }
+		catch (Exception e)
+		{
+			PrintStream out;
+			out = environment.getOutStream ();
+			try { ErrorHandling.process (e, out); }
+			catch (ErrorHandling.Terminator t) { t.show (out); }
+		}
 	}
 
 

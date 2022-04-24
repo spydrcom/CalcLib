@@ -4,7 +4,8 @@ package net.myorb.math.expressions.gui;
 import net.myorb.math.expressions.GreekSymbols;
 import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.evaluationstates.Environment;
-
+import net.myorb.data.abstractions.ErrorHandling;
+import net.myorb.data.abstractions.ErrorHandling.Terminator;
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.MenuManager;
 import net.myorb.gui.components.GuiToolkit;
@@ -324,9 +325,23 @@ class CommandHandler
 	 */
 	public void execute (String command)
 	{
-		PrintStream out = environment.getOutStream ();
-		out.println (command); control.execute (command);
-		out.println (); out.flush ();
+		execute (command, environment.getOutStream ());
+	}
+	public void execute (String command, PrintStream out)
+	{
+		ErrorHandling.process
+		(
+			new ErrorHandling.Executable ()
+			{
+				public void process () throws Terminator
+				{
+					out.println (command);
+					control.execute (command);
+					out.println (); out.flush ();
+				}
+			},
+			out
+		);
 	}
 
 	/**

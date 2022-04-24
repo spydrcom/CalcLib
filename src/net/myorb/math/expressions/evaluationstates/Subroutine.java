@@ -12,6 +12,7 @@ import net.myorb.math.computational.integration.RealDomainIntegration;
 import net.myorb.math.computational.Spline.Operations;
 
 import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.data.abstractions.ErrorHandling;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -426,7 +427,7 @@ public class Subroutine<T>
 		catch (Exception e)
 		{
 			if (supressingErrorMessages) return null;
-			else throw new RuntimeException (e);
+			else throw new ErrorHandling.Terminator (e.getMessage (), e);
 		}
 	}
 

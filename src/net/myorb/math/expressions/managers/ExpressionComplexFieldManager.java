@@ -8,6 +8,7 @@ import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.EvaluationControlI;
+import net.myorb.math.expressions.EvaluationEngine;
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.TokenParser;
 
@@ -67,7 +68,7 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	 */
 	public boolean providesSupportFor (String requiredType)
 	{
-		return ValueCharacterization.valueOf (requiredType.toUpperCase ()) == ValueCharacterization.COMPLEX;
+		return EvaluationEngine.supports (requiredType, ValueCharacterization.COMPLEX);
 	}
 
 	/* (non-Javadoc)

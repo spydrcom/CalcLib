@@ -7,8 +7,10 @@ import net.myorb.math.expressions.evaluationstates.ExtendedArrayFeatures;
 import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+// IOLIB error handling
+import net.myorb.data.abstractions.ErrorHandling;
+
 // JRE
-import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -18,39 +20,6 @@ import java.util.List;
  */
 public class EvaluationEngine<T>
 {
-
-
-	/**
-	 * flavors of error messages
-	 */
-	public static class Messages extends RuntimeException
-	{
-		public Messages (String message) { this (message, ""); }
-		public Messages (String message, String context)
-		{ super (message); this.context = context; }
-		protected String context;
-
-		public void show (PrintStream stream)
-		{
-			if (shown) return;
-			stream.println (context + getMessage ());
-			shown = true;
-		}
-
-		private static final long serialVersionUID = 2220291952416924622L;
-		private boolean shown = false;
-	}
-	public static class Notification extends Messages
-	{
-		public Notification (String message) { super (message, "%%% "); }
-		private static final long serialVersionUID = -414148295079134040L;
-	}
-	public static class Terminator extends Messages
-	{
-		public Terminator (String message) { super (message, "*** "); }
-		public Terminator () { this ("Termination event has been processed"); }
-		private static final long serialVersionUID = -739626212806356283L;
-	}
 
 
 	/**
@@ -119,27 +88,28 @@ public class EvaluationEngine<T>
 		{
 			process (tokens);
 		}
-		catch (Notification n)
-		{
-			n.show (environment.getOutStream ());
-		}
-		catch (Terminator t)
-		{
-			t.show (environment.getOutStream ());
-			throw t;
-		}
 		catch (Exception e)
 		{
-			if (dumpingRequested ())
-			{
-				e.printStackTrace ();
-			}
-			else if (!supressingErrorMessages)
-			{
-				environment.getOutStream ().println ("*** " + e.getLocalizedMessage ());
-			}
-			e.printStackTrace ();
+			ErrorHandling.process
+			(
+				e, environment.getOutStream (),
+				supressingErrorMessages,
+				dumpingRequested ()
+			);
 		}
+	}
+
+
+	/**
+	 * @param requiredType name of the type being required
+	 * @param expected the expected value for a match
+	 * @return TRUE when supported otherwise FALSE
+	 */
+	public static boolean supports (String requiredType, ExpressionSpaceManager.ValueCharacterization expected)
+	{
+		try
+		{ return ExpressionSpaceManager.ValueCharacterization.valueOf (requiredType.toUpperCase ()) == expected; }
+		catch (Exception e) { throw new ErrorHandling.Terminator ("Data type name not recognized"); }
 	}
 
 
