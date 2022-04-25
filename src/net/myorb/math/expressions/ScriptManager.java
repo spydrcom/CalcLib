@@ -262,41 +262,41 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	}
 
 
-	public void readAndIterate (String filename, int maxIterations) // throws AssertionStatus
+	public void readAndIterate (String filename, int maxIterations)
 	{
-		Script script = find (filename);
+		Script script;
+		if ((script = find (filename)) == null)
+		{ throw new ErrorHandling.Notification ("Unable to process script"); }
+		PrintStream out = environment.getOutStream ();
 
-		if (script == null)
-		{
-			throw new RuntimeException ("Unable to process script");
-		}
-
-		
 		for (int i = 1; i <= maxIterations; i++)
 		{
 			try { execute (script, false); }
-			catch (Exception e)
-			{
-				notification (i, e.getMessage (), e);
-				throw new RuntimeException ("Script has terminated");
-			}
+			catch (Exception e) { notify (messageFor (i), e, out); }
 		}
 
-		notification ("Iteration " + maxIterations + " has completed");
-		throw new RuntimeException ("Maximum iteration count exceeded");
+		notification ("Iteration " + maxIterations + " has completed", out);
+		throw new ErrorHandling.Terminator ("Maximum iteration count exceeded");
 	}
-	void notification (int i, String message, Exception e)
+	String messageFor (int iteration)
 	{
-		notification
-		("Script interrupted in iteration " + i);
-		if (message != null) environment.getOutStream ().println (message);
-		else environment.getOutStream ().println ("Exception '" + e.getClass ().getName () + "' was caught");
+		return "Script interrupted in iteration " + iteration;
 	}
-	void notification (String message)
+	void notify (String message, Exception e, PrintStream out)
 	{
-		environment.getOutStream ().println ();
-		environment.getOutStream ().println (message);
+		notification (message, out); notify (e, out);
+		throw new ErrorHandling.Notification ("Script has terminated");
 	}
+	void notify (Exception e, PrintStream out)
+	{
+		String message = e.getMessage ();
+		if (message == null) notification (e, out);
+		else notification (message, out);
+	}
+	void notification (Exception e, PrintStream out)
+	{ notification ("Exception '" + e.getClass ().getName () + "' was caught", out); }
+	void notification (String message, PrintStream out)
+	{ out.println (); out.println (message); }
 
 
 	/**

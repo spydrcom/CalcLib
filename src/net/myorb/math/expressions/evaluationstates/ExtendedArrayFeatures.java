@@ -88,9 +88,15 @@ public class ExtendedArrayFeatures<T> extends Arrays<T>
 		 */
 		int buildFullDescriptor ()
 		{
-			int ending = parseExpression (tokens, starting) + 1;
+			int ending = identifyEndOfDescriptor ();
 			buildDescriptor (arrayDescriptor, tokens.between (starting, ending), delta);
 			return ending;
+		}
+		int identifyEndOfDescriptor ()
+		{
+			int ending = parseExpression (tokens, starting);
+			if (ending == 0) { throw new ErrorHandling.Terminator ("Unexpected array syntax"); }
+			return ending + 1;
 		}
 
 		/**
