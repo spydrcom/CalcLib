@@ -9,6 +9,7 @@ import net.myorb.math.expressions.gui.DisplayFiles;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.abstractions.ZipUtilities;
+import net.myorb.data.abstractions.ErrorHandling.Terminator;
 import net.myorb.data.abstractions.ZipRecord;
 import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.FileSource;
@@ -214,7 +215,7 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 		}
 		catch (Exception e)
 		{
-			throw new RuntimeException ("File reader failed");
+			throw new ErrorHandling.Terminator ("File reader failed", e);
 		}
 	}
 
@@ -314,16 +315,23 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	 */
 	public void readAndExecute (String filename)
 	{
-		Script script = find (filename);
-		if (script == null) return;
-
-		try { execute (script, true); }
-		catch (Exception e)
+		execute (find (filename), environment.getOutStream ());
+	}
+	public void execute (Script script, PrintStream out)
+	{
+		if (script != null)
 		{
-			PrintStream out;
-			out = environment.getOutStream ();
-			try { ErrorHandling.process (e, out); }
-			catch (ErrorHandling.Terminator t) { t.show (out); }
+			ErrorHandling.process
+			(
+				new ErrorHandling.Executable ()
+				{
+					public void process () throws Terminator
+					{
+						execute (script, true);
+					}
+				},
+				out
+			);
 		}
 	}
 
