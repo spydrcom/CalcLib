@@ -90,17 +90,34 @@ public class EvaluationEngine<T>
 		}
 		catch (Exception e)
 		{
-			ErrorHandling.process
-			(
-				e, environment.getOutStream (),
-				supressingErrorMessages,
-				dumpingRequested ()
-			);
+			processErrorInLine (tokens, e);
 		}
+	}
+
+	
+	/**
+	 * produce appropriately formatted diagnostic
+	 * @param lineTokens the tokens of the error source line
+	 * @param exceptionSeen an executable process to be invoked
+	 */
+	public void processErrorInLine
+		(
+			List<TokenParser.TokenDescriptor> lineTokens,
+			Exception exceptionSeen
+		)
+	{
+		ErrorHandling.process
+		(
+			lineTokens, exceptionSeen,
+			environment.getOutStream (),
+			supressingErrorMessages,
+			dumpingRequested ()
+		);
 	}
 
 
 	/**
+	 * compare a type name to the expected type name
 	 * @param requiredType name of the type being required
 	 * @param expected the expected value for a match
 	 * @return TRUE when supported otherwise FALSE
