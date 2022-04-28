@@ -4,6 +4,8 @@ package net.myorb.math.expressions.evaluationstates;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
 
+import net.myorb.data.abstractions.ErrorHandling;
+
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ public class Assignments<T> extends Primitives<T>
 	public void initAssignmentProcessing ()
 	{
 		assignmentPending = false;
-		operatorLastSeen = true;
+		setOperatorLastSeen ();
 		assignTo = null;
 	}
 
@@ -33,15 +35,25 @@ public class Assignments<T> extends Primitives<T>
 	 */
 	public void processBinaryOpSpecialCase (SymbolMap.Operation op, int opPrec)
 	{
-		if (operatorLastSeen &&
+		if  (
+				operatorLastSeen &&
 				op instanceof SymbolMap.BinaryOperator &&
-				opPrec != SymbolMap.FUNCTTION_PRECEDENCE)
+				opPrec != SymbolMap.FUNCTTION_PRECEDENCE
+			)
 		{
-			operatorLastSeen = false;
+			resetOperatorLastSeen ();
 			getValueStack ().push (ZERO);
-		} else operatorLastSeen = true;
+		}
+		else setOperatorLastSeen ();
 	}
+
+
+	/**
+	 * @param newStatus mark as seen TRUE or not seen FALSE
+	 */
 	protected void setOperatorStatus (boolean newStatus) { operatorLastSeen = newStatus; }
+	protected void resetOperatorLastSeen () { setOperatorStatus (false); }
+	protected void setOperatorLastSeen () { setOperatorStatus (true); }
 	private boolean operatorLastSeen = true;
 
 
@@ -50,7 +62,7 @@ public class Assignments<T> extends Primitives<T>
 	 */
 	public void processValue ()
 	{
-		operatorLastSeen = false;
+		resetOperatorLastSeen ();
 		pushTokenOnValueStack ();
 		dumpValueStack ();
 	}
@@ -61,10 +73,7 @@ public class Assignments<T> extends Primitives<T>
 	 * token image is stored and pending flag is reset
 	 */
 	public void processPendingAssignment ()
-	{
-		assignTo = getTokenImage ();
-		assignmentPending = false;
-	}
+	{ assignTo = getTokenImage (); assignmentPending = false; }
 	protected boolean assignmentPending = false;
 
 
@@ -75,31 +84,69 @@ public class Assignments<T> extends Primitives<T>
 	 */
 	public boolean assignmentProcessed (int opPrec)
 	{
-		if (opPrec == SymbolMap.ASSIGNMENT_PRECEDENCE)
+		switch (opPrec)
 		{
-			assignmentPending = true;
-			return true;
+
+			case SymbolMap.ASSIGNMENT_PRECEDENCE:
+				assignmentPending = true;
+				return true;
+
+			case SymbolMap.STORAGE_PRECEDENCE:
+				identifyAssignmentOperator ();
+				return true;
+
+			default:
+				return false;
+
 		}
-		else if (opPrec == SymbolMap.STORAGE_PRECEDENCE)
+	}
+
+	/**
+	 * check for indexed assignment
+	 */
+	public void identifyAssignmentOperator ()
+	{
+		setOperatorLastSeen ();
+		if (assignTo != null || ! isIndexed (getTOSvalue ()))
+		{ pushAssignmentOperator (assignTo); assignTo = null; }
+	}
+
+	/**
+	 * pop top of stack and check for error
+	 * @return the generic value popped from top of stack
+	 * @throws ErrorHandling.Terminator for invalid assignment observed
+	 */
+	public ValueManager.GenericValue getTOSvalue () throws ErrorHandling.Terminator
+	{
+		try
 		{
-			operatorLastSeen = true;
-			if (assignTo == null)
-			{
-				ValueManager.GenericValue value = getValueStack ().pop ();
-				if (getValueStack ().peek () == null)
-					assignTo = value.getName ();
-				else
-				{
-					pushIndexedAssignmentOperator
-						(getValueStack ().pop ().getName (), value);
-					return true;
-				}
-			}
-			pushAssignmentOperator (assignTo);
-			assignTo = null;
-			return true;
+			return getValueStack ().pop ();
 		}
-		return false;
+		catch (Exception e)
+		{
+			throw new ErrorHandling.Terminator ("Assignment is invalid");
+		}
+	}
+
+	/**
+	 * determine if index operator should be pushed
+	 * @param value prior top of stack which becomes assigned
+	 * @return TRUE when value stack peek is not null
+	 */
+	public boolean isIndexed (ValueManager.GenericValue value)
+	{
+		if (getValueStack ().peek () == null)
+		{
+			assignTo = value.getName ();
+			return false;
+		}
+
+		pushIndexedAssignmentOperator
+		(
+			getValueStack ().pop ().getName (), value
+		);
+
+		return true;
 	}
 	protected String assignTo = null;
 
@@ -110,9 +157,12 @@ public class Assignments<T> extends Primitives<T>
 	 * @param index value of the index
 	 */
 	public void pushIndexedAssignmentOperator
-	(String variable, ValueManager.GenericValue index)
+		(
+			String variable, ValueManager.GenericValue index
+		)
 	{
 		popOpStackToTos ();								// eliminate unnecessary indexing operation
+
 		pushOpStack
 		(
 			new IndexedAssignmentOperator<T>
@@ -140,7 +190,7 @@ public class Assignments<T> extends Primitives<T>
 	public void pushVariableValue (ValueManager.GenericValue v)
 	{
 		getValueStack ().push (v);
-		operatorLastSeen = false;
+		resetOperatorLastSeen ();
 		dumpValueStack ();
 	}
 
@@ -281,8 +331,8 @@ public class Assignments<T> extends Primitives<T>
 
 
 	/**
-	 * evaluate the indicies to be used
-	 * @param op the operator being processed
+	 * evaluate the index value(s) being used
+	 * @param op the operator currently being processed
 	 * @return the integer offset from start of array
 	 */
 	public int processIndicies (SymbolMap.IndexedVariableAssignment op)
