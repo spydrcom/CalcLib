@@ -124,7 +124,7 @@ public class Assignments<T> extends Primitives<T>
 		}
 		catch (Exception e)
 		{
-			throw new ErrorHandling.Terminator ("Assignment is invalid");
+			throw new ErrorHandling.Terminator ("Assignment is invalid", e);
 		}
 	}
 
