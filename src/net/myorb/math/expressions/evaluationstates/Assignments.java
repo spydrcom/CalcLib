@@ -161,9 +161,9 @@ public class Assignments<T> extends Primitives<T>
 			String variable, ValueManager.GenericValue index
 		)
 	{
-		popOpStackToTos ();								// eliminate unnecessary indexing operation
+		// eliminate unnecessary indexing operation
 
-		pushOpStack
+		substituteTos
 		(
 			new IndexedAssignmentOperator<T>
 			(

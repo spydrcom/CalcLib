@@ -3,11 +3,12 @@ package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.computational.FunctionRoots;
-import net.myorb.data.abstractions.Function;
 
 import net.myorb.math.expressions.commands.CommandDictionary;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
+
+import net.myorb.data.abstractions.Function;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -355,6 +356,21 @@ public class Primitives<T>
 	}
 
 
+	/**
+	 * replace TOS operation with substitute
+	 * @param op operation to become TOS
+	 * @return prior TOS operation
+	 */
+	protected SymbolMap.Operation substituteTos
+			(SymbolMap.Operation op)
+	{
+		SymbolMap.Operation prior =
+			popOpStackToTos ();
+		pushOpStack (op);
+		return prior;
+	}
+
+
 	/*
 	 * value stack object controlled operations
 	 */
@@ -390,8 +406,9 @@ public class Primitives<T>
 
 	/**
 	 * check for error conditions after operations exhausted
+	 * @throws ValueStack.StackCycle for unexpected or inadequate stack remnants
 	 */
-	public void checkValueStack ()
+	public void checkValueStack () throws ValueStack.StackCycle
 	{
 		if (valueStack.isEmpty ()) return;
 		
@@ -408,14 +425,17 @@ public class Primitives<T>
 				 */
 				valueManager.check (valueStack.pop ());
 			}
-			catch (Exception e) //TODO: bug fix (see PRIME)
+			catch (ValueManager.UndefinedValueError u)
 			{
-				valueStack.clear ();
-				throw new RuntimeException ("Value list found to contain error", e); // FIXME
+				throw u;
+			}
+			catch (Exception e)
+			{
+				valueStack.recognizeContextError (e);
 			}
 		}
 
-		throw new RuntimeException ("Not all values used in calculation");
+		throw new ValueStack.StackOverflow ();
 	}
 
 

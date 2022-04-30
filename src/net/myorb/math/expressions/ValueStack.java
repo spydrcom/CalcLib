@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.data.abstractions.ErrorHandling;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,32 @@ import java.util.List;
  */
 public class ValueStack<T>
 {
+
+	public static class StackCycle extends ErrorHandling.Terminator
+	{
+		public StackCycle (String message) { super (message); }
+		private static final long serialVersionUID = 3665018210579636331L;
+	}
+
+	public static class StackUnderflow extends StackCycle
+	{
+		public StackUnderflow () { super ("Stack underflow"); }
+		private static final long serialVersionUID = 6211686482909558457L;
+	}
+
+	public static class StackOverflow extends StackCycle
+	{
+		public StackOverflow () { super ("Not all values used in calculation"); }
+		private static final long serialVersionUID = 3414577202824036948L;
+	}
+
+	public static class ContextError extends ErrorHandling.Terminator
+	{
+		public ContextError (Exception exception) { super (CONTEXT_ERROR, exception); }
+		static final String CONTEXT_ERROR = "Value list found to contain error";
+		private static final long serialVersionUID = -534760667363238945L;
+	}
+
 
 	public interface StackStatusMonitor
 	{
@@ -119,10 +147,11 @@ public class ValueStack<T>
 
 	/**
 	 * check for stack underflow
+	 * @throws StackUnderflow for stack empty on POP request
 	 */
-	public void checkSize ()
+	public void checkSize () throws StackUnderflow
 	{
-		if (stack.isEmpty ()) throw new RuntimeException ("Stack underflow");
+		if (stack.isEmpty ()) throw new StackUnderflow ();
 	}
 
 
@@ -269,6 +298,19 @@ public class ValueStack<T>
 	{
 		stack.clear ();
 		notifyMonitors ();
+	}
+
+
+	/**
+	 * process errors in values
+	 * @param exception the exception caught as result
+	 */
+	public void recognizeContextError
+		(Exception exception)
+	throws ContextError
+	{
+		stack.clear ();
+		throw new ContextError (exception);		
 	}
 
 

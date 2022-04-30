@@ -745,15 +745,9 @@ public class ValueManager<T>
 		check (GenericValue value)
 	throws UndefinedValueError, EmptyParameterList
 	{
-		try
-		{
-			
-			if (isUndefinedValue (value))
-			{ throw new UndefinedValueError (value); }
-			return delist (value);
-
-		}
-		catch (Exception e) { e.printStackTrace();  throw e; }
+		if (isUndefinedValue (value))
+		{ throw new UndefinedValueError (value); }
+		return delist (value);
 	}
 
 
