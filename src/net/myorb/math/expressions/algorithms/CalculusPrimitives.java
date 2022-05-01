@@ -86,16 +86,24 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	{
 		return new AbstractUnaryOperator (symbol, precedence)
 		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
 				String symbolDelta = ConventionalNotations.DELTA_JAVA_ESCAPE + parameter.getName ();
 				return environment.getSymbolMap ().getValue (symbolDelta);
 			}
 
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{
 				return "<mrow><mi>" + ConventionalNotations.DELTA_XML_ESCAPE + "</mi><mo/>" + operand + "</mrow>";
 			}
+
 		};
 	}
 
@@ -110,11 +118,20 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	{
 		return new AbstractCalculusOperator (symbol, precedence)
 		{
-			public ValueManager.GenericValue
-			execute (ValueManager.GenericValue parameter) { return approximateDerivative (parameter, 1); }
 
-			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{ return approximateDerivative (parameter, 1); }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay
+			(String operator, String operand, NodeFormatting using)
 			{ return operand + operator; }
+
 		};
 	}
 
@@ -129,11 +146,19 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	{
 		return new AbstractCalculusOperator (symbol, precedence)
 		{
-			public ValueManager.GenericValue
-			execute (ValueManager.GenericValue parameter) { return approximateDerivative (parameter, 2); }
 
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{ return approximateDerivative (parameter, 2); }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{ return operand + operator; }
+
 		};
 	}
 
@@ -232,7 +257,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	{
 		ValueManager.GenericValue wrapper = valueManager.newDiscreteValue (evaluationPoint);
 		DerivativeMetadataStorage<T> meta = new DerivativeMetadataStorage<T> (delta);
-		wrapper.setMetadata (meta); // add metadata holding delta
+		wrapper.setMetadata (meta); // add meta-data holding delta
 		return wrapper;
 	}
 	@SuppressWarnings("unchecked")
@@ -246,7 +271,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 		}
 		else if (m instanceof DerivativeMetadataStorage)					// must find a metadata block if one is present
 		{
-			dms = ((DerivativeMetadataStorage<T>)m);
+			dms = (DerivativeMetadataStorage<T>) m;
 		}
 		else
 		{
