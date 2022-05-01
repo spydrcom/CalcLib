@@ -11,25 +11,33 @@ import net.myorb.math.expressions.ValueManager;
 public class CalculusMarkers
 {
 
+
+	/**
+	 * markers for built-in forms of quadrature
+	 */
 	public enum CalculusMarkerTypes
 	{
-		INTERVAL,
-		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,
-		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,
-		DERIVATIVE
+		INTERVAL,										// interval calculation between domain points
+		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,		// Curtis-Clenshaw and Double Exponential quadrature forms
+		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,	// Trapezoidal rule evaluation and post-sum adjust
+		DERIVATIVE										// simple function derivative approximation
 	}
+
 
 	/**
 	 * metadata marker for calculus operators
 	 */
 	public interface CalculusMetadata extends ValueManager.Metadata 
 	{
+		/**
+		 * @return enumerated element which identifies data set
+		 */
 		CalculusMarkerTypes typeOfOperation ();
 	}
 
 
 	/**
-	 * metadata marker for interval evaluation
+	 * meta-data marker for interval evaluation
 	 */
 	public static class IntervalEvaluationMarker implements CalculusMetadata
 	{
