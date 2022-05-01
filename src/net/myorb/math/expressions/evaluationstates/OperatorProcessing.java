@@ -252,39 +252,29 @@ class OperatorProcessing<T> extends Assignments<T>
 			CalculusMarkers.CalculusMetadata calculusMetadata
 		)
 	{
-		if (calculusMetadata instanceof CalculusMarkers.IntervalEvaluationMarker)
+		switch (calculusMetadata.typeOfOperation ())
 		{
-			return getQuadrature ().intervalEvaluation (op, parameters);						// f(hi) - f(lo)
+			case QUADRATURE_CLENSHAW:
+				return getQuadrature ().ccqApproximation (op, parameters);			// INTEGRAL f (cos t) | (0, pi)
+			case QUADRATURE_TANH_SINH:
+				return getQuadrature ().quadratureApproximation (op, parameters);	// INTEGRAL f | (lo, hi, error)
+			case QUADRATURE_TRAP_ADJUST:
+				return getQuadrature ().trapezoidalAdjustmnet (op, parameters);		// INTEGRAL f | (lo, hi, dx)
+			case QUADRATURE_TRAP_EVAL:
+				return getQuadrature ().trapezoidalApproximation (op, parameters);	// INTEGRAL f | (lo, hi, dx)
+			case INTERVAL:
+				return getQuadrature ().intervalEvaluation (op, parameters);		// f(hi) - f(lo)
+			case DERIVATIVE:
+				return computeDerivative (op, parameters, calculusMetadata);		// f'(x)
+			default: throw new IllegalMetadata ();
 		}
-		else if (calculusMetadata instanceof CalculusMarkers.ClenshawCurtisEvaluationMarker)
-		{
-			return getQuadrature ().ccqApproximation (op, parameters);							// INTEGRAL f (cos t) | (0, pi)
-		}
-		else if (calculusMetadata instanceof CalculusMarkers.TanhSinhEvaluationMarker)
-		{
-			return getQuadrature ().quadratureApproximation (op, parameters);					// INTEGRAL f | (lo, hi, error)
-		}
-		else if (calculusMetadata instanceof CalculusMarkers.TrapezoidalEvaluationMarker)
-		{
-			return getQuadrature ().trapezoidalApproximation (op, parameters);					// INTEGRAL f | (lo, hi, dx)
-		}
-		else if (calculusMetadata instanceof CalculusMarkers.TrapezoidalAdjustmentMarker)
-		{
-			return getQuadrature ().trapezoidalAdjustmnet (op, parameters);						// INTEGRAL f | (lo, hi, dx)
-		}
-		else if (calculusMetadata instanceof CalculusMarkers.DerivativeMetadata)
-		{
-			return computeDerivative (op, parameters, calculusMetadata);						// f'(x)
-		}
-		else throw new IllegalMetadata ();
 	}
 
 
 	CalculusMarkers.DerivativeMetadata<T> toDerivativeMetadata
 			(ValueManager.Metadata calculusMetadata)
 	{
-		@SuppressWarnings("unchecked")
-		CalculusMarkers.DerivativeMetadata<T>
+		@SuppressWarnings("unchecked") CalculusMarkers.DerivativeMetadata<T>
 		derivativeMetadata = (CalculusMarkers.DerivativeMetadata<T>) calculusMetadata;
 		return derivativeMetadata;
 	}

@@ -11,26 +11,66 @@ import net.myorb.math.expressions.ValueManager;
 public class CalculusMarkers
 {
 
+	public enum CalculusMarkerTypes
+	{
+		INTERVAL,
+		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,
+		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,
+		DERIVATIVE
+	}
 
 	/**
 	 * metadata marker for calculus operators
 	 */
-	public interface CalculusMetadata extends ValueManager.Metadata {}
+	public interface CalculusMetadata extends ValueManager.Metadata 
+	{
+		CalculusMarkerTypes typeOfOperation ();
+	}
 
 
 	/**
 	 * metadata marker for interval evaluation
 	 */
-	public static class IntervalEvaluationMarker implements CalculusMetadata {}
+	public static class IntervalEvaluationMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.INTERVAL;
+		}
+	}
 
 
 	/**
 	 * markers for quadrature
 	 */
-	public static class ClenshawCurtisEvaluationMarker implements CalculusMetadata {}
-	public static class TrapezoidalEvaluationMarker implements CalculusMetadata {}
-	public static class TrapezoidalAdjustmentMarker implements CalculusMetadata {}
-	public static class TanhSinhEvaluationMarker implements CalculusMetadata {}
+	public static class ClenshawCurtisEvaluationMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.QUADRATURE_CLENSHAW;
+		}
+	}
+	public static class TrapezoidalEvaluationMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.QUADRATURE_TRAP_EVAL;
+		}
+	}
+	public static class TrapezoidalAdjustmentMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.QUADRATURE_TRAP_ADJUST;
+		}
+	}
+	public static class TanhSinhEvaluationMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.QUADRATURE_TANH_SINH;
+		}
+	}
 
 
 	/**

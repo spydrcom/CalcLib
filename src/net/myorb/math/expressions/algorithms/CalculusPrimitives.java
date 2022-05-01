@@ -2,9 +2,12 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.CalculusMarkers;
+import net.myorb.math.computational.CalculusMarkers.CalculusMarkerTypes;
+
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractCalculusOperator;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.ConventionalNotations;
@@ -44,6 +47,10 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	{
 		return new AbstractBinaryOperator (symbol, precedence)
 		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.BinaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue, net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
@@ -51,6 +58,9 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 				return approximateDerivative (evaluationPoint, delta);
 			}
 
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractBinaryOperator#markupForDisplay(java.lang.String, java.lang.String, java.lang.String, boolean, boolean, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
 			public String markupForDisplay
 				(
 					String operator,
@@ -61,6 +71,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			{
 				return using.formatParenthetical (firstOperand);
 			}
+
 		};
 	}
 
@@ -368,6 +379,14 @@ class DerivativeMetadataStorage<T>
 	 */
 	public int getCount () { return count; }
 	int count = 0;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.CalculusMarkers.CalculusMetadata#typeOfOperation()
+	 */
+	public CalculusMarkerTypes typeOfOperation ()
+	{
+		return CalculusMarkerTypes.DERIVATIVE;
+	}
 
 	public String toString ()
 	{

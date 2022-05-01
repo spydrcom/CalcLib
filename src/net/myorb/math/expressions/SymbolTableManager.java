@@ -4,6 +4,7 @@ package net.myorb.math.expressions;
 import net.myorb.math.computational.CalculusMarkers;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.computational.Combinatorics;
+import net.myorb.math.computational.CalculusMarkers.CalculusMarkerTypes;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.*;
 
@@ -783,6 +784,14 @@ class DerivativeMetadataStorage<T>
 	 */
 	public int getCount () { return count; }
 	int count = 0;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.CalculusMarkers.CalculusMetadata#typeOfOperation()
+	 */
+	public CalculusMarkerTypes typeOfOperation ()
+	{
+		return CalculusMarkerTypes.DERIVATIVE;
+	}
 
 }
 
