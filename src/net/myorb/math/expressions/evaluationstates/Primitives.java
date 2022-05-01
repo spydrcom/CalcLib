@@ -7,7 +7,7 @@ import net.myorb.math.computational.FunctionRoots;
 import net.myorb.math.expressions.commands.CommandDictionary;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
-
+import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.Function;
 
 import java.io.PrintStream;
@@ -22,6 +22,17 @@ import java.util.List;
  */
 public class Primitives<T>
 {
+
+
+	/**
+	 * base class for errors that terminate processing
+	 */
+	public static class FatalError extends ErrorHandling.Terminator
+	{
+		public FatalError (String message) { super (message); }
+		public FatalError (String message, Exception e) { super (message, e); }
+		private static final long serialVersionUID = -3390690308336665935L;
+	}
 
 
 	/**
@@ -231,7 +242,7 @@ public class Primitives<T>
 		SymbolMap.Named n;
 		if ((n = symbols.lookup (name)) == null)
 			if (type == TokenParser.TokenType.OPR)
-				throw new RuntimeException ("Unrecognized operator: " + name);
+				throw new FatalError ("Unrecognized operator: " + name);
 			else n = processUndefinedSymbol (name);
 		return n;
 	}
@@ -288,6 +299,69 @@ public class Primitives<T>
 
 
 	/*
+	 * flag operator being seen
+	 */
+
+
+	/**
+	 * @return current flag value
+	 */
+	protected boolean isOperatorLastSeen () { return this.operatorLastSeen; }
+	private boolean operatorLastSeen = true;
+
+	/**
+	 * @param newStatus mark as seen TRUE or not seen FALSE
+	 */
+	protected void setOperatorStatus (boolean newStatus) { this.operatorLastSeen = newStatus; }
+
+	/**
+	 * flag reset to false
+	 */
+	protected void resetOperatorLastSeen () { setOperatorStatus (false); }
+
+	/**
+	 * flag set to true
+	 */
+	protected void setOperatorLastSeen () { setOperatorStatus (true); }
+
+
+
+	/*
+	 * assignment preparation primitives
+	 */
+
+
+	/**
+	 * @return name of most recently prepared assignment
+	 */
+	protected String getPreparedAssignment () { return assignTo; }
+	private String assignTo = null;
+
+	/**
+	 * @param symbolName name of symbol to be assigned
+	 */
+	protected void flagAssignment (String symbolName) { this.assignTo = symbolName; }
+
+	/**
+	 * @return TRUE for assignment prepared
+	 */
+	protected boolean assignmentActive () { return this.assignTo != null; }
+
+	/**
+	 * reset prepared assignment to inactive
+	 */
+	protected void resetAssignment () { this.assignTo = null; }
+
+	/**
+	 * @return pending assignment has been flagged
+	 */
+	protected boolean assignmentIsPending () { return this.assignmentPending; }
+	protected void resetPendingAssignment () { this.assignmentPending = false; }
+	protected void flagPendingAssignment () { this.assignmentPending = true; }
+	private boolean assignmentPending = false;
+
+
+	/*
 	 * operations and values stacks
 	 */
 
@@ -339,7 +413,7 @@ public class Primitives<T>
 	protected SymbolMap.Operation popOpStack ()
 	{
 		int size = operationStack.size ();
-		if (size == 0) throw new RuntimeException ("Underflow on operations stack");
+		if (size == 0) throw new FatalError ("Underflow on operations stack");
 		return operationStack.remove (size - 1);
 	}
 

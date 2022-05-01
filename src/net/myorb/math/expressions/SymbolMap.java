@@ -35,13 +35,23 @@ public class SymbolMap extends HashMap <String, Object>
 	public enum SymbolType
 	{
 		DELIMITER,
-		ASSIGNMENT,
+		ASSIGNMENT,		// VariableAssignment | IndexedVariableAssignment
 		IDENTIFIER,
-		UNARY,
-		POSTFIX,
-		BINARY,
-		PARAMETERIZED,
+		UNARY,			// UnaryOperator
+		POSTFIX,		// UnaryPostfixOperator
+		BINARY,			// UnaryPostfixOperator
+		PARAMETERIZED,	// ParameterizedFunction
 		LIBRARY
+	}
+
+
+	/**
+	 * Symbol type not recognized
+	 */
+	public static class Unrecognized extends ErrorHandling.Terminator
+	{
+		public Unrecognized () { super ("Symbol type not recognized"); }
+		private static final long serialVersionUID = 6542030733553905564L;
 	}
 
 

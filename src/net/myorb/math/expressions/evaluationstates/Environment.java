@@ -99,7 +99,7 @@ public class Environment<T> extends OperatorProcessing<T>
 	 */
 	public void processIdentifier ()
 	{
-		if (assignmentPending)
+		if (assignmentIsPending ())
 		{
 			processPendingAssignment ();
 		}
@@ -114,7 +114,7 @@ public class Environment<T> extends OperatorProcessing<T>
 			{
 				pushVariableValue (getSymbolMap ().getValue (symbol));
 			}
-			else throw new RuntimeException ("Symbol type not recognized");
+			else throw new SymbolMap.Unrecognized ();
 		}
 	}
 
@@ -126,20 +126,25 @@ public class Environment<T> extends OperatorProcessing<T>
 	 */
 	public boolean groupItemProcessed (int opPrec)
 	{
-		if (opPrec == SymbolMap.CONTINUE_GROUP_PRECEDENCE)
+		switch (opPrec)
 		{
-			setOperatorStatus (true);
-			getValueStack ().continueArray ();
-			return true;
+
+			case SymbolMap.CONTINUE_GROUP_PRECEDENCE:
+
+				setOperatorStatus (true);
+				getValueStack ().continueArray ();
+				return true;
+
+			case SymbolMap.CLOSE_GROUP_PRECEDENCE:
+
+				getValueStack ().closeArray ();
+				setOperatorStatus (false);
+				popOpStackToTos ();
+				return true;
+
+			default: return false;
+
 		}
-		else if	(opPrec == SymbolMap.CLOSE_GROUP_PRECEDENCE)
-		{
-			getValueStack ().closeArray ();
-			setOperatorStatus (false);
-			popOpStackToTos ();
-			return true;
-		}
-		return false;
 	}
 
 

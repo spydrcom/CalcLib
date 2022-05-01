@@ -4,8 +4,6 @@ package net.myorb.math.expressions.evaluationstates;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
 
-import net.myorb.data.abstractions.ErrorHandling;
-
 import java.util.List;
 
 /**
@@ -22,9 +20,9 @@ public class Assignments<T> extends Primitives<T>
 	 */
 	public void initAssignmentProcessing ()
 	{
-		assignmentPending = false;
+		resetPendingAssignment ();
 		setOperatorLastSeen ();
-		assignTo = null;
+		resetAssignment ();
 	}
 
 
@@ -36,7 +34,7 @@ public class Assignments<T> extends Primitives<T>
 	public void processBinaryOpSpecialCase (SymbolMap.Operation op, int opPrec)
 	{
 		if  (
-				operatorLastSeen &&
+				isOperatorLastSeen () &&
 				op instanceof SymbolMap.BinaryOperator &&
 				opPrec != SymbolMap.FUNCTTION_PRECEDENCE
 			)
@@ -46,15 +44,6 @@ public class Assignments<T> extends Primitives<T>
 		}
 		else setOperatorLastSeen ();
 	}
-
-
-	/**
-	 * @param newStatus mark as seen TRUE or not seen FALSE
-	 */
-	protected void setOperatorStatus (boolean newStatus) { operatorLastSeen = newStatus; }
-	protected void resetOperatorLastSeen () { setOperatorStatus (false); }
-	protected void setOperatorLastSeen () { setOperatorStatus (true); }
-	private boolean operatorLastSeen = true;
 
 
 	/**
@@ -73,8 +62,10 @@ public class Assignments<T> extends Primitives<T>
 	 * token image is stored and pending flag is reset
 	 */
 	public void processPendingAssignment ()
-	{ assignTo = getTokenImage (); assignmentPending = false; }
-	protected boolean assignmentPending = false;
+	{
+		flagAssignment (getTokenImage ());
+		resetPendingAssignment ();
+	}
 
 
 	/**
@@ -88,7 +79,7 @@ public class Assignments<T> extends Primitives<T>
 		{
 
 			case SymbolMap.ASSIGNMENT_PRECEDENCE:
-				assignmentPending = true;
+				flagPendingAssignment ();
 				return true;
 
 			case SymbolMap.STORAGE_PRECEDENCE:
@@ -107,16 +98,16 @@ public class Assignments<T> extends Primitives<T>
 	public void identifyAssignmentOperator ()
 	{
 		setOperatorLastSeen ();
-		if (assignTo != null || ! isIndexed (getTOSvalue ()))
-		{ pushAssignmentOperator (assignTo); assignTo = null; }
+		if ( assignmentActive () || ! isIndexed (getTOSvalue ()) )
+		{ pushFlaggedAssignment (); }
 	}
 
 	/**
 	 * pop top of stack and check for error
 	 * @return the generic value popped from top of stack
-	 * @throws ErrorHandling.Terminator for invalid assignment observed
+	 * @throws FatalError for invalid assignment observed
 	 */
-	public ValueManager.GenericValue getTOSvalue () throws ErrorHandling.Terminator
+	public ValueManager.GenericValue getTOSvalue () throws FatalError
 	{
 		try
 		{
@@ -124,7 +115,7 @@ public class Assignments<T> extends Primitives<T>
 		}
 		catch (Exception e)
 		{
-			throw new ErrorHandling.Terminator ("Assignment is invalid", e);
+			throw new FatalError ("Assignment is invalid", e);
 		}
 	}
 
@@ -137,7 +128,7 @@ public class Assignments<T> extends Primitives<T>
 	{
 		if (getValueStack ().peek () == null)
 		{
-			assignTo = value.getName ();
+			flagAssignment (value.getName ());
 			return false;
 		}
 
@@ -148,7 +139,6 @@ public class Assignments<T> extends Primitives<T>
 
 		return true;
 	}
-	protected String assignTo = null;
 
 
 	/**
@@ -161,10 +151,10 @@ public class Assignments<T> extends Primitives<T>
 			String variable, ValueManager.GenericValue index
 		)
 	{
-		// eliminate unnecessary indexing operation
-
 		substituteTos
 		(
+			// eliminate unnecessary indexing operation.
+			// TOS replaced with a more efficient representation
 			new IndexedAssignmentOperator<T>
 			(
 				variable, index, getSymbolMap ()
@@ -180,6 +170,17 @@ public class Assignments<T> extends Primitives<T>
 	public void pushAssignmentOperator (String variable)
 	{
 		pushOpStack (new AssignmentOperator (variable, getSymbolMap ()));
+	}
+
+
+	/**
+	 * push the flagged assign to stack and reset flag
+	 */
+	public void pushFlaggedAssignment ()
+	{
+		pushAssignmentOperator
+			(getPreparedAssignment ());
+		resetAssignment ();
 	}
 
 
@@ -251,7 +252,7 @@ public class Assignments<T> extends Primitives<T>
 		SymbolMap symbols = op.getSymbolMap ();
 		if ((symbol = (SymbolMap.Named) symbols.get (name)) == null) generatePreviouslyUndefined (op);
 		else if (symbol instanceof SymbolMap.VariableLookup) previouslyDefined (op, (SymbolMap.VariableLookup) symbol);
-		else throw new RuntimeException ("Assignment not consistent, symbol does not refer to a variable");
+		else throw new FatalError ("Assignment not consistent, symbol does not refer to a variable");
 	}
 
 
@@ -266,7 +267,7 @@ public class Assignments<T> extends Primitives<T>
 		ValueManager.GenericValue value = symbol.getValue ();
 		if (value instanceof ValueManager.UndefinedValue) generatePreviouslyUndefined (op);
 		else if (value instanceof ValueManager.DimensionedValue) updatePreviouslySet (op, (ValueManager.DimensionedValue)value);
-		else throw new RuntimeException ("Assignment not consistent, symbol does not refer to an array");
+		else throw new FatalError ("Assignment not consistent, symbol does not refer to an array");
 	}
 
 

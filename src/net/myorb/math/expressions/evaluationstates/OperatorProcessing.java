@@ -27,42 +27,43 @@ class OperatorProcessing<T> extends Assignments<T>
 	/**
 	 * execute an operator effecting value stack
 	 * @param opSymbol the symbol map descriptor of the operator
-	 * @throws RuntimeException for unrecognized operation
+	 * @throws UnknownOperator for unrecognized operation
 	 */
-	public void execute (SymbolMap.Operation opSymbol) throws RuntimeException
+	public void execute (SymbolMap.Operation opSymbol) throws UnknownOperator
 	{
 		if (traceIsEnabled ())
-		{ System.out.println ("execute: " + opSymbol.getName ()); }
-		if (opSymbol instanceof SymbolMap.UnaryPostfixOperator)
 		{
-			process ((SymbolMap.UnaryPostfixOperator) opSymbol);
+			System.out.println ("execute: " + opSymbol.getName ());
 		}
-		else if (opSymbol instanceof SymbolMap.UnaryOperator)
+		switch (opSymbol.getSymbolType ())
 		{
-			process ((SymbolMap.UnaryOperator) opSymbol);
+			case ASSIGNMENT: processAssignment (opSymbol); break;
+			case BINARY: process ((SymbolMap.BinaryOperator) opSymbol); break;
+			case PARAMETERIZED: process ((SymbolMap.ParameterizedFunction) opSymbol); break;
+			case POSTFIX: process ((SymbolMap.UnaryPostfixOperator) opSymbol); break;
+			case UNARY: process ((SymbolMap.UnaryOperator) opSymbol); break;
+			default: throw new UnknownOperator (opSymbol.getName ());
 		}
-		else if (opSymbol instanceof SymbolMap.BinaryOperator)
-		{
-			process ((SymbolMap.BinaryOperator) opSymbol);
-		}
-		else if (opSymbol instanceof SymbolMap.VariableAssignment)
-		{
-			process ((SymbolMap.VariableAssignment) opSymbol);
-		}
-		else if (opSymbol instanceof SymbolMap.IndexedVariableAssignment)
-		{
-			process ((SymbolMap.IndexedVariableAssignment) opSymbol);
-		}
-		else if (opSymbol instanceof SymbolMap.ParameterizedFunction)
-		{
-			process ((SymbolMap.ParameterizedFunction) opSymbol);
-		}
-		else throw new RuntimeException ("Unrecognized operation: " + opSymbol.getName ());
 	}
 
 
 	/**
-	 * invoke unary postfix operator
+	 * process an operation carrying the type of Assignment
+	 * @param opSymbol the symbol map descriptor of the operator
+	 * @throws UnknownOperator for unrecognized assignment
+	 */
+	public void processAssignment (SymbolMap.Operation opSymbol) throws UnknownOperator
+	{
+		if (opSymbol instanceof SymbolMap.VariableAssignment)
+		{ process ((SymbolMap.VariableAssignment) opSymbol); }
+		else if (opSymbol instanceof SymbolMap.IndexedVariableAssignment)
+		{ process ((SymbolMap.IndexedVariableAssignment) opSymbol); }
+		else throw new UnknownOperator (opSymbol.getName ());
+	}
+
+
+	/**
+	 * invoke unary post-fix operator
 	 * @param op SymbolMap.UnaryPostfixOperator object
 	 */
 	public void process (SymbolMap.UnaryPostfixOperator op)
@@ -256,7 +257,7 @@ class OperatorProcessing<T> extends Assignments<T>
 		{
 			return computeDerivative (op, parameters, calculusMetadata);						// f'(x)
 		}
-		else throw new RuntimeException ("Meta-data error");
+		else throw new IllegalMetadata ();
 	}
 
 
