@@ -19,6 +19,25 @@ class OperatorProcessing<T> extends Assignments<T>
 {
 
 
+	/**
+	 * Operator not recognized
+	 */
+	public static class UnknownOperator extends FatalError
+	{
+		public UnknownOperator (String name) { super ("Unrecognized operation: " + name); }
+		private static final long serialVersionUID = -9178623687801173996L;
+	}
+
+	/**
+	 * Illegal Meta-data in processing stream
+	 */
+	public static class IllegalMetadata extends FatalError
+	{
+		public IllegalMetadata () { super ("Meta-data error"); }
+		private static final long serialVersionUID = -3954795635454493657L;
+	}
+
+
 	/*
 	 * operation execution
 	 */
