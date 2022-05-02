@@ -241,13 +241,13 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	public Script find (String filename)
 	{
 		if (scripts.containsKey (filename))
-			return scripts.get (filename);
+		{ return scripts.get (filename); }
 		else return read (filename);
 	}
 
 
 	/**
-	 * @param script the script object to be executed
+	 * @param script the script object containing instructions to be executed
 	 * @param processWithCheck TRUE implies errors should propagate when found
 	 */
 	public void execute (Script script, boolean processWithCheck)
@@ -262,26 +262,46 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	}
 
 
+	/**
+	 * read script and execute iterations
+	 * @param filename the filename of the script source
+	 * @param maxIterations the maximum count of iterations to allow
+	 */
 	public void readAndIterate (String filename, int maxIterations)
 	{
-		Script script;
+		Script script; PrintStream out;
 		if ((script = find (filename)) == null)
 		{ throw new ErrorHandling.Notification ("Unable to process script"); }
-		PrintStream out = environment.getOutStream ();
+		iterate (script, maxIterations, out = environment.getOutStream ());
+		notification ("Iteration " + maxIterations + " has completed", out);
+		throw new ErrorHandling.Terminator ("Maximum iteration count exceeded");
+	}
 
+	/**
+	 * execute a script for a maximum number of iterations
+	 * @param script the script object containing instructions to be executed
+	 * @param maxIterations the maximum count of iterations to allow
+	 * @param out print stream to format message to
+	 */
+	void iterate (Script script, int maxIterations, PrintStream out)
+	{
 		for (int i = 1; i <= maxIterations; i++)
 		{
 			try { execute (script, false); }
 			catch (Exception e) { notify (messageFor (i), e, out); }
 		}
-
-		notification ("Iteration " + maxIterations + " has completed", out);
-		throw new ErrorHandling.Terminator ("Maximum iteration count exceeded");
 	}
 	String messageFor (int iteration)
 	{
 		return "Script interrupted in iteration " + iteration;
 	}
+
+	/**
+	 * notify user of conditions recognized in processing flow
+	 * @param message text of notification to be passed to user
+	 * @param e exception which was caught indicating error
+	 * @param out print stream to format message to
+	 */
 	void notify (String message, Exception e, PrintStream out)
 	{
 		notification (message, out); notify (e, out);
@@ -293,6 +313,12 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 		if (message == null) notification (e, out);
 		else notification (message, out);
 	}
+
+	/**
+	 * format error message
+	 * @param e exception which was caught indicating error
+	 * @param out print stream to format message to
+	 */
 	void notification (Exception e, PrintStream out)
 	{ notification ("Exception '" + e.getClass ().getName () + "' was caught", out); }
 	void notification (String message, PrintStream out)
