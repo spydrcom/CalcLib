@@ -7,16 +7,18 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.DisplayConsole;
 import net.myorb.math.expressions.gui.DisplayFiles;
 
-import net.myorb.data.abstractions.SimpleStreamIO;
-import net.myorb.data.abstractions.ZipUtilities;
-import net.myorb.data.abstractions.ErrorHandling.Terminator;
-import net.myorb.data.abstractions.ZipRecord;
-import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.FileSource;
+import net.myorb.data.abstractions.ErrorHandling;
+import net.myorb.data.abstractions.SimpleStreamIO;
+
 import net.myorb.data.abstractions.ZipSource;
+import net.myorb.data.abstractions.ZipUtilities;
+import net.myorb.data.abstractions.ZipRecord;
+
 import net.myorb.gui.components.FileDrop;
 
 import java.awt.Component;
+
 import java.io.PrintStream;
 import java.io.File;
 
@@ -54,15 +56,15 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 			ZipRecord.Properties p = zip.getEntryProperties ();
 			this.identity = p.getName ();
 		}
-		public Script (FileSource source) throws Exception { this (source.getTextSource ()); }
-		public Script (SimpleStreamIO.TextSource source) throws Exception { read (source); }
+		public Script (FileSource source) throws SimpleStreamIO.TransferError { this (source.getTextSource ()); }
+		public Script (SimpleStreamIO.TextSource source) throws SimpleStreamIO.TransferError { read (source); }
 
 		/**
 		 * @param source a stream source for the script content
-		 * @throws Exception for any errors
+		 * @throws SimpleStreamIO.TransferError for any IO errors
 		 */
 		public void read
-		(SimpleStreamIO.TextSource source) throws Exception
+		(SimpleStreamIO.TextSource source) throws SimpleStreamIO.TransferError
 		{ SimpleStreamIO.copyTo (this, source); }
 
 		/* (non-Javadoc)
@@ -201,8 +203,9 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	/**
 	 * @param f a file to read as a script source
 	 * @return the script read or NULL if no script generated
+	 * @throws ErrorHandling.Terminator File reader failed
 	 */
-	public Script read (File f)
+	public Script read (File f) throws ErrorHandling.Terminator
 	{
 		try
 		{
@@ -351,7 +354,7 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 			(
 				new ErrorHandling.Executable ()
 				{
-					public void process () throws Terminator
+					public void process () throws ErrorHandling.Terminator
 					{
 						execute (script, true);
 					}

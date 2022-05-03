@@ -4,11 +4,12 @@ package net.myorb.math.expressions.gui;
 import net.myorb.math.expressions.GreekSymbols;
 import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.data.abstractions.ErrorHandling;
-import net.myorb.data.abstractions.ErrorHandling.Terminator;
+
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.MenuManager;
 import net.myorb.gui.components.GuiToolkit;
+
+import net.myorb.data.abstractions.ErrorHandling;
 
 import javax.swing.KeyStroke;
 import javax.swing.JTextField;
@@ -333,7 +334,7 @@ class CommandHandler
 		(
 			new ErrorHandling.Executable ()
 			{
-				public void process () throws Terminator
+				public void process () throws ErrorHandling.Terminator
 				{
 					out.println (command);
 					control.execute (command);
