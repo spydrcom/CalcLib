@@ -47,7 +47,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for HOME menu
 	 */
-	public static class HomeActions
+	public static class HomeActions implements Functionality.Home
 	{
 		public ActionListener getTabAction () { return tab; }
 		public ActionListener getSymAction () { return sym; }
@@ -95,7 +95,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for DATA menu
 	 */
-	public static class DataActions
+	public static class DataActions implements Functionality.Data
 	{
 		public ActionListener getPiAction () { return pi; }
 		public ActionListener getSigmaAction () { return sigma; }
@@ -140,7 +140,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for PRIMES menu
 	 */
-	public static class PrimesActions
+	public static class PrimesActions implements Functionality.Primes
 	{
 		public ActionListener getGcfAction () { return gcf; }
 		public ActionListener getGapsAction () { return gaps; }
@@ -188,7 +188,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for POLYNOMIAL menu
 	 */
-	public static class PolynomialActions
+	public static class PolynomialActions implements Functionality.Polynomials
 	{
 		public ActionListener getConvAction () { return conv; }
 		public ActionListener getRootsAction () { return roots; }
@@ -236,7 +236,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for MATRICES menu
 	 */
-	public static class MatrixActions
+	public static class MatrixActions implements Functionality.Matrix
 	{
 		public ActionListener getEigAction () { return eig; }
 		public ActionListener getTransposeAction () { return transpose; }
@@ -293,7 +293,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for Simultaneous Equations menu
 	 */
-	public static class SimEqActions
+	public static class SimEqActions implements Functionality.SimEq
 	{
 		public ActionListener getEvAction () { return ev; }
 		public ActionListener getSvdAction () { return svd; }
@@ -345,7 +345,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for STATISTICS menu
 	 */
-	public static class StatisticsActions
+	public static class StatisticsActions implements Functionality.Statistics
 	{
 		public ActionListener getMinAction () { return min; }
 		public ActionListener getMaxAction () { return max; }
@@ -393,7 +393,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for REGRESSION menu
 	 */
-	public static class RegressionActions
+	public static class RegressionActions implements Functionality.Regression
 	{
 		public ActionListener getVmAction () { return vm; }
 		public ActionListener getFftAction () { return fft; }
@@ -453,7 +453,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for CHARTS menu
 	 */
-	public static class ChartsActions
+	public static class ChartsActions implements Functionality.Charts
 	{
 		public ActionListener getListAction () { return list; }
 		public ActionListener getScatterAction () { return scatter; }
@@ -496,7 +496,7 @@ public class ToolBarMenu
 	/**
 	 * collection of action listeners for FRACTALS menu
 	 */
-	public static class FractalsActions
+	public static class FractalsActions implements Functionality.Fractals
 	{
 		public ActionListener getJuliaAction () { return julia; }
 		public ActionListener getMandelbrotAction () { return mandelbrot; }
