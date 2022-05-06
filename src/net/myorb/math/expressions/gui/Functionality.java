@@ -3,9 +3,17 @@ package net.myorb.math.expressions.gui;
 
 import java.awt.event.ActionListener;
 
+/**
+ * Functionality features
+ *  organized by actions provided in menu objects
+ * @author Michael Druckman
+ */
 public class Functionality
 {
 
+	/**
+	 * actions of Home menu
+	 */
 	public interface Home
 	{
 		public ActionListener getTabAction ();
@@ -17,6 +25,9 @@ public class Functionality
 		public ActionListener getRpnAction ();
 	}
 
+	/**
+	 * actions of Data menu
+	 */
 	public interface Data
 	{
 		public ActionListener getPiAction ();
@@ -27,6 +38,9 @@ public class Functionality
 		public ActionListener getDotAction ();
 	}
 
+	/**
+	 * actions of Primes menu
+	 */
 	public interface Primes
 	{
 		public ActionListener getGcfAction ();
@@ -38,6 +52,9 @@ public class Functionality
 		public ActionListener getLcmAction ();
 	}
 
+	/**
+	 * actions of Polynomials menu
+	 */
 	public interface Polynomials
 	{
 		public ActionListener getConvAction ();
@@ -49,6 +66,9 @@ public class Functionality
 		public ActionListener getPolyAction ();
 	}
 
+	/**
+	 * actions of Matrix menu
+	 */
 	public interface Matrix
 	{
 		public ActionListener getEigAction ();
@@ -63,6 +83,9 @@ public class Functionality
 		public ActionListener getAdjAction ();
 	}
 
+	/**
+	 * actions of SimEq menu
+	 */
 	public interface SimEq
 	{
 		public ActionListener getEvAction ();
@@ -74,6 +97,9 @@ public class Functionality
 		public ActionListener getQrAction ();
 	}
 
+	/**
+	 * actions of Statistics menu
+	 */
 	public interface Statistics
 	{
 		public ActionListener getMinAction ();
@@ -85,6 +111,9 @@ public class Functionality
 		public ActionListener getCovAction ();
 	}
 
+	/**
+	 * actions of Regression menu
+	 */
 	public interface Regression
 	{
 		public ActionListener getVmAction ();
@@ -98,6 +127,9 @@ public class Functionality
 		public ActionListener getGaussAction ();
 	}
 
+	/**
+	 * actions of Charts menu
+	 */
 	public interface Charts
 	{
 		public ActionListener getListAction ();
@@ -106,6 +138,9 @@ public class Functionality
 		public ActionListener getRadialAction ();
 	}
 
+	/**
+	 * actions of Fractals menu
+	 */
 	public interface Fractals
 	{
 		public ActionListener getJuliaAction ();
@@ -114,6 +149,9 @@ public class Functionality
 		public ActionListener getListAction ();
 	}
 
+	/**
+	 * management of actions of all menus
+	 */
 	public interface ActionManager
 	{
 		Home getHomeActions ();

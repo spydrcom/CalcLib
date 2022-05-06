@@ -3,19 +3,18 @@ package net.myorb.math.expressions.gui;
 
 import net.myorb.math.expressions.OperatorNomenclature;
 
-import net.myorb.math.expressions.charting.fractals.Fractal;
-import net.myorb.math.expressions.charting.fractals.Mandelbrot;
-import net.myorb.math.expressions.charting.fractals.Newton;
-import net.myorb.math.expressions.charting.fractals.Julia;
+import net.myorb.math.expressions.charting.fractals.*;
+
+import net.myorb.math.expressions.gui.Functionality;
 
 import net.myorb.math.SpaceManager;
 
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 
-import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.awt.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -559,6 +558,124 @@ public class ToolBarMenu
 		charts (menu, processor);
 
 		return menu;
+	}
+
+
+	/**
+	 * control access to Action objects used in main menus
+	 */
+	public static class ActionManager implements Functionality.ActionManager
+	{
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getHomeActions()
+		 */
+		@Override
+		public Functionality.Home getHomeActions() {
+			return new HomeActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getSimEqActions()
+		 */
+		@Override
+		public Functionality.SimEq getSimEqActions() {
+			return new SimEqActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getMatrixActions()
+		 */
+		@Override
+		public Functionality.Matrix getMatrixActions() {
+			return new MatrixActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getStatisticsActions()
+		 */
+		@Override
+		public Functionality.Statistics getStatisticsActions() {
+			return new StatisticsActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getPolynomialsActions()
+		 */
+		@Override
+		public Functionality.Polynomials getPolynomialsActions() {
+			return new PolynomialActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getRegressionActions()
+		 */
+		@Override
+		public Functionality.Regression getRegressionActions() {
+			return new RegressionActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getFractalActions()
+		 */
+		@Override
+		public Functionality.Fractals getFractalActions() {
+			return new FractalsActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getPrimesActions()
+		 */
+		@Override
+		public Functionality.Primes getPrimesActions() {
+			return new PrimesActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getChartActions()
+		 */
+		@Override
+		public Functionality.Charts getChartActions() {
+			return new ChartsActions (processor, appParent);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.gui.Functionality.ActionManager#getDataActions()
+		 */
+		@Override
+		public Functionality.Data getDataActions() {
+			return new DataActions (processor, appParent);
+		}
+
+		/**
+		 * @param appParent the component used by menu action objects
+		 */
+		public void setAppParent (Component appParent)
+		{
+			this.appParent = appParent;
+		}
+		Component appParent;
+
+		/**
+		 * @param processor the command processor to be used by menu action objects
+		 */
+		public ActionManager (DisplayIO.CommandProcessor processor)
+		{
+			this.processor = processor;
+		}
+		DisplayIO.CommandProcessor processor;
+
+	}
+
+	/**
+	 * allocate a management object for menu action objects
+	 * @param processor the command processor to be used by menu action objects
+	 * @return an action manager object
+	 */
+	public static Functionality.ActionManager getActionManager
+		(DisplayIO.CommandProcessor processor)
+	{
+		return new ActionManager (processor);
 	}
 
 
