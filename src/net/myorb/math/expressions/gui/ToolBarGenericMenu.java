@@ -1,6 +1,12 @@
 
 package net.myorb.math.expressions.gui;
 
+import net.myorb.jxr.JxrParser;
+import net.myorb.jxr.JxrPrimitives;
+import net.myorb.jxr.JxrSymManager;
+
+import net.myorb.gui.components.SimpleMenuBar;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -102,6 +108,46 @@ public class ToolBarGenericMenu
 		tool.charts (addMenu ("Charts", bar), processor);
 		
 		return bar;
+	}
+
+
+	/**
+	 * @param processor the command processor object that will provide support to the actions
+	 * @param parent the screen components to use as the parent of the menu being built
+	 * @return the menu bar constructed as an implementation of the JXR script
+	 * @throws RuntimeException for any errors
+	 */
+	public static JMenuBar getConfiguredMenuBar
+		(DisplayIO.CommandProcessor processor, Component parent)
+	throws RuntimeException
+	{
+		try
+		{
+			JxrPrimitives.SymbolTable ST = 
+				JxrParser.read ("cfg/gui/MenuBar.xml", getActionManager (processor, parent));
+			SimpleMenuBar menus = (SimpleMenuBar) ST.get ("menus");
+			return menus.getMenuBar ();
+		}
+		catch (Exception e)
+		{
+			throw new RuntimeException ("Menu script throws", e);
+		}
+	}
+
+
+	/**
+	 * @param processor the command processor object that will provide support to the actions
+	 * @param parent the screen components to use as the parent of the menu being built
+	 * @return a hash holding the manager as a parameter
+	 */
+	public static JxrSymManager.SymbolHash getActionManager
+		(DisplayIO.CommandProcessor processor, Component parent)
+	{
+		JxrSymManager.SymbolHash actions = new JxrSymManager.SymbolHash ();
+		Functionality.ActionManager manager = ToolBarMenu.getActionManager (processor);
+		actions.put ("actionManager", manager);
+		manager.setAppParent (parent);
+		return actions;
 	}
 
 

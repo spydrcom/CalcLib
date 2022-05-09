@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.gui;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 /**
@@ -154,6 +155,8 @@ public class Functionality
 	 */
 	public interface ActionManager
 	{
+		void setAppParent (Component appParent);
+
 		Home getHomeActions ();
 		SimEq getSimEqActions ();
 		Matrix getMatrixActions ();

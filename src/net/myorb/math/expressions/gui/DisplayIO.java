@@ -114,6 +114,17 @@ public class DisplayIO extends DisplayFrame
 
 
 	/**
+	 * get access to the action listeners for the master menu
+	 * @param handler a command handler connected to a master console
+	 * @return the action manager for the current functionality list
+	 */
+	public static Functionality.ActionManager getMenuBarActions (CommandHandler handler)
+	{
+		return ToolBarMenu.getActionManager (handler);
+	}
+
+
+	/**
 	 * produce a menu bar for the application
 	 * @param handler the application command processor
 	 * @return the application menu bar
@@ -122,7 +133,8 @@ public class DisplayIO extends DisplayFrame
 	{
 		Component c = GuiToolkit.getDesktop ();
 		//return ToolBarMenu.getMasterMenuBar (handler);
-		return ToolBarGenericMenu.getMasterMenuBar (handler, c);
+		//return ToolBarGenericMenu.getMasterMenuBar (handler, c);
+		return ToolBarGenericMenu.getConfiguredMenuBar (handler, c);
 	}
 
 
