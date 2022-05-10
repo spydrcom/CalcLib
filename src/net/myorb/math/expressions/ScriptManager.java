@@ -352,13 +352,7 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 		{
 			ErrorHandling.process
 			(
-				new ErrorHandling.Executable ()
-				{
-					public void process () throws ErrorHandling.Terminator
-					{
-						execute (script, true);
-					}
-				},
+				() -> execute (script, true),
 				out
 			);
 		}

@@ -126,6 +126,7 @@ public class Functionality
 		public ActionListener getHarmonicAction ();
 		public ActionListener getSeriesAction ();
 		public ActionListener getGaussAction ();
+		public ActionListener getPolyAction ();
 	}
 
 	/**

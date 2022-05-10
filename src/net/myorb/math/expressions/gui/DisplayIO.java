@@ -344,14 +344,11 @@ class CommandHandler
 	{
 		ErrorHandling.process
 		(
-			new ErrorHandling.Executable ()
+			() ->
 			{
-				public void process () throws ErrorHandling.Terminator
-				{
-					out.println (command);
-					control.execute (command);
-					out.println (); out.flush ();
-				}
+				out.println (command);
+				control.execute (command);
+				out.println (); out.flush ();
 			},
 			out
 		);
@@ -362,13 +359,7 @@ class CommandHandler
 	 */
 	public TextEditor.TextProcessor getExecutionProcessor ()
 	{
-		return new TextEditor.TextProcessor ()
-		{
-			@Override public void process (String text)
-			{
-				execute (text);
-			}
-		};
+		return (t) -> execute (t);
 	}
 
 	/* (non-Javadoc)

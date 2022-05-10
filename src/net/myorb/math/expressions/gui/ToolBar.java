@@ -81,7 +81,6 @@ public class ToolBar extends ToolBarTabbedPanes
 	}
 
 
-
 	/**
 	 * construct menu item list for the symbols display table
 	 * @param processor the master command processor object
