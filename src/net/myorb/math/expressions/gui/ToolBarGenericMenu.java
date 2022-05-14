@@ -124,7 +124,7 @@ public class ToolBarGenericMenu
 		try
 		{
 			JxrPrimitives.SymbolTable ST = 
-				JxrParser.read ("cfg/gui/MenuBar.xml", getActionManager (processor, parent));
+				JxrParser.read ("cfg/gui/MasterMenuBar.xml", getActionManager (processor, parent));
 			SimpleMenuBar menus = (SimpleMenuBar) ST.get ("menus");
 			return menus.getMenuBar ();
 		}
