@@ -112,20 +112,30 @@ public class ToolBarGenericMenu
 
 
 	/**
+	 * @param scriptPath path to the script describing the menu bar
 	 * @param processor the command processor object that will provide support to the actions
 	 * @param parent the screen components to use as the parent of the menu being built
 	 * @return the menu bar constructed as an implementation of the JXR script
 	 * @throws RuntimeException for any errors
 	 */
 	public static JMenuBar getConfiguredMenuBar
-		(DisplayIO.CommandProcessor processor, Component parent)
+		(
+			String scriptPath,
+			DisplayIO.CommandProcessor processor,
+			Component parent
+		)
 	throws RuntimeException
 	{
 		try
 		{
-			JxrPrimitives.SymbolTable ST = 
-				JxrParser.read ("cfg/gui/MasterMenuBar.xml", getActionManager (processor, parent));
-			SimpleMenuBar menus = (SimpleMenuBar) ST.get ("menus");
+			JxrPrimitives.SymbolTable
+				ST = JxrParser.read
+				(
+					scriptPath,
+					getActionManager (processor, parent)
+				);
+			SimpleMenuBar menus =
+				(SimpleMenuBar) ST.get ("menus");
 			return menus.getMenuBar ();
 		}
 		catch (Exception e)
