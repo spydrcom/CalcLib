@@ -131,8 +131,11 @@ public class DisplayIO extends DisplayFrame
 	 */
 	public static JMenuBar getMasterMenuBar (CommandHandler handler)
 	{
-		Component c = GuiToolkit.getDesktop ();
-		return ToolBarGenericMenu.getMasterMenuBar (handler, c);
+		return ToolBarGenericMenu.getMasterMenuBar
+			(
+				handler,
+				GuiToolkit.getDesktop ()
+			);
 	}
 
 
@@ -150,7 +153,9 @@ public class DisplayIO extends DisplayFrame
 			);
 	}
 
+
 	/**
+	 * identify the script that will configure the menu bar
 	 * @param menuScriptPath path to the script describing the menu bar
 	 */
 	public static void setMenuBarScript (String menuScriptPath)
