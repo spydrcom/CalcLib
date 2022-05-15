@@ -126,13 +126,33 @@ public class ToolBarGenericMenu
 		)
 	throws RuntimeException
 	{
+		return getConfiguredMenuBar
+		(
+			scriptPath, getActionManager (processor, parent)
+		);
+	}
+
+
+	/**
+	 * @param scriptPath path to the script describing the menu bar
+	 * @param actionManager a symbol hash holding the action manager for parameter passing
+	 * @return the menu bar constructed as an implementation of the JXR script
+	 * @throws RuntimeException for any errors
+	 */
+	public static JMenuBar getConfiguredMenuBar
+		(
+			String scriptPath,
+			JxrSymManager.SymbolHash actionManager
+		)
+	throws RuntimeException
+	{
 		try
 		{
 			JxrPrimitives.SymbolTable
 				ST = JxrParser.read
 				(
 					scriptPath,
-					getActionManager (processor, parent)
+					actionManager
 				);
 			SimpleMenuBar menus =
 				(SimpleMenuBar) ST.get ("menus");
