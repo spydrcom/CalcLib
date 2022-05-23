@@ -70,6 +70,23 @@ public class DisplayIO extends DisplayFrame
 		EnvironmentCore.CoreMap getMap ();
 	}
 
+	/**
+	 * command control and process functionality
+	 */
+	public interface CommandControl extends CommandProcessor
+	{
+		/**
+		 * @param environment the execution environment 
+		 * @param control the evaluation control object
+		 * @return the application core map
+		 */
+		EnvironmentCore.CoreMap connect
+		(
+			Environment <?> environment,
+			EvaluationControlI <?> control
+		);
+	}
+
 
 	/**
 	 * the console frame for the GUI
@@ -143,7 +160,7 @@ public class DisplayIO extends DisplayFrame
 	 * @param handler the application command processor
 	 * @return the application menu bar
 	 */
-	public static JMenuBar getMenuBar (CommandHandler handler)
+	public static JMenuBar getMenuBar (CommandProcessor handler)
 	{
 		return ToolBarGenericMenu.getConfiguredMenuBar
 			(
@@ -161,6 +178,7 @@ public class DisplayIO extends DisplayFrame
 	{
 		menuScript = menuScriptPath;
 	}
+	public static String getMenuBarScript () { return menuScript; }
 	static String menuScript = "cfg/gui/MasterMenuBar.xml";
 
 
@@ -327,7 +345,7 @@ class MasterConsole
  * the action handler for the command text component
  */
 class CommandHandler
-	implements ActionListener, DisplayIO.CommandProcessor, TextEditor.TextProcessor
+	implements ActionListener, DisplayIO.CommandControl, TextEditor.TextProcessor
 {
 
 	/* (non-Javadoc)

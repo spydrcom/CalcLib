@@ -2,9 +2,18 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+
 import net.myorb.math.expressions.gui.DisplayConsole;
 import net.myorb.math.expressions.gui.DisplayIO;
-import net.myorb.math.expressions.*;
+
+import net.myorb.math.expressions.OperatorNomenclature;
+import net.myorb.math.expressions.EvaluationControlI;
+import net.myorb.math.expressions.EvaluationEngine;
+import net.myorb.math.expressions.TokenParser;
+
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.SymbolTableManagerI;
+import net.myorb.math.expressions.SymbolMap;
 
 import java.util.List;
 
@@ -28,6 +37,7 @@ public class ConfiguredEvaluationControl <T> implements EvaluationControlI <T>
 		if (startGui) connectGui (environment);
 	}
 
+
 	/**
 	 * get copies of symbol map and space manager
 	 * @param environment the environment object holding objects
@@ -39,23 +49,62 @@ public class ConfiguredEvaluationControl <T> implements EvaluationControlI <T>
 		this.spaceManager = environment.getSpaceManager ();
 		this.spaceManager.setEvaluationControl (this);
 	}
-	protected Environment <T> environment;
 	protected ExpressionSpaceManager <T> spaceManager;
+	protected Environment <T> environment;
 	protected SymbolMap symbols;
 
 
+	/*
+	 * GUI connection to environment
+	 */
+
 	/**
 	 * connect calculation environment to DisplayIO GUI objects
+	 */
+	public void connectGui ()
+	{
+		connectConsole ();
+		mapEnvironment ();
+	}
+
+	/**
 	 * @param environment the object controlling the evaluation environment
 	 */
-	public void connectGui (Environment<T> environment)
+	@Deprecated public void connectGui
+	(Environment<T> environment)
+	{ connectGui (); }
+
+	/**
+	 * map output stream, console writer, symbol map, and environment object
+	 */
+	public void mapEnvironment ()
 	{
-		guiSymbolMap = DisplayIO.connectConsole (toString (), 700, environment, this);
+		// environment connects to output stream and console
 		environment.setOutStream (DisplayConsole.getStreamFor (CoreMainConsole, guiSymbolMap));
 		environment.setConsoleWriter (DisplayConsole.getWriterFor (CoreMainConsole, guiSymbolMap));
+
+		// GUI map connects to symbols and environment
 		guiSymbolMap.put (CoreExecutionEnvironment, environment);
 		guiSymbolMap.put (CoreSymbolMap, symbols);
 	}
+
+
+	/*
+	 * GUI symbol map setup
+	 */
+
+	/**
+	 * initialize GUI map with console connection
+	 */
+	public void connectConsole ()
+	{
+		guiSymbolMap = DisplayIO.connectConsole (toString (), SCREEN_SIZE, environment, this);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.EvaluationControlI#getGuiMap()
+	 */
 	public DisplayConsole.StreamProperties getGuiMap () { return guiSymbolMap; }
 	protected DisplayConsole.StreamProperties guiSymbolMap;
 
@@ -68,6 +117,10 @@ public class ConfiguredEvaluationControl <T> implements EvaluationControlI <T>
 		symbols.addCoreOperators ();
 	}
 
+
+	/*
+	 * execution engine initialization
+	 */
 
 	/**
 	 * allocate an engine object that will operate in the specified space
@@ -149,20 +202,15 @@ public class ConfiguredEvaluationControl <T> implements EvaluationControlI <T>
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString ()
-	{
-		return "CALCLIB";
-	}
+	public String toString () { return "CALCLIB"; }
+	public static final int SCREEN_SIZE = 700;
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.EvaluationControlI#getSymbolTableManager()
 	 * @deprecated
 	 */
-	public SymbolTableManagerI<T> getSymbolTableManager() 
-	{
-		return null;
-	}
+	public SymbolTableManagerI <T> getSymbolTableManager () { return null; }
 
 
 }
