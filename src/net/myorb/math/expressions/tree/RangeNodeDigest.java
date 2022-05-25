@@ -40,6 +40,15 @@ public class RangeNodeDigest<T>
 	protected LexicalAnalysis.RangeDescriptor<T> descriptor;
 	protected GenericValue loBnd, hiBnd, delta;
 	protected CalculationEngine<T> calculator;
+
+
+	/**
+	 * lookup identifier in symbol map
+	 * @param named the name of the symbol
+	 * @return the symbol found with specified name
+	 */
+	public SymbolMap.Named find (String named)
+	{ return symbols.lookup (named); }
 	protected SymbolMap symbols;
 
 

@@ -262,6 +262,14 @@ public class Subroutine<T>
 		if ((this.splineFunctions = splineFunctions) == null) return;
 		if (gardener != null) this.gardener.attachSpline (splineFunctions);
 	}
+
+
+	/**
+	 * identify connection to a spline
+	 * @return TRUE when splineFunctions has been set
+	 */
+	public boolean
+		hasAttachedSpline () { return splineFunctions != null; }
 	protected Operations<T> splineFunctions = null;
 
 

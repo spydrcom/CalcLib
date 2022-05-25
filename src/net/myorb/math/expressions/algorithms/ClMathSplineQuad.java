@@ -5,10 +5,13 @@ import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
+//import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
-//import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
+
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.computational.integration.RealDomainIntegration;
@@ -28,6 +31,15 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 {
 
 
+	static final boolean TRACE = false;
+
+
+	protected QuadAbstraction getQuadAbstraction (String named)
+	{
+		return new SplineQuadAbstraction (named);
+	}
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
 	 */
@@ -36,7 +48,7 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 	{
 		this.sym = named;
 		this.options = Parameterization.copy (configuration);
-		return new SplineQuadAbstraction (named);
+		return getQuadAbstraction (named);
 	}
 
 
@@ -47,7 +59,7 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 	{
 		this.sym = sym;
 		this.options = Parameterization.copy (lib.getParameterization ());
-		return new SplineQuadAbstraction (sym);
+		return getQuadAbstraction (sym);
 	}
 
 
@@ -59,7 +71,7 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 		this.options =
 			Parameterization.copy (options);
 		this.sym = options.get ("SYMBOL").toString ();
-		QuadAbstraction quad = new SplineQuadAbstraction (sym);
+		QuadAbstraction quad = getQuadAbstraction (sym);
 		return quad.getIterationConsumer ();
 	}
 
@@ -93,22 +105,25 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 		 */
 		public GenericValue evaluate (RangeNodeDigest<T> digest)
 		{
-			RealDomainIntegration<T> splineOps = digestMap.get (digest);
-
+			RealDomainIntegration<T> splineOps =
+				digestMap.get (digest);
 			if (splineOps == null)
-			{
-				splineOps = examineDigest (digest);
-				digestMap.put (digest, splineOps);
-			}
-
-			return vm.newDiscreteValue
-			(
-				splineOps.evalIntegralOver
+				{
+					splineOps = examineDigest (digest);
+					digestMap.put (digest, splineOps);
+				}
+			T integral = splineOps.evalIntegralOver
 				(
 					cvt.toDouble (digest.getLoBnd ()),
 					cvt.toDouble (digest.getHiBnd ())
-				)
-			);
+				);
+			if (TRACE)
+				{
+					System.out.print ("LO="+digest.getLoBnd ());
+					System.out.println (" HI="+digest.getHiBnd ());
+					System.out.println ("INT="+integral);
+				}
+			return vm.newDiscreteValue (integral);
 		}
 
 		/**
