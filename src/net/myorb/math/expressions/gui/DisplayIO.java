@@ -4,6 +4,7 @@ package net.myorb.math.expressions.gui;
 import net.myorb.math.expressions.GreekSymbols;
 import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.TextEditor.TextProcessor;
 
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.MenuManager;
@@ -13,6 +14,7 @@ import net.myorb.data.abstractions.ErrorHandling;
 
 import javax.swing.KeyStroke;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JComponent;
@@ -382,6 +384,7 @@ class CommandHandler
 	 */
 	public void execute (String command)
 	{
+		if (environment == null) return;
 		execute (command, environment.getOutStream ());
 	}
 	public void execute (String command, PrintStream out)
@@ -429,12 +432,12 @@ class CommandHandler
 	 * constructed to connect with the text component
 	 * @param textField the text component that accepts commands
 	 */
-	CommandHandler (JTextField textField)
+	CommandHandler (JTextComponent textField)
 	{
 		this.commandLineInput = textField; this.coreMap = new EnvironmentCore.CoreMap ();
 		this.coreMap.put (EnvironmentCore.CoreCommandProcessor, this);
 	}
-	JTextField commandLineInput;
+	JTextComponent commandLineInput;
 
 }
 
@@ -447,15 +450,23 @@ class NotationMenu
 
 	/**
 	 * add pop-up with names of Greek symbols
-	 * @param field the text input field for the popup
+	 * @param field the text input field for the pop-up
 	 */
-	static void addPopupMenuTo (JTextField field)
+	static void addPopupMenuTo (JTextComponent field)
+	{
+		addPopupMenuTo
+		(
+			field,
+			(text) -> field.setText (field.getText () + text)
+		);
+	}
+	static void addPopupMenuTo (JTextComponent field, TextProcessor p)
 	{
 		Map<String,String> map = GreekSymbols.getEnglishToGreekMap ();
-		field.addMouseListener (MenuManager.getMenu (menus (map, field)));
+		field.addMouseListener (MenuManager.getMenu (menus (map, p)));
 	}
 
-	static JMenu[] menus (Map<String,String> map, JTextField t)
+	static JMenu[] menus (Map<String,String> map, TextProcessor p)
 	{
 		List<String> symbols = getSymbolList (map.keySet ());
 		List<ActionListener> menuActionsU = new ArrayList<ActionListener>();
@@ -465,7 +476,7 @@ class NotationMenu
 		for (String s : symbols)
 		{
 			menuActions = Character.isUpperCase (s.charAt (0))? menuActionsU: menuActionsL;
-			menuActions.add (new GreekMenuAction (s, map.get(s), t));
+			menuActions.add (new GreekMenuAction (s, map.get(s), p));
 		}
 
 		return new JMenu[]
@@ -485,22 +496,34 @@ class NotationMenu
 
 	static class GreekMenuAction implements ActionListener, MenuManager.HotKeyAvailable
 	{
-		GreekMenuAction (String english, String greek, JTextField t)
+		GreekMenuAction (String english, String greek, JTextComponent c)
+		{
+			this
+			(
+				english, greek,
+				(text) ->
+				{
+					c.setText (c.getText () + text);
+				}
+			);
+		}
+
+		GreekMenuAction (String english, String greek, TextProcessor p)
 		{
 			String special = GreekSymbols.getSpecialCaseFor (english);
 			char initial = special == null? english.charAt (0): special.charAt (0);
 			this.keystroke = KeyStroke.getKeyStroke (Character.toLowerCase (initial));
 			this.title = english + " (" + greek + ")";
 			this.english = " " + english + " ";
-			this.t = t;
+			this.proc = p;
 		}
 		public String toString () { return title; }
 		public KeyStroke getHotKey() { return keystroke; }
 		public void actionPerformed (ActionEvent event)
-		{ t.setText (t.getText () + english); }
+		{ proc.process (english); }
 		String title, english;
 		KeyStroke keystroke;
-		JTextField t;
+		TextProcessor proc;
 	}
 
 }
