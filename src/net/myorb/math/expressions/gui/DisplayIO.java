@@ -6,11 +6,11 @@ import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.TextEditor.TextProcessor;
 
+import net.myorb.data.abstractions.ErrorHandling;
+
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.MenuManager;
 import net.myorb.gui.components.GuiToolkit;
-
-import net.myorb.data.abstractions.ErrorHandling;
 
 import javax.swing.KeyStroke;
 import javax.swing.JTextField;
@@ -264,11 +264,31 @@ class MasterConsole
 	void constructPanel (int size)
 	{
 		panel = new JPanel (gridbag);
-		Dimension PANEL_SIZE = new Dimension
-			(size + DisplayIO.MARGIN, size + DisplayIO.MARGIN);
-		panel.setPreferredSize (PANEL_SIZE);
+		setPreferredSize (panel, size);
 	}
 	JPanel panel;
+
+	/**
+	 * @param edgeSize each side of square display
+	 * @return a Dimension object with sized edges
+	 */
+	public static Dimension getPreferredSize (int edgeSize)
+	{
+		return new Dimension
+		(
+			edgeSize + DisplayIO.MARGIN,
+			edgeSize + DisplayIO.MARGIN
+		);
+	}
+
+	/**
+	 * @param c the component to resize
+	 * @param size the edge size for the operation
+	 */
+	public static void setPreferredSize (JComponent c, int size)
+	{
+		c.setPreferredSize (getPreferredSize (size));
+	}
 
 	/**
 	 * add component to panel with GridBag layout
@@ -461,31 +481,77 @@ class NotationMenu
 		);
 	}
 	static void addPopupMenuTo (JTextComponent field, TextProcessor p)
-	{
-		Map<String,String> map = GreekSymbols.getEnglishToGreekMap ();
-		field.addMouseListener (MenuManager.getMenu (menus (map, p)));
-	}
+	{ field.addMouseListener (MenuManager.getMenu (getMenus (p))); }
 
-	static JMenu[] menus (Map<String,String> map, TextProcessor p)
-	{
-		List<String> symbols = getSymbolList (map.keySet ());
-		List<ActionListener> menuActionsU = new ArrayList<ActionListener>();
-		List<ActionListener> menuActionsL = new ArrayList<ActionListener>();
-		List<ActionListener> menuActions = null;
+	/**
+	 * @param using the text processor for menu actions
+	 * @return an array of the generated menus
+	 */
+	public static JMenu[]
+		getMenus (TextProcessor using)
+	{ return new Case (using).menus (); }
 
-		for (String s : symbols)
+	/**
+	 * @param using the text processor for menu actions
+	 * @param list the list collecting menus
+	 */
+	public static void
+		getMenus (TextProcessor using, List<JMenu> list)
+	{ new Case (using).addTo (list); }
+
+	/**
+	 * lists of character data organized by case
+	 */
+	static class Case
+	{
+
+		List<ActionListener> listFor (String text)
 		{
-			menuActions = Character.isUpperCase (s.charAt (0))? menuActionsU: menuActionsL;
-			menuActions.add (new GreekMenuAction (s, map.get(s), p));
+			return Character.isUpperCase (text.charAt (0)) ?
+					upper: lower;
 		}
 
-		return new JMenu[]
+		List<ActionListener> upper = new ArrayList<ActionListener>();
+		List<ActionListener> lower = new ArrayList<ActionListener>();
+
+		JMenu upperMenu () { return MenuManager.getMenuOf (upper, "Upper Case"); }
+		JMenu lowerMenu () { return MenuManager.getMenuOf (lower, "Lower Case"); }
+
+		/**
+		 * @param thisList the list collecting menus
+		 */
+		void addTo (List<JMenu> thisList)
 		{
-			MenuManager.getMenuOf (menuActionsU, "Upper Case"),
-			MenuManager.getMenuOf (menuActionsL, "Lower Case")
-		};
+			thisList.add (upperMenu ());
+			thisList.add (lowerMenu ());
+		}
+
+		/**
+		 * @return an array of the menu objects
+		 */
+		JMenu[] menus ()
+		{
+			return new JMenu[]{ upperMenu (), lowerMenu () };
+		}
+
+		Case (TextProcessor p)
+		{
+			this (GreekSymbols.getEnglishToGreekMap (), p);
+		}
+
+		Case (Map<String,String> map, TextProcessor p)
+		{
+			for (String s : getSymbolList (map.keySet ()))
+			{ listFor (s).add (new GreekMenuAction (s, map.get(s), p)); }
+		}
+
 	}
 
+	/**
+	 * sort the item collection
+	 * @param items collection of text items
+	 * @return the sorted list
+	 */
 	static List<String> getSymbolList (Collection<String> items)
 	{
 		List<String> symbols = new ArrayList<String>();
@@ -494,6 +560,9 @@ class NotationMenu
 		return symbols;
 	}
 
+	/**
+	 * Greek / English correlation
+	 */
 	static class GreekMenuAction implements ActionListener, MenuManager.HotKeyAvailable
 	{
 		GreekMenuAction (String english, String greek, JTextComponent c)
@@ -517,6 +586,7 @@ class NotationMenu
 			this.english = " " + english + " ";
 			this.proc = p;
 		}
+
 		public String toString () { return title; }
 		public KeyStroke getHotKey() { return keystroke; }
 		public void actionPerformed (ActionEvent event)

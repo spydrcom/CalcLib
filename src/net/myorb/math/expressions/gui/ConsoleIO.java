@@ -13,10 +13,12 @@ import net.myorb.gui.components.SimpleScreenIO;
 
 import javax.swing.text.JTextComponent;
 import javax.swing.JTextArea;
+import javax.swing.JMenu;
 
-import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.Font;
+
+import java.util.*;
 
 /**
  * extended version of GUI console.
@@ -89,7 +91,7 @@ class ExtendedConsole extends Console
 		super (color, width, height, columns);
 		w = width; h = height;
 	}
-	int w, h;
+	protected int w, h;
 
 	/**
 	 * construct the console components
@@ -121,23 +123,22 @@ class ExtendedConsole extends Console
 	 */
 	void constructPanel (int size)
 	{
-		PANEL_SIZE = new Dimension
-			(size + DisplayIO.MARGIN, size + DisplayIO.MARGIN);
-		panel.setFont (new Font ("Arial Unicode MS", java.awt.Font.PLAIN, 14));
-		panel.setSize (PANEL_SIZE);
-
-		JTextArea c = (JTextArea) textArea;
-		panel.addMouseListener
+		panel.setFont
 		(
-			MenuManager.getMenu
+			new Font
 			(
-				getMenuActions (c, "workspace", this)
+				"Arial Unicode MS",
+				java.awt.Font.PLAIN, 14
 			)
 		);
-		NotationMenu.addPopupMenuTo
-		(c, (text) -> appendLine (text, c));
+
+		panel.setSize
+		(
+			MasterConsole.getPreferredSize (size)
+		);
+
+		addMenus ((JTextArea) textArea);
 	}
-	Dimension PANEL_SIZE;
 
 	/**
 	 * @param text the text being appended
@@ -150,27 +151,30 @@ class ExtendedConsole extends Console
 	}
 
 	/**
-	 * @param console the text area of the console
-	 * @param title the title to apply to the save command
-	 * @param processor the text processor action
-	 * @return the action list for the menu
+	 * @param to console display area
 	 */
-	public MenuManager.ActionList getMenuActions
-	(JTextArea console, String title, TextProcessor processor)
+	public void addMenus (JTextArea to)
 	{
-		MenuManager.ActionList items =
-			new MenuManager.ActionList ();
-		items.add
-		(
-			new UseSelectedCommand
+		List<JMenu> menuList = new ArrayList<JMenu>();
+
+		MenuManager.ActionList editorActions =
+			TextEditor.getMenuActions
 			(
-				console,
-				(text) -> appendLine (text, console)
-			)
+				to, "workspace",
+				(text) -> appendLine (text, to)
+			);
+
+		menuList.add
+		(
+			MenuManager.getMenuOf (editorActions, "Edit")
 		);
-		items.add (new SaveCommand (console, title));
-		items.add (new ClearCommand (console));
-		return items;
+
+		NotationMenu.getMenus ((text) -> appendLine (text, to), menuList);
+
+		panel.addMouseListener
+		(
+			MenuManager.getMenu (menuList.toArray (new JMenu[1]))
+		);
 	}
 
 	/**
@@ -182,7 +186,7 @@ class ExtendedConsole extends Console
 		handler = new CommandHandler (prompt = getTextArea ());
 		(coreMap = handler.getMap ()).put (EnvironmentCore.CoreCommandLine, prompt);
 	}
-	EnvironmentCore.CoreMap coreMap;
+	protected EnvironmentCore.CoreMap coreMap;
 
 	/**
 	 * @return the handler for the established prompt
@@ -191,7 +195,7 @@ class ExtendedConsole extends Console
 	{
 		return handler;
 	}
-	CommandHandler handler;
+	protected CommandHandler handler;
 
 	/**
 	 * scroll pane for display area

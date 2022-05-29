@@ -144,19 +144,43 @@ public class TextEditor extends DisplayFrame
 
 	/**
 	 * build a menu manager action list
-	 * @param console the console that will associate with the menu
-	 * @param title the title for the frame that shows the console
-	 * @param processor the processor being demonstrated
+	 * @param console the text area of the console
+	 * @param title the title to apply to the save command
+	 * @param processor the text processor action
 	 * @return the action list for the menu
 	 */
 	public static MenuManager.ActionList getMenuActions
 	(JTextArea console, String title, TextProcessor processor)
 	{
-		MenuManager.ActionList items = new MenuManager.ActionList ();
-		if (processor != null) items.add (new UseSelectedCommand (console, processor));
+		MenuManager.ActionList items =
+			new MenuManager.ActionList ();
+		addMenuActions (console, title, processor, items);
+		return items;
+	}
+
+	/**
+	 * compile list of menu actions
+	 * @param console the text area of the console
+	 * @param title the title to apply to the save command
+	 * @param processor the text processor action
+	 * @param items the list being accumulated
+	 */
+	public static void addMenuActions
+		(
+			JTextArea console,
+			String title, TextProcessor processor,
+			MenuManager.ActionList items
+		)
+	{
+		if (processor != null)
+		{
+			items.add
+			(
+				new UseSelectedCommand (console, processor)
+			);
+		}
 		items.add (new SaveCommand (console, title));
 		items.add (new ClearCommand (console));
-		return items;
 	}
 
 	/**
