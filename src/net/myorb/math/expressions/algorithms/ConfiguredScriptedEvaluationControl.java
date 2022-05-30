@@ -8,6 +8,7 @@ import net.myorb.math.expressions.gui.DisplayConsole;
 import net.myorb.math.expressions.gui.Functionality;
 import net.myorb.math.expressions.gui.ToolBarMenu;
 import net.myorb.math.expressions.gui.DisplayIO;
+import net.myorb.math.expressions.gui.ConsoleIO;
 
 import net.myorb.gui.components.GuiToolkit;
 
@@ -37,8 +38,11 @@ public class ConfiguredScriptedEvaluationControl <T>
 	 */
 	public DisplayIO.CommandControl getCommandControl ()
 	{
+		if (USE_CONSOLE_COMPONENT)
+			return ConsoleIO.showConsole (toString (), SCREEN_SIZE);
 		return DisplayIO.showConsole (toString (), SCREEN_SIZE);
 	}
+	static final boolean USE_CONSOLE_COMPONENT = true;
 
 
 	/**

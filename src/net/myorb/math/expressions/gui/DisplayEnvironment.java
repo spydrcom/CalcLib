@@ -8,6 +8,7 @@ import javax.swing.RootPaneContainer;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.JComponent;
+import javax.swing.JViewport;
 import javax.swing.JMenuBar;
 
 import java.awt.Component;
@@ -112,8 +113,9 @@ class EnvironmentState extends WidgetIndex
 	 */
 	EnvironmentState (EnvironmentCore.CoreMap components)
 	{
-		this.environmentFrame = (RootPaneContainer) components.get
-			(DisplayEnvironment.EnvironmentFrame);
+		this.environmentFrame =
+			(RootPaneContainer) components.get
+				(DisplayEnvironment.EnvironmentFrame);
 		this.components = components;
 		copyComponents ();
 
@@ -127,6 +129,21 @@ class EnvironmentState extends WidgetIndex
 
 
 	/**
+	 * @param scroll a JScroll with viewport items
+	 * @param called the name to call the contained item
+	 */
+	void copyComponentFrom
+	(JScrollPane scroll, String called)
+	{
+		this.put (called, scroll);
+		JViewport viewport = scroll.getViewport ();
+		if (viewport == null || viewport.getComponentCount() == 0) return;
+		Component viewed = viewport.getComponent (0);
+		this.put (called + "$VIEWED", viewed);
+	}
+
+
+	/**
 	 * copy the component map into this index
 	 */
 	void copyComponents ()
@@ -134,13 +151,11 @@ class EnvironmentState extends WidgetIndex
 		Object object;
 		for (String item : components.keySet ())
 		{
-			if ((object = components.get (item)) instanceof JScrollPane)
-			{
-				JScrollPane scroll = (JScrollPane) object;
-				Component viewed = scroll.getViewport ().getComponent (0);
-				this.put (item + "$VIEWED", viewed); this.put (item, scroll);
-			}
-			else if (object instanceof Component) this.put (item, (Component) object);
+			object = components.get (item);
+			if (object instanceof JScrollPane)
+			{ copyComponentFrom ((JScrollPane) object, item); }
+			else if (object instanceof Component)
+			{ put (item, (Component) object); }
 		}
 	}
 	Map <String, Object> components;

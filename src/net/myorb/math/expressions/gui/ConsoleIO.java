@@ -18,7 +18,8 @@ import javax.swing.JMenu;
 import java.awt.Color;
 import java.awt.Font;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * extended version of GUI console.
@@ -103,8 +104,6 @@ class ExtendedConsole extends Console
 		constructPrompt ();
 		addScrollPane ();
 	}
-	public static void excludeTabs () { INCLUDE_TABS = false; }
-	static boolean INCLUDE_TABS = true;
 
 	/**
 	 * display console in a frame
