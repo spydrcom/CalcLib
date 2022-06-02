@@ -413,13 +413,23 @@ class CommandHandler
 		(
 			() ->
 			{
-				out.println (command);
+				if (echoState) out.println (command);
 				control.execute (command);
-				out.println (); out.flush ();
+				out.println ();
+				out.flush ();
 			},
 			out
 		);
 	}
+
+	/**
+	 * @param state value to place on echo state
+	 */
+	public void setEcho (boolean state)
+	{
+		echoState = state;
+	}
+	boolean echoState = true;
 
 	/**
 	 * @return access to command execution processor

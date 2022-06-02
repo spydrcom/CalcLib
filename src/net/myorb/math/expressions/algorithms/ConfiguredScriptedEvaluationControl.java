@@ -33,6 +33,18 @@ public class ConfiguredScriptedEvaluationControl <T>
 
 
 	/**
+	 * specify display component to use
+	 * @param useConsole T for console and F for legacy debug version
+	 */
+	public void chooseConsoleDisplay
+		(boolean useConsole)
+	{
+		USE_CONSOLE_COMPONENT = useConsole;
+	}
+	static boolean USE_CONSOLE_COMPONENT = false;
+
+
+	/**
 	 * construct and show console
 	 * @return command control resulting from console construction
 	 */
@@ -42,7 +54,6 @@ public class ConfiguredScriptedEvaluationControl <T>
 			return ConsoleIO.showConsole (toString (), SCREEN_SIZE);
 		return DisplayIO.showConsole (toString (), SCREEN_SIZE);
 	}
-	static final boolean USE_CONSOLE_COMPONENT = true;
 
 
 	/**

@@ -184,6 +184,7 @@ class ExtendedConsole extends Console
 		JTextComponent prompt;
 		handler = new CommandHandler (prompt = getTextArea ());
 		(coreMap = handler.getMap ()).put (EnvironmentCore.CoreCommandLine, prompt);
+		handler.setEcho (false);
 	}
 	protected EnvironmentCore.CoreMap coreMap;
 
