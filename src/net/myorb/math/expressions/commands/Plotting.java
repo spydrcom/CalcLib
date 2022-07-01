@@ -10,6 +10,8 @@ import net.myorb.math.expressions.charting.DisplayGraph3D;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
 
+import net.myorb.gui.components.SimpleScreenIO;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,18 +63,15 @@ public class Plotting<T> extends Utilities<T>
 	 */
 	public void backgroundPlot (final Map<String,Object> parameters)
 	{
-		new Thread
+		SimpleScreenIO.startBackgroundTask
 		(
-				new Runnable ()
-				{
-					public void run ()
-					{
-						SymbolMap symbols = environment.getSymbolMap ();
-						ComplexPlaneTransform.constructPlot (parameters, symbols);
-						addTrackingRecord (parameters);
-					}
-				}
-		).start ();
+			() ->
+			{
+				SymbolMap symbols = environment.getSymbolMap ();
+				ComplexPlaneTransform.constructPlot (parameters, symbols);
+				addTrackingRecord (parameters);
+			}
+		);
 	}
 
 

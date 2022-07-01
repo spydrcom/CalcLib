@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.charting.fractals;
 
 import net.myorb.gui.components.SimplePopupRequest;
+import net.myorb.gui.components.SimpleScreenIO;
 
 /**
  * generalized form for Fractal menu
@@ -24,7 +25,7 @@ public abstract class Selection
 
 	@Override
 	public void setSelectedItem (Fractal item)
-	{ this.item = item; new Thread (this).start (); }
+	{ this.item = item; SimpleScreenIO.startBackgroundTask (this); }
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()

@@ -4,6 +4,8 @@ package net.myorb.math.expressions.gui;
 import net.myorb.charting.DisplayGraphSegmenting;
 import net.myorb.charting.DisplayGraphSegmentTools;
 
+import net.myorb.gui.components.SimpleScreenIO;
+
 /**
  * collect configuration items for asymptotic segmenting algorithms.
  *  in absence of asymptotes, general range clipping is provided
@@ -26,7 +28,7 @@ public class SegmentConfig extends FormComponents implements FormComponents.Form
 
 //		System.out.println ("PUBLISH limit=" + limit.getText() + " minimum=" + minimum.getText() + " Segment=" + segments.getValue());
 
-		if (processor != null) new Thread (processor).start ();
+		if (processor != null) SimpleScreenIO.startBackgroundTask (processor);
 	}
 	Runnable processor;
 

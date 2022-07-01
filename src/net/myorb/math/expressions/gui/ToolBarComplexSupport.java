@@ -14,6 +14,7 @@ import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.*;
 
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.MenuManager;
 
 import javax.swing.KeyStroke;
@@ -607,7 +608,10 @@ abstract class IterativeApproximation<T> extends LimitedFunctionSelection<T>
 	/**
 	 * start the approximation run
 	 */
-	protected void runInBackground () { new Thread (this).start (); }
+	protected void runInBackground ()
+	{
+		SimpleScreenIO.startBackgroundTask (this);
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.gui.IntervalForm.Publisher#publish(java.lang.String)

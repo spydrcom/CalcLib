@@ -8,6 +8,8 @@ import net.myorb.charting.Histogram;
 
 import net.myorb.rinearn.SurfacePlotter;
 
+import net.myorb.gui.components.SimpleScreenIO;
+
 import javax.swing.JComponent;
 
 import java.awt.image.BufferedImage;
@@ -280,7 +282,8 @@ class OffAxisHandler3D extends OffAxisHandler
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.OffAxisHandler#processArea()
 	 */
-	public void processArea () { new Thread (this).start (); }
+	public void processArea () { SimpleScreenIO.startBackgroundTask (this); }
+	//public void processArea () { new Thread (this).start (); }
 
 
 	/*

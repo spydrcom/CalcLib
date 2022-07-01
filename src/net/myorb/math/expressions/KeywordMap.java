@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 // IOlib GUI and Data support
 import net.myorb.data.abstractions.SimplePropertiesManager;
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.SideBySide;
 
@@ -1257,7 +1258,11 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 			{
 				ScriptManager<T> scriptManager = engine.getScriptManager (); scriptManager.readSymbols ("NamedConstants.txt");
 				scriptManager.readSymbols ("BuiltInFunctions.txt"); scriptManager.readSymbols ("TrigIdentities.txt");
-				new Thread (new net.myorb.math.expressions.gui.rpn.Calculator<T> (environment)).start ();
+
+				SimpleScreenIO.startBackgroundTask
+				(
+					() -> new net.myorb.math.expressions.gui.rpn.Calculator<T> (environment)
+				);
 			}
 			public String describe () { return "Start the RPN calculator"; }
 		};

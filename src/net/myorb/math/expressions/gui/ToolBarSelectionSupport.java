@@ -9,6 +9,7 @@ import net.myorb.math.expressions.gui.DisplayIO.CommandProcessor;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.DifferentialEquationsManager;
 
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayTable;
 import net.myorb.gui.components.MenuManager;
 import net.myorb.gui.components.Alerts;
@@ -535,16 +536,8 @@ class FractalDisplay extends SelectedCommand
 	 */
 	void plotThread (final Fractal f, final int resolution)
 	{
-		new Thread
-		(
-			new Runnable ()
-			{
-				public void run ()
-				{
-					f.plot (resolution, 5);
-				}
-			}
-		).start ();
+		SimpleScreenIO.startBackgroundTask
+		( () -> f.plot (resolution, 5) );
 	}
 
 }

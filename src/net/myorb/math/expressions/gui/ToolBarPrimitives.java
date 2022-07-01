@@ -8,6 +8,7 @@ import net.myorb.math.primenumbers.sieves.SieveOfEratosthenes;
 import net.myorb.math.primenumbers.ReportGenerators;
 import net.myorb.math.primenumbers.Factorization;
 
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.MenuManager;
 import net.myorb.gui.components.Alerts;
 
@@ -282,7 +283,7 @@ class CommandThread extends SimpleCommand implements Runnable
 	public void run () { processor.execute (command); }
 
 	public CommandThread (CommandProcessor processor, String command)
-	{ super (command, processor); new Thread (this).start (); }
+	{ super (command, processor); SimpleScreenIO.startBackgroundTask (this); }
 
 }
 

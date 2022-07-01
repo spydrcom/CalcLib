@@ -15,6 +15,7 @@ import net.myorb.data.abstractions.ZipSource;
 import net.myorb.data.abstractions.ZipUtilities;
 import net.myorb.data.abstractions.ZipRecord;
 
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.FileDrop;
 
 import java.awt.Component;
@@ -374,17 +375,14 @@ public class ScriptManager<T> implements FileDrop.FileProcessor
 	 */
 	public void readAndExecuteBG (final String filename)
 	{
-		new Thread
+		SimpleScreenIO.startBackgroundTask
 		(
-			new Runnable ()
+			() ->
 			{
-				public void run ()
-				{
-					forkedScriptManager (filename).readAndExecute (filename);
-					environment.getOutStream ().println ("Script execution of " + filename + " has completed");
-				}
+				forkedScriptManager (filename).readAndExecute (filename);
+				environment.getOutStream ().println ("Script execution of " + filename + " has completed");
 			}
-		).start ();
+		);
 	}
 
 

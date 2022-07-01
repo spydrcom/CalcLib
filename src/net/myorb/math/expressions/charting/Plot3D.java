@@ -7,6 +7,8 @@ import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.math.MultiDimensional;
 
+import net.myorb.gui.components.SimpleScreenIO;
+
 /**
  * boiler plate for 3D plot control
  * @author Michael Druckman
@@ -102,10 +104,7 @@ public class Plot3D<T> extends ContourPlotProperties
 	 * @param title the title to show on the frame
 	 */
 	public void show (String title)
-	{
-		this.title = title;
-		new Thread (this).start ();
-	}
+	{ this.title = title; SimpleScreenIO.startBackgroundTask (this); }
 	protected String title;
 
 
