@@ -26,6 +26,8 @@ public class CLmathComplexImplementations
 	static ComplexLibrary<Double> library = new ComplexLibrary<Double> (realMgr, cmplxMgr);
 
 
+	public CLmathComplexImplementations () { this (null); }
+
 	public CLmathComplexImplementations
 	(Environment<ComplexValue<Double>> environment)
 	{

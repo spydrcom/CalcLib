@@ -1388,6 +1388,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 	 */
 	public void constructCoreKeywordMap ()
 	{
+		add (OperatorNomenclature.TIP_PREFIX, constructCommentCommand ());
 		add (OperatorNomenclature.COMMENT_PREFIX, constructCommentCommand ());
 		add (OperatorNomenclature.DEFINITION_PREFIX, constructDefineKeywordCommand ());
 		add (OperatorNomenclature.HG_POLYNOMIAL_PREFIX, constructHGPolynomialKeywordCommand ());
