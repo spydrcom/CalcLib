@@ -100,7 +100,10 @@ public class ConfigurationManager extends Configuration
 	 */
 	public Object addExtendedLibrary (String name, String classpath)
 	{
-		return addExtensionLibrary (classpath, name, libraryMap);
+		Object newLib =
+			addExtensionLibrary (classpath, name, libraryMap);
+		collector.getEnvironment ().provideAccessTo (newLib);
+		return newLib;
 	}
 
 

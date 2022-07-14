@@ -28,6 +28,11 @@ public class CLmathRealImplementations
 	static ExtendedPowerLibrary<Double> library = jrePowerLibrary;
 
 
+	public CLmathRealImplementations ()
+	{
+		this (null);
+	}
+
 	public CLmathRealImplementations (Environment<Double> environment)
 	{
 		super (realMgr, realMgr, library, environment);

@@ -165,7 +165,7 @@ O,clmath,Bernoulli Number,BernoulliNumber,B,10,&#03B6;,1000
 O,clmath,Exponential Integral,ExponentialIntegral,Ei,10
 O,clmath,Logarithmic Integral,LogarithmicIntegral,Li,10
 O,clmath,E1 Exponential Integral,E1Integral,E1,10
-O,clmath,Bessel Jp,Bessel,Jp,10,,Jp;2.5;2
+-O,clmath,Bessel Jp,Bessel,Jp,10,,Jp;2.5;2
 F,clmath,Airy Ai,AiryAi,Ai
 F,clmath,Airy Bi,AiryBi,Bi
 -

@@ -15,7 +15,7 @@ import java.io.File;
 public class ConfiguredControl<T> extends ConfiguredEvaluationControl<T>
 {
 
-	public static String CONFIG_HOME = "cfg\\", DEFAULT_CONFIG_FILE = "default.txt";
+	public static String CONFIG_HOME = "cfg\\testbed\\", DEFAULT_CONFIG_FILE = "default.txt";
 
 	ConfiguredControl (ConfigurationManager cm)
 	{ super (cm.getEnvironment (), true); cm.addCommands (engine.getKeywordMap ()); }

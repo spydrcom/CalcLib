@@ -18,7 +18,7 @@ import net.myorb.math.Function;
  * @author Michael Druckman
  */
 public abstract class CLmathGenericImplementations<T>
-	extends CLmathPrimitives<T>
+	extends CLmathPrimitives<T>  implements Environment.AccessAcceptance<T>
 {
 
 
@@ -38,6 +38,14 @@ public abstract class CLmathGenericImplementations<T>
 	SpaceManager<T> manager;
 	SpaceConversion<T> conversion;
 	ExtendedPowerLibrary<T> library;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
+	 */
+	public void setEnvironment (Environment<T> environment)
+	{
+		this.environment = environment;
+	}
 	Environment<T> environment;
 
 
