@@ -8,6 +8,7 @@ import net.myorb.math.*;
 /**
  * processing methods for states of the state machine
  * @param <T> type on which operations are to be executed
+ * @author Michael Druckman
  */
 public class Environment<T> extends OperatorProcessing<T>
 {

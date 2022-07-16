@@ -19,6 +19,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/IOLIB"/>
 	<classpathentry kind="lib" path="lib/jmtex-0224.zip"/>
 	<classpathentry kind="lib" path="lib/CalcLibSpline.zip"/>
-	<classpathentry kind="lib" path="/SITSTAT/bin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

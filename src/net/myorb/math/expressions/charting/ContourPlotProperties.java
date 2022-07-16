@@ -6,6 +6,9 @@ import net.myorb.math.expressions.charting.colormappings.LegacyAlternativeAlgori
 import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.ColorSelection;
 
+import net.myorb.sitstat.tasks.TaskDescriptor;
+import net.myorb.sitstat.tasks.TaskManager;
+
 import java.util.HashMap;
 
 /**
@@ -219,12 +222,53 @@ public class ContourPlotProperties extends HashMap<String,Object>
 		this.remaining -= portion;
 		long progress = originalSize - remaining;
 		long percent = (progress * 100) / originalSize;
-		if (percent < nextMilestone) return;
 
-		System.out.println ("Progress: " + percent + "%");
-		nextMilestone += 10;
+		if (percent >= nextMilestone)
+		{
+			if (verifyManager ())
+			{
+				taskDescriptor.setPercent (percent);
+				TaskManager.update (taskDescriptor);
+			} else System.out.println ("Progress: " + percent + "%");
+
+			nextMilestone += 10;
+		}
 	}
 	protected int remaining, originalSize, nextMilestone;
+
+
+	/**
+	 * determine if task manager is present.
+	 * - build descriptor on first check when active
+	 * @return TRUE when task monitor active
+	 */
+	boolean verifyManager ()
+	{
+		if (taskDescriptor != null) return true;
+		if (!TaskManager.taskManagerPresent ()) return false;
+
+		taskDescriptor = new TaskDescriptor ();
+		taskDescriptor.setName (uniqueName (taskDescriptor));
+		taskDescriptor.setDescription ("Contour Plot");
+		taskDescriptor.setStarted ();
+
+		TaskManager.post (taskDescriptor);
+
+		return true;
+	}
+	protected TaskDescriptor taskDescriptor;
+
+	/**
+	 * use address naming to supply unique name
+	 * @param t the task descriptor to be named
+	 * @return a unique name
+	 */
+	public static String uniqueName (TaskDescriptor t)
+	{
+		String unique = t.toString ();
+		String portion = unique.substring (unique.indexOf ('@'));
+		return portion;
+	}
 
 
 	private static final long serialVersionUID = -5812958866188128427L;
