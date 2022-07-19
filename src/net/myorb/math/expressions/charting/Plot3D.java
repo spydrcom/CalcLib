@@ -104,7 +104,11 @@ public class Plot3D<T> extends ContourPlotProperties
 	 * @param title the title to show on the frame
 	 */
 	public void show (String title)
-	{ this.title = title; SimpleScreenIO.startBackgroundTask (this); }
+	{
+		this.title = title;
+		this.getActivityDescriptor ().setTitle (title);
+		SimpleScreenIO.startBackgroundTask (this);
+	}
 	protected String title;
 
 

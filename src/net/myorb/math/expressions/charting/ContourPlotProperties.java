@@ -7,6 +7,7 @@ import net.myorb.sitstat.tasks.CommonTaskProcessing;
 import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.ColorSelection;
 
+import net.myorb.sitstat.RealizationTracking;
 import net.myorb.sitstat.ActivityProperties;
 import net.myorb.sitstat.Activity;
 
@@ -16,8 +17,7 @@ import java.util.HashMap;
  * collect properties required to construct contour plot
  */
 public class ContourPlotProperties extends HashMap<String,Object>
-	implements DisplayGraphTypes.ContourPlotDescriptor,
-		PlotComputers.RealizationTracking
+	implements DisplayGraphTypes.ContourPlotDescriptor, RealizationTracking
 {
 
 	public static String POLAR_IDENTITY = "POLAR";
@@ -234,6 +234,14 @@ public class ContourPlotProperties extends HashMap<String,Object>
 	public void reduceRemaining (int portion)
 	{
 		this.taskMonitorProcessing.reduceRemaining (portion);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.sitstat.RealizationTracking#setOriginalSize(int)
+	 */
+	public void setOriginalSize (int remaining)
+	{
+		this.taskMonitorProcessing.setOriginalSize (remaining);
 	}
 
 	private static final long serialVersionUID = -5812958866188128427L;

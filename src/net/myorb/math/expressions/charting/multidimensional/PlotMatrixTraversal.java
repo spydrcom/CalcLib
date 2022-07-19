@@ -2,9 +2,9 @@
 package net.myorb.math.expressions.charting.multidimensional;
 
 import net.myorb.math.expressions.charting.ContourPlotProperties;
-import net.myorb.math.expressions.charting.PlotComputers;
 
 import net.myorb.charting.DisplayGraphTypes.Point;
+import net.myorb.sitstat.RealizationTracking;
 import net.myorb.sitstat.Activity;
 
 /**
@@ -20,7 +20,7 @@ class PlotMatrixTraversal extends ResultCollector
 		super (proprties);
 		this.tracking = proprties;
 	}
-	protected PlotComputers.RealizationTracking tracking;
+	protected RealizationTracking tracking;
 
 
 	/**
