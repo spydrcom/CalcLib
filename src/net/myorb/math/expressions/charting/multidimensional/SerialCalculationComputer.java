@@ -13,6 +13,8 @@ public class SerialCalculationComputer extends PlotMatrixTraversal
 	public SerialCalculationComputer (ContourPlotProperties proprties)
 	{
 		super (proprties);
+		proprties.getActivityDescriptor ().setProducer ("SerialCalculationComputer");
+		proprties.getActivityDescriptor ().setDescription ("Serial 3D Plot");
 	}
 
 	/**
@@ -43,7 +45,7 @@ public class SerialCalculationComputer extends PlotMatrixTraversal
 		/*
 		 * run function calls to map (x,y) to z results
 		 */
-		System.out.println ("SerialCalculationComputer invoked");
+		//System.out.println ("SerialCalculationComputer invoked");
 		traverseMatrix ();
 	}
 

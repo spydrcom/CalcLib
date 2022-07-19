@@ -33,6 +33,8 @@ class VectoredTransform<T> extends PlotMatrixTraversal
 		)
 	{
 		super (proprties);
+		proprties.getActivityDescriptor ().setProducer ("VectoredTransform");
+		proprties.getActivityDescriptor ().setDescription ("Vectored 3D Plot");
 		this.initEnvironment (environment);
 		this.initSeries ();
 	}

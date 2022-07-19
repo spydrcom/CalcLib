@@ -17,6 +17,8 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 	public BruteForcePlotComputer (ContourPlotProperties proprties)
 	{
 		super (proprties);
+		//proprties.getActivityDescriptor ().setProducer ("BruteForcePlotComputer");
+		//proprties.getActivityDescriptor ().setDescription ("Serial Contour Plot");
 	}
 
 
@@ -39,7 +41,7 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 		proprties.setEdgeSize (descriptor.getEdgeSize ());
 		proprties.setAltEdgeSize (descriptor.getEdgeSize ());
 		proprties.setLowCorner (descriptor.getLowCorner ());
-		System.out.println ("BruteForcePlotComputer invoked");
+		//System.out.println ("BruteForcePlotComputer invoked");
 		this.points = points; this.range = range;
 		this.histogram = histogram;
 		traverseMatrix ();

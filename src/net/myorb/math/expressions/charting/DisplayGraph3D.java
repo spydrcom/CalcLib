@@ -7,7 +7,7 @@ import net.myorb.charting.ColorSelection;
 import net.myorb.charting.Histogram;
 
 import net.myorb.rinearn.SurfacePlotter;
-
+import net.myorb.sitstat.Activity;
 import net.myorb.gui.components.SimpleScreenIO;
 
 import javax.swing.JComponent;
@@ -46,9 +46,20 @@ public class DisplayGraph3D extends DisplayGraph
 	public static void plotMesh
 	(ContourPlotProperties proprties, String description)
 	{
+		describePlot
+		(
+			proprties.getActivityDescriptor (), description
+		);
 		PlotComputers.TransformResultsCollection points =
 				PlotComputers.getSerialCalculationProcessing (proprties).executeTransform ();
 		new SurfacePlotter (description, proprties).plot (points);
+	}
+	static void describePlot (Activity activity, String description)
+	{
+		activity.setTitle (description);
+		activity.setProducer ("SerialCalculationComputer");
+		activity.setMechanism ("DisplayGraph3D.plotMesh");
+		activity.setDescription ("3D Mesh Plot");
 	}
 
 

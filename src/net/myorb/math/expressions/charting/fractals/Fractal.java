@@ -6,6 +6,7 @@ import net.myorb.math.expressions.charting.ContourPlotProperties;
 import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
+import net.myorb.sitstat.Activity;
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.SpaceManager;
 
@@ -41,7 +42,16 @@ public class Fractal extends ContourPlotProperties
 	 */
 	public void plot (int pointsPerAxis, int pointSize)
 	{
+		describePlot (getActivityDescriptor ());
 		DisplayGraph3D.plotContour (setScale (pointsPerAxis, pointSize), toString ());
+	}
+	void describePlot (Activity activity)
+	{
+		activity.setProducer("");
+		activity.setTitle (identifyTransform ());
+		activity.setMechanism ("DisplayGraph3D.plotContour");
+		activity.setDescription ("Fractal Contour Plot");
+		activity.setProducer ("Fractal.Plot");
 	}
 
 

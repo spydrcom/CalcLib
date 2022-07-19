@@ -11,6 +11,8 @@ import net.myorb.charting.DisplayGraphTypes.Point;
 
 import net.myorb.charting.Histogram;
 
+import net.myorb.sitstat.Activity;
+
 /**
  * algorithms for collecting plot points
  * @author Michael Druckman
@@ -33,6 +35,11 @@ public class PlotComputers
 		 * @param portion amount of job most recently completed
 		 */
 		void reduceRemaining (int portion);
+		
+		/**
+		 * @return access to Activity Descriptor for this Realization
+		 */
+		Activity getActivityDescriptor ();
 	}
 
 

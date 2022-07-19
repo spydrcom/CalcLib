@@ -5,6 +5,7 @@ import net.myorb.math.expressions.charting.ContourPlotProperties;
 import net.myorb.math.expressions.charting.PlotComputers;
 
 import net.myorb.charting.DisplayGraphTypes.Point;
+import net.myorb.sitstat.Activity;
 
 /**
  * brute force traversal to calculate transform of every point of 2D matrix
@@ -58,6 +59,7 @@ class PlotMatrixTraversal extends ResultCollector
 		)
 	{
 		double x = x0;
+		describePlot (tracking.getActivityDescriptor ());
 		tracking.setRemaining (pointsPerAxis*pointsPerAxis);
 		for (x_index = 0; x_index < pointsPerAxis; x_index++)
 		{
@@ -65,6 +67,10 @@ class PlotMatrixTraversal extends ResultCollector
 			tracking.reduceRemaining (pointsPerAxis);
 			x += incrementX;
 		}
+	}
+	void describePlot (Activity activity)
+	{
+		activity.setMechanism ("PlotMatrixTraversal.traverseMatrix");
 	}
 
 
