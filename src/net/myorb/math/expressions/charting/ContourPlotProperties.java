@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 /**
  * collect properties required to construct contour plot
+ * @author Michael Druckman
  */
 public class ContourPlotProperties extends HashMap<String,Object>
 	implements DisplayGraphTypes.ContourPlotDescriptor, RealizationTracking

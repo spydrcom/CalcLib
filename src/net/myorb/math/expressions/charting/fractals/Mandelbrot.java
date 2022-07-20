@@ -59,13 +59,16 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 	 */
 	public int computeIterationsFor (double x0, double y0)
 	{
-		int iteration = 0;
+		int iteration = 0, max = getMaxResult ();
+		Cycles test = new Cycles (this.getEdgeSize ());
 		double x = 0.0f, y = 0.0f, xn = 0.0f, yn = 0.0f, value;
-		while (iteration < getMaxResult ())
+		while (iteration < max)
 		{
 			x = xn; y = yn;
 			value = x*x + y*y;
 			if (value > currentLimit) break;
+			if (test.loopCheck (iteration, x, y))
+			{ return max - 100*iteration; }
 			xn = x*x - y*y + x0;
 			yn = 2*x*y + y0;
 			iteration++;
