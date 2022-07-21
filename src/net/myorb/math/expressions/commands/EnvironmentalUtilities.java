@@ -157,6 +157,15 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 
 
 	/**
+	 * use SNIP editor
+	 */
+	public void editSnip ()
+	{
+		System.out.println ("Edit SNIP"); //TODO
+	}
+
+
+	/**
 	 * include commands for prime table functionality
 	 */
 	public void addPrimeNumberCommands ()

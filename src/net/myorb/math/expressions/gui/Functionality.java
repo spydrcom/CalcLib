@@ -22,6 +22,7 @@ public class Functionality
 		public ActionListener getFuncAction ();
 		public ActionListener getSaveAction ();
 		public ActionListener getHelpAction ();
+		public ActionListener getEditAction ();
 		public ActionListener getAllAction ();
 		public ActionListener getRpnAction ();
 	}

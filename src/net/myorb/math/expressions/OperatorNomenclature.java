@@ -73,6 +73,7 @@ public class OperatorNomenclature
 	SERVE_KEYWORD = "SERVE",					// SERVE service,port	request service start on port given
 	VERIFY_KEYWORD = "VERIFY",					// VERIFY x				lookup symbol and verify present
 	HELP_KEYWORD = "HELP",						// HELP					list of operator descriptions
+	EDIT_KEYWORD = "EDIT",						// EDIT					edit selected snip of text
 	STOP_KEYWORD = "STOP",						// STOP					Stop Anaconda server
 	DOCS_KEYWORD = "DOCS",						// DOCS					show JavaDocs HTML
 	RPN_KEYWORD = "RPN"							// RPN					RPN calculator

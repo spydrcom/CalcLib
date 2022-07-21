@@ -218,7 +218,7 @@ class ExtendedConsole extends Console
 	 */
 	public void process (String line)
 	{
-		System.out.println (line);
+		//System.out.println (line);
 		handler.execute (line);
 	}
 

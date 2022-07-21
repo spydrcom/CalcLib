@@ -119,13 +119,24 @@ public class ToolBarPrimitives
 
 
 /**
- * simplist form of menu item, text of command is sent to command processor
+ * simple form of menu item, text of command is sent to command processor
  */
 class SimpleCommand extends ToolBarPrimitives implements ActionListener
 {
 	SimpleCommand (String command, DisplayIO.CommandProcessor processor) { super (command, processor, null); }
 	SimpleCommand (String command, DisplayIO.CommandProcessor processor, Component parent) { super (command, processor, parent); }
 	public void actionPerformed(ActionEvent e) { processor.execute (command); refresh (); }
+}
+
+
+/**
+ * simple (w/o side-effects) form of menu item, text of command is sent to command processor
+ */
+class SimpleCommandWOSE extends ToolBarPrimitives implements ActionListener
+{
+	SimpleCommandWOSE (String command, DisplayIO.CommandProcessor processor) { super (command, processor, null); }
+	SimpleCommandWOSE (String command, DisplayIO.CommandProcessor processor, Component parent) { super (command, processor, parent); }
+	public void actionPerformed(ActionEvent e) { processor.execute (command); }
 }
 
 

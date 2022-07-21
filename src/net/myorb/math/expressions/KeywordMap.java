@@ -514,6 +514,23 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 
 
 	/**
+	 * edit the selected snip of text
+	 * @return a keyword command for the help keyword
+	 */
+	public KeywordCommand constructEditKeywordCommand ()
+	{
+		return new KeywordCommand ()
+		{
+			public String describe ()
+			{ return "Edit the selected snip of text"; }
+
+			public void execute (CommandSequence tokens)
+			{ editSnip (); }
+		};
+	}
+
+
+	/**
 	 * show the help table
 	 * @return a keyword command for the help keyword
 	 */
@@ -1445,6 +1462,7 @@ public class KeywordMap<T> extends EnvironmentalUtilities<T>
 		addAsLowerCase (OperatorNomenclature.READ_INPUT_KEYWORD, constructReadKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.RECOGNIZE_KEYWORD, constructRecognizeKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.VERIFY_KEYWORD, constructVerifyKeywordCommand ());
+		addAsLowerCase (OperatorNomenclature.EDIT_KEYWORD, constructEditKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.HELP_KEYWORD, constructHelpKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.FFT_KEYWORD, constructFftKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.DOCS_KEYWORD, constructDocsKeywordCommand ());

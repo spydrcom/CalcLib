@@ -53,20 +53,22 @@ public class ToolBarMenu
 		public ActionListener getFuncAction () { return func; }
 		public ActionListener getSaveAction () { return save; }
 		public ActionListener getHelpAction () { return help; }
+		public ActionListener getEditAction () { return edit; }
 		public ActionListener getAllAction () { return all; }
 		public ActionListener getRpnAction () { return rpn; }
 
 		public HomeActions (DisplayIO.CommandProcessor processor, Component parent)
 		{
 			tab = new ShowCommand (processor);
-			sym = new SimpleCommand ("SHOW Symbols", processor);
-			func = new SimpleCommand ("SHOW Functions", processor);
+			edit = new SimpleCommandWOSE ("EDIT", processor);
+			sym = new SimpleCommandWOSE ("SHOW Symbols", processor);
+			func = new SimpleCommandWOSE ("SHOW Functions", processor);
 			save = new DialogCommand ("SAVE ", "Filename for SAVE", "Specify File", processor, parent);
-			all = new SimpleCommand ("SHOW ALL", processor);
-			help = new SimpleCommand ("HELP", processor);
-			rpn = new SimpleCommand ("RPN", processor);
+			all = new SimpleCommandWOSE ("SHOW ALL", processor);
+			help = new SimpleCommandWOSE ("HELP", processor);
+			rpn = new SimpleCommandWOSE ("RPN", processor);
 		}
-		ActionListener tab, sym, func, save, all, help, rpn;
+		ActionListener tab, sym, func, edit, save, all, help, rpn;
 	}
 
 	/**
@@ -86,6 +88,7 @@ public class ToolBarMenu
 		add (panel, "Dump", act.getAllAction (), "Dump all operators (user and built-in) defined in the environment");
 		add (panel, "Save", act.getSaveAction (), "Save workspace script to a file and export matrices");
 		add (panel, "HELP", act.getHelpAction (), "Display a table of command help information");
+		add (panel, "Edit", act.getEditAction (), "Edit snip of command text block");
 
 		bar.add (panel);
 	}
