@@ -60,14 +60,14 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 	public int computeIterationsFor (double x0, double y0)
 	{
 		int iteration = 0, max = getMaxResult ();
-		Cycles test = new Cycles (this.getEdgeSize ());
+		Cycles test = CycleDectionEnabled? new Cycles (this.getEdgeSize ()): null;
 		double x = 0.0f, y = 0.0f, xn = 0.0f, yn = 0.0f, value;
 		while (iteration < max)
 		{
 			x = xn; y = yn;
 			value = x*x + y*y;
 			if (value > currentLimit) break;
-			if (test.loopCheck (iteration, x, y))
+			if (test != null && test.loopCheck (iteration, x, y))
 			{ return max - 100*iteration; }
 			xn = x*x - y*y + x0;
 			yn = 2*x*y + y0;
@@ -75,6 +75,15 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 		}
 		return iteration;
 	}
+
+
+	/**
+	 * enable use of cycle detector
+	 * @param detectCycles TRUE to enable feature
+	 */
+	public static void useCycleDection
+	(boolean detectCycles) { CycleDectionEnabled = detectCycles; }
+	static boolean CycleDectionEnabled = false;
 
 
 	/**
