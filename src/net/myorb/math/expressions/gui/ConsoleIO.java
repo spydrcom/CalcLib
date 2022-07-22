@@ -210,6 +210,7 @@ class ExtendedConsole extends Console
 			EnvironmentCore.CoreMainConsole,
 			(JTextArea) textArea, s
 		);
+		coreMap.put (EnvironmentCore.CoreDisplayComponent, textArea);
 		coreMap.put (EnvironmentCore.CoreDisplayArea, s);
 	}
 

@@ -16,6 +16,9 @@ import net.myorb.math.expressions.gui.SplineTool;
 import net.myorb.math.expressions.symbols.SplineExport;
 import net.myorb.math.expressions.symbols.SplineDescriptor;
 
+//CalcLib snip editing functionality
+import net.myorb.math.expressions.gui.editor.SnipTool;
+
 // CalcLib evaluation states
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
@@ -161,7 +164,7 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	 */
 	public void editSnip ()
 	{
-		System.out.println ("Edit SNIP"); //TODO
+		new SnipTool (environment).show ();
 	}
 
 
@@ -220,9 +223,13 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	{
 		String functionSymbol = getFunctionName (tokens);
 		Object symbol = environment.getSymbolMap ().get (functionSymbol);
-		@SuppressWarnings ("unchecked") SplineDescriptor<T> s = SimpleUtilities.verifyClass (symbol, SplineDescriptor.class);
+		new SplineExport<T>().forDescriptor (getSplineDescriptor (symbol));
+	}
+	@SuppressWarnings("unchecked") SplineDescriptor<T> getSplineDescriptor (Object symbol)
+	{
+		SplineDescriptor<T> s = SimpleUtilities.verifyClass (symbol, SplineDescriptor.class);
 		if (s == null) throw new RuntimeException ("Symbol is not a segmented function");
-		new SplineExport<T>().forDescriptor (s);
+		else return s;
 	}
 
 

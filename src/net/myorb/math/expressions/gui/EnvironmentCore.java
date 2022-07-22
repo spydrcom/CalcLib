@@ -27,6 +27,7 @@ public class EnvironmentCore
 		CoreExecutionEnvironment = EvaluationControlI.CoreExecutionEnvironment,
 		CoreMainConsole = EvaluationControlI.CoreMainConsole,
 		CoreCommandProcessor = "CommandProcessor",
+		CoreDisplayComponent = "DisplayComponent",
 		CoreCommandLine = "CommandLine",
 		CoreDisplayArea = "DisplayArea"
 	;
