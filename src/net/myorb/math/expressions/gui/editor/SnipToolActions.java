@@ -26,7 +26,7 @@ public class SnipToolActions
 
 	public void process (String source)
 	{
-		environment.getControl().execute(source);
+		environment.getControl ().execute (source);
 	}
 
 	/**
@@ -95,8 +95,16 @@ public class SnipToolActions
 	 */
 	public void exec (String text, String sep)
 	{
+		//dump (text);
 		String[] lines = text.split (sep);
-		for (String line : lines) exec (line);
+		for (String line : lines) exec (line + "\r\n");
+	}
+	public void dump (String text)
+	{
+		for (int i = 0; i < text.length (); i++)
+		{
+			System.out.println (Integer.toHexString (text.charAt (i)));
+		}
 	}
 
 	/**
@@ -119,7 +127,7 @@ public class SnipToolActions
 	{
 		return (e) ->
 		{
-			exec (tool.getSelectedText (), "\r\n");
+			exec (tool.getSelectedText (), "\n");
 		};
 	}
 

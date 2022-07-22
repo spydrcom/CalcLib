@@ -28,6 +28,7 @@ public class SnipTool extends SnipFrame
 		this.setMenu (snipToolMenu.getMenuBar ());
 		this.environment = environment;
 		actions.setSource (source);
+		actions.connectTool (this);
 	}
 	protected Environment<?> environment;
 
@@ -40,7 +41,6 @@ public class SnipTool extends SnipFrame
 		try { JxrParser.read ("cfg/gui/SnipToolMenu.xml", null); }
 		catch (Exception e) { e.printStackTrace (); }
 		actions.setEnvironment (environment);
-		actions.connectTool (this);
 	}
 
 	/**
