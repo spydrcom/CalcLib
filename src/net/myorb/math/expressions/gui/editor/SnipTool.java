@@ -50,7 +50,7 @@ public class SnipTool extends SnipFrame
 	{
 		return actions = new SnipToolActions ();
 	}
-	static SnipToolActions actions = null;
+	static SnipToolActions actions;
 
 	/**
 	 * @param menu the menu prepared by JXR ready for display
@@ -59,7 +59,7 @@ public class SnipTool extends SnipFrame
 	{
 		snipToolMenu = menu;
 	}
-	static SimpleMenuBar snipToolMenu = null;
+	static SimpleMenuBar snipToolMenu;
 
 	/**
 	 * @param environment access to display components

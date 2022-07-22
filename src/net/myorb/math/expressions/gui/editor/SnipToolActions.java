@@ -24,6 +24,11 @@ public class SnipToolActions
 	}
 	protected Environment<?> environment;
 
+	public void process (String source)
+	{
+		environment.getControl().execute(source);
+	}
+
 	/**
 	 * @param source the component holding original source
 	 */
@@ -80,6 +85,7 @@ public class SnipToolActions
 	public void exec (String line)
 	{
 		source.setText (source.getText () + line);
+		process (line);
 	}
 
 	/**

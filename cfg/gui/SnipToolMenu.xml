@@ -1,0 +1,64 @@
+<JXR>
+
+	<!-- import runtime declarations -->
+	<read path='cfg/runtime.xml'/>
+
+	<saveas toBeCalled='VKO'><field named='VK_O' class='KeyEvent'/></saveas>
+	<saveas toBeCalled='VKS'><field named='VK_S' class='KeyEvent'/></saveas>
+	<saveas toBeCalled='VKC'><field named='VK_C' class='KeyEvent'/></saveas>
+	<saveas toBeCalled='VKA'><field named='VK_A' class='KeyEvent'/></saveas>
+	<saveas toBeCalled='VKP'><field named='VK_P' class='KeyEvent'/></saveas>
+
+	<!-- get access to Snip Tool class -->
+	<package called='GuiEditor'>net.myorb.math.expressions.gui.editor</package>
+	<class called='tool' package='GuiEditor' name='SnipTool'/>
+
+	<!-- refer to action listeners -->
+	<saveas toBeCalled='actions'><evaluate class='tool' method='getSnipActions'/></saveas>
+
+	<!-- construct MDI and MenuBar controllers -->
+	<void><new called='menus' class='SimpleMenuBar' /></void>
+ 
+	<!-- add a menu to the main menu bar -->
+	<SaveAs toBeCalled='File'><evaluate object='menus' method='addMenu'><string>File</string></evaluate></SaveAs>
+	<SaveAs toBeCalled='Edit'><evaluate object='menus' method='addMenu'><string>Edit</string></evaluate></SaveAs>
+	<SaveAs toBeCalled='Exec'><evaluate object='menus' method='addMenu'><string>Execute</string></evaluate></SaveAs>
+
+	<void><string toBeCalled='Open'>Open</string></void>
+	<void><substring toBeCalled='OPEN_NMEM' using='Open 1 1'/></void>
+	<void><string toBeCalled='OPEN_TIP'>Open file for use in editor</string></void>
+	<SaveAs toBeCalled='ACT'> <evaluate  object='actions' method='getOpenAction'/> </SaveAs>
+	<SaveAs toBeCalled='OPEN'><evaluate object='menus' method='addMenuItem' using='Open File'/></SaveAs>
+	<bean references='OPEN'><set ItemMnemonic='OPEN_NMEM' HotKey='VKO' Modifiers='CTL' Tip='OPEN_TIP' ActionForItem='ACT'/></bean>
+
+	<void><string toBeCalled='Save'>Save As</string></void>
+	<void><substring toBeCalled='SAVE_NMEM' using='Save 1 1'/></void>
+	<void><string toBeCalled='SAVE_TIP'>Save editor contents to file</string></void>
+	<SaveAs toBeCalled='ACT'> <evaluate  object='actions' method='getSaveAction'/> </SaveAs>
+	<SaveAs toBeCalled='SAVE'><evaluate object='menus' method='addMenuItem' using='Save File'/></SaveAs>
+	<bean references='SAVE'><set ItemMnemonic='SAVE_NMEM' HotKey='VKS' Modifiers='CTL' Tip='SAVE_TIP' ActionForItem='ACT'/></bean>
+
+	<void><string toBeCalled='Copy'>Copy</string></void>
+	<void><substring toBeCalled='COPY_NMEM' using='Copy 1 1'/></void>
+	<void><string toBeCalled='COPY_TIP'>Selected content is placed in copy buffer</string></void>
+	<SaveAs toBeCalled='ACT'> <evaluate  object='actions' method='getCopyAction'/> </SaveAs>
+	<SaveAs toBeCalled='COPY'><evaluate object='menus' method='addMenuItem' using='Copy Edit'/></SaveAs>
+	<bean references='COPY'><set ItemMnemonic='COPY_NMEM' HotKey='VKC' Modifiers='CTL' Tip='COPY_TIP' ActionForItem='ACT'/></bean>
+
+	<void><string toBeCalled='All'>All</string></void>
+	<void><substring toBeCalled='ALL_NMEM' using='All 1 1'/></void>
+	<void><string toBeCalled='ALL_TIP'>Run full text in processor</string></void>
+	<SaveAs toBeCalled='ACT'> <evaluate  object='actions' method='getExecAllAction'/> </SaveAs>
+	<SaveAs toBeCalled='ALL'><evaluate object='menus' method='addMenuItem' using='All Exec'/></SaveAs>
+	<bean references='ALL'><set ItemMnemonic='ALL_NMEM' HotKey='VKA' Modifiers='CTL' Tip='ALL_TIP' ActionForItem='ACT'/></bean>
+
+	<void><string toBeCalled='Selected'>Selected</string></void>
+	<void><substring toBeCalled='SELECTED_NMEM' using='Selected 1 1'/></void>
+	<void><string toBeCalled='SELECTED_TIP'>Run selected text in processor</string></void>
+	<SaveAs toBeCalled='ACT'> <evaluate  object='actions' method='getExecSelectedAction'/> </SaveAs>
+	<SaveAs toBeCalled='SELECTED'><evaluate object='menus' method='addMenuItem' using='Selected Exec'/></SaveAs>
+	<bean references='SELECTED'><set ItemMnemonic='SELECTED_NMEM' HotKey='VKP' Modifiers='CTL' Tip='SELECTED_TIP' ActionForItem='ACT'/></bean>
+
+	<call class='tool' method='setMenuBar' using='menus' />
+
+</JXR>
