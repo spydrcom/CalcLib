@@ -11,7 +11,7 @@ public class Cycles
 {
 
 
-	static final int MAX_ITERATION = 10;
+	static final int MAX_ITERATION = 20;
 	static final int LOOP_GRADE = 100;
 
 

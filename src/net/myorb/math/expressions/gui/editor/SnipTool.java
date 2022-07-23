@@ -20,10 +20,8 @@ public class SnipTool extends SnipToolDisplays
 	public static void addSnip (Environment<?> environment)
 	{
 		if (frame == null)
-		{
-			new SnipTool (environment);
-		}
-
+		{ new SnipTool (environment); }
+		frame.forceToScreen ();
 		add ();
 	}
 
@@ -63,7 +61,7 @@ public class SnipTool extends SnipToolDisplays
 	 */
 	public void show ()
 	{
-		buildFrame ().show (wXh (800, 500));
+		buildFrame ().showOrHide (wXh (W, H));
 	}
 
 

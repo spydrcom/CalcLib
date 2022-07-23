@@ -59,6 +59,10 @@ public class SnipToolActions extends SnipToolProcessing
 	 * Open and Edit action items
 	 */
 
+	/**
+	 * change name on tab
+	 * @return action for feature
+	 */
 	public ActionListener getNameAction ()
 	{
 		return (e) ->
