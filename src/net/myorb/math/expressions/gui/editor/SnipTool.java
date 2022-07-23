@@ -1,87 +1,71 @@
 
 package net.myorb.math.expressions.gui.editor;
 
-import net.myorb.math.expressions.gui.DisplayConsole;
-import net.myorb.math.expressions.gui.EnvironmentCore;
-
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.gui.components.SimpleScreenIO;
-import net.myorb.gui.components.SimpleMenuBar;
-import net.myorb.gui.components.SnipFrame;
-import net.myorb.jxr.JxrParser;
+import javax.swing.text.JTextComponent;
 
 /**
  * an editor specifically for tool content
  * @author Michael Druckman
  */
-public class SnipTool extends SnipFrame
+public class SnipTool extends SnipToolDisplays
 {
+
+
+	/**
+	 * add a tab for a new snip
+	 * @param environment access to display components
+	 */
+	public static void addSnip (Environment<?> environment)
+	{
+		if (frame == null)
+		{
+			new SnipTool (environment);
+		}
+
+		add ();
+	}
+
 
 	/**
 	 * @param environment access to display components
 	 */
 	public SnipTool (Environment<?> environment)
 	{
-		super (SimpleScreenIO.asTextComponent (getDisplay (environment)));
-		if (actions == null) prepareSnipToolActions (environment);
-		this.setMenu (snipToolMenu.getMenuBar ());
+		buildPanel ();
 		this.environment = environment;
-		actions.setSource (source);
+		prepareSnipToolActions (environment);
 		actions.connectTool (this);
+		show ();
 	}
 	protected Environment<?> environment;
 
-	/**
-	 * use JXR to provide the menus
-	 * @param environment access to display components
-	 */
-	public void prepareSnipToolActions (Environment<?> environment)
-	{
-		try { JxrParser.read ("cfg/gui/SnipToolMenu.xml", null); }
-		catch (Exception e) { e.printStackTrace (); }
-		actions.setEnvironment (environment);
-	}
 
 	/**
-	 * @return the action listeners for the menu items
+	 * @param name the name to give the tab
 	 */
-	public static SnipToolActions getSnipActions ()
+	public void setName (String name)
 	{
-		return actions = new SnipToolActions ();
+		tabs.setTitleAt (tabs.getSelectedIndex (), name);
 	}
-	static SnipToolActions actions;
+
 
 	/**
-	 * @param menu the menu prepared by JXR ready for display
+	 * @return the currently selected tab contents
 	 */
-	public static void setMenuBar (SimpleMenuBar menu)
-	{
-		snipToolMenu = menu;
-	}
-	static SimpleMenuBar snipToolMenu;
+	public JTextComponent getTextContainer ()
+	{ return contents.get (tabs.getSelectedIndex ()); }
+
 
 	/**
-	 * @param environment access to display components
-	 * @return the text component with source of text to edit
-	 */
-	public static Object getDisplay (Environment<?> environment)
-	{
-		DisplayConsole.StreamProperties
-		guiMap = environment.getControl ().getGuiMap ();
-		return guiMap.get (EnvironmentCore.CoreDisplayComponent);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.Component#show()
+	 * build display frame and show
 	 */
 	public void show ()
 	{
-		show ("Snip Editor", SimpleScreenIO.wXh (500, 300));
+		buildFrame ().show (wXh (800, 500));
 	}
 
-	private static final long serialVersionUID = -5090628039978268126L;
 
 }
-
 

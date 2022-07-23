@@ -6,14 +6,14 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import javax.swing.text.JTextComponent;
 
 import java.awt.event.ActionListener;
-//import java.awt.event.ActionEvent;
 
 /**
  * implementation of the editor actions
  * @author Michael Druckman
  */
-public class SnipToolActions
+public class SnipToolActions extends SnipToolProcessing
 {
+
 
 	/**
 	 * @param environment access to display components
@@ -24,10 +24,15 @@ public class SnipToolActions
 	}
 	protected Environment<?> environment;
 
+
+	/**
+	 * @param source execute command in CalcLib processor
+	 */
 	public void process (String source)
 	{
 		environment.getControl ().execute (source);
 	}
+
 
 	/**
 	 * @param source the component holding original source
@@ -36,7 +41,9 @@ public class SnipToolActions
 	{
 		this.source = source;
 	}
+	public JTextComponent getSource () { return source; }
 	protected JTextComponent source;
+
 
 	/**
 	 * @param tool the snip tool class using these actions
@@ -47,9 +54,19 @@ public class SnipToolActions
 	}
 	protected SnipTool tool;
 
+
 	/*
 	 * Open and Edit action items
 	 */
+
+	public ActionListener getNameAction ()
+	{
+		return (e) ->
+		{
+			try { tool.setName (requestName ()); }
+			catch (Exception x) { x.printStackTrace(); }
+		};
+	}
 
 	public ActionListener getOpenAction ()
 	{
@@ -74,6 +91,7 @@ public class SnipToolActions
 			throw new RuntimeException ("NOT implemented");
 		};
 	}
+
 
 	/*
 	 * Execute action items
@@ -115,7 +133,7 @@ public class SnipToolActions
 	{
 		return (e) ->
 		{
-			exec (tool.getText (), "\r");
+			exec (tool.getTextContainer ().getText (), "\r");
 		};
 	}
 
@@ -127,9 +145,10 @@ public class SnipToolActions
 	{
 		return (e) ->
 		{
-			exec (tool.getSelectedText (), "\n");
+			exec (tool.getTextContainer ().getSelectedText (), "\n");
 		};
 	}
+
 
 }
 

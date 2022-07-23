@@ -164,7 +164,7 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	 */
 	public void editSnip ()
 	{
-		new SnipTool (environment).show ();
+		SnipTool.addSnip (environment);
 	}
 
 
