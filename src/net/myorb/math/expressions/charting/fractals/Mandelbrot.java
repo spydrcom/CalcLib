@@ -59,8 +59,8 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 	 */
 	public int computeIterationsFor (double x0, double y0)
 	{
+		Cycles test = newCycleDetector ();
 		int iteration = 0, max = getMaxResult ();
-		Cycles test = CycleDectionEnabled? new Cycles (this.getEdgeSize ()): null;
 		double x = 0.0f, y = 0.0f, xn = 0.0f, yn = 0.0f, value;
 		while (iteration < max)
 		{
@@ -68,13 +68,26 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 			value = x*x + y*y;
 			if (value > currentLimit) break;
 			if (test != null && test.loopCheck (iteration, x, y))
-			{ return max - 100*iteration; }
+			{ return max - Cycles.LOOP_GRADE * iteration; }
 			xn = x*x - y*y + x0;
 			yn = 2*x*y + y0;
 			iteration++;
 		}
 		return iteration;
 	}
+
+
+	/**
+	 * @return a cycle detector with recycle set
+	 */
+	public Cycles newCycleDetector ()
+	{
+		if (!CycleDectionEnabled) return null;
+		Cycles test = new Cycles (this.getEdgeSize ());
+		released = test.setBuffer (released);
+		return test;
+	}
+	Cycles.Cache released = null;
 
 
 	/**

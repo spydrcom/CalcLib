@@ -12,11 +12,18 @@ public class Cycles
 
 
 	static final int MAX_ITERATION = 10;
+	static final int LOOP_GRADE = 100;
 
 
 	public Cycles (double edge)
-	{ scaleFactor = 1000 / edge; }
-	protected double scaleFactor;
+	{
+		if (edge < 1E-4) scaleFactor = 1E8;
+		else if (edge < 1E-6) scaleFactor = 1E10;
+		else if (edge < 1E-8) scaleFactor = 1E12;
+		//else scaleFactor = 1000 / edge;
+		cache = new Cache ();
+	}
+	protected double scaleFactor = 1E6;
 
 
 	/**
@@ -53,7 +60,16 @@ public class Cycles
 		 */
 		boolean EQ (double x, double y) { return scale(x) == scale(y); }
 
-		EvalPoint (double x, double y) { this.x = x; this.y = y; }
+		/**
+		 * @param x value on the x axis
+	 	 * @param y value on the y axis
+		 * @return this
+		 */
+		public EvalPoint set (double x, double y)
+		{ this.x = x; this.y = y; return this; }
+
+		public EvalPoint
+		(double x, double y) { set (x, y); }
 		double x, y;
 
 	}
@@ -62,9 +78,33 @@ public class Cycles
 	/**
 	 * a list of points having already been seen over iterations
 	 */
-	public static class Cache extends ArrayList<EvalPoint>
+	public class Cache extends ArrayList<EvalPoint>
 	{
-		
+
+		/**
+		 * recycle or create new
+		 * @param x value on the x axis
+	 	 * @param y value on the y axis
+	 	 * @return a point set to x,y
+		 */
+		public EvalPoint allocate (double x, double y)
+		{
+			int available = size ();
+			if (available == 0) return new EvalPoint (x, y);
+			else return remove (available - 1).set (x, y);
+		}
+
+		/**
+		 * @param p the point being evaluated
+		 * @return TRUE implies found
+		 */
+		public boolean findOrPut (EvalPoint p)
+		{
+			boolean check;
+			check = this.hasSeen (p); this.add (p);
+			return check;
+		}
+
 		/**
 		 * check cache for point indicating a cycle
 		 * @param p the point being evaluated
@@ -75,6 +115,26 @@ public class Cycles
 			for (EvalPoint c : this)
 			{ if (c.EQ (p)) return true; }
 			return false;
+		}
+
+		/**
+		 * move contents to recycle buffer
+		 */
+		public void recycle ()
+		{
+			recycled.addAll (this);
+			this.clear ();
+		}
+
+		/**
+		 * process first member of cycle
+		 * @param x value on the x axis
+	 	 * @param y value on the y axis
+		 */
+		public void start (double x, double y)
+		{
+			this.recycle ();
+			this.add (recycled.allocate (x, y));
 		}
 
 		private static final long serialVersionUID = 8589277167486179337L;
@@ -92,27 +152,24 @@ public class Cycles
 	public boolean loopCheck (int iteration, double x, double y)
 	{
 		if (iteration == 0)
-		{
-			cache = new Cache ();
-			return false;
-		}
+		{ cache.start (x, y); return false; }
 		else if (iteration > MAX_ITERATION) return false;
-
-		EvalPoint p = new  EvalPoint (x, y);
-		boolean check = cache.hasSeen (p);
-
-		if (!check)
-		{
-			cache.add (p);
-		}
-//		else
-//		{
-//			System.out.println ("cycle found @" + p + " >  " + cache);
-//		}
-
-		return check;
+		return cache.findOrPut (recycled.allocate (x, y));
 	}
-	protected Cache cache;
+
+
+	/**
+	 * prepare a cache as a buffer for recycled points
+	 * @param toBuffer buffer holding recycled entries
+	 * @return new empty Cache when buffer is null
+	 */
+	public Cache setBuffer (Cache toBuffer)
+	{
+		if ((this.recycled = toBuffer) == null)
+		{ this.recycled = new Cache (); }
+		return this.recycled;
+	}
+	protected Cache cache = null, recycled = null;
 
 
 }
