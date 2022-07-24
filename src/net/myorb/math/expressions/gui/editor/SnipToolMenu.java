@@ -7,9 +7,6 @@ import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.SimpleMenuBar;
 import net.myorb.gui.components.SimpleScreenIO;
 
-import net.myorb.math.expressions.gui.EnvironmentCore;
-import net.myorb.math.expressions.gui.DisplayConsole;
-
 import net.myorb.jxr.JxrParser;
 
 /**
@@ -21,25 +18,12 @@ public class SnipToolMenu extends SimpleScreenIO
 
 
 	/**
-	 * locate source environment component
-	 * @param environment access to display components
-	 * @return the text component with source of text to edit
-	 */
-	public static Object getDisplay (Environment<?> environment)
-	{
-		DisplayConsole.StreamProperties
-			guiMap = environment.getControl ().getGuiMap ();
-		return guiMap.get (EnvironmentCore.CoreDisplayComponent);
-	}
-
-
-	/**
 	 * provide source environment component to menu functions
 	 * @param environment access to display components
 	 */
 	public static void setSource (Environment<?> environment)
 	{
-		actions.setSource (asTextComponent (getDisplay (environment)));
+		actions.setSource (asTextComponent (SnipToolSupport.getDisplay (environment)));
 	}
 
 

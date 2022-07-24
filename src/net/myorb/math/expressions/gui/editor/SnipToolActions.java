@@ -67,7 +67,7 @@ public class SnipToolActions extends SnipToolProcessing
 	{
 		return (e) ->
 		{
-			try { tool.setName (requestName ()); }
+			try { SnipToolComponents.setToRequestedName (); }
 			catch (Exception x) { x.printStackTrace(); }
 		};
 	}

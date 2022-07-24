@@ -45,7 +45,7 @@ public class SnipTool extends SnipToolDisplays
 	 */
 	public void setName (String name)
 	{
-		tabs.setTitleAt (tabs.getSelectedIndex (), name);
+		SnipToolComponents.setName (name);
 	}
 
 
@@ -53,7 +53,7 @@ public class SnipTool extends SnipToolDisplays
 	 * @return the currently selected tab contents
 	 */
 	public JTextComponent getTextContainer ()
-	{ return contents.get (tabs.getSelectedIndex ()); }
+	{ return SnipToolComponents.getTextContainer (); }
 
 
 	/**

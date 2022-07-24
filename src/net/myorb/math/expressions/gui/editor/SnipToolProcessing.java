@@ -1,22 +1,74 @@
 
 package net.myorb.math.expressions.gui.editor;
 
+import net.myorb.gui.components.FileDrop;
+
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+
+import java.awt.Component;
+
+import java.io.File;
+
 /**
  * processing methods for execution of editor requests
  * @author Michael Druckman
  */
-public class SnipToolProcessing extends SnipToolDisplays
+public class SnipToolProcessing extends SnipToolMenu
 {
 
 
+	public static int W = 800, H = 500, margain = 100;
+
+
 	/**
-	 * @return the name provided by screen request
-	 * @throws Exception for errors in the input request
+	 * @return JEditorPane with copied source text in scroll bars
 	 */
-	String requestName () throws Exception
+	static JScrollPane buildEditor ()
 	{
-		return requestTextInput (tabs, "Name for Tab", "", "NA");
+		JEditorPane editor = new SnipEditor ();
+		editor.setText (actions.getSource ().getSelectedText ());
+		JScrollPane s = new JScrollPane (editor);
+		s.setPreferredSize
+		(
+			wXh (W - margain, H - margain)
+		);
+		SnipToolComponents.addEditorToList (editor);
+		return s;
+	}
+
+
+	/**
+	 * add a tab with a name
+	 * @param name a name for the tab
+	 */
+	static void add (String name)
+	{
+		SnipToolComponents.add (name).add (buildEditor ());
+	}
+	static int tabCount = 1;
+
+
+	/**
+	 * add tab for file contents
+	 * @param files content to read
+	 */
+	static void process (File file)
+	{
+		String name =
+			SnipToolSupport.shortNameFor (file.getName ());
+		add (name); SnipToolComponents.copy (file);
+	}
+
+
+	/**
+	 * @param component related component
+	 */
+	static void connectDrop (Component component)
+	{
+		FileDrop.simpleFileDrop (component, (f) -> { process (f); });
 	}
 
 
 }
+
