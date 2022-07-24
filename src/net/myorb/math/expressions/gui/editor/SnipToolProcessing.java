@@ -46,7 +46,6 @@ public class SnipToolProcessing extends SnipToolMenu
 	{
 		SnipToolComponents.add (name).add (buildEditor ());
 	}
-	static int tabCount = 1;
 
 
 	/**

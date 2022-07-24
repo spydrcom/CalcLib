@@ -3,9 +3,9 @@ package net.myorb.math.expressions.gui.editor;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.gui.components.DisplayFrame;
 import net.myorb.gui.components.SimpleMenuBar;
 import net.myorb.gui.components.SimpleScreenIO;
+import net.myorb.gui.components.DisplayFrame;
 
 import net.myorb.jxr.JxrParser;
 
@@ -15,6 +15,12 @@ import net.myorb.jxr.JxrParser;
  */
 public class SnipToolMenu extends SimpleScreenIO
 {
+
+
+	/**
+	 * JXR source for Snip Tool frame menu bar
+	 */
+	public static final String CONFIGURATION_PATH = "cfg/gui/SnipToolMenu.xml";
 
 
 	/**
@@ -33,7 +39,7 @@ public class SnipToolMenu extends SimpleScreenIO
 	 */
 	public static void prepareSnipToolActions (Environment<?> environment)
 	{
-		try { JxrParser.read ("cfg/gui/SnipToolMenu.xml", null); }
+		try { JxrParser.read (CONFIGURATION_PATH, null); }
 		catch (Exception e) { e.printStackTrace (); }
 		actions.setEnvironment (environment);
 		setSource (environment);

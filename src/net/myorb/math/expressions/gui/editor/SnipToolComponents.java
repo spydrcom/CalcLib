@@ -14,8 +14,22 @@ import javax.swing.JComponent;
 import java.util.ArrayList;
 import java.io.File;
 
+/**
+ * static wrapper for property access
+ * @author Michael Druckman
+ */
 public class SnipToolComponents
 {
+
+
+	/**
+	 * @param file destination file for save
+	 */
+	static void saveTo (File file)
+	{
+		try { SimpleStreamIO.generateTextFile (getComponentSource (), file); }
+		catch (Exception e) { e.printStackTrace (); }
+	}
 
 
 	/**
@@ -26,7 +40,7 @@ public class SnipToolComponents
 	{
 		try
 		{ SimpleStreamIO.processTextFile (file, getComponentSink ()); }
-		catch (Exception e) {}
+		catch (Exception e) { e.printStackTrace (); }
 	}
 
 
@@ -46,6 +60,10 @@ public class SnipToolComponents
 		return properties.streamsForSelectedTab ().getTextSource ();
 	}
 
+
+	/*
+	 * static wrapper for property access
+	 */
 
 	static void setName (String name) { properties.setName (name); }
 
@@ -68,6 +86,9 @@ public class SnipToolComponents
 }
 
 
+/**
+ * a bean holding the display components
+ */
 class SnipToolComponentProperties
 {
 

@@ -76,7 +76,7 @@ public class SnipToolActions extends SnipToolProcessing
 	{
 		return (e) ->
 		{
-			throw new RuntimeException ("NOT implemented");
+			SnipToolComponents.copy (new java.io.File ("scripts/AiryCalcTests.txt"));
 		};
 	}
 
@@ -84,7 +84,7 @@ public class SnipToolActions extends SnipToolProcessing
 	{
 		return (e) ->
 		{
-			throw new RuntimeException ("NOT implemented");
+			SnipToolComponents.saveTo (new java.io.File ("scripts/testing-write.txt"));
 		};
 	}
 

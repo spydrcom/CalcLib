@@ -10,6 +10,10 @@ import net.myorb.gui.components.SimpleScreenIO;
 
 import java.awt.Component;
 
+/**
+ * helper class for Snip tool features
+ * @author Michael Druckman
+ */
 public class SnipToolSupport extends SimpleScreenIO
 {
 

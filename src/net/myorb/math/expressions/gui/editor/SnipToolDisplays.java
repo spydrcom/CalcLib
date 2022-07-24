@@ -27,6 +27,7 @@ public class SnipToolDisplays extends SnipToolProcessing
 	{
 		add (Integer.toString (tabCount++));
 	}
+	static int tabCount = 1;
 
 
 	/**
