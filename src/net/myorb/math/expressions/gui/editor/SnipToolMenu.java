@@ -4,7 +4,6 @@ package net.myorb.math.expressions.gui.editor;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.gui.components.SimpleMenuBar;
-import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayFrame;
 
 import net.myorb.jxr.JxrParser;
@@ -13,7 +12,7 @@ import net.myorb.jxr.JxrParser;
  * menu manager for Snip tool
  * @author Michael Druckman
  */
-public class SnipToolMenu extends SimpleScreenIO
+public class SnipToolMenu extends SnipToolComponents
 {
 
 

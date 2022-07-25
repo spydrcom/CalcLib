@@ -16,7 +16,7 @@ public class SnipToolDisplays extends SnipToolProcessing
 	 */
 	static void buildPanel ()
 	{
-		connectDrop (SnipToolComponents.buildTabbedPanel ());
+		connectDrop (buildTabbedPanel ());
 	}
 
 
@@ -25,7 +25,7 @@ public class SnipToolDisplays extends SnipToolProcessing
 	 */
 	static void add ()
 	{
-		add (Integer.toString (tabCount++));
+		addTab (Integer.toString (tabCount++));
 	}
 	static int tabCount = 1;
 
@@ -36,7 +36,7 @@ public class SnipToolDisplays extends SnipToolProcessing
 	static DisplayFrame buildFrame ()
 	{
 		frame = new DisplayFrame
-			(SnipToolComponents.getTabbedPanel (), "Snip Editor");
+			(getTabbedPanel (), "Snip Editor");
 		setMenuBar (frame);
 		return frame;
 	}

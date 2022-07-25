@@ -3,8 +3,6 @@ package net.myorb.math.expressions.gui.editor;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import javax.swing.text.JTextComponent;
-
 /**
  * an editor specifically for tool content
  * @author Michael Druckman
@@ -27,6 +25,7 @@ public class SnipTool extends SnipToolDisplays
 
 
 	/**
+	 * construct singleton version of object
 	 * @param environment access to display components
 	 */
 	public SnipTool (Environment<?> environment)
@@ -38,22 +37,6 @@ public class SnipTool extends SnipToolDisplays
 		show ();
 	}
 	protected Environment<?> environment;
-
-
-	/**
-	 * @param name the name to give the tab
-	 */
-	public void setName (String name)
-	{
-		SnipToolComponents.setName (name);
-	}
-
-
-	/**
-	 * @return the currently selected tab contents
-	 */
-	public JTextComponent getTextContainer ()
-	{ return SnipToolComponents.getTextContainer (); }
 
 
 	/**

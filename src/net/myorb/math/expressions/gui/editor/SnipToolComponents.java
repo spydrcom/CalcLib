@@ -1,13 +1,16 @@
 
 package net.myorb.math.expressions.gui.editor;
 
+import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.TextComponentStreams;
+
 import net.myorb.gui.components.SimpleScreenIO.TabPanel;
 import net.myorb.gui.components.SimpleScreenIO.TabbedPanel;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 import javax.swing.text.JTextComponent;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JComponent;
 
@@ -18,11 +21,23 @@ import java.io.File;
  * static wrapper for property access
  * @author Michael Druckman
  */
-public class SnipToolComponents
+public class SnipToolComponents extends SimpleScreenIO
 {
 
 
 	/**
+	 * request a tab name
+	 * @return name specified to GUI request for user input
+	 * @throws Exception process canceled by user
+	 */
+	static String requestName () throws Exception
+	{
+		return SnipToolSupport.requestName (getTabbedPanel ());
+	}
+
+	
+	/**
+	 * write content to file
 	 * @param file destination file for save
 	 */
 	static void saveTo (File file)
@@ -65,6 +80,8 @@ public class SnipToolComponents
 	 * static wrapper for property access
 	 */
 
+	static String getName () { return properties.getName (); }
+
 	static void setName (String name) { properties.setName (name); }
 
 	static TabPanel add (String name) { return properties.add (name); }
@@ -73,14 +90,16 @@ public class SnipToolComponents
 
 	static TabbedPanel buildTabbedPanel () { return properties.buildTabbedPanel (); }
 
-	static void addEditorToList (JTextComponent editor) { properties.addEditorToList (editor); }
-
 	static JTextComponent getTextContainer () { return properties.getTextContainer (); }
 
-	static SnipToolComponentProperties properties = new SnipToolComponentProperties ();
+	static void addEditorToList (JTextComponent editor) { properties.addEditorToList (editor); }
 
-	static void setToRequestedName () throws Exception
-	{ properties.setToRequestedName (); }
+
+	/*
+	 * GUI properties made accessible via bean conventions
+	 */
+
+	static SnipToolComponentProperties properties = new SnipToolComponentProperties ();
 
 
 }
@@ -136,15 +155,17 @@ class SnipToolComponentProperties
 	}
 
 
-	/**
-	 * request name for tab
-	 * @throws Exception for GUI error
+	/*
+	 * manage the tabbed panel
 	 */
-	void setToRequestedName () throws Exception
-	{
-		setName (SnipToolSupport.requestName (tabs));
-	}
 
+	/**
+	 * @return the name given the selected tab
+	 */
+	String getName ()
+	{
+		return tabs.getTitleAt (tabs.getSelectedIndex ());
+	}
 
 	/**
 	 * @param name the name to give the tab
@@ -153,8 +174,12 @@ class SnipToolComponentProperties
 	{
 		tabs.setTitleAt (tabs.getSelectedIndex (), name);
 	}
-	TabbedPanel tabs;
+	protected TabbedPanel tabs;
 
+
+	/*
+	 * manage list of editors
+	 */
 
 	/**
 	 * @return the currently selected tab contents
@@ -171,7 +196,7 @@ class SnipToolComponentProperties
 	{
 		contents.add (editor);
 	}
-	ArrayList<JTextComponent> contents;
+	protected ArrayList<JTextComponent> contents;
 
 }
 

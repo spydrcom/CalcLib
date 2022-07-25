@@ -4,7 +4,6 @@ package net.myorb.math.expressions.gui.editor;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import javax.swing.text.JTextComponent;
-
 import java.awt.event.ActionListener;
 
 /**
@@ -16,6 +15,7 @@ public class SnipToolActions extends SnipToolProcessing
 
 
 	/**
+	 * get access to APP data structures
 	 * @param environment access to display components
 	 */
 	public void setEnvironment (Environment<?> environment)
@@ -26,7 +26,8 @@ public class SnipToolActions extends SnipToolProcessing
 
 
 	/**
-	 * @param source execute command in CalcLib processor
+	 * use environment control to get execution processor
+	 * @param source source of command to execute in CalcLib processor
 	 */
 	public void process (String source)
 	{
@@ -35,6 +36,7 @@ public class SnipToolActions extends SnipToolProcessing
 
 
 	/**
+	 * identify from which text to be edited is drawn
 	 * @param source the component holding original source
 	 */
 	public void setSource (JTextComponent source)
@@ -46,6 +48,7 @@ public class SnipToolActions extends SnipToolProcessing
 
 
 	/**
+	 * get access to APP top layer functionality
 	 * @param tool the snip tool class using these actions
 	 */
 	public void connectTool (SnipTool tool)
@@ -65,29 +68,44 @@ public class SnipToolActions extends SnipToolProcessing
 	 */
 	public ActionListener getNameAction ()
 	{
-		return (e) ->
-		{
-			try { SnipToolComponents.setToRequestedName (); }
-			catch (Exception x) { x.printStackTrace(); }
-		};
+		return (e) -> { setToRequestedName (); };
 	}
 
+	/**
+	 * read file contents into current tab
+	 * - file name taken from file selected in table
+	 * - user GUI request made for file name when nothing selected
+	 * @return action for feature
+	 */
 	public ActionListener getOpenAction ()
 	{
-		return (e) ->
-		{
-			SnipToolComponents.copy (new java.io.File ("scripts/AiryCalcTests.txt"));
-		};
+		return (e) -> { open (environment); };
 	}
 
+	/**
+	 * save tab contents to file
+	 * - user GUI request specifies file name
+	 * - tab name is also changed to user specified name
+	 * @return action for feature
+	 */
+	public ActionListener getSaveAsAction ()
+	{
+		return (e) -> { saveAs (); };
+	}
+
+	/**
+	 * save tab contents to file given tab name
+	 * @return action for feature
+	 */
 	public ActionListener getSaveAction ()
 	{
-		return (e) ->
-		{
-			SnipToolComponents.saveTo (new java.io.File ("scripts/testing-write.txt"));
-		};
+		return (e) -> { save (); };
 	}
 
+	/**
+	 * NOT implemented
+	 * @return action for feature
+	 */
 	public ActionListener getCopyAction ()
 	{
 		return (e) ->
@@ -117,16 +135,9 @@ public class SnipToolActions extends SnipToolProcessing
 	 */
 	public void exec (String text, String sep)
 	{
-		//dump (text);
+		//SnipToolSupport.dump (text);
 		String[] lines = text.split (sep);
 		for (String line : lines) exec (line + "\r\n");
-	}
-	public void dump (String text)
-	{
-		for (int i = 0; i < text.length (); i++)
-		{
-			System.out.println (Integer.toHexString (text.charAt (i)));
-		}
 	}
 
 	/**
@@ -137,7 +148,7 @@ public class SnipToolActions extends SnipToolProcessing
 	{
 		return (e) ->
 		{
-			exec (tool.getTextContainer ().getText (), "\r");
+			exec (getTextContainer ().getText (), "\r");
 		};
 	}
 
@@ -149,7 +160,7 @@ public class SnipToolActions extends SnipToolProcessing
 	{
 		return (e) ->
 		{
-			exec (tool.getTextContainer ().getSelectedText (), "\n");
+			exec (getTextContainer ().getSelectedText (), "\n");
 		};
 	}
 

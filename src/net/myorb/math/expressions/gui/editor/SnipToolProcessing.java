@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.gui.editor;
 
 import net.myorb.gui.components.FileDrop;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
@@ -33,7 +34,7 @@ public class SnipToolProcessing extends SnipToolMenu
 		(
 			wXh (W - margain, H - margain)
 		);
-		SnipToolComponents.addEditorToList (editor);
+		addEditorToList (editor);
 		return s;
 	}
 
@@ -42,9 +43,29 @@ public class SnipToolProcessing extends SnipToolMenu
 	 * add a tab with a name
 	 * @param name a name for the tab
 	 */
-	static void add (String name)
+	static void addTab (String name)
 	{
-		SnipToolComponents.add (name).add (buildEditor ());
+		add (name).add (buildEditor ());
+	}
+
+
+	static String requestForName ()
+	{
+		try { return requestName (); }
+		catch (Exception x)
+		{ return null; }
+	}
+
+	/**
+	 * request name for tab
+	 * @return TRUE success FALSE canceled
+	 */
+	static boolean setToRequestedName ()
+	{
+		String name = requestForName ();
+		if (name == null) return false;
+		setName (name);
+		return true;
 	}
 
 
@@ -56,7 +77,38 @@ public class SnipToolProcessing extends SnipToolMenu
 	{
 		String name =
 			SnipToolSupport.shortNameFor (file.getName ());
-		add (name); SnipToolComponents.copy (file);
+		addTab (name); SnipToolComponents.copy (file);
+	}
+
+
+	/**
+	 * save contents of selected tab to script file with tab name
+	 * @param environment access to display components
+	 */
+	static void open (Environment<?> environment)
+	{
+		String name = SnipToolSupport.getSelectedScript (environment);
+		if (name == null && (name = requestForName ()) == null) return;
+		else name = "scripts/" + name;
+		process (new File (name));
+	}
+
+
+	/**
+	 * save contents of selected tab to script file with tab name
+	 */
+	static void save ()
+	{
+		saveTo (SnipToolSupport.getScriptFileAccess (getName ()));
+	}
+
+
+	/**
+	 * save contents of selected tab to script file with tab name
+	 */
+	static void saveAs ()
+	{
+		if (setToRequestedName ()) save ();
 	}
 
 
