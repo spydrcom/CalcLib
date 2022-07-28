@@ -17,7 +17,7 @@ import net.myorb.math.expressions.symbols.SplineExport;
 import net.myorb.math.expressions.symbols.SplineDescriptor;
 
 //CalcLib snip editing functionality
-import net.myorb.math.expressions.gui.editor.SnipTool;
+import net.myorb.math.expressions.gui.editor.CalcLibSnipTool;
 
 // CalcLib evaluation states
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -164,7 +164,7 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	 */
 	public void editSnip ()
 	{
-		SnipTool.addSnip (environment);
+		CalcLibSnipTool.addSnip (environment);
 	}
 
 
