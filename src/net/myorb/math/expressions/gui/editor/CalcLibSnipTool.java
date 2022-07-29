@@ -20,14 +20,15 @@ public class CalcLibSnipTool extends SnipTool
 	{
 		if (frame == null)
 		{ new CalcLibSnipTool (environment); }
+		add (environment.getSnipProperties ());
 		frame.forceToScreen ();
-		add ();
 	}
 
 
 	public CalcLibSnipTool (Environment<?> environment)
 	{
 		super (new SnipProperties (environment));
+		environment.setSnipProperties (getSnipToolPropertyAccess ());
 	}
 
 	

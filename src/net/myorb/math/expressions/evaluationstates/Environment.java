@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.expressions.algorithms.CyclicAndPowerLibrary;
+import net.myorb.gui.editor.SnipToolPropertyAccess;
 import net.myorb.math.expressions.*;
 import net.myorb.math.*;
 
@@ -79,6 +80,16 @@ public class Environment<T> extends OperatorProcessing<T>
 	public void setCyclicAndPowerLibrary (CyclicAndPowerLibrary<T> lib) { this.cyclicAndPowerLibrary = lib; }
 	public CyclicAndPowerLibrary<T> getCyclicAndPowerLibrary () { return cyclicAndPowerLibrary; }
 	protected CyclicAndPowerLibrary<T> cyclicAndPowerLibrary;
+
+
+	/**
+	 * retain snip tool properties for configuration of editors
+	 * @param snipProperties  properties to use for snip tool
+	 */
+	public void setSnipProperties
+	(SnipToolPropertyAccess snipProperties) { this.snipProperties = snipProperties; }
+	public SnipToolPropertyAccess getSnipProperties () { return snipProperties; }
+	protected SnipToolPropertyAccess snipProperties;
 
 
 	/*
