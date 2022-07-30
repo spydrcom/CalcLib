@@ -6,6 +6,10 @@ import net.myorb.gui.components.SimpleScreenIO;
 import java.awt.Color;
 import java.awt.Font;
 
+/**
+ * SnipEditor specific to CalcTools
+ * @author Michael Druckman
+ */
 public class CalcLibSnipToolEditor extends SimpleScreenIO.SnipEditor
 {
 

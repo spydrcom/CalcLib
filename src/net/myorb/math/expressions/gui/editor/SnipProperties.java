@@ -3,11 +3,11 @@ package net.myorb.math.expressions.gui.editor;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.expressions.gui.editor.CalcLibSnipToolEditor;
+
 import net.myorb.math.expressions.gui.DisplayEnvironment;
 import net.myorb.math.expressions.gui.EnvironmentCore;
 import net.myorb.math.expressions.gui.DisplayConsole;
-
-import net.myorb.math.expressions.gui.editor.CalcLibSnipToolEditor;
 
 import net.myorb.gui.components.DisplayTablePrimitives;
 import net.myorb.gui.components.SimpleScreenIO;
@@ -16,8 +16,8 @@ import net.myorb.gui.editor.SnipToolPropertyAccess;
 
 import net.myorb.gui.editor.model.SnipToolDocument;
 import net.myorb.gui.editor.model.SnipToolContext;
-import net.myorb.gui.editor.model.SnipToolKit;
 import net.myorb.gui.editor.model.SnipToolToken;
+import net.myorb.gui.editor.model.SnipToolKit;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -30,7 +30,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 {
 
 
-	static final boolean USE_RAW_TEXT_EDITOR = true;
+	static final boolean USE_RAW_TEXT_EDITOR = false;
 
 
 	/**
@@ -45,6 +45,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 	public SnipProperties (Environment<?> environment)
 	{
 		this.environment = environment;
+		initializeTokenList ();
 	}
 	protected Environment<?> environment;
 
@@ -104,15 +105,47 @@ public class SnipProperties implements SnipToolPropertyAccess
 		return new CalcLibSnipToolEditor (this);
 	}
 
-	public SnipToolToken[] getAll ()
-	{
-		return new SnipToolToken[]{};
-	}
-
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getAll()
+	 */
+	public SnipToolToken.SystemTokens getAll () { return this.tokens; }
 	public SnipToolContext newContext () { return new SnipToolContext (this); }
 	public SnipToolDocument newDocument () { return new SnipToolDocument (); }
 	public SnipToolKit newKit () { return new SnipToolKit (this); }
-	public int getMaximumScanValue () { return 100; }
+
+	/**
+	 * add token to system list
+	 * @param category the category for the token
+	 * @param representation the text image of the token
+	 * @param scanValue a sequential value assigned to the token
+	 */
+	public void addToken
+	(String category, String representation, int scanValue)
+	{
+		this.tokens.add (new SnipToolToken (category, representation, scanValue));
+	}
+
+	/**
+	 * automated scanValue generation
+	 * @param category the category for the token
+	 * @param representation the text image of the token
+	 */
+	public void addToken
+	(String category, String representation)
+	{
+		this.tokens.add (new SnipToolToken (category, representation, ++lastScanValue));
+	}
+	protected int lastScanValue = 0;
+
+	/**
+	 * use SystemTokens constructor to preserve ERROR_CODE convention
+	 */
+	protected void initializeTokenList ()
+	{
+		// UNKNOWN_TOKEN is placed at ERROR_CODE entry by constructor
+		this.tokens = new SnipToolToken.SystemTokens ();
+	}
+	protected SnipToolToken.SystemTokens tokens;
 
 }
 
