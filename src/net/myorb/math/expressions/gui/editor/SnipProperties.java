@@ -7,14 +7,17 @@ import net.myorb.math.expressions.gui.DisplayEnvironment;
 import net.myorb.math.expressions.gui.EnvironmentCore;
 import net.myorb.math.expressions.gui.DisplayConsole;
 
+import net.myorb.math.expressions.gui.editor.CalcLibSnipToolEditor;
+
 import net.myorb.gui.components.DisplayTablePrimitives;
 import net.myorb.gui.components.SimpleScreenIO;
 
 import net.myorb.gui.editor.SnipToolPropertyAccess;
-import net.myorb.gui.editor.model.SnipToolContext;
+
 import net.myorb.gui.editor.model.SnipToolDocument;
-import net.myorb.gui.editor.model.SnipToolEditor;
+import net.myorb.gui.editor.model.SnipToolContext;
 import net.myorb.gui.editor.model.SnipToolKit;
+import net.myorb.gui.editor.model.SnipToolToken;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -25,6 +28,9 @@ import javax.swing.JTable;
  */
 public class SnipProperties implements SnipToolPropertyAccess
 {
+
+
+	static final boolean USE_RAW_TEXT_EDITOR = true;
 
 
 	/**
@@ -93,13 +99,20 @@ public class SnipProperties implements SnipToolPropertyAccess
 	 */
 	public SimpleScreenIO.SnipEditor newEditor ()
 	{
-		return new SnipToolEditor ();
+		if (USE_RAW_TEXT_EDITOR)
+		{ return new SimpleScreenIO.SnipEditor (); }
+		return new CalcLibSnipToolEditor (this);
 	}
 
+	public SnipToolToken[] getAll ()
+	{
+		return new SnipToolToken[]{};
+	}
 
-	public SnipToolContext newContext () { return null; }
-	public SnipToolDocument newDocument () { return null; }
-	public SnipToolKit newKit () { return null; }
+	public SnipToolContext newContext () { return new SnipToolContext (this); }
+	public SnipToolDocument newDocument () { return new SnipToolDocument (); }
+	public SnipToolKit newKit () { return new SnipToolKit (this); }
+	public int getMaximumScanValue () { return 100; }
 
 }
 
