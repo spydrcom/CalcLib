@@ -12,6 +12,7 @@ import net.myorb.math.expressions.gui.DisplayConsole;
 import net.myorb.gui.components.DisplayTablePrimitives;
 import net.myorb.gui.components.SimpleScreenIO;
 
+import net.myorb.gui.editor.SnipToolScanner;
 import net.myorb.gui.editor.SnipToolPropertyAccess;
 
 import net.myorb.gui.editor.model.SnipToolDocument;
@@ -109,9 +110,16 @@ public class SnipProperties implements SnipToolPropertyAccess
 	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getAll()
 	 */
 	public SnipToolToken.SystemTokens getAll () { return this.tokens; }
-	public SnipToolContext newContext () { return new SnipToolContext (this); }
 	public SnipToolDocument newDocument () { return new SnipToolDocument (); }
 	public SnipToolKit newKit () { return new SnipToolKit (this); }
+
+	public SnipToolContext newContext ()
+	{
+		if (context == null)
+		{ context = new SnipToolContext (this); }
+		return context;
+	}
+	SnipToolContext context = null;
 
 	/**
 	 * add token to system list
@@ -146,6 +154,19 @@ public class SnipProperties implements SnipToolPropertyAccess
 		this.tokens = new SnipToolToken.SystemTokens ();
 	}
 	protected SnipToolToken.SystemTokens tokens;
+
+
+	public SnipToolScanner getScanner ()
+	{
+		return scanner = new CalcLibSnipScanner (this);
+	}
+	CalcLibSnipScanner scanner;
+	
+	public int getDefaultStyleCode ()
+	{
+		return scanner.getDefaultStyleCode();
+	}
+
 
 }
 
