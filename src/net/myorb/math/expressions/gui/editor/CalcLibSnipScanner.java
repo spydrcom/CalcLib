@@ -73,7 +73,6 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 		assignStyleMapEntries ();
 	}
-	protected String fontName = "Courier"; protected int fontSize = 12;
 	protected int commentStyle, commandStyle, IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
 
 
@@ -88,6 +87,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		Font f = new Font(fontName, style, fontSize);
 		return context.postAnonymousStyle (f, color);
 	}
+	protected String fontName = "Courier"; protected int fontSize = 12;
 
 
 	/**
@@ -154,36 +154,92 @@ public class CalcLibSnipScanner implements SnipToolScanner
 			scan = scans.get (current++);
 		String image = scan.tokens.getTokenImage ();
 		int location = scan.tracking.getLocation ();
+
+		if (isComment (image))
+		{
+			return adjustForComment (location);
+		}
+
+		return otherLexicalElement
+		(
+			image, location,
+			scan.tokens.getTokenType ()
+		);
+	}
+
+
+	/**
+	 * process non-comment token
+	 * @param image the text of the token
+	 * @param location the location in the document
+	 * @param type the token type from the parser
+	 * @return the snip token with assigned style
+	 */
+	SnipToolToken otherLexicalElement
+		(
+			String image, int location,
+			LseTokenParser.TokenType type
+		)
+	{
 		int styleCode;
 
-		if (image.startsWith (COMMENT_TOKEN) || image.toUpperCase ().startsWith (ENTITLED_TOKEN))
+		if (type != LseTokenParser.TokenType.IDN)
 		{
-			setLastSourcePosition (this.buffer.length ());
-			String remainder = buffer.substring (location);
-			return new SnipToolToken (remainder, commentStyle);
+			styleCode = styleMap.get (type);	// not an identifier
 		}
-		else if (commands.contains (image))
+		else if (isCommand (image))
 		{
-			styleCode = commandStyle;
+			styleCode = this.commandStyle;		// COMMAND identifier
+		}
+		else if (symbols.contains (image))
+		{
+			styleCode = this.IDstyleOK;			// recognized symbol
 		}
 		else
 		{
-			LseTokenParser.TokenType t = scan.tokens.getTokenType ();
-
-			if (t == LseTokenParser.TokenType.IDN)
-			{
-				if (symbols.contains (image))
-				{ styleCode = this.IDstyleOK; }
-				else styleCode = this.IDstyleBAD;
-			}
-			else
-			{
-				styleCode = styleMap.get (t);
-			}
+			styleCode = this.IDstyleBAD;		// unrecognized symbol
 		}
 
 		setLastSourcePosition (location + image.length ());
 		return new SnipToolToken (image, styleCode);
+	}
+
+
+	/**
+	 * special treatment for comment
+	 * @param location the location of the start of the token
+	 * @return the token assigned for treatment as comment
+	 */
+	SnipToolToken adjustForComment (int location)
+	{
+		setLastSourcePosition (this.buffer.length ());
+		String remainder = buffer.substring (location);
+		return new SnipToolToken (remainder, commentStyle);
+	}
+
+
+	/**
+	 * check token for command recognition
+	 * @param image the text of the token
+	 * @return TRUE for command
+	 */
+	boolean isCommand (String image)
+	{
+		return
+			commands.contains (image.toUpperCase ()) ||
+			commands.contains (image.toLowerCase ());
+	}
+
+	/**
+	 * check token for comment syntax
+	 * @param image the text of the token
+	 * @return TRUE for comment
+	 */
+	boolean isComment (String image)
+	{
+		return
+			image.startsWith (COMMENT_TOKEN) ||
+			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
 	}
 	public static final String ENTITLED_TOKEN = "ENTITLED";
 	public static final String COMMENT_TOKEN = "//";
