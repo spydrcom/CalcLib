@@ -17,11 +17,12 @@ import net.myorb.gui.editor.SnipToolPropertyAccess;
 
 import net.myorb.gui.editor.model.SnipToolDocument;
 import net.myorb.gui.editor.model.SnipToolContext;
-import net.myorb.gui.editor.model.SnipToolToken;
 import net.myorb.gui.editor.model.SnipToolKit;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
+
+import java.util.Collection;
 
 /**
  * CalcLib properties for Snip tool features
@@ -46,9 +47,26 @@ public class SnipProperties implements SnipToolPropertyAccess
 	public SnipProperties (Environment<?> environment)
 	{
 		this.environment = environment;
-		initializeTokenList ();
 	}
 	protected Environment<?> environment;
+
+
+	/**
+	 * @return a collection of the names of commands
+	 */
+	public Collection<String> getCommands ()
+	{
+		return environment.getCommandDictionary ().keySet ();
+	}
+
+
+	/**
+	 * @return a collection of the names of symbols
+	 */
+	public Collection<String> getSymbols ()
+	{
+		return environment.getSymbolMap ().keySet ();
+	}
 
 
 	/* (non-Javadoc)
@@ -106,65 +124,47 @@ public class SnipProperties implements SnipToolPropertyAccess
 		return new CalcLibSnipToolEditor (this);
 	}
 
+
 	/* (non-Javadoc)
-	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getAll()
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newDocument()
 	 */
-	public SnipToolToken.SystemTokens getAll () { return this.tokens; }
 	public SnipToolDocument newDocument () { return new SnipToolDocument (); }
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newKit()
+	 */
 	public SnipToolKit newKit () { return new SnipToolKit (this); }
 
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newContext()
+	 */
 	public SnipToolContext newContext ()
 	{
 		if (context == null)
 		{ context = new SnipToolContext (this); }
 		return context;
 	}
-	SnipToolContext context = null;
+	protected SnipToolContext context = null;
 
-	/**
-	 * add token to system list
-	 * @param category the category for the token
-	 * @param representation the text image of the token
-	 * @param scanValue a sequential value assigned to the token
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getScanner()
 	 */
-	public void addToken
-	(String category, String representation, int scanValue)
-	{
-		this.tokens.add (new SnipToolToken (category, representation, scanValue));
-	}
-
-	/**
-	 * automated scanValue generation
-	 * @param category the category for the token
-	 * @param representation the text image of the token
-	 */
-	public void addToken
-	(String category, String representation)
-	{
-		this.tokens.add (new SnipToolToken (category, representation, ++lastScanValue));
-	}
-	protected int lastScanValue = 0;
-
-	/**
-	 * use SystemTokens constructor to preserve ERROR_CODE convention
-	 */
-	protected void initializeTokenList ()
-	{
-		// UNKNOWN_TOKEN is placed at ERROR_CODE entry by constructor
-		this.tokens = new SnipToolToken.SystemTokens ();
-	}
-	protected SnipToolToken.SystemTokens tokens;
-
-
 	public SnipToolScanner getScanner ()
 	{
 		return scanner = new CalcLibSnipScanner (this);
 	}
-	CalcLibSnipScanner scanner;
-	
+	protected CalcLibSnipScanner scanner;
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getDefaultStyleCode()
+	 */
 	public int getDefaultStyleCode ()
 	{
-		return scanner.getDefaultStyleCode();
+		return scanner.getDefaultStyleCode ();
 	}
 
 

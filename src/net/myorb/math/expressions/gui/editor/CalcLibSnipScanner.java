@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import java.util.List;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,9 +44,12 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	{
 		this.parser = new LseTokenParser ();
 		this.context = properties.newContext ();
+		this.commands = properties.getCommands ();
+		this.symbols = properties.getSymbols ();
 		this.properties = properties;
-		prepareStyles ();
+		this.prepareStyles ();
 	}
+	protected Collection<String> commands, symbols;
 	protected SnipProperties properties;
 	protected SnipToolContext context;
 	protected LseTokenParser parser;
@@ -57,32 +61,50 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void prepareStyles ()
 	{
+		IDstyleOK = post (0, Color.BLUE);
+		IDstyleBAD = post (0, Color.RED);
+
+		commandStyle = post (Font.BOLD, Color.decode ("0x80"));
+		commentStyle = post (Font.ITALIC, Color.decode ("0x6400"));
+		defaultStyle = post (0, Color.BLACK);
+
+		QOTstyle = post (Font.ITALIC, Color.decode ("0x800080"));
+		OPstyle = post (Font.BOLD, Color.PINK);
+
+		assignStyleMapEntries ();
+	}
+	protected String fontName = "Courier"; protected int fontSize = 12;
+	protected int commentStyle, commandStyle, IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
+
+
+	/**
+	 * post a style to context
+	 * @param style the style of font
+	 * @param color the foreground color
+	 * @return the style code
+	 */
+	int post (int style, Color color)
+	{
+		Font f = new Font(fontName, style, fontSize);
+		return context.postAnonymousStyle (f, color);
+	}
+
+
+	/**
+	 * populate map with style codes
+	 */
+	void assignStyleMapEntries ()
+	{
 		this.styleMap = new HashMap<LseTokenParser.TokenType,Integer>();
 
-		Font f = new Font(fontName, 0, fontSize);
-		int IDstyle = context.postAnonymousStyle (f, Color.BLUE);
-
-		f = new Font(fontName, 0, fontSize);
-		defaultStyle = context.postAnonymousStyle (f, Color.BLACK);
-
-		f = new Font(fontName, Font.ITALIC, fontSize);
-		int QOTstyle = context.postAnonymousStyle (f, Color.RED);
-
-		f = new Font(fontName, Font.ITALIC, fontSize);
-		commentStyle = context.postAnonymousStyle (f, Color.ORANGE);
-
-		f = new Font(fontName, Font.BOLD, fontSize);
-		int OPstyle = context.postAnonymousStyle (f, Color.GREEN);
-
 		for (LseTokenParser.TokenType t : LseTokenParser.TokenType.values ())
-		{ styleMap.put (t, defaultStyle); }
+		{
+			styleMap.put (t, defaultStyle);
+		}
 
-		styleMap.put (LseTokenParser.TokenType.IDN, IDstyle);
 		styleMap.put (LseTokenParser.TokenType.QOT, QOTstyle);
 		styleMap.put (LseTokenParser.TokenType.OPR, OPstyle);
 	}
-	protected String fontName = "Courier"; protected int fontSize = 12;
-	protected int commentStyle;
 
 
 	/* (non-Javadoc)
@@ -98,18 +120,27 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	public void updateSource (StringBuffer source, int position)
 	{
 		this.scans = parser.ScanLine (source); this.current = 0;
-		this.start = position; this.tokenEnd = position;
+		this.start = position; this.setLastSourcePosition (0);
 		this.buffer = source;
 	}
 	protected List<LseTokenParser.Scan> scans;
-	protected int start, current, tokenEnd;
 	protected StringBuffer buffer;
+	protected int start, current;
+
+
+	/**
+	 * identify updated position within source buffer
+	 * @param offset the offset from the model start of the buffer
+	 */
+	public void setLastSourcePosition (int offset)
+	{ this.lastSourcePosition = this.start + offset; }
+	protected int lastSourcePosition;
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.editor.SnipToolScanner#getLastSourcePosition()
 	 */
-	public int getLastSourcePosition () { return tokenEnd; }
+	public int getLastSourcePosition () { return lastSourcePosition; }
 
 
 	/* (non-Javadoc)
@@ -117,28 +148,44 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	public SnipToolToken getToken ()
 	{
-		SnipToolToken token;
 		if (current == scans.size ()) return null;
 
 		LseTokenParser.Scan
 			scan = scans.get (current++);
 		String image = scan.tokens.getTokenImage ();
 		int location = scan.tracking.getLocation ();
+		int styleCode;
 
-		if (image.startsWith (COMMENT_TOKEN))
+		if (image.startsWith (COMMENT_TOKEN) || image.toUpperCase ().startsWith (ENTITLED_TOKEN))
 		{
-			token = new SnipToolToken (buffer.substring (location), commentStyle);
-			tokenEnd = this.start + this.buffer.length ();
+			setLastSourcePosition (this.buffer.length ());
+			String remainder = buffer.substring (location);
+			return new SnipToolToken (remainder, commentStyle);
+		}
+		else if (commands.contains (image))
+		{
+			styleCode = commandStyle;
 		}
 		else
 		{
-			token = new SnipToolToken
-				(image, styleMap.get (scan.tokens.getTokenType ()));
-			tokenEnd = this.start + location + image.length ();
+			LseTokenParser.TokenType t = scan.tokens.getTokenType ();
+
+			if (t == LseTokenParser.TokenType.IDN)
+			{
+				if (symbols.contains (image))
+				{ styleCode = this.IDstyleOK; }
+				else styleCode = this.IDstyleBAD;
+			}
+			else
+			{
+				styleCode = styleMap.get (t);
+			}
 		}
 
-		return token;
+		setLastSourcePosition (location + image.length ());
+		return new SnipToolToken (image, styleCode);
 	}
+	public static final String ENTITLED_TOKEN = "ENTITLED";
 	public static final String COMMENT_TOKEN = "//";
 
 
