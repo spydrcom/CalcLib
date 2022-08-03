@@ -42,10 +42,12 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 	public CalcLibSnipScanner (SnipProperties properties)
 	{
-		this.parser = new LseTokenParser ();
 		this.context = properties.newContext ();
+		this.fontSize = properties.getFontSize ();
+		this.fontName = properties.getFontFamily ();
 		this.commands = properties.getCommands ();
 		this.symbols = properties.getSymbols ();
+		this.parser = new LseTokenParser ();
 		this.properties = properties;
 		this.prepareStyles ();
 	}

@@ -32,6 +32,9 @@ public class SnipProperties implements SnipToolPropertyAccess
 {
 
 
+
+	static int FONT_SIZE = 12; static String FONT_FAMILY = "Courier";
+
 	static final boolean USE_RAW_TEXT_EDITOR = false;
 
 
@@ -166,6 +169,18 @@ public class SnipProperties implements SnipToolPropertyAccess
 	{
 		return scanner.getDefaultStyleCode ();
 	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getFontSize()
+	 */
+	public int getFontSize () { return FONT_SIZE; }
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#getFontFamily()
+	 */
+	public String getFontFamily () { return FONT_FAMILY; }
 
 
 }

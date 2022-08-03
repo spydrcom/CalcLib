@@ -6,6 +6,10 @@ import net.myorb.data.abstractions.ExpressionTokenParser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * lexical parser for language sensitive editor features
+ * @author Michael Druckman
+ */
 public class LseTokenParser extends ExpressionTokenParser
 {
 
@@ -15,16 +19,38 @@ public class LseTokenParser extends ExpressionTokenParser
 		this.tracking = new ArrayList<TokenTrack>();
 	}
 
+	/**
+	 * use common parser
+	 * @param buffer source text for parser
+	 * @return a token sequence of parsed content
+	 */
 	public static ExpressionTokenParser.TokenSequence parse (StringBuffer buffer)
 	{
 		return new ExpressionTokenParser.TokenSequence (parseCommon (buffer, new LseTokenParser ()));
 	}
 
-	public int parseNext (StringBuffer buffer, int position, List<TokenDescriptor> tokens, List<TokenTrack> tracking)
+	/**
+	 * use LSE parser to collect tokens
+	 * @param buffer source text for parser
+	 * @param position current position within the line
+	 * @param tokens the list of tokens that becomes parsed
+	 * @param tracking the parallel list of tracking records
+	 * @return the position at the end of the parse
+	 */
+	public int parseNext
+		(
+			StringBuffer buffer, int position,
+			List<TokenDescriptor> tokens,
+			List<TokenTrack> tracking
+		)
 	{
 		return parseNext (buffer, this, position, tokens, tracking);
 	}
 
+	/**
+	 * parse a source line into tokens
+	 * @param buffer the source text buffer
+	 */
 	public void parseLine (StringBuffer buffer)
 	{
 		tokens.clear (); tracking.clear ();
@@ -33,10 +59,17 @@ public class LseTokenParser extends ExpressionTokenParser
 			pos = parseNext (buffer, pos, tokens, tracking);
 		}
 	}
-	List<TokenDescriptor> tokens; List<TokenTrack> tracking;
+	protected List<TokenDescriptor> tokens; protected List<TokenTrack> tracking;
 
+	/**
+	 * wrapper for token parser output
+	 */
 	public static class Scan
 	{
+		/**
+		 * @param tokens the token descriptor
+		 * @param tracking tracking data from the parser
+		 */
 		Scan (TokenDescriptor tokens, TokenTrack tracking)
 		{
 			this.tracking = tracking;
@@ -45,6 +78,9 @@ public class LseTokenParser extends ExpressionTokenParser
 		TokenDescriptor tokens;
 		TokenTrack tracking;
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString ()
 		{
 			StringBuffer buf = new StringBuffer ()
@@ -56,6 +92,10 @@ public class LseTokenParser extends ExpressionTokenParser
 		}
 	}
 
+	/**
+	 * @param buffer source text for parser
+	 * @return the list of scan records
+	 */
 	public List<Scan> ScanLine (StringBuffer buffer)
 	{
 		parseLine (buffer);
@@ -70,6 +110,10 @@ public class LseTokenParser extends ExpressionTokenParser
 	}
 
 
+	/**
+	 * unit test
+	 * @param args N/A
+	 */
 	public static void main (String[] args)
 	{
 		StringBuffer buf = new StringBuffer ()
