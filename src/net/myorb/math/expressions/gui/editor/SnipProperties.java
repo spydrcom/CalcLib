@@ -10,19 +10,22 @@ import net.myorb.math.expressions.gui.EnvironmentCore;
 import net.myorb.math.expressions.gui.DisplayConsole;
 
 import net.myorb.gui.components.DisplayTablePrimitives;
-import net.myorb.gui.components.SimpleScreenIO;
+//import net.myorb.gui.components.SimpleScreenIO;
 
 import net.myorb.gui.editor.SnipToolScanner;
 import net.myorb.gui.editor.SnipToolPropertyAccess;
 
 import net.myorb.gui.editor.model.SnipToolDocument;
 import net.myorb.gui.editor.model.SnipToolContext;
+import net.myorb.gui.editor.model.SnipToolEditor;
 import net.myorb.gui.editor.model.SnipToolKit;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
 import java.util.Collection;
+
+import java.awt.Font;
 
 /**
  * CalcLib properties for Snip tool features
@@ -33,9 +36,9 @@ public class SnipProperties implements SnipToolPropertyAccess
 
 
 
-	static int FONT_SIZE = 12; static String FONT_FAMILY = "Courier";
+	static int FONT_SIZE = 12; static String FONT_FAMILY = "";
 
-	static final boolean USE_RAW_TEXT_EDITOR = false;
+//	static final boolean USE_RAW_TEXT_EDITOR = true;
 
 
 	/**
@@ -52,6 +55,16 @@ public class SnipProperties implements SnipToolPropertyAccess
 		this.environment = environment;
 	}
 	protected Environment<?> environment;
+
+
+	/**
+	 * @param withStyle the style for the font
+	 * @return a Font object with Snip configuration
+	 */
+	public Font getFont (int withStyle)
+	{
+		return new Font (FONT_FAMILY, withStyle, FONT_SIZE);
+	}
 
 
 	/**
@@ -120,13 +133,18 @@ public class SnipProperties implements SnipToolPropertyAccess
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newEditor()
 	 */
-	public SimpleScreenIO.SnipEditor newEditor ()
+	public SnipToolEditor newEditor ()
 	{
-		if (USE_RAW_TEXT_EDITOR)
-		{ return new SimpleScreenIO.SnipEditor (); }
-		return new CalcLibSnipToolEditor (this);
+//		if (USE_RAW_TEXT_EDITOR)
+//		{ return new SimpleScreenIO.SnipEditor (); }
+//		return new CalcLibSnipToolEditor (this);
+		return new SnipToolEditor ();
 	}
 
+	public SnipToolEditor newLanguageSensitiveEditor ()
+	{
+		return new CalcLibSnipToolEditor (this);
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newDocument()
