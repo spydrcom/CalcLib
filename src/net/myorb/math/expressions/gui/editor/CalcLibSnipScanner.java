@@ -89,7 +89,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		Font f = new Font(fontName, style, fontSize);
 		return context.postAnonymousStyle (f, color);
 	}
-	protected String fontName = "Courier"; protected int fontSize = 12;
+	protected String fontName = "Courier"; protected int fontSize = 20;
 
 
 	/**

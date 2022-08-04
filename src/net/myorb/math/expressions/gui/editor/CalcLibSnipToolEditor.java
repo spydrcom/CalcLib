@@ -16,7 +16,6 @@ public class CalcLibSnipToolEditor extends SnipToolEditor
 	{
 		setEditorKitForContentType ("text/calc", properties.newKit ());
 		setContentType ("text/calc"); setBackground (Color.white);
-		setFont (properties.getFont (0));
 		setEditable (true);
 	}
 

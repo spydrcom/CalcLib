@@ -10,7 +10,6 @@ import net.myorb.math.expressions.gui.EnvironmentCore;
 import net.myorb.math.expressions.gui.DisplayConsole;
 
 import net.myorb.gui.components.DisplayTablePrimitives;
-//import net.myorb.gui.components.SimpleScreenIO;
 
 import net.myorb.gui.editor.SnipToolScanner;
 import net.myorb.gui.editor.SnipToolPropertyAccess;
@@ -36,9 +35,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 
 
 
-	static int FONT_SIZE = 12; static String FONT_FAMILY = "";
-
-//	static final boolean USE_RAW_TEXT_EDITOR = true;
+	static int FONT_SIZE = 16; static String FONT_FAMILY = "Courier";
 
 
 	/**
@@ -135,12 +132,12 @@ public class SnipProperties implements SnipToolPropertyAccess
 	 */
 	public SnipToolEditor newEditor ()
 	{
-//		if (USE_RAW_TEXT_EDITOR)
-//		{ return new SimpleScreenIO.SnipEditor (); }
-//		return new CalcLibSnipToolEditor (this);
 		return new SnipToolEditor ();
 	}
 
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newLanguageSensitiveEditor()
+	 */
 	public SnipToolEditor newLanguageSensitiveEditor ()
 	{
 		return new CalcLibSnipToolEditor (this);
