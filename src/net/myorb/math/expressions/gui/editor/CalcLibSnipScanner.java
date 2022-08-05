@@ -1,10 +1,13 @@
 
 package net.myorb.math.expressions.gui.editor;
 
+import net.myorb.gui.editor.SnipToolScanner;
+
 import net.myorb.gui.editor.model.SnipToolToken;
 import net.myorb.gui.editor.model.SnipToolContext;
 
-import net.myorb.gui.editor.SnipToolScanner;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.Style;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -24,6 +27,8 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 
 	/*
+	 * the token types assigned by the parser
+	 * 
 		IDN, // an identifier
 		OPR, // an operator, possible multi-character
 		QOT, // a quoted body of text, a string literal
@@ -42,7 +47,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 	public CalcLibSnipScanner (SnipProperties properties)
 	{
-		this.context = properties.newContext ();
+		this.styles = properties.newContext ();
 		this.fontSize = properties.getFontSize ();
 		this.fontName = properties.getFontFamily ();
 		this.commands = properties.getCommands ();
@@ -53,7 +58,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 	protected Collection<String> commands, symbols;
 	protected SnipProperties properties;
-	protected SnipToolContext context;
+	protected SnipToolContext styles;
 	protected LseTokenParser parser;
 
 
@@ -63,33 +68,57 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void prepareStyles ()
 	{
-		IDstyleOK = post (0, Color.BLUE);
-		IDstyleBAD = post (0, Color.RED);
+		IDstyleOK = postStyle ("Identifier", Font.PLAIN, Color.BLUE);
+		IDstyleBAD = postStyle ("UnrecognizedIdentifier", Font.ITALIC, Color.RED);
 
-		commandStyle = post (Font.BOLD, Color.decode ("0x80"));
-		commentStyle = post (Font.ITALIC, Color.decode ("0x6400"));
-		defaultStyle = post (0, Color.BLACK);
+		commandStyle = postStyle ("Command", Font.BOLD, "0x80");
+		commentStyle = postStyle ("Comment", Font.ITALIC, "0x6400");
+		defaultStyle = postStyle ("General", Font.PLAIN, Color.BLACK);
 
-		QOTstyle = post (Font.ITALIC, Color.decode ("0x800080"));
-		OPstyle = post (Font.BOLD, Color.PINK);
+		QOTstyle = postStyle ("QuotedText", Font.ITALIC, "0x800080");
+		OPstyle = postStyle ("Operator", Font.BOLD, "0xA52A2A");
 
 		assignStyleMapEntries ();
+		postSymbolStyles ();
+
 	}
 	protected int commentStyle, commandStyle, IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
 
 
 	/**
-	 * post a style to context
-	 * @param style the style of font
-	 * @param color the foreground color
-	 * @return the style code
+	 * post a style using a color code
+	 * @param name a name to be given to the style
+	 * @param fontCode the font code for the style of the font
+	 * @param colorCode the encoded color identifier (as hex string)
+	 * @return the style code assigned to this posted style
 	 */
-	int post (int style, Color color)
+	int postStyle (String name, int fontCode, String colorCode)
 	{
-		Font f = new Font(fontName, style, fontSize);
-		return context.postAnonymousStyle (f, color);
+		return postStyle (name, fontCode, Color.decode (colorCode));
 	}
-	protected String fontName = "Courier"; protected int fontSize = 20;
+
+
+	/**
+	 * post a style using a color object
+	 * @param name a name to be given to the style
+	 * @param fontCode the font code for the style of the font
+	 * @param color the AWT color object to use as foreground color
+	 * @return the style code assigned to this posted style
+	 */
+	int postStyle (String name, int fontCode, Color color)
+	{
+		Style style = styles.addStyle (name);
+
+		StyleConstants.setForeground (style, color);
+		StyleConstants.setFontFamily (style, fontName);
+		StyleConstants.setFontSize (style, fontSize);
+
+		StyleConstants.setItalic (style, fontCode == Font.ITALIC);
+		StyleConstants.setBold (style, fontCode == Font.BOLD);
+
+		return styles.assignStyleCode (style);
+	}
+	protected String fontName; protected int fontSize; // set from properties
 
 
 	/**
@@ -187,7 +216,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 		if (type != LseTokenParser.TokenType.IDN)
 		{
-			styleCode = styleMap.get (type);	// not an identifier
+			styleCode =
+				nonIdentifierLexicalElement
+					(image, type);				// not an identifier
 		}
 		else if (isCommand (image))
 		{
@@ -195,7 +226,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		}
 		else if (symbols.contains (image))
 		{
-			styleCode = this.IDstyleOK;			// recognized symbol
+			styleCode =
+				recognizedIdentifier
+					(image, type);				// recognized symbol
 		}
 		else
 		{
@@ -204,6 +237,98 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 		setLastSourcePosition (location + image.length ());
 		return new SnipToolToken (image, styleCode);
+	}
+
+
+	/**
+	 * identifier recognized but not typed
+	 * @param image the text image of the symbol
+	 * @param type the token type identified in the parser
+	 * @return the styleCode to use for this token
+	 */
+	int recognizedIdentifier
+		(
+			String image,
+			LseTokenParser.TokenType type
+		)
+	{
+		//show (image, "REC");
+		return choose (image, IDstyleOK);
+	}
+
+
+	/**
+	 * non-identifier not yet recognized
+	 * @param image the text image of the symbol
+	 * @param type the token type identified in the parser
+	 * @return the styleCode to use for this token
+	 */
+	int nonIdentifierLexicalElement
+		(
+			String image,
+			LseTokenParser.TokenType type
+		)
+	{
+		//show (image, "UNK");
+		return choose (image, styleMap.get (type));
+	}
+
+
+	/**
+	 * choose the style to render this token
+	 * @param image the text image of the symbol
+	 * @param defaultChoice the default to be used lacking alternate choice
+	 * @return the styleCode to use for this token
+	 */
+	int choose
+		(
+			String image, int defaultChoice
+		)
+	{
+		Number choice = chooseForType (lookup (image));
+		if (choice == null) return defaultChoice;
+		else return choice.intValue ();
+	}
+
+
+	/**
+	 * provide trace of symbol type
+	 * @param image the text image of the symbol
+	 * @param kind REC or UNK as identified by caller
+	 */
+	void show (String image, String kind)
+	{
+		String type = "NO TYPE";
+		Object sym = properties.getSymbolMap ().get (image);
+		if (sym != null) type = sym.getClass ().getSuperclass ().getName () + ";" + properties.whatIs (sym);
+		System.out.println (kind + ":" + image + " = " + type);
+	}
+
+
+	/**
+	 * look at symbol table for classification
+	 * @param image the text image of the symbol
+	 * @return the classification name
+	 */
+	String lookup (String image)
+	{
+		Object sym = properties.getSymbolMap ().get (image);
+		if (sym == null) return "Unrecognized";
+		else return properties.whatIs (sym);
+	}
+
+
+	/**
+	 * find style by name in manager
+	 * @param type the name of the type
+	 * @return the style code for the posted type
+	 */
+	Number chooseForType (String type)
+	{
+		Style style =
+			styles.getStyle (type);
+		if (style == null) return null;
+		return styles.getStyleCodeFor (style);
 	}
 
 
@@ -232,6 +357,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 			commands.contains (image.toLowerCase ());
 	}
 
+
 	/**
 	 * check token for comment syntax
 	 * @param image the text of the token
@@ -245,6 +371,41 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 	public static final String ENTITLED_TOKEN = "ENTITLED";
 	public static final String COMMENT_TOKEN = "//";
+
+
+	/**
+	 * typeTable identified symbol types can be given unique styles
+	 */
+	void postSymbolStyles ()
+	{
+		postStyle ("Library", Font.PLAIN, "0x800080");
+		postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
+		postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
+	}
+
+
+	/*
+	 * the map of symbol classifications
+	 * 
+		typeTable.put ("Library", "OperationObject");
+		typeTable.put ("SplineDescriptor", "Splines");
+		typeTable.put ("Splines", "SplineDescriptor");
+		typeTable.put ("Functions", "AbstractFunction");
+		typeTable.put ("Symbols", "AbstractVariableLookup");
+		typeTable.put ("BuiltIn", "AbstractBuiltinVariableLookup");
+		typeTable.put ("AbstractParameterizedFunction", "Built-In Functions");
+		typeTable.put ("AbstractUnaryPostfixOperator", "Unary Post-Fix Operators");
+		typeTable.put ("AbstractBuiltinVariableLookup", "Built-In Symbols");
+		typeTable.put ("AbstractBinaryOperator", "Binary Operators");
+		typeTable.put ("AbstractModifiedOperator", "Operator Modifiers");
+		typeTable.put ("AbstractUnaryOperator", "Unary Operators");
+		typeTable.put ("Assignment", "Assignment Operators");
+		typeTable.put ("AbstractVariableLookup", "Symbols");
+		typeTable.put ("Delimiter", "Group Delimiters");
+		typeTable.put ("AbstractFunction", "Functions");
+		typeTable.put ("Object", "Built-In Delimiter");
+		typeTable.put ("OperationObject", "Library");
+	 */
 
 
 }

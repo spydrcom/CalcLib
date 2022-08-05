@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions.gui.editor;
 
+import net.myorb.math.expressions.SymbolMap;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.gui.editor.CalcLibSnipToolEditor;
@@ -35,7 +37,17 @@ public class SnipProperties implements SnipToolPropertyAccess
 
 
 
-	static int FONT_SIZE = 16; static String FONT_FAMILY = "Courier";
+	/*
+	 * Java SE defines the following five logical font families:
+	 * 
+		Dialog.
+		DialogInput.
+		Monospaced.
+		Serif.
+		SansSerif.
+	 */
+
+	static int FONT_SIZE = 16; static String FONT_FAMILY = "SansSerif"; // also Courier
 
 
 	/**
@@ -79,6 +91,25 @@ public class SnipProperties implements SnipToolPropertyAccess
 	public Collection<String> getSymbols ()
 	{
 		return environment.getSymbolMap ().keySet ();
+	}
+
+
+	/**
+	 * @return the symbol map from the environment
+	 */
+	public SymbolMap getSymbolMap ()
+	{
+		return environment.getSymbolMap ();
+	}
+
+
+	/**
+	 * @param object an object to be identified
+	 * @return symbol table type lookup
+	 */
+	public String whatIs (Object object)
+	{
+		return environment.getSymbolMap ().whatIs (object);
 	}
 
 
@@ -135,6 +166,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 		return new SnipToolEditor ();
 	}
 
+
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newLanguageSensitiveEditor()
 	 */
@@ -142,6 +174,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 	{
 		return new CalcLibSnipToolEditor (this);
 	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newDocument()
