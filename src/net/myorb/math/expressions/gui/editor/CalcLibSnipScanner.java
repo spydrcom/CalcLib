@@ -126,13 +126,22 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void assignStyleMapEntries ()
 	{
+		/*
+		 * this provides just lexical analysis
+		 */
 		this.styleMap = new HashMap<LseTokenParser.TokenType,Integer>();
 
+		/*
+		 * this provides a straight map from the type of lexical element to a style
+		 */
 		for (LseTokenParser.TokenType t : LseTokenParser.TokenType.values ())
 		{
 			styleMap.put (t, defaultStyle);
 		}
 
+		/*
+		 * this is just a simple lexical analysis, semantics are added below
+		 */
 		styleMap.put (LseTokenParser.TokenType.QOT, QOTstyle);
 		styleMap.put (LseTokenParser.TokenType.OPR, OPstyle);
 	}
@@ -191,12 +200,61 @@ public class CalcLibSnipScanner implements SnipToolScanner
 			return adjustForComment (location);
 		}
 
+		/*
+		 * this is where semantic analysis can be done in detail
+		 */
 		return otherLexicalElement
 		(
 			image, location,
 			scan.tokens.getTokenType ()
 		);
 	}
+
+
+	/**
+	 * special treatment for comment
+	 * @param location the location of the start of the token
+	 * @return the token assigned for treatment as comment
+	 */
+	SnipToolToken adjustForComment (int location)
+	{
+		setLastSourcePosition (this.buffer.length ());
+		String remainder = buffer.substring (location);
+		return new SnipToolToken (remainder, commentStyle);
+	}
+
+
+	/*
+	 * commands and comments are simple lexical elements
+	 */
+
+
+	/**
+	 * check token for command recognition
+	 * @param image the text of the token
+	 * @return TRUE for command
+	 */
+	boolean isCommand (String image)
+	{
+		return
+			commands.contains (image.toUpperCase ()) ||
+			commands.contains (image.toLowerCase ());
+	}
+
+
+	/**
+	 * check token for comment syntax
+	 * @param image the text of the token
+	 * @return TRUE for comment
+	 */
+	boolean isComment (String image)
+	{
+		return
+			image.startsWith (COMMENT_TOKEN) ||
+			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
+	}
+	public static final String ENTITLED_TOKEN = "ENTITLED";
+	public static final String COMMENT_TOKEN = "//";
 
 
 	/**
@@ -240,6 +298,11 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 
 
+	/*
+	 * semantic analysis amounts to 
+	 * how far down the tree symbols are analyzed
+	 */
+
 	/**
 	 * identifier recognized but not typed
 	 * @param image the text image of the symbol
@@ -253,6 +316,12 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		)
 	{
 		//show (image, "REC");
+
+		/*
+		 * at this point all we know is
+		 * the symbol table has this symbol...
+		 * OK just means the symbol table has it.
+		 */
 		return choose (image, IDstyleOK);
 	}
 
@@ -270,6 +339,13 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		)
 	{
 		//show (image, "UNK");
+
+		/*
+		 * at this point we know 
+		 * we are not looking at identifiers.
+		 * the style map will just treat it as an operator.
+		 * all operators are treated with a single style here.
+		 */
 		return choose (image, styleMap.get (type));
 	}
 
@@ -305,6 +381,13 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 
 
+	/*
+	 * from here we are down the rabbit hole.
+	 * the symbol table offers whatIs as first analysis.
+	 * analysis of this answer provides semantic details.
+	 */
+
+
 	/**
 	 * look at symbol table for classification
 	 * @param image the text image of the symbol
@@ -330,47 +413,6 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		if (style == null) return null;
 		return styles.getStyleCodeFor (style);
 	}
-
-
-	/**
-	 * special treatment for comment
-	 * @param location the location of the start of the token
-	 * @return the token assigned for treatment as comment
-	 */
-	SnipToolToken adjustForComment (int location)
-	{
-		setLastSourcePosition (this.buffer.length ());
-		String remainder = buffer.substring (location);
-		return new SnipToolToken (remainder, commentStyle);
-	}
-
-
-	/**
-	 * check token for command recognition
-	 * @param image the text of the token
-	 * @return TRUE for command
-	 */
-	boolean isCommand (String image)
-	{
-		return
-			commands.contains (image.toUpperCase ()) ||
-			commands.contains (image.toLowerCase ());
-	}
-
-
-	/**
-	 * check token for comment syntax
-	 * @param image the text of the token
-	 * @return TRUE for comment
-	 */
-	boolean isComment (String image)
-	{
-		return
-			image.startsWith (COMMENT_TOKEN) ||
-			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
-	}
-	public static final String ENTITLED_TOKEN = "ENTITLED";
-	public static final String COMMENT_TOKEN = "//";
 
 
 	/**
