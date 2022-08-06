@@ -79,7 +79,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		OPstyle = postStyle ("Operator", Font.BOLD, "0xA52A2A");
 
 		assignStyleMapEntries ();
-		postSymbolStyles ();
+		//postSymbolStyles ();
 
 	}
 	protected int commentStyle, commandStyle, IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
@@ -420,9 +420,14 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void postSymbolStyles ()
 	{
-		postStyle ("Library", Font.PLAIN, "0x800080");
-		postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
-		postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
+		//postStyle ("Library", Font.PLAIN, "0x800080");
+		//postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
+		//postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
+
+		// these named categories are now configured in
+		// the JXR style sheet configuration processing
+		// SEE: cfg/gui/SnipStyles.xml referred to by
+		// CalcLibSnipStyles
 	}
 
 

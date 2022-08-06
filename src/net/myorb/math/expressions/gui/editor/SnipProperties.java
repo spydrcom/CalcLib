@@ -6,6 +6,7 @@ import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.gui.editor.CalcLibSnipToolEditor;
+import net.myorb.math.expressions.gui.editor.CalcLibSnipStyles;
 
 import net.myorb.math.expressions.gui.DisplayEnvironment;
 import net.myorb.math.expressions.gui.EnvironmentCore;
@@ -194,7 +195,7 @@ public class SnipProperties implements SnipToolPropertyAccess
 	public SnipToolContext newContext ()
 	{
 		if (context == null)
-		{ context = new SnipToolContext (this); }
+		{ context = new CalcLibSnipStyles (this); }
 		return context;
 	}
 	protected SnipToolContext context = null;
