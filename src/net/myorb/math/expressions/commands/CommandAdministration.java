@@ -35,7 +35,7 @@ public class CommandAdministration<T> extends Utilities<T>
 	 */
 	public CommandDictionary 
 		getCommandDictionary () { return commands; }
-	protected CommandDictionary commands;;
+	protected CommandDictionary commands;
 
 
 	/**
@@ -59,14 +59,30 @@ public class CommandAdministration<T> extends Utilities<T>
 
 
 	/**
+	 * @param name the name of the command (case not important)
+	 * @param cmd the command implementation object
+	 */
+	public void addCommandAndKeywords (String name, KeywordCommand cmd)
+	{
+		commands.put (name, cmd);
+
+		if (cmd instanceof ExtendedKeywordCommand)
+		{
+			environment.addToKeywordList ( (ExtendedKeywordCommand) cmd );
+		}
+	}
+
+
+	/**
 	 * command names are forced to
 	 *  lower case to force case insensitivity
 	 * @param name the name of the command (case not important)
 	 * @param cmd the command implementation object
 	 */
-	public void addAsLowerCase
-	(String name, KeywordCommand cmd)
-	{ commands.put (name.toLowerCase (), cmd); }
+	public void addAsLowerCase (String name, KeywordCommand cmd)
+	{
+		addCommandAndKeywords (name.toLowerCase (), cmd);
+	}
 
 
 	/**
@@ -74,7 +90,7 @@ public class CommandAdministration<T> extends Utilities<T>
 	 * @param name the name of the command (case not important)
 	 * @param cmd the command implementation object
 	 */
-	public void add (String name, KeywordCommand cmd) { commands.put (name, cmd); }
+	public void add (String name, KeywordCommand cmd) { addCommandAndKeywords (name, cmd); }
 
 
 	/**

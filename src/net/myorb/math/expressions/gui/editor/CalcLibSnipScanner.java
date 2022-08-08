@@ -51,12 +51,13 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		this.fontSize = properties.getFontSize ();
 		this.fontName = properties.getFontFamily ();
 		this.commands = properties.getCommands ();
+		this.keywords = properties.getKeywords ();
 		this.symbols = properties.getSymbols ();
 		this.parser = new LseTokenParser ();
 		this.properties = properties;
 		this.prepareStyles ();
 	}
-	protected Collection<String> commands, symbols;
+	protected Collection<String> commands, symbols, keywords;
 	protected SnipProperties properties;
 	protected SnipToolContext styles;
 	protected LseTokenParser parser;
@@ -68,10 +69,12 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void prepareStyles ()
 	{
+		IDstyleBAD = styles.getStyleCodeFor ("UnknownID");
 		IDstyleOK = postStyle ("Identifier", Font.PLAIN, Color.BLUE);
-		IDstyleBAD = postStyle ("UnrecognizedIdentifier", Font.ITALIC, Color.RED);
+		//IDstyleBAD = postStyle ("UnrecognizedIdentifier", Font.ITALIC, Color.RED);
 
 		commandStyle = postStyle ("Command", Font.BOLD, "0x80");
+		keywordStyle = postStyle ("Keyword", Font.PLAIN, "0x4040");
 		commentStyle = postStyle ("Comment", Font.ITALIC, "0x6400");
 		defaultStyle = postStyle ("General", Font.PLAIN, Color.BLACK);
 
@@ -82,7 +85,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		//postSymbolStyles ();
 
 	}
-	protected int commentStyle, commandStyle, IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
+	protected int
+	commentStyle, commandStyle, keywordStyle,
+	IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
 
 
 	/**
@@ -243,6 +248,17 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 
 	/**
+	 * check token for keyword recognition
+	 * @param image the text of the token
+	 * @return TRUE for keyword
+	 */
+	boolean isKeyword (String image)
+	{
+		return keywords.contains (image.toLowerCase ());
+	}
+
+
+	/**
 	 * check token for comment syntax
 	 * @param image the text of the token
 	 * @return TRUE for comment
@@ -281,6 +297,10 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		else if (isCommand (image))
 		{
 			styleCode = this.commandStyle;		// COMMAND identifier
+		}
+		else if (isKeyword (image))
+		{
+			styleCode = this.keywordStyle;		// KEYWORD identifier
 		}
 		else if (symbols.contains (image))
 		{

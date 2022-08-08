@@ -87,6 +87,15 @@ public class SnipProperties implements SnipToolPropertyAccess
 
 
 	/**
+	 * @return a collection of the names of extended keywords
+	 */
+	public Collection<String> getKeywords ()
+	{
+		return environment.getSubordinateKeywords ();
+	}
+
+
+	/**
 	 * @return a collection of the names of symbols
 	 */
 	public Collection<String> getSymbols ()

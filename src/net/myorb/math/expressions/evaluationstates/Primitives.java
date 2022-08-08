@@ -5,8 +5,11 @@ import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.computational.FunctionRoots;
 
 import net.myorb.math.expressions.commands.CommandDictionary;
+import net.myorb.math.expressions.commands.ExtendedKeywordCommand;
+
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
+
 import net.myorb.data.abstractions.ErrorHandling;
 import net.myorb.data.abstractions.Function;
 
@@ -115,6 +118,24 @@ public class Primitives<T>
 	 */
 	public CommandDictionary getCommandDictionary () { return commands; }
 	protected CommandDictionary commands =  new CommandDictionary ();
+
+
+	/**
+	 * @return access to command subordinate keywords
+	 */
+	public List<String> getSubordinateKeywords () { return subordinateKeywords; }
+	protected List<String> subordinateKeywords =  new ArrayList<String> ();
+
+
+	/**
+	 * @param command an command descriptor containing subordinates
+	 */
+	public void addToKeywordList (ExtendedKeywordCommand command)
+	{
+		if (command == null) return;
+		for (String keyword : command.includingSubordinateKeywords ())
+		{ subordinateKeywords.add (keyword.toLowerCase ()); }
+	}
 
 
 	/**
