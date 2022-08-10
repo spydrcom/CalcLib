@@ -16,7 +16,7 @@ public class CalcLibSnipToolEditor extends SnipToolEditor
 	{
 		setEditorKitForContentType ("text/calc", properties.newKit ());
 		setContentType ("text/calc"); setBackground (Color.white);
-		setEditable (true);
+		//setEditable (true);
 	}
 
 	private static final long serialVersionUID = 1116124051020966007L;

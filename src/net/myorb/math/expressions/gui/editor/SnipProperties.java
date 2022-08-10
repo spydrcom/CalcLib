@@ -13,14 +13,17 @@ import net.myorb.math.expressions.gui.EnvironmentCore;
 import net.myorb.math.expressions.gui.DisplayConsole;
 
 import net.myorb.gui.components.DisplayTablePrimitives;
+import net.myorb.gui.components.SnipAnalyzer;
 
-import net.myorb.gui.editor.SnipToolScanner;
 import net.myorb.gui.editor.SnipToolPropertyAccess;
+import net.myorb.gui.editor.SnipToolScanner;
 
 import net.myorb.gui.editor.model.SnipToolDocument;
 import net.myorb.gui.editor.model.SnipToolContext;
 import net.myorb.gui.editor.model.SnipToolEditor;
 import net.myorb.gui.editor.model.SnipToolKit;
+
+import javax.swing.text.JTextComponent;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -183,6 +186,15 @@ public class SnipProperties implements SnipToolPropertyAccess
 	public SnipToolEditor newLanguageSensitiveEditor ()
 	{
 		return new CalcLibSnipToolEditor (this);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolPropertyAccess#newSnipAnalyzer()
+	 */
+	public SnipAnalyzer newSnipAnalyzer (JTextComponent component)
+	{
+		return new SnipAnalyzer (component, this);
 	}
 
 

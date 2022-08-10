@@ -57,9 +57,16 @@ public class LseTokenParser extends ExpressionTokenParser
 		for (int pos = 0; pos < buffer.length (); )
 		{
 			pos = parseNext (buffer, pos, tokens, tracking);
+			if (eolSeen ()) break;
 		}
 	}
 	protected List<TokenDescriptor> tokens; protected List<TokenTrack> tracking;
+
+	boolean eolSeen ()
+	{
+		int at; if ((at = tracking.size () - 1) < 0) return false;
+		else return tracking.get (at).getType () == Category.EOL;
+	}
 
 	/**
 	 * wrapper for token parser output

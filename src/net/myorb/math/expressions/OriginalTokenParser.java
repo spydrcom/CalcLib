@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,7 @@ public class OriginalTokenParser extends CommonCommandParser
 	public String getWhiteSpace () { return WHITE_SPACE; }
 	public String getMultiCharacterOperator () { return MULTI_CHARACTER_OPERATOR; }
 	public String getExtendedOperator () { return OPERATOR_EXTENDED; }
+	public Collection<String> getCommentIndicators () { return null; }
 	public String getOperator () { return OPERATOR; }
 	public String getIdnBody () { return IDN_BODY; }
 	

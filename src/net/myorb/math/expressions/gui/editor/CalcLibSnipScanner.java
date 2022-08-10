@@ -63,6 +63,13 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	protected LseTokenParser parser;
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.gui.editor.SnipToolScanner#trackWS()
+	 */
+	public void trackWS () { parser.trackWS (); trackingWS = true; }
+	boolean trackingWS = false;
+
+
 	/**
 	 * allocate style codes for styles to be used.
 	 *  construct style map to provide style per token type
@@ -216,6 +223,19 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 
 
+	int findEol (int from)
+	{
+		if (!trackingWS)
+			return buffer.length ();
+		int pos = from;
+		while (pos < buffer.length ())
+		{
+			if (buffer.charAt(pos) == '\n') break;
+			pos++;
+		}
+		return pos;
+	}
+
 	/**
 	 * special treatment for comment
 	 * @param location the location of the start of the token
@@ -223,7 +243,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	SnipToolToken adjustForComment (int location)
 	{
-		setLastSourcePosition (this.buffer.length ());
+//		int pos; setLastSourcePosition (pos = findEol (location));
+//		String remainder = buffer.substring (pos);
+		setLastSourcePosition (buffer.length());
 		String remainder = buffer.substring (location);
 		return new SnipToolToken (remainder, commentStyle);
 	}
