@@ -36,7 +36,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		INT, // an integer value (no decimal point)
 		RDX, // an integer value with specified radix
 		DEC, // a decimal value (decimal point) 
-		FLT  // a floating point value
+		FLT, // a floating point value
+		CMT, // comments
+		WS
 	 */
 
 	/**
@@ -76,25 +78,38 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	void prepareStyles ()
 	{
-		IDstyleBAD = styles.getStyleCodeFor ("UnknownID");
-		IDstyleOK = postStyle ("Identifier", Font.PLAIN, Color.BLUE);
-		//IDstyleBAD = postStyle ("UnrecognizedIdentifier", Font.ITALIC, Color.RED);
+		// styles generates in StyleManager and JXR
+		IDstyleOK		= styles.getStyleCodeFor ("Identifiers");
+		IDstyleBAD		= styles.getStyleCodeFor ("UnknownID");
+		commandStyle	= styles.getStyleCodeFor ("Commands");
+		keywordStyle	= styles.getStyleCodeFor ("Keywords");
 
-		commandStyle = postStyle ("Command", Font.BOLD, "0x80");
-		keywordStyle = postStyle ("Keyword", Font.PLAIN, "0x4040");
-		commentStyle = postStyle ("Comment", Font.ITALIC, "0x6400");
-		defaultStyle = postStyle ("General", Font.PLAIN, Color.BLACK);
-
-		QOTstyle = postStyle ("QuotedText", Font.ITALIC, "0x800080");
-		OPstyle = postStyle ("Operator", Font.BOLD, "0xA52A2A");
+		// posted inline here
+		//IDstyleOK = postStyle ("Identifier", Font.PLAIN, Color.BLUE);
+		//defaultStyle = postStyle ("General", Font.PLAIN, Color.BLACK);
 
 		assignStyleMapEntries ();
 		//postSymbolStyles ();
-
 	}
 	protected int
-	commentStyle, commandStyle, keywordStyle,
-	IDstyleOK, IDstyleBAD, OPstyle, QOTstyle;
+	commandStyle, keywordStyle,
+	IDstyleOK, IDstyleBAD;
+
+
+	/**
+	 * typeTable identified symbol types can be given unique styles
+	 */
+	void postSymbolStyles ()
+	{
+		//postStyle ("Library", Font.PLAIN, "0x800080");
+		//postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
+		//postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
+
+		// these named categories are now configured in
+		// the JXR style sheet configuration processing
+		// SEE: cfg/gui/SnipStyles.xml referred to by
+		// CalcLibSnipStyles
+	}
 
 
 	/**
@@ -139,6 +154,11 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	void assignStyleMapEntries ()
 	{
 		/*
+		 * default style assigned when other assignment is absent
+		 */
+		defaultStyle = styles.getStyleCodeFor ("Non-Specific");
+
+		/*
 		 * this provides just lexical analysis
 		 */
 		this.styleMap = new HashMap<LseTokenParser.TokenType,Integer>();
@@ -154,8 +174,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		/*
 		 * this is just a simple lexical analysis, semantics are added below
 		 */
-		styleMap.put (LseTokenParser.TokenType.QOT, QOTstyle);
-		styleMap.put (LseTokenParser.TokenType.OPR, OPstyle);
+		styleMap.put (LseTokenParser.TokenType.QOT, styles.getStyleCodeFor ("QuotedText"));
+		styleMap.put (LseTokenParser.TokenType.OPR, styles.getStyleCodeFor ("Operators"));
+		styleMap.put (LseTokenParser.TokenType.CMT, styles.getStyleCodeFor ("Comments"));
 	}
 
 
@@ -207,11 +228,6 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		String image = scan.tokens.getTokenImage ();
 		int location = scan.tracking.getLocation ();
 
-		if (isComment (image))
-		{
-			return adjustForComment (location);
-		}
-
 		/*
 		 * this is where semantic analysis can be done in detail
 		 */
@@ -220,34 +236,6 @@ public class CalcLibSnipScanner implements SnipToolScanner
 			image, location,
 			scan.tokens.getTokenType ()
 		);
-	}
-
-
-	int findEol (int from)
-	{
-		if (!trackingWS)
-			return buffer.length ();
-		int pos = from;
-		while (pos < buffer.length ())
-		{
-			if (buffer.charAt(pos) == '\n') break;
-			pos++;
-		}
-		return pos;
-	}
-
-	/**
-	 * special treatment for comment
-	 * @param location the location of the start of the token
-	 * @return the token assigned for treatment as comment
-	 */
-	SnipToolToken adjustForComment (int location)
-	{
-//		int pos; setLastSourcePosition (pos = findEol (location));
-//		String remainder = buffer.substring (pos);
-		setLastSourcePosition (buffer.length());
-		String remainder = buffer.substring (location);
-		return new SnipToolToken (remainder, commentStyle);
 	}
 
 
@@ -280,19 +268,19 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	}
 
 
-	/**
-	 * check token for comment syntax
-	 * @param image the text of the token
-	 * @return TRUE for comment
-	 */
-	boolean isComment (String image)
-	{
-		return
-			image.startsWith (COMMENT_TOKEN) ||
-			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
-	}
-	public static final String ENTITLED_TOKEN = "ENTITLED";
-	public static final String COMMENT_TOKEN = "//";
+//	/**
+//	 * check token for comment syntax
+//	 * @param image the text of the token
+//	 * @return TRUE for comment
+//	 */
+//	boolean isComment (String image)
+//	{
+//		return
+//			image.startsWith (COMMENT_TOKEN) ||
+//			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
+//	}
+//	public static final String ENTITLED_TOKEN = "ENTITLED";
+//	public static final String COMMENT_TOKEN = "//";
 
 
 	/**
@@ -454,22 +442,6 @@ public class CalcLibSnipScanner implements SnipToolScanner
 			styles.getStyle (type);
 		if (style == null) return null;
 		return styles.getStyleCodeFor (style);
-	}
-
-
-	/**
-	 * typeTable identified symbol types can be given unique styles
-	 */
-	void postSymbolStyles ()
-	{
-		//postStyle ("Library", Font.PLAIN, "0x800080");
-		//postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
-		//postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
-
-		// these named categories are now configured in
-		// the JXR style sheet configuration processing
-		// SEE: cfg/gui/SnipStyles.xml referred to by
-		// CalcLibSnipStyles
 	}
 
 
