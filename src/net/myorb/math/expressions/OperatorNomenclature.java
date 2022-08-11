@@ -256,6 +256,8 @@ public class OperatorNomenclature
 	END_OF_STATEMENT_DELIMITER = ";",			// @A=1; @B=2		separation of statements
 	START_OF_GROUP_DELIMITER = "(",				// (a+b)*(c+d)		increased precedence
 	START_OF_ARRAY_DELIMITER = "[",				// [0<=i<=10]()		limits of domain
+	START_OF_FORMAL_LIST_DELIMITER = "{",		// {  p1, p2  }		formal parameters to a
+	END_OF_FORMAL_LIST_DELIMITER = "}",			// -> func(p1,p2)	lambda expression
 	END_OF_ARRAY_DELIMITER = "]",
 	END_OF_GROUP_DELIMITER = ")"
 		;
@@ -324,11 +326,11 @@ public class OperatorNomenclature
 	TRAPQUAD_OPERATOR			= "$#",			// f$#(lo,hi,dx)	Trapezoidal iterative numeric integral approximation
 	TRAPADJUST_OPERATOR			= "$%",			// f$%(lo,hi,dx)	Trapezoidal adjustment for brute force approximation
 	INTERVAL_EVAL_OPERATOR		= "||",			// f||(lo,hi)		evaluate f(hi) - f(lo) {definite integral evaluation}
+	LAMBDA_EXPRESSION_INDICATOR	= "->",			// lambda			declaration of a lambda expression between parameters and formula
 	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			incrementation {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation
 	PRIME_OPERATOR				= "'",			// f'(x)			first derivative evaluation
-
 	PRIME_RENDER				= "\u00B4"		// f'(x)			render chanacter for prime
 		;
 
