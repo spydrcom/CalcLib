@@ -1,18 +1,14 @@
 
 package net.myorb.math.expressions.gui.editor;
 
-import net.myorb.gui.editor.SnipToolScanner;
+import net.myorb.data.abstractions.language.ContextSpecificAnalyzer;
+import net.myorb.data.abstractions.language.ContextSpecificParser;
 
-import net.myorb.gui.editor.model.SnipToolToken;
 import net.myorb.gui.editor.model.SnipToolContext;
+import net.myorb.gui.editor.model.SnipToolToken;
 
-import javax.swing.text.StyleConstants;
 import javax.swing.text.Style;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import java.util.List;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +18,7 @@ import java.util.Map;
  *  and made to support style assignment for Language Sensitive Editing features
  * @author Michael Druckman
  */
-public class CalcLibSnipScanner implements SnipToolScanner
+public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 {
 
 
@@ -41,28 +37,19 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		WS
 	 */
 
+
 	/**
 	 * provide a direct map between LseTokenParser.TokenType and style codes
 	 */
-	protected Map<LseTokenParser.TokenType,Integer> styleMap;
+	protected Map<ContextSpecificParser.TokenType,Integer> styleMap;
 
 
 	public CalcLibSnipScanner (SnipProperties properties)
 	{
-		this.styles = properties.newContext ();
-		this.fontSize = properties.getFontSize ();
-		this.fontName = properties.getFontFamily ();
-		this.commands = properties.getCommands ();
-		this.keywords = properties.getKeywords ();
-		this.symbols = properties.getSymbols ();
-		this.parser = new LseTokenParser ();
-		this.properties = properties;
-		this.prepareStyles ();
+		this.parser = new ContextSpecificParser ();
+		this.processCollections (properties);
 	}
-	protected Collection<String> commands, symbols, keywords;
-	protected SnipProperties properties;
-	protected SnipToolContext styles;
-	protected LseTokenParser parser;
+	protected ContextSpecificParser parser;
 
 
 	/* (non-Javadoc)
@@ -73,79 +60,45 @@ public class CalcLibSnipScanner implements SnipToolScanner
 
 
 	/**
+	 * identify collections of commands, keywords, and Symbols
+	 * @param properties the descriptor for this Snip tool
+	 */
+	public void processCollections (SnipProperties properties)
+	{
+		this.styles = properties.newContext ();
+		this.commands = properties.getCommands ();
+		this.keywords = properties.getKeywords ();
+		this.symbols = properties.getSymbols ();
+		this.properties = properties;
+		this.prepareStyles ();
+	}
+	protected Collection<String> commands, symbols, keywords;
+	protected SnipProperties properties;
+	protected SnipToolContext styles;
+
+
+	/*
+	 * processing of style data from the JXR snip styles
+	 */
+
+
+	/**
 	 * allocate style codes for styles to be used.
 	 *  construct style map to provide style per token type
 	 */
-	void prepareStyles ()
+	public void prepareStyles ()
 	{
-		// styles generates in StyleManager and JXR
-		IDstyleOK		= styles.getStyleCodeFor ("Identifiers");
-		IDstyleBAD		= styles.getStyleCodeFor ("UnknownID");
-		commandStyle	= styles.getStyleCodeFor ("Commands");
-		keywordStyle	= styles.getStyleCodeFor ("Keywords");
+		// styles generated in StyleManager using JXR
+		commandStyle			= styles.getStyleCodeFor ("Commands");
+		recognizedIdentifier	= styles.getStyleCodeFor ("Identifiers");
+		unrecognizedIdentifier	= styles.getStyleCodeFor ("UnknownID");
+		keywordStyle			= styles.getStyleCodeFor ("Keywords");
 
-		// posted inline here
-		//IDstyleOK = postStyle ("Identifier", Font.PLAIN, Color.BLUE);
-		//defaultStyle = postStyle ("General", Font.PLAIN, Color.BLACK);
-
+		// produce a map that provides defaults for all token types
 		assignStyleMapEntries ();
-		//postSymbolStyles ();
 	}
-	protected int
-	commandStyle, keywordStyle,
-	IDstyleOK, IDstyleBAD;
-
-
-	/**
-	 * typeTable identified symbol types can be given unique styles
-	 */
-	void postSymbolStyles ()
-	{
-		//postStyle ("Library", Font.PLAIN, "0x800080");
-		//postStyle ("Built-In Delimiter", Font.BOLD, "0x2E8B57");
-		//postStyle ("Group Delimiters", Font.BOLD, "0x228B22");
-
-		// these named categories are now configured in
-		// the JXR style sheet configuration processing
-		// SEE: cfg/gui/SnipStyles.xml referred to by
-		// CalcLibSnipStyles
-	}
-
-
-	/**
-	 * post a style using a color code
-	 * @param name a name to be given to the style
-	 * @param fontCode the font code for the style of the font
-	 * @param colorCode the encoded color identifier (as hex string)
-	 * @return the style code assigned to this posted style
-	 */
-	int postStyle (String name, int fontCode, String colorCode)
-	{
-		return postStyle (name, fontCode, Color.decode (colorCode));
-	}
-
-
-	/**
-	 * post a style using a color object
-	 * @param name a name to be given to the style
-	 * @param fontCode the font code for the style of the font
-	 * @param color the AWT color object to use as foreground color
-	 * @return the style code assigned to this posted style
-	 */
-	int postStyle (String name, int fontCode, Color color)
-	{
-		Style style = styles.addStyle (name);
-
-		StyleConstants.setForeground (style, color);
-		StyleConstants.setFontFamily (style, fontName);
-		StyleConstants.setFontSize (style, fontSize);
-
-		StyleConstants.setItalic (style, fontCode == Font.ITALIC);
-		StyleConstants.setBold (style, fontCode == Font.BOLD);
-
-		return styles.assignStyleCode (style);
-	}
-	protected String fontName; protected int fontSize; // set from properties
+	protected int commandStyle, keywordStyle;
+	protected int recognizedIdentifier, unrecognizedIdentifier;
 
 
 	/**
@@ -156,64 +109,33 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		/*
 		 * default style assigned when other assignment is absent
 		 */
-		defaultStyle = styles.getStyleCodeFor ("Non-Specific");
+		this.defaultStyle = styles.getStyleCodeFor ("Non-Specific");
 
 		/*
 		 * this provides just lexical analysis
 		 */
-		this.styleMap = new HashMap<LseTokenParser.TokenType,Integer>();
+		this.styleMap = new HashMap<ContextSpecificParser.TokenType,Integer>();
 
 		/*
 		 * this provides a straight map from the type of lexical element to a style
 		 */
-		for (LseTokenParser.TokenType t : LseTokenParser.TokenType.values ())
+		for (ContextSpecificParser.TokenType t : ContextSpecificParser.TokenType.values ())
 		{
-			styleMap.put (t, defaultStyle);
+			this.styleMap.put (t, defaultStyle);
 		}
 
 		/*
 		 * this is just a simple lexical analysis, semantics are added below
 		 */
-		styleMap.put (LseTokenParser.TokenType.QOT, styles.getStyleCodeFor ("QuotedText"));
-		styleMap.put (LseTokenParser.TokenType.OPR, styles.getStyleCodeFor ("Operators"));
-		styleMap.put (LseTokenParser.TokenType.CMT, styles.getStyleCodeFor ("Comments"));
+		styleMap.put (ContextSpecificParser.TokenType.QOT, styles.getStyleCodeFor ("QuotedText"));
+		styleMap.put (ContextSpecificParser.TokenType.OPR, styles.getStyleCodeFor ("Operators"));
+		styleMap.put (ContextSpecificParser.TokenType.CMT, styles.getStyleCodeFor ("Comments"));
 	}
 
 
-	/* (non-Javadoc)
-	 * @see net.myorb.gui.editor.SnipToolScanner#getDefaultStyleCode()
+	/*
+	 * token related processing
 	 */
-	public int getDefaultStyleCode () { return defaultStyle; }
-	protected int defaultStyle;
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.gui.editor.SnipToolScanner#updateSource(java.lang.StringBuffer, int)
-	 */
-	public void updateSource (StringBuffer source, int position)
-	{
-		this.scans = parser.ScanLine (source); this.current = 0;
-		this.start = position; this.setLastSourcePosition (0);
-		this.buffer = source;
-	}
-	protected List<LseTokenParser.Scan> scans;
-	protected StringBuffer buffer;
-	protected int start, current;
-
-
-	/**
-	 * identify updated position within source buffer
-	 * @param offset the offset from the model start of the buffer
-	 */
-	public void setLastSourcePosition (int offset)
-	{ this.lastSourcePosition = this.start + offset; }
-	protected int lastSourcePosition;
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.gui.editor.SnipToolScanner#getLastSourcePosition()
-	 */
-	public int getLastSourcePosition () { return lastSourcePosition; }
 
 
 	/* (non-Javadoc)
@@ -221,26 +143,94 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 */
 	public SnipToolToken getToken ()
 	{
-		if (current == scans.size ()) return null;
-
-		LseTokenParser.Scan
-			scan = scans.get (current++);
-		String image = scan.tokens.getTokenImage ();
-		int location = scan.tracking.getLocation ();
-
-		/*
-		 * this is where semantic analysis can be done in detail
-		 */
-		return otherLexicalElement
-		(
-			image, location,
-			scan.tokens.getTokenType ()
-		);
+		if (current < scans.size ())
+		{
+			ContextSpecificParser.Scan
+				scan = scans.get (current++);
+			String image = scan.tokens.getTokenImage ();
+			int location = scan.tracking.getLocation ();
+	
+			/*
+			 * this is where semantic analysis can be done in detail
+			 */
+			return doSemanticAnalysis
+			(
+				image, location,
+				scan.tokens.getTokenType ()
+			);
+		} else return null;
 	}
 
 
 	/*
-	 * commands and comments are simple lexical elements
+	 * analysis of tokens and style assignments based on analysis
+	 */
+
+
+	/**
+	 * process tokens by type
+	 * @param image the text of the token
+	 * @param location the location in the document
+	 * @param type the token type from the parser
+	 * @return the snip token with assigned style
+	 */
+	public SnipToolToken doSemanticAnalysis
+		(
+			String image, int location,
+			ContextSpecificParser.TokenType type
+		)
+	{
+		int styleCode;
+
+		if (type != ContextSpecificParser.TokenType.IDN)
+		{
+			styleCode =
+				nonIdentifierLexicalElement
+					(image, type);						// not an identifier
+		}
+		else if (isCommand (image))
+		{
+			styleCode = this.commandStyle;				// COMMAND identifier
+		}
+		else if (isKeyword (image))
+		{
+			styleCode = this.keywordStyle;				// KEYWORD identifier
+		}
+		else if (isRecognized (image))
+		{
+			styleCode =
+				recognizedIdentifier
+					(image, type);						// recognized symbol
+		}
+		else
+		{
+			styleCode = this.unrecognizedIdentifier;	// unrecognized symbol
+		}
+
+		setLastSourcePosition (location + image.length ());
+		return new SnipToolToken (image, styleCode);
+	}
+
+
+	/*
+	 * logic for assigned analysis results
+	 */
+
+
+	/**
+	 * identifiers are recognized
+	 *  when present in symbols table
+	 * @param image the text of the token
+	 * @return TRUE for recognized
+	 */
+	public boolean isRecognized (String image)
+	{
+		return symbols.contains (image);
+	}
+
+
+	/*
+	 * commands and keywords are recognized identifier tokens
 	 */
 
 
@@ -249,7 +239,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param image the text of the token
 	 * @return TRUE for command
 	 */
-	boolean isCommand (String image)
+	public boolean isCommand (String image)
 	{
 		return
 			commands.contains (image.toUpperCase ()) ||
@@ -262,69 +252,9 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param image the text of the token
 	 * @return TRUE for keyword
 	 */
-	boolean isKeyword (String image)
+	public boolean isKeyword (String image)
 	{
 		return keywords.contains (image.toLowerCase ());
-	}
-
-
-//	/**
-//	 * check token for comment syntax
-//	 * @param image the text of the token
-//	 * @return TRUE for comment
-//	 */
-//	boolean isComment (String image)
-//	{
-//		return
-//			image.startsWith (COMMENT_TOKEN) ||
-//			image.toUpperCase ().startsWith (ENTITLED_TOKEN);
-//	}
-//	public static final String ENTITLED_TOKEN = "ENTITLED";
-//	public static final String COMMENT_TOKEN = "//";
-
-
-	/**
-	 * process non-comment token
-	 * @param image the text of the token
-	 * @param location the location in the document
-	 * @param type the token type from the parser
-	 * @return the snip token with assigned style
-	 */
-	SnipToolToken otherLexicalElement
-		(
-			String image, int location,
-			LseTokenParser.TokenType type
-		)
-	{
-		int styleCode;
-
-		if (type != LseTokenParser.TokenType.IDN)
-		{
-			styleCode =
-				nonIdentifierLexicalElement
-					(image, type);				// not an identifier
-		}
-		else if (isCommand (image))
-		{
-			styleCode = this.commandStyle;		// COMMAND identifier
-		}
-		else if (isKeyword (image))
-		{
-			styleCode = this.keywordStyle;		// KEYWORD identifier
-		}
-		else if (symbols.contains (image))
-		{
-			styleCode =
-				recognizedIdentifier
-					(image, type);				// recognized symbol
-		}
-		else
-		{
-			styleCode = this.IDstyleBAD;		// unrecognized symbol
-		}
-
-		setLastSourcePosition (location + image.length ());
-		return new SnipToolToken (image, styleCode);
 	}
 
 
@@ -333,16 +263,17 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * how far down the tree symbols are analyzed
 	 */
 
+
 	/**
 	 * identifier recognized but not typed
 	 * @param image the text image of the symbol
 	 * @param type the token type identified in the parser
 	 * @return the styleCode to use for this token
 	 */
-	int recognizedIdentifier
+	public int recognizedIdentifier
 		(
 			String image,
-			LseTokenParser.TokenType type
+			ContextSpecificParser.TokenType type
 		)
 	{
 		//show (image, "REC");
@@ -352,7 +283,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 		 * the symbol table has this symbol...
 		 * OK just means the symbol table has it.
 		 */
-		return choose (image, IDstyleOK);
+		return choose (image, recognizedIdentifier);
 	}
 
 
@@ -362,10 +293,10 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param type the token type identified in the parser
 	 * @return the styleCode to use for this token
 	 */
-	int nonIdentifierLexicalElement
+	public int nonIdentifierLexicalElement
 		(
 			String image,
-			LseTokenParser.TokenType type
+			ContextSpecificParser.TokenType type
 		)
 	{
 		//show (image, "UNK");
@@ -386,7 +317,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param defaultChoice the default to be used lacking alternate choice
 	 * @return the styleCode to use for this token
 	 */
-	int choose
+	public int choose
 		(
 			String image, int defaultChoice
 		)
@@ -402,7 +333,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param image the text image of the symbol
 	 * @param kind REC or UNK as identified by caller
 	 */
-	void show (String image, String kind)
+	public void show (String image, String kind)
 	{
 		String type = "NO TYPE";
 		Object sym = properties.getSymbolMap ().get (image);
@@ -423,7 +354,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param image the text image of the symbol
 	 * @return the classification name
 	 */
-	String lookup (String image)
+	public String lookup (String image)
 	{
 		Object sym = properties.getSymbolMap ().get (image);
 		if (sym == null) return "Unrecognized";
@@ -436,7 +367,7 @@ public class CalcLibSnipScanner implements SnipToolScanner
 	 * @param type the name of the type
 	 * @return the style code for the posted type
 	 */
-	Number chooseForType (String type)
+	public Number chooseForType (String type)
 	{
 		Style style =
 			styles.getStyle (type);
