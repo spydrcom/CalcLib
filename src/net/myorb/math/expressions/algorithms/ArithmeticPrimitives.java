@@ -217,5 +217,41 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	}
 
 
+	/**
+	 * implement operator - ->
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getLambdaAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				String lefts = left.toString (), rights = right.toString ();
+				String parameters = lefts.substring (1, lefts.length()-1);
+				String funcBody = rights.substring (1, rights.length()-1);
+				String declare = "lambda " + parameters + " : " + funcBody;
+
+				ValueManager.GenericValue value =
+						valueManager.newCapturedValue (declare);
+				System.out.println (declare);
+				return value;
+			}
+
+			public String markupForDisplay
+				(
+					String operator, String firstOperand, String secondOperand,
+					boolean lfence, boolean rfence, NodeFormatting using
+				)
+			{
+				return null;
+			}
+		};
+	}
+
+
 }
 

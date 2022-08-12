@@ -486,7 +486,14 @@ public class Primitives<T>
 	 */
 	public void pushTokenOnValueStack ()
 	{
-		valueStack.push (spaceManager.parseValueToken (type, image));
+		if (type == TokenParser.TokenType.SEQ)
+		{
+			valueStack.push (valueManager.newCapturedValue (image), null);	//TODO: meta-data for captured sequences
+		}
+		else
+		{
+			valueStack.push (spaceManager.parseValueToken (type, image));
+		}
 	}
 
 

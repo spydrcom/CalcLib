@@ -149,6 +149,10 @@ public class ValueManager<T>
 	}
 
 
+	public interface CapturedValue extends TextValue
+	{}
+
+
 	public interface StructuredValue extends GenericValue
 	{
 		/**
@@ -259,6 +263,16 @@ public class ValueManager<T>
 	public StructuredValue newStructure (Object structure)
 	{
 		return new StructureStorage (structure);
+	}
+
+
+	/**
+	 * @param structure object to be referenced
+	 * @return new structure object
+	 */
+	public CapturedValue newCapturedValue (String text)
+	{
+		return new TextStorage (text);
 	}
 
 
@@ -982,7 +996,7 @@ class MatrixStorage<T> extends NamedValue
 
 
 class TextStorage extends NamedValue
-	implements ValueManager.TextValue
+	implements ValueManager.TextValue, ValueManager.CapturedValue
 {
 
 	public TextStorage(String text)
