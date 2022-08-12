@@ -430,6 +430,11 @@ class ExpressionSegments
 {
 
 	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ExpressionTokenParser#getSequenceCaptureMarkers()
+	 */
+	public String getSequenceCaptureMarkers () { return "{}"; }
+
+	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.ExpressionTokenParser#getCommentIndicators()
 	 */
 	public Collection <String> getCommentIndicators () { return COMMENT_INDICATORS; }
