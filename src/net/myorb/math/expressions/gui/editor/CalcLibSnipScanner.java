@@ -1,8 +1,8 @@
 
 package net.myorb.math.expressions.gui.editor;
 
-import net.myorb.data.abstractions.language.ContextSpecificAnalyzer;
 import net.myorb.data.abstractions.language.ContextSpecificParser;
+import net.myorb.data.abstractions.language.ContextSpecificAnalyzer;
 
 import net.myorb.gui.editor.model.SnipToolContext;
 import net.myorb.gui.editor.model.SnipToolToken;
@@ -45,18 +45,21 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 
 
 	public CalcLibSnipScanner (SnipProperties properties)
-	{
-		this.parser = new ContextSpecificParser ();
-		this.processCollections (properties);
-	}
-	protected ContextSpecificParser parser;
+	{ super (null); this.prepareParser (); this.processCollections (properties); }
 
 
-	/* (non-Javadoc)
-	 * @see net.myorb.gui.editor.SnipToolScanner#trackWS()
+	/**
+	 * establish context for parser
 	 */
-	public void trackWS () { parser.trackWS (); trackingWS = true; }
-	boolean trackingWS = false;
+	public void prepareParser ()
+	{
+		ContextSpecificParser.COMMENT_INDICATORS.add ("//");
+		ContextSpecificParser.COMMENT_INDICATORS.add ("//*");
+		ContextSpecificParser.COMMENT_INDICATORS.add ("ENTITLED");
+		this.parser = new ContextSpecificParser ();
+	}
+
+
 
 
 	/**
