@@ -1,8 +1,13 @@
 
 package net.myorb.math.expressions.gui.editor;
 
+import net.myorb.math.expressions.OperatorNomenclature;
+
 import net.myorb.data.abstractions.language.ContextSpecificParser;
 import net.myorb.data.abstractions.language.ContextSpecificAnalyzer;
+
+import net.myorb.data.abstractions.ExpressionTokenParser;
+import net.myorb.data.abstractions.CommonCommandParser;
 
 import net.myorb.gui.editor.model.SnipToolContext;
 import net.myorb.gui.editor.model.SnipToolToken;
@@ -10,8 +15,12 @@ import net.myorb.gui.editor.model.SnipToolToken;
 import javax.swing.text.Style;
 
 import java.util.Collection;
+
 import java.util.HashMap;
+import java.util.HashSet;
+
 import java.util.Map;
+import java.util.Set;
 
 /**
  * extended token parser tailored to CalcLib script syntax
@@ -25,41 +34,36 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 	/*
 	 * the token types assigned by the parser
 	 * 
-		IDN, // an identifier
-		OPR, // an operator, possible multi-character
+		IDN, // an identifier (command, keyword, symbol)
+		OPR, // an operator, possible multi-character (MCO)
 		QOT, // a quoted body of text, a string literal
 		NUM, // any numeric value (with no sub-class)
-		INT, // an integer value (no decimal point)
 		RDX, // an integer value with specified radix
+		INT, // an integer value (no decimal point)
 		DEC, // a decimal value (decimal point) 
 		FLT, // a floating point value
-		CMT, // comments
-		WS
+		CMT, // a comment to EOL
+		WS   // white space
 	 */
 
 
 	/**
-	 * provide a direct map between LseTokenParser.TokenType and style codes
+	 * provide a direct map between
+	 *	ContextSpecificParser.TokenType
+	 * and style codes
 	 */
 	protected Map<ContextSpecificParser.TokenType,Integer> styleMap;
 
 
-	public CalcLibSnipScanner (SnipProperties properties)
-	{ super (null); this.prepareParser (); this.processCollections (properties); }
-
-
 	/**
-	 * establish context for parser
+	 * construct scanner based on application properties for Snip tool
+	 * @param properties the application properties specific to Snip tool
 	 */
-	public void prepareParser ()
+	public CalcLibSnipScanner (SnipProperties properties)
 	{
-		ContextSpecificParser.COMMENT_INDICATORS.add ("//");
-		ContextSpecificParser.COMMENT_INDICATORS.add ("//*");
-		ContextSpecificParser.COMMENT_INDICATORS.add ("ENTITLED");
-		this.parser = new ContextSpecificParser ();
+		super (new ExpressionSegments ());		// supply context to analyzer
+		this.processCollections (properties);	// read symbol data from properties
 	}
-
-
 
 
 	/**
@@ -100,8 +104,8 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 		// produce a map that provides defaults for all token types
 		assignStyleMapEntries ();
 	}
-	protected int commandStyle, keywordStyle;
 	protected int recognizedIdentifier, unrecognizedIdentifier;
+	protected int commandStyle, keywordStyle;
 
 
 	/**
@@ -185,7 +189,7 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 	{
 		int styleCode;
 
-		if (type != ContextSpecificParser.TokenType.IDN)
+		if ( ! isIdentifier (type) )
 		{
 			styleCode =
 				nonIdentifierLexicalElement
@@ -218,6 +222,17 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 	/*
 	 * logic for assigned analysis results
 	 */
+
+
+	/**
+	 * identifiers have a specific type
+	 * @param type the category assigned to a token
+	 * @return TRUE when type indicates a token type
+	 */
+	public boolean isIdentifier (ContextSpecificParser.TokenType type)
+	{
+		return type == ContextSpecificParser.TokenType.IDN;
+	}
 
 
 	/**
@@ -402,6 +417,41 @@ public class CalcLibSnipScanner extends ContextSpecificAnalyzer
 		typeTable.put ("OperationObject", "Library");
 	 */
 
+
+}
+
+
+/**
+ * token descriptions specific to CalcLib
+ */
+class ExpressionSegments
+	extends ExpressionTokenParser
+	implements CommonCommandParser.SpecialTokenSegments
+{
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ExpressionTokenParser#getCommentIndicators()
+	 */
+	public Collection <String> getCommentIndicators () { return COMMENT_INDICATORS; }
+
+	/**
+	 * comment syntax and recognition was prone to causing bugs
+	 * 	****  so it is being specifically outlined here  ****
+	 */
+	static final Set <String> COMMENT_INDICATORS;
+
+	static
+	{
+
+		// recognition of operators that work as EOL comments
+		COMMENT_INDICATORS = new HashSet <String> ();
+
+		// refer back to language Nomenclature
+		COMMENT_INDICATORS.add (OperatorNomenclature.COMMENT_PREFIX);
+		COMMENT_INDICATORS.add (OperatorNomenclature.ENTITLED_KEYWORD);
+		COMMENT_INDICATORS.add (OperatorNomenclature.TIP_PREFIX);
+
+	}
 
 }
 

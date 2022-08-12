@@ -40,7 +40,6 @@ public class SnipProperties implements SnipToolPropertyAccess
 {
 
 
-
 	/*
 	 * Java SE defines the following five logical font families:
 	 * 
