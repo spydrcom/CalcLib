@@ -7,6 +7,7 @@ import net.myorb.math.computational.FunctionRoots;
 import net.myorb.math.expressions.commands.CommandDictionary;
 import net.myorb.math.expressions.commands.ExtendedKeywordCommand;
 
+import net.myorb.math.expressions.algorithms.LambdaExpressions;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
 
@@ -125,6 +126,16 @@ public class Primitives<T>
 	 */
 	public List<String> getSubordinateKeywords () { return subordinateKeywords; }
 	protected List<String> subordinateKeywords =  new ArrayList<String> ();
+
+
+	/**
+	 * @return processing object for Lambda expressions
+	 */
+	public LambdaExpressions<T> getLambdaExpressionProcessor ()
+	{
+		return lambdaExpressions; //TODO: may need some changes
+	}
+	protected LambdaExpressions<T> lambdaExpressions = new LambdaExpressions<T> ();
 
 
 	/**

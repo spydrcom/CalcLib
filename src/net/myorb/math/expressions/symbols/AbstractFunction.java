@@ -214,7 +214,7 @@ class DomainStorage<T> implements AbstractFunction.DomainConstraints<T>
 		String notation = GreekSymbols.findNotationFor (sName);									// check for Greek notation (for unicode display)
 		if (notation != null) sNameUC = notation;												// found the greek version for unicode display
 	}
-	protected SymbolMap.VariableLookup symbol = null;										// variable contains scalar value for evaluation
+	protected SymbolMap.VariableLookup symbol = null;											// variable contains scalar value for evaluation
 	protected String sName = null, sNameUC = null;												// ANSI text, unicode text
 
 

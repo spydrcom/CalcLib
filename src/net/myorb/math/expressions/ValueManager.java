@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.math.expressions.evaluationstates.*;
+import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.GeneratingFunctions;
 
@@ -149,10 +151,34 @@ public class ValueManager<T>
 	}
 
 
+	/**
+	 * tokens carried as raw text value to represent a lambda expression
+	 */
 	public interface CapturedValue extends TextValue
 	{}
 
 
+	/**
+	 * a pointer carried as a value to implement object access
+	 */
+	public interface IndirectAccess extends GenericValue
+	{
+		Object getReferenced (); //TODO: more indirection capability
+	}
+
+
+	/**
+	 * an indirect reference to a function
+	 */
+	public interface Executable<T> extends GenericValue
+	{
+		Subroutine<T> getSubroutine (); //TODO: more indirection capability
+	}
+
+
+	/**
+	 * general object wrapper
+	 */
 	public interface StructuredValue extends GenericValue
 	{
 		/**
@@ -266,14 +292,48 @@ public class ValueManager<T>
 	}
 
 
+	/*
+	 * specific values for lambda expressions
+	 * and Procedure Parameter implementations
+	 * (Pointer types included)
+	 */
+	//TODO: complete implementation
+
+
 	/**
-	 * @param structure object to be referenced
-	 * @return new structure object
+	 * @param text the captured text
+	 * @return the text storage object
 	 */
 	public CapturedValue newCapturedValue (String text)
 	{
 		return new TextStorage (text);
 	}
+
+
+	/**
+	 * @param referenced the object referred to
+	 * @return indirect access to the object
+	 */
+	public IndirectAccess newPointer (Object referenced)
+	{
+		return new Pointer ( (NamedValue) referenced );
+	}
+
+
+	/**
+	 * build a generic value to hold a procedure parameter
+	 * @param procedure the procedure to be referenced
+	 * @return the procedure wrapped as an Executable
+	 */
+	public Executable<T> newProcedureParameter (DefinedFunction<T> procedure)
+	{
+		return new ExecutableReference<T> (procedure);
+	}
+
+
+	/*
+	 * utilities for GenericValue content
+	 */
 
 
 	/**
@@ -820,7 +880,7 @@ class NamedValue implements ValueManager.GenericValue
 
 
 /**
- * demarcation of a value introduced by an undefined symbol reference
+ * notation of a value introduced by an undefined symbol reference
  */
 class UndefinedSymbolReference extends NamedValue
 	implements ValueManager.UndefinedValue
@@ -1010,6 +1070,34 @@ class TextStorage extends NamedValue
 }
 
 
+class Pointer extends NamedValue
+	implements ValueManager.IndirectAccess
+{
+
+	public String toString ()
+	{ return "&" + referenced.getName (); }
+	public Object getReferenced () { return referenced; }
+	public Pointer (NamedValue referenced)
+	{ this.referenced = referenced; }
+	NamedValue referenced;
+
+}
+
+
+class ExecutableReference<T> extends NamedValue
+	implements ValueManager.Executable<T>
+{
+
+	public String toString ()
+	{ return subroutine.getName (); }
+	public Subroutine<T> getSubroutine () { return subroutine; }
+	public ExecutableReference (DefinedFunction<T> subroutine)
+	{ this.subroutine = subroutine; }
+	DefinedFunction<T> subroutine;
+	
+}
+
+
 class StructureStorage extends NamedValue
 	implements ValueManager.StructuredValue
 {
@@ -1026,3 +1114,4 @@ class StructureStorage extends NamedValue
 	Object object;
 
 }
+

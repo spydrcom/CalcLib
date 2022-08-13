@@ -231,13 +231,16 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
 				String lefts = left.toString (), rights = right.toString ();
-				String parameters = lefts.substring (1, lefts.length()-1);
-				String funcBody = rights.substring (1, rights.length()-1);
-				String declare = "lambda " + parameters + " : " + funcBody;
+
+				String parameters = lefts.substring (1, lefts.length () - 1);
+				String funcBody = rights.substring (1, rights.length () - 1);
+
+				LambdaExpressions<T> lambda =
+					environment.getLambdaExpressionProcessor ();
+				environment.provideAccessTo (lambda);
 
 				ValueManager.GenericValue value =
-						valueManager.newCapturedValue (declare);
-				System.out.println (declare);
+					lambda.processDeclaration (parameters, funcBody);
 				return value;
 			}
 
