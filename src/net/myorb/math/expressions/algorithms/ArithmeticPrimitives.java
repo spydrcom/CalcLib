@@ -218,7 +218,7 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 
 
 	/**
-	 * implement operator - ->
+	 * implement operator - -&gt;
 	 * @param symbol the symbol associated with this object
 	 * @param precedence the associated precedence
 	 * @return operation implementation object
