@@ -21,19 +21,23 @@ public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
 {
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
+	 */
 	public void setEnvironment (Environment<T> environment)
 	{
 		this.environment = environment;
 		this.valueManager = environment.getValueManager ();
 	}
-	ValueManager<T> valueManager;
-	Environment<T> environment;
+	protected ValueManager<T> valueManager;
+	protected Environment<T> environment;
 
 
 	/**
-	 * @param parameters
-	 * @param funcBody
-	 * @return
+	 * process a lambda function definition operator
+	 * @param parameters the parameter text captured in the operator parse
+	 * @param funcBody the tokens of the function body captured in the operator parse
+	 * @return a generic value the holds a procedure parameter reference
 	 */
 	public ValueManager.GenericValue processDeclaration 
 		(String parameters, String funcBody)
@@ -50,17 +54,22 @@ public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
 			);
 		environment.processDefinedFunction (defnition);
 
+		LambdaMetadata metadata =
+			new LambdaMetadata (parameters, funcBody);
 		ValueManager.Executable<T> proParm =
 			valueManager.newProcedureParameter (defnition);
 		ValueManager.IndirectAccess access =
 			valueManager.newPointer (proParm);
+		proParm.setMetadata (metadata);
 		proParm.setName (name);
-		return access;
 
-//		ValueManager.GenericValue
-//			value = python (parameters, funcBody);
-//		return value;
+		return access;
 	}
+
+
+	/*
+	 * parse the required structures for User Function definition
+	 */
 
 	public TokenParser.TokenSequence functionTokensFrom (String source)
 	{
@@ -82,17 +91,54 @@ public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
 
 	/**
 	 * format a display using Python syntax
-	 * @param parameters the parameter profile of the symbol
-	 * @param funcBody the token that make the body of the function symbol
+	 * @param metadata the metadata block for a lambda procedure parameter
 	 * @return a generic value holding the text of the display
 	 */
-	public ValueManager.GenericValue python (String parameters, String funcBody)
+	public ValueManager.GenericValue toPythonSyntax (LambdaMetadata metadata)
 	{
-		String declare = "lambda " + parameters + " : " + funcBody;
-		ValueManager.GenericValue value = valueManager.newCapturedValue (declare);
-		//System.out.println (declare);
-		return value;
+		return valueManager.newCapturedValue (metadata.toString ()); 
 	}
 
 
 }
+
+
+/**
+ * retain the original captured text of the declaration
+ */
+class LambdaMetadata implements ValueManager.Metadata
+{
+
+
+	LambdaMetadata
+	(String parameters, String funcBody)
+	{
+		this.parameters = parameters;
+		this.funcBody = funcBody;
+	}
+	protected String parameters, funcBody;
+
+
+	/**
+	 * format a display using Python syntax
+	 * @param parameters the parameter profile of the symbol
+	 * @param funcBody the token that make the body of the function symbol
+	 * @return the text of the display
+	 */
+	public static String getPythonSyntaxFor (String parameters, String funcBody)
+	{
+		return "lambda " + parameters + " : " + funcBody;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString ()
+	{
+		return getPythonSyntaxFor (parameters, funcBody);
+	}
+
+
+}
+

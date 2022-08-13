@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.commands;
 
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.DifferentialEquationsManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.symbols.AbstractFunction;
@@ -45,10 +46,18 @@ public class Rendering<T> extends PrettyPrinter<T>
 	 */
 	public void RenderFunction (CommandSequence sequence)
 	{
+		TokenParser.TokenSequence tokens;
 		String functionName = Utilities.getSequenceFollowing (1, sequence);
 		AbstractFunction<T> f = AbstractFunction.cast (formatter.getSymbolMap ().get (functionName));
-		if (f == null) throw new RuntimeException ("No such function: " + functionName);
-		prettyPrint (getProfileTokens (functionName, f));
+		if (f == null) { throw new RuntimeException ("No such function: " + functionName); }
+		if (isIndexReference (functionName)) tokens = getLambdaTokens (functionName, f);
+		else tokens = getProfileTokens (functionName, f);
+		prettyPrint (tokens);
+	}
+	boolean isIndexReference (String symbolName)
+	{
+		// names generated for lambda expressions have indexing syntax
+		return symbolName.indexOf (OperatorNomenclature.INDEXING_OPERATOR) >= 0;
 	}
 
 
@@ -113,6 +122,39 @@ public class Rendering<T> extends PrettyPrinter<T>
 		profileTokens.addAll (function.getFunctionTokens ());
 		return profileTokens;
 	}
+
+
+	/**
+	 * prepare lambda expression to be rendered in function display
+	 * @param functionName the name of the function being rendered
+	 * @param function the low level representation of the function
+	 * @return the list of tokens making up the profile
+	 */
+	private TokenParser.TokenSequence getLambdaTokens
+		(String functionName, AbstractFunction<T> function)
+	{
+		TokenParser.TokenSequence profileTokens = TokenParser.parse
+			(
+				append
+				(
+					function.getParameterNameList ()
+						.formatNameList (true),
+					functionName
+				)
+			);
+		profileTokens.addAll (function.getFunctionTokens ());
+		return profileTokens;
+	}
+	StringBuffer append (StringBuffer parameterList, String functionName)
+	{
+		return new StringBuffer ().append (functionName).append (" = ")
+			.append (START).append (" ").append (parameterList).append (" ")
+			.append (END).append (" ").append (LAMBDA).append (" ");
+	}
+	static final String
+	LAMBDA = OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR,
+	START = OperatorNomenclature.START_OF_FORMAL_LIST_DELIMITER,
+	END = OperatorNomenclature.END_OF_FORMAL_LIST_DELIMITER;
 
 
 }

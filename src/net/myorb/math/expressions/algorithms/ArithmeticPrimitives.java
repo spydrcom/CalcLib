@@ -250,7 +250,8 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 					boolean lfence, boolean rfence, NodeFormatting using
 				)
 			{
-				return null;
+				String left = using.formatParenthetical (firstOperand, lfence), right = using.formatParenthetical (secondOperand, rfence);
+				return using.formatBinaryOperation (left, OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR, right);
 			}
 		};
 	}
