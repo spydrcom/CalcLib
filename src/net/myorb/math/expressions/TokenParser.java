@@ -16,14 +16,11 @@ public class TokenParser extends ExpressionTokenParser
 	 * provide for Greek character substitutions
 	 */
 	static ExpressionTokenParser.Notation notations =
-			new ExpressionTokenParser.Notation ()
-			{
-				@Override
-				public String lookFor(String text)
-				{
-					return GreekSymbols.findNotationFor (text);
-				}
-			};
+		new ExpressionTokenParser.Notation ()
+		{
+			public String lookFor (String text)
+			{ return GreekSymbols.findNotationFor (text); }
+		};
 
 	/**
 	 * pretty print a token sequence

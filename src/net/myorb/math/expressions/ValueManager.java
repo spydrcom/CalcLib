@@ -1,13 +1,16 @@
 
 package net.myorb.math.expressions;
 
-import net.myorb.math.expressions.evaluationstates.*;
-import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.GeneratingFunctions;
 
+import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.symbols.DefinedFunction;
+
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.data.abstractions.ErrorHandling;
+
+import java.util.List;
 
 /**
  * the central representation for all value types supported
@@ -163,7 +166,7 @@ public class ValueManager<T>
 	 */
 	public interface IndirectAccess extends GenericValue
 	{
-		Object getReferenced (); //TODO: more indirection capability
+		Object getReferenced ();
 	}
 
 
@@ -172,7 +175,7 @@ public class ValueManager<T>
 	 */
 	public interface Executable<T> extends GenericValue
 	{
-		Subroutine<T> getSubroutine (); //TODO: more indirection capability
+		Subroutine<T> getSubroutine ();
 	}
 
 
@@ -297,7 +300,6 @@ public class ValueManager<T>
 	 * and Procedure Parameter implementations
 	 * (Pointer types included)
 	 */
-	//TODO: complete implementation
 
 
 	/**
@@ -636,6 +638,46 @@ public class ValueManager<T>
 
 
 	/**
+	 * apply an index to an array and return the value
+	 * @param left a generic value that must be an array
+	 * @param indexValue the index into the array to check
+	 * @return the element of the array given by the index
+	 * @throws RuntimeException for index out of range
+	 */
+	public GenericValue applyIndex
+	(GenericValue left, int indexValue)
+	throws RuntimeException
+	{
+		if (isParameterList (left))
+		{
+			ValueList v = (ValueList) left;
+			List<GenericValue> items = v.getValues ();
+			indexCheck (items, indexValue);
+			return items.get (indexValue);
+		}
+
+		List<T> array;
+		indexCheck (array = toArray (left), indexValue);
+		return newDiscreteValue (array.get (indexValue));
+	}
+
+
+	/**
+	 * check index against array size
+	 * @param list the list to treat as an array
+	 * @param index the index into the array to check
+	 * @throws RuntimeException for index out of range
+	 */
+	public void indexCheck (List<?> list, int index) throws RuntimeException
+	{
+		if (index < 0 || list.size () <= index)
+		{
+			throw new RuntimeException ("Index found to be beyond array bounds");
+		}		
+	}
+
+
+	/**
 	 * does parameter represent a list
 	 * @param value the value as a generic object
 	 * @return TRUE = value is a list
@@ -947,6 +989,7 @@ class ValueListStorage extends NamedValue
 	//TODO: contains (DimensionedValue) ???
 }
 
+
 /**
  * special treatment operators
  */
@@ -966,6 +1009,7 @@ class GenericManager<T> extends NamedValue
 	}
 	protected ValueManager.Formatter<T> formatter = null;
 }
+
 
 /**
  * storage for individual values
@@ -1055,6 +1099,9 @@ class MatrixStorage<T> extends NamedValue
 }
 
 
+/**
+ * storage of any text
+ */
 class TextStorage extends NamedValue
 	implements ValueManager.TextValue, ValueManager.CapturedValue
 {
@@ -1070,20 +1117,29 @@ class TextStorage extends NamedValue
 }
 
 
+/**
+ * general pointer implementing indirect access
+ */
 class Pointer extends NamedValue
 	implements ValueManager.IndirectAccess
 {
 
 	public String toString ()
-	{ return "&" + referenced.getName (); }
+	{ return OP + referenced.getName (); }
 	public Object getReferenced () { return referenced; }
 	public Pointer (NamedValue referenced)
 	{ this.referenced = referenced; }
 	NamedValue referenced;
 
+	static final String OP =
+		OperatorNomenclature.ADDRESS_OF_OPERATOR;
+
 }
 
 
+/**
+ * procedure parameter reference
+ */
 class ExecutableReference<T> extends NamedValue
 	implements ValueManager.Executable<T>
 {
@@ -1098,6 +1154,9 @@ class ExecutableReference<T> extends NamedValue
 }
 
 
+/**
+ * access to any Object treated as Structure
+ */
 class StructureStorage extends NamedValue
 	implements ValueManager.StructuredValue
 {

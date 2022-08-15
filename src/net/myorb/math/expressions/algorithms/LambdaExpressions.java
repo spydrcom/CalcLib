@@ -1,14 +1,18 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-
-import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.ValueManager.GenericValue;
+
+import net.myorb.math.expressions.OperatorNomenclature;
+import net.myorb.math.expressions.TokenParser;
 
 import java.util.List;
 
@@ -17,17 +21,18 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
+public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 {
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
 	 */
-	public void setEnvironment (Environment<T> environment)
+	public void setEnvironment (Environment <T> environment)
 	{
 		this.environment = environment;
 		this.valueManager = environment.getValueManager ();
+		this.allocateLambdaList ();
 	}
 	protected ValueManager<T> valueManager;
 	protected Environment<T> environment;
@@ -42,28 +47,99 @@ public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
 	public ValueManager.GenericValue processDeclaration 
 		(String parameters, String funcBody)
 	{
-		String name;
-		DefinedFunction<T> defnition =
+		DefinedFunction<T> definition =
 			DefinedFunction.defineUserFunction
 			(
-				name = nextName (),
+				nextName (),
 				parameterNamesFrom (parameters),
 				functionTokensFrom (funcBody),
 				environment.getSpaceManager (),
 				environment.getSymbolMap ()
 			);
-		environment.processDefinedFunction (defnition);
+		environment.processDefinedFunction (definition);
+		return getAccessToProc
+		(
+			getProcParm
+			(
+				definition,
+				new LambdaMetadata
+				(
+					parameters,
+					funcBody
+				)
+			)
+		);
+	}
 
-		LambdaMetadata metadata =
-			new LambdaMetadata (parameters, funcBody);
-		ValueManager.Executable<T> proParm =
-			valueManager.newProcedureParameter (defnition);
-		ValueManager.IndirectAccess access =
-			valueManager.newPointer (proParm);
-		proParm.setMetadata (metadata);
-		proParm.setName (name);
 
-		return access;
+	/**
+	 * build a pointer to a procedure parameter
+	 * @param proParm the executable describing a function
+	 * @return indirect access to the procedure parameter
+	 */
+	public ValueManager.IndirectAccess getAccessToProc
+	(ValueManager.Executable <T> proParm)
+	{
+		ValueManager.IndirectAccess
+			accessToProc = valueManager.newPointer (proParm);
+		addToArray (accessToProc);
+		return accessToProc;
+	}
+
+
+	/**
+	 * build a procedure parameter description
+	 * @param definition a function definition record
+	 * @param metadata a meta-data object for the procedure
+	 * @return the procedure parameter description
+	 */
+	public ValueManager.Executable <T> getProcParm
+	(DefinedFunction <T> definition, LambdaMetadata metadata)
+	{
+		ValueManager.Executable <T> procParm =
+			valueManager.newProcedureParameter (definition);
+		procParm.setName (definition.getName ());
+		procParm.setMetadata (metadata);
+		return procParm;
+	}
+
+
+	/**
+	 * maintain a list of lambda functions
+	 * @param value a new lambda resulting from expression execution
+	 */
+	public void addToArray
+	(ValueManager.GenericValue value) { lambdas.add (value); }
+	protected ValueManager.GenericValueList lambdas = null;
+	protected ValueManager.ValueList lambdaList = null;
+
+
+	/**
+	 * build and post the lambda array
+	 */
+	public void allocateLambdaList ()
+	{
+		if (lambdas != null) return;
+		this.lambdas = new ValueManager.GenericValueList ();
+		this.lambdaList = environment.getValueManager ().newValueList (lambdas);
+		this.environment.getSymbolMap ().add (post ());
+	}
+
+
+	/**
+	 * post the lambda array
+	 * @return a symbol table posting for the lambda array
+	 */
+	public SymbolMap.VariableLookup post ()
+	{
+		return new SymbolMap.VariableLookup ()
+		{
+			public String getName () { return "lambda"; }
+			public String toString () { return lambdaList.toString (); }
+			public SymbolType getSymbolType () { return SymbolType.IDENTIFIER; }
+			public GenericValue getValue () { return lambdaList; }
+			public void rename (String to) {}
+		};
 	}
 
 
@@ -71,27 +147,36 @@ public class LambdaExpressions<T> implements Environment.AccessAcceptance<T>
 	 * parse the required structures for User Function definition
 	 */
 
-	public TokenParser.TokenSequence functionTokensFrom (String source)
-	{
-		return TokenParser.parse (new StringBuffer (source));
-	}
+	/**
+	 * parse the tokens of the function body
+	 * @param source a line of source from the command stream
+	 * @return the token sequence from the source
+	 */
+	public static TokenParser.TokenSequence functionTokensFrom (String source)
+	{ return TokenParser.parse (new StringBuffer (source)); }
 
+	/**
+	 * take the text of a formal parameter list and parse with convention
+	 * @param parameters a formal parameter list
+	 * @return the ListOfName representation
+	 */
 	public static List<String> parameterNamesFrom (String parameters)
-	{
-		return Subroutine.listOfNames (parameters.split (","));
-	}
+	{ return Subroutine.listOfNames (parameters.split (",")); }
 
-	public static String nextName ()
-	{
-		int thisIndex = nextLambdaIndex++;
-		return "lambda#" + thisIndex;
-	}
-	static int nextLambdaIndex = 0;
+	/**
+	 * lambda generated function names use indexing syntax
+	 * - the convention is lambda # index allowing maintenance of the lambda array
+	 * @return a generated name conforming to convention
+	 */
+	public String nextName () { return PREFIX + allocateNextIndex (); }
+	public String allocateNextIndex () { return Integer.toString (nextLambdaIndex++); }
+	public static final String PREFIX = OperatorNomenclature.LAMBDA_FUNCTION_NAME_PREFIX;
+	protected int nextLambdaIndex = 0;
 
 
 	/**
 	 * format a display using Python syntax
-	 * @param metadata the metadata block for a lambda procedure parameter
+	 * @param metadata the meta-data block for a lambda procedure parameter
 	 * @return a generic value holding the text of the display
 	 */
 	public ValueManager.GenericValue toPythonSyntax (LambdaMetadata metadata)

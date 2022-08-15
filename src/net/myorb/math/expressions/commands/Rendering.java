@@ -50,14 +50,10 @@ public class Rendering<T> extends PrettyPrinter<T>
 		String functionName = Utilities.getSequenceFollowing (1, sequence);
 		AbstractFunction<T> f = AbstractFunction.cast (formatter.getSymbolMap ().get (functionName));
 		if (f == null) { throw new RuntimeException ("No such function: " + functionName); }
-		if (isIndexReference (functionName)) tokens = getLambdaTokens (functionName, f);
-		else tokens = getProfileTokens (functionName, f);
+		if ( ! OperatorNomenclature.isIndexReference (functionName) )
+		{   tokens = getProfileTokens (functionName, f);   }
+		else tokens = getLambdaTokens (functionName, f);
 		prettyPrint (tokens);
-	}
-	boolean isIndexReference (String symbolName)
-	{
-		// names generated for lambda expressions have indexing syntax
-		return symbolName.indexOf (OperatorNomenclature.INDEXING_OPERATOR) >= 0;
 	}
 
 

@@ -218,13 +218,8 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 	public ValueManager.GenericValue index (ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
 		if (valueManager.isMatrix (left))
-			return abstractions.getMatrixLibrary ().index (valueManager.toMatrix (left), right);
-		List<T> array = valueManager.toArray (left); int index = valueManager.toInt (right, spaceManager);
-		if (array.size () <= index)
-			{
-			throw new RuntimeException ("Index found to be beyond array bounds");
-			}
-		return valueManager.newDiscreteValue (array.get (index));
+		{ return abstractions.getMatrixLibrary ().index (valueManager.toMatrix (left), right); }
+		else return valueManager.applyIndex (left, valueManager.toInt (right, spaceManager));
 	}
 
 

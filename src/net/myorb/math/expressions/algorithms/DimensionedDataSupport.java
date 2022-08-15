@@ -301,9 +301,8 @@ public class DimensionedDataSupport<T>
 	public ValueManager.GenericValue index (ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
 		if (valueManager.isMatrix (left))
-			return abstractions.getMatrixLibrary ().index (valueManager.toMatrix (left), right);
-		List<T> array = valueManager.toArray (left); int index = valueManager.toInt (right, spaceManager);
-		return valueManager.newDiscreteValue (array.get (index));
+		{ return abstractions.getMatrixLibrary ().index (valueManager.toMatrix (left), right); }
+		else return valueManager.applyIndex (left, valueManager.toInt (right, spaceManager));
 	}
 
 

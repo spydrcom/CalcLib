@@ -326,12 +326,14 @@ public class OperatorNomenclature
 	TRAPQUAD_OPERATOR			= "$#",			// f$#(lo,hi,dx)	Trapezoidal iterative numeric integral approximation
 	TRAPADJUST_OPERATOR			= "$%",			// f$%(lo,hi,dx)	Trapezoidal adjustment for brute force approximation
 	INTERVAL_EVAL_OPERATOR		= "||",			// f||(lo,hi)		evaluate f(hi) - f(lo) {definite integral evaluation}
+	ADDRESS_OF_OPERATOR			= "&@",			// &@ symbol		take indirect access to a symbol (only limited symbols allowed)
+	POINTER_DEREF_OPERATOR		= "@|",			// @| pointer		dereference a pointer to get access to the object pointed to
 	LAMBDA_EXPRESSION_INDICATOR	= "->",			// lambda			declaration of a lambda expression between parameters and formula
 	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			incrementation {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation
 	PRIME_OPERATOR				= "'",			// f'(x)			first derivative evaluation
-	PRIME_RENDER				= "\u00B4"		// f'(x)			render chanacter for prime
+	PRIME_RENDER				= "\u00B4"		// f'(x)			render character for prime
 		;
 
 
@@ -406,6 +408,29 @@ public class OperatorNomenclature
 	CHOOSE_OPERATOR				= ":",			// choice based on condition code
 	SET_CONDITION_OPERATOR		= "?"			// set condition code
 		;
+
+
+	/*
+	 * lambda expression convention
+	 */
+
+	public static
+		final String
+	LAMBDA_FUNCTION_NAME_PREFIX = "lambda" + INDEXING_OPERATOR
+		;
+
+
+	/**
+	 * names generated for
+	 *  lambda expressions have indexing syntax
+	 * @param symbolName the name given to a symbol
+	 * @return TRUE when indexing operator present
+	 */
+	public static boolean isIndexReference (String symbolName)
+	{
+		return symbolName.indexOf (INDEXING_OPERATOR) >= 0;
+	}
+
 
 
 	/*

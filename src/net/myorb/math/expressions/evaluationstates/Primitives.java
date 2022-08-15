@@ -499,7 +499,7 @@ public class Primitives<T>
 	{
 		if (type == TokenParser.TokenType.SEQ)
 		{
-			valueStack.push (valueManager.newCapturedValue (image), null);	//TODO: meta-data for captured sequences
+			valueStack.push (valueManager.newCapturedValue (image), null);
 		}
 		else
 		{

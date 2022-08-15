@@ -2,10 +2,10 @@
 package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.SymbolMap;
-import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.TokenParser;
 
 import net.myorb.math.Function;
 

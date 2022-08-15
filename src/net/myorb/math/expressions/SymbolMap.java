@@ -34,13 +34,13 @@ public class SymbolMap extends HashMap <String, Object>
 
 	public enum SymbolType
 	{
-		DELIMITER,
+		DELIMITER,		// a delimiter
 		ASSIGNMENT,		// VariableAssignment | IndexedVariableAssignment
-		IDENTIFIER,
-		UNARY,			// UnaryOperator
 		POSTFIX,		// UnaryPostfixOperator
-		BINARY,			// UnaryPostfixOperator
 		PARAMETERIZED,	// ParameterizedFunction
+		BINARY,			// BinaryOperator
+		UNARY,			// UnaryOperator
+		IDENTIFIER,		// Identifier
 		LIBRARY
 	}
 
