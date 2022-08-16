@@ -132,32 +132,6 @@ public class Environment<T> extends OperatorProcessing<T>
 
 
 	/**
-	 * process the object of the dereference
-	 */
-	@SuppressWarnings("unchecked")
-	public void processDereference ()
-	{
-		SymbolMap.Named symbol = lookupImage ();
-
-		if (symbol instanceof SymbolMap.VariableLookup)
-		{
-			ValueManager.GenericValue value = getSymbolMap ().getValue (symbol);
-			
-			if (value instanceof ValueManager.IndirectAccess)
-			{
-				Object deref = ( (ValueManager.IndirectAccess) value ).getReferenced ();
-				ValueManager.Executable<T> exe = (ValueManager.Executable<T>) deref;
-				SymbolMap.Named objectReferenced = (SymbolMap.Named) exe.getSubroutine ();
-
-				setTokenImage (objectReferenced.getName ());
-				setTokenType (TokenParser.TokenType.IDN);
-			}
-		}
-		else throw new SymbolMap.Unrecognized ();
-	}
-
-
-	/**
 	 * process group operations
 	 * @param opPrec the precedence of the current operation
 	 * @return TRUE = group operator found and processed

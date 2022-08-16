@@ -131,10 +131,8 @@ public class Primitives<T>
 	/**
 	 * @return processing object for Lambda expressions
 	 */
-	public LambdaExpressions<T> getLambdaExpressionProcessor ()
-	{
-		return lambdaExpressions; //TODO: may need some changes
-	}
+	public LambdaExpressions<T>
+	getLambdaExpressionProcessor () { return lambdaExpressions; }
 	protected LambdaExpressions<T> lambdaExpressions = new LambdaExpressions<T> ();
 
 
@@ -306,11 +304,19 @@ public class Primitives<T>
 	 * capture the description of the current token
 	 * @param t the descriptor for the token being processed
 	 */
-	public void setToken (TokenParser.TokenDescriptor t)
-	{
-		type = t.getTokenType ();
-		image = t.getTokenImage ();
-	}
+	public void setToken
+	(TokenParser.TokenDescriptor t)
+	{ setToken (t.getTokenType (), t.getTokenImage ()); }
+
+
+	/**
+	 * set the current token value
+	 * @param type the type given to the token
+	 * @param image the text of the token
+	 */
+	public void setToken
+	(TokenParser.TokenType type, String image)
+	{ this.type = type; this.image = image; }
 
 
 	/**

@@ -4,7 +4,9 @@ package net.myorb.math.expressions;
 // evaluation states
 import net.myorb.math.expressions.evaluationstates.DeclarationSupport;
 import net.myorb.math.expressions.evaluationstates.ExtendedArrayFeatures;
+import net.myorb.math.expressions.evaluationstates.IndirectionProcessing;
 import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 // IOLIB error handling
@@ -45,17 +47,28 @@ public class EvaluationEngine<T>
 	public EvaluationEngine (Environment<T> environment)
 	{
 		this.setFunctionDefinition (this.environment = environment);
+		this.setIndirectionProcessor (environment);
 	}
 	protected Environment<T> environment;
 
 
 	/**
+	 * prepare for function definitions
 	 * @param environment a description of the system
 	 */
 	public void setFunctionDefinition
 	(Environment<T> environment) { this.setFunctionDefinition (new FunctionDefinition<T> (environment)); }
 	public void setFunctionDefinition (FunctionDefinition<T> functionManager) { this.functionManager = functionManager; }
 	protected FunctionDefinition<T> functionManager;
+
+
+	/**
+	 * prepare indirect access processor
+	 * @param environment a description of the system
+	 */
+	public void setIndirectionProcessor (Environment<T> environment)
+	{ this.indirectionProcessor = new IndirectionProcessing<T>(environment); }
+	protected IndirectionProcessing<T> indirectionProcessor;
 
 
 	/**
@@ -156,8 +169,7 @@ public class EvaluationEngine<T>
 
 			if (environment.inPointerExpression ())											// recognize a pointer at position
 			{
-				environment.setToken (tokens.get (++tokenPosition));
-				environment.processDereference ();											// dereference the pointer to get symbol
+				indirectionProcessor.processDereference (tokens.get (++tokenPosition));		// dereference the pointer to get symbol
 			}
 
 			if (typeIsIdentifier ()) environment.processIdentifier ();						// identifier may be recognized as operator
