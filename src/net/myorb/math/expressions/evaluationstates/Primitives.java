@@ -318,6 +318,7 @@ public class Primitives<T>
 	 * @return the token image
 	 */
 	public String getTokenImage () { return image; }
+	public void setTokenImage (String image) { this.image = image; }
 	private String image;
 
 
@@ -328,6 +329,15 @@ public class Primitives<T>
 	public TokenParser.TokenType getTokenType () { return type; }
 	protected void setTokenType (TokenParser.TokenType type) { this.type = type; }
 	private TokenParser.TokenType type;
+
+
+	/**
+	 * @return TRUE when current operator is pointer dereference
+	 */
+	public boolean inPointerExpression ()
+	{
+		return image.equals (OperatorNomenclature.POINTER_DEREF_OPERATOR);
+	}
 
 
 	/*

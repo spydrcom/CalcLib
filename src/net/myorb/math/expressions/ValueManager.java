@@ -649,17 +649,33 @@ public class ValueManager<T>
 	throws RuntimeException
 	{
 		if (isParameterList (left))
-		{
-			ValueList v = (ValueList) left;
-			List<GenericValue> items = v.getValues ();
-			indexCheck (items, indexValue);
-			return items.get (indexValue);
-		}
-
-		List<T> array;
-		indexCheck (array = toArray (left), indexValue);
-		return newDiscreteValue (array.get (indexValue));
+		{ return elementOfList (valuesOfList (left), indexValue); }
+		else return discreteElement (toArray (left), indexValue);
 	}
+
+
+	/**
+	 * get item of array at given index
+	 * @param array an array of discrete data values
+	 * @param index the index into the array to check
+	 * @return the element of the array given by the index
+	 * @throws RuntimeException for index out of range
+	 */
+	public GenericValue
+	discreteElement (List<T> array, int index) throws RuntimeException
+	{ indexCheck (array, index); return newDiscreteValue (array.get (index)); }
+
+
+	/**
+	 * get item of list at given index
+	 * @param items a list of generic values
+	 * @param index the index into the array to check
+	 * @return the element of the array given by the index
+	 * @throws RuntimeException for index out of range
+	 */
+	public GenericValue
+	elementOfList (List<GenericValue> items, int index) throws RuntimeException
+	{ indexCheck (items, index); return items.get (index); }
 
 
 	/**

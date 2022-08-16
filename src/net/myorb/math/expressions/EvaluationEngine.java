@@ -154,6 +154,12 @@ public class EvaluationEngine<T>
 		{
 			environment.setToken (tokens.get (tokenPosition));
 
+			if (environment.inPointerExpression ())											// recognize a pointer at position
+			{
+				environment.setToken (tokens.get (++tokenPosition));
+				environment.processDereference ();											// dereference the pointer to get symbol
+			}
+
 			if (typeIsIdentifier ()) environment.processIdentifier ();						// identifier may be recognized as operator
 			else if (!typeIsOperator ()) environment.processValue ();						// all recognized values are processed commonly
 			if (typeIsOperator ()) environment.processOperator ();							// identifier processing may have switched

@@ -328,8 +328,8 @@ public class OperatorNomenclature
 	INTERVAL_EVAL_OPERATOR		= "||",			// f||(lo,hi)		evaluate f(hi) - f(lo) {definite integral evaluation}
 	ADDRESS_OF_OPERATOR			= "&@",			// &@ symbol		take indirect access to a symbol (only limited symbols allowed)
 	POINTER_DEREF_OPERATOR		= "@|",			// @| pointer		dereference a pointer to get access to the object pointed to
-	LAMBDA_EXPRESSION_INDICATOR	= "->",			// lambda			declaration of a lambda expression between parameters and formula
-	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			incrementation {used in array declaration and derivative approximation}
+	LAMBDA_EXPRESSION_INDICATOR	= "->",			// {x}->{f(x)}		declaration of a lambda expression between parameters and formula
+	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			increment {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation
 	PRIME_OPERATOR				= "'",			// f'(x)			first derivative evaluation

@@ -257,5 +257,28 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	}
 
 
+	/**
+	 * implement operator - @|
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getDerefAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.UnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue
+			execute (ValueManager.GenericValue parameter)
+			{
+				return null;
+			}
+		};
+	
+	}
+
+
 }
 
