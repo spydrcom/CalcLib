@@ -68,6 +68,16 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 
 
 	/**
+	 * plot lambda functions over range
+	 * @param descriptor the descriptor for the domain
+	 */
+	public void lambdaFunctionPlots (ArrayDescriptor<T> descriptor)
+	{
+		String parameterNotation = ConventionalNotations.determineNotationFor (descriptor.getVariable ());
+	}//TODO: implement
+
+
+	/**
 	 * Display tabular plot with data taken from a matrix
 	 * @param symbolName name of matrix with plot data
 	 * @param sequence parameters of plot
@@ -108,6 +118,16 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 		(
 			fullName.toString (), arrays.getArrayDescriptor (sequence, pos, environment)
 		);
+	}
+
+	/**
+	 * plot lambda functions over range from command text
+	 * @param sequence the text of the command
+	 */
+	public void lambdaFunctionPlots (CommandSequence sequence)
+	{
+		ExtendedArrayFeatures<T> arrays = new ExtendedArrayFeatures<T> ();
+		lambdaFunctionPlots (arrays.getArrayDescriptor (sequence, 1, environment));
 	}
 
 

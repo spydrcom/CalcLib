@@ -88,6 +88,7 @@ public class OperatorNomenclature
 		final String
 	FFT_KEYWORD = "FFT",						// FFT(X,Y)				compute and plot a fast Fourier transform
 	PLOTF_KEYWORD = "PLOTF",					// PLOTF f [...]		plot a specified range of a user defined function
+	PLOTL_KEYWORD = "PLOTL",					// PLOTL   [...]		plot a specified range for lambda declared function(s)
 	CHART_KEYWORD = "CHART",					// CHART kind  a b c	bar and pie charts with a kind specific to implementation
 	SPLOT_KEYWORD = "SPLOT",					// SPLOT [...](f(x))	plot an array of structured values over a specified domain
 	PLOTC_KEYWORD = "PLOTC",					// PLOTC f x y 			plot a specified 2D domain with contours of a 3D user defined function
