@@ -201,6 +201,24 @@ public class DisplayGraphAtomic extends DisplayGraphTypes
 
 
 	/**
+	 * build a domain from an array descriptor
+	 * @param descriptor description of the domain values
+	 * @param mgr a type manager for the data
+	 * @param <T> the data type of the domain
+	 * @return a sequence holding the domain
+	 */
+	public static <T> DataSequence <T> domain
+		(Arrays.Descriptor<T> descriptor, ExpressionSpaceManager<T> mgr)
+	{
+		return DataSequence.evenlySpaced
+				(
+					descriptor.getLo (), descriptor.getHi (),
+					descriptor.getDelta (), mgr
+				);
+	}
+
+
+	/**
 	 * provide a domain value list
 	 * @param lo the low value for the domain
 	 * @param hi the high value for the domain

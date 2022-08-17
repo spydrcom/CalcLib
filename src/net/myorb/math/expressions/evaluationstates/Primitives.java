@@ -7,7 +7,7 @@ import net.myorb.math.computational.FunctionRoots;
 import net.myorb.math.expressions.commands.CommandDictionary;
 import net.myorb.math.expressions.commands.ExtendedKeywordCommand;
 
-import net.myorb.math.expressions.algorithms.LambdaExpressions;
+import net.myorb.math.expressions.algorithms.LambdaFunctionPlotter;
 import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
 
@@ -131,9 +131,9 @@ public class Primitives<T>
 	/**
 	 * @return processing object for Lambda expressions
 	 */
-	public LambdaExpressions<T>
+	public LambdaFunctionPlotter <T>
 	getLambdaExpressionProcessor () { return lambdaExpressions; }
-	protected LambdaExpressions<T> lambdaExpressions = new LambdaExpressions<T> ();
+	protected LambdaFunctionPlotter <T> lambdaExpressions = new LambdaFunctionPlotter <T> ();
 
 
 	/**

@@ -182,15 +182,43 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	 */
 	public void plotValues (ValueManager.GenericValue array)
 	{
-		Arrays.Descriptor<T>
-			domainDescriptor = environment.getArrayMetadataFor (array);
-		RealSeries domainValues = domain (domainDescriptor, conversion);
-		plotValues (domainDescriptor.formatTitle (), domainDescriptor, domainValues, array);
+		Arrays.Descriptor<T> domainDescriptor =
+				environment.getArrayMetadataFor (array);
+		plotValues (domainDescriptor, array, domainDescriptor.formatTitle ());
 	}
-	public void plotStructuredData (ValueManager.GenericValue array)
+
+
+	/**
+	 * @param domainDescriptor the array descriptor for the domain
+	 * @param values the values of the functions at the domain points
+	 * @param titled a title for the plot
+	 */
+	public void plotValues
+		(
+			Arrays.Descriptor<T> domainDescriptor,
+			ValueManager.GenericValue values,
+			String titled
+		)
 	{
-		Arrays.Descriptor<T> domainDescriptor = environment.getArrayMetadataFor (array);
-		plotStructuredData (domainDescriptor.formatTitle (), domainDescriptor, array);
+		RealSeries domainValues = domain (domainDescriptor, conversion);
+		plotValues (titled, domainDescriptor, domainValues, values);
+	}
+
+
+	/**
+	 * plot multiple lambda functions
+	 * @param domainDescriptor descriptor of domain array
+	 * @param domainValues list of values of domain
+	 * @param rangeValues list of values of range
+	 * @param legend lambda specific legend
+	 */
+	public void multiLambdaPlot
+		(
+			Arrays.Descriptor<T> domainDescriptor, RealSeries domainValues,
+			ValueManager.ValueList rangeValues, SimpleLegend <T> legend
+		)
+	{
+		this.multiPlot (domainValues, rangeValues, "Lambda Functions", legend);
 	}
 
 
@@ -221,6 +249,16 @@ public class ExpressionGraphing<T> extends DisplayGraph
 				rangeValues, domainDescriptor.genMacro (environment, true)
 			);
 		}
+	}
+
+
+	/**
+	 * @param array the data for the plot with meta-data
+	 */
+	public void plotStructuredData (ValueManager.GenericValue array)
+	{
+		Arrays.Descriptor<T> domainDescriptor = environment.getArrayMetadataFor (array);
+		plotStructuredData (domainDescriptor.formatTitle (), domainDescriptor, array);
 	}
 
 

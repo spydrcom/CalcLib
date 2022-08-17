@@ -17,6 +17,14 @@ public class DisplayGraph extends DisplayGraphAtomic
 {
 
 
+	/**
+	 * a trigger type that just support legen data
+	 * @param <T> data type used in plots
+	 */
+	public static class SimpleLegend <T> extends MouseSampleTrigger <T>
+	{ private static final long serialVersionUID = -3457937988434277359L; }
+
+
 	/*
 	 * scaling
 	 */

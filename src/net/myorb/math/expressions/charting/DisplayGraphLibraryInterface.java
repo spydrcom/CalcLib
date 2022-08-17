@@ -22,7 +22,8 @@ public interface DisplayGraphLibraryInterface
 	@SuppressWarnings ("rawtypes")
 	public void multiPlotWithAxis
 		(
-			Colors colors, PlotCollection funcPlot, String title, MouseSampleTrigger trigger
+			Colors colors, PlotCollection funcPlot,
+			String title, MouseSampleTrigger trigger
 		);
 
 }

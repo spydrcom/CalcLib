@@ -75,7 +75,7 @@ public class ArrayFunction<T>
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
 		Arrays.Descriptor<T> dsc =
-			getArrayMetadataFor (left);				// metadata must be found attached to array
+			getArrayMetadataFor (left);				// meta-data must be found attached to array
 		List<T> y = valueManager.toArray (left);	// the array contains the y-axis values for the domain
 		T x = valueManager.toDiscrete (right);		// right side of the operator is the x-axis value
 		return arrayFunctionEval (x, y, dsc);		// evaluate function at X using descriptor

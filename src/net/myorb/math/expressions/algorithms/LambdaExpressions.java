@@ -4,13 +4,11 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.symbols.DefinedFunction;
-
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.TokenParser;
 

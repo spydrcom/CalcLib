@@ -5,10 +5,15 @@ package net.myorb.math.expressions;
 import net.myorb.math.expressions.commands.Utilities;
 import net.myorb.math.expressions.commands.CommandSequence;
 
+// lambda specific functionality
+import net.myorb.math.expressions.algorithms.LambdaFunctionPlotter;
+
 // evaluation states
 import net.myorb.math.expressions.evaluationstates.ExtendedArrayFeatures;
-import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
 import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
+import net.myorb.math.expressions.evaluationstates.Arrays;
 
 // charting
 import net.myorb.math.expressions.charting.DisplayGraph;
@@ -24,9 +29,11 @@ import net.myorb.charting.DisplayGraphProperties;
 
 // data
 import net.myorb.data.abstractions.CommonCommandParser;
+import net.myorb.data.abstractions.DataSequence;
 
 // JRE
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * support for charting and other expression graphing
@@ -51,6 +58,17 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	}
 
 
+	/**
+	 * a real series taken directly from a list of T data items
+	 */
+	public class ExtendedRealSeries extends RealSeries
+	{
+		public ExtendedRealSeries (List<T> items)
+		{ this.addAll (conversion.convertToSeries (items)); }
+		private static final long serialVersionUID = -8390580795236803241L;
+	}
+
+
 	public GraphManager (Environment<T> environment) { super (environment); }
 
 
@@ -67,14 +85,77 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	}
 
 
+	/*
+	 * lambda plot (PLOTL) processing
+	 */
+
+
+	/**
+	 * get the Lambda Processor and
+	 *  provide environment access to the code layer
+	 * @return access to the LambdaExpressions processor
+	 */
+	public LambdaFunctionPlotter <T> getLambdaProcessor ()
+	{
+		LambdaFunctionPlotter <T> processor =
+			environment.getLambdaExpressionProcessor ();
+		environment.provideAccessTo (processor);
+		return processor;
+	}
+
+
+	/**
+	 * plot the lambda functions
+	 * @param descriptor the descriptor for the domain
+	 * @param domainValues the DataSequence holding domain values
+	 * @param lambda the lambda processor for the plots
+	 */
+	public void doMultiLambdaPlot
+		(
+			Arrays.Descriptor <T> descriptor,
+			DataSequence <T> domainValues,
+			LambdaFunctionPlotter <T> lambda
+		)
+	{
+		this.multiLambdaPlot
+		(
+			descriptor,
+			new ExtendedRealSeries (domainValues),
+			lambda.computeLambdaRange (domainValues),
+			lambda.getSimpleLegend (descriptor)
+		);
+	}
+
+
 	/**
 	 * plot lambda functions over range
 	 * @param descriptor the descriptor for the domain
 	 */
-	public void lambdaFunctionPlots (ArrayDescriptor<T> descriptor)
+	public void lambdaFunctionPlots (Arrays.Descriptor <T> descriptor)
 	{
-		String parameterNotation = ConventionalNotations.determineNotationFor (descriptor.getVariable ());
-	}//TODO: implement
+		this.doMultiLambdaPlot
+		(
+			descriptor,
+			domain (descriptor, environment.getSpaceManager ()),
+			getLambdaProcessor ()
+		);
+	}
+
+
+	/**
+	 * plot lambda functions over range from command text
+	 * @param sequence the text of the command
+	 */
+	public void lambdaFunctionPlots (CommandSequence sequence)
+	{
+		ExtendedArrayFeatures <T> arrays = new ExtendedArrayFeatures <T> ();
+		this.lambdaFunctionPlots (arrays.getArrayDescriptor (sequence, 1, environment));
+	}
+
+
+	/*
+	 * matrix tabulation displays
+	 */
 
 
 	/**
@@ -82,9 +163,11 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	 * @param symbolName name of matrix with plot data
 	 * @param sequence parameters of plot
 	 */
-	public void tabularFunctionPlot (String symbolName, CommandSequence sequence)
+	public void tabularFunctionPlot
+		(String symbolName, CommandSequence sequence)
 	{
-		SymbolMap.Named matrix = environment.getSymbolMap ().lookup (symbolName);
+		SymbolMap.Named matrix =
+			environment.getSymbolMap ().lookup (symbolName);
 		System.out.println (matrix);
 
 		throw new RuntimeException
@@ -104,6 +187,11 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	}
 
 
+	/*
+	 * simple function plot drivers
+	 */
+
+
 	/**
 	 * plot UDF over range from command text
 	 * @param sequence the text of the command
@@ -118,16 +206,6 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 		(
 			fullName.toString (), arrays.getArrayDescriptor (sequence, pos, environment)
 		);
-	}
-
-	/**
-	 * plot lambda functions over range from command text
-	 * @param sequence the text of the command
-	 */
-	public void lambdaFunctionPlots (CommandSequence sequence)
-	{
-		ExtendedArrayFeatures<T> arrays = new ExtendedArrayFeatures<T> ();
-		lambdaFunctionPlots (arrays.getArrayDescriptor (sequence, 1, environment));
 	}
 
 
