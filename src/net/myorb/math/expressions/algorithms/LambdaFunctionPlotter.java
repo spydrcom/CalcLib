@@ -1,11 +1,11 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 import net.myorb.math.expressions.evaluationstates.Arrays;
+import net.myorb.math.expressions.ValueManager;
 
-//import net.myorb.charting.DisplayGraphTypes.RealSeries;
+import net.myorb.math.Function;
 
 import net.myorb.data.abstractions.DataSequence;
 
@@ -31,30 +31,52 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	public ValueManager.ValueList
 		computeLambdaRange (DataSequence <T> domainValues)
 	{
-		//System.out.println ("domainValues"+domainValues);
+		// the list of function matching the criteria
+		List < Function <T> > functions = getSimpleFunctionList ();
 
-		ValueManager.ValueList range = valueManager.newValueList ();
+		// construct the matrix, a plot per row, a range per column
+		List < List <T> > plots = new ArrayList < List <T> > ();
+		for (int i = 0; i < functions.size (); i++)
+		{ plots.add (new ArrayList <T> ()); }
 
-		List<T> listT0 = new ArrayList<T>();
-		List<T> listT1 = new ArrayList<T>();
+		// evaluate each function for each domain value
 
-		for (T d : domainValues)
+		for (T x : domainValues)
 		{
-
-			listT0.add(d);
-
-			listT1.add(environment.getSpaceManager().negate(d));
-
+			for (int i = 0; i < functions.size (); i++)
+			{
+				T functionResult = functions.get (i).eval (x);
+				plots.get (i).add (functionResult);
+			}
 		}
 
-		ValueManager.DimensionedValue<T> dim = valueManager.newDimensionedValue (listT0);
-		range.getValues ().add (dim);
-
-		dim = valueManager.newDimensionedValue (listT1);
-		range.getValues ().add (dim);
+		// convert matrix to value list range representation
+		ValueManager.ValueList range = valueManager.newValueList ();
+		ValueManager.GenericValueList valueList = range.getValues ();
+		for (int i = 0; i < functions.size (); i++)
+		{ add (plots.get (i), valueList); }
 
 		return range;
 	}
+	void add (List<T> plot, ValueManager.GenericValueList to)
+	{ to.add (valueManager.newDimensionedValue (plot)); }
+
+
+	/**
+	 * @return the list of names for the lambda plot legend
+	 */
+	public String[] getLambdaList ()
+	{
+		List <Integer> unary = unaryFunctionProfiles ();
+		String [] legendNames = new String [unary.size ()];
+		for (int n = 0; n < legendNames.length; n++)
+		{
+			String ID = Integer.toString (unary.get (n));
+			legendNames[n] = LAMBDA + ID;
+		}
+		return legendNames;
+	}
+	public static final String LAMBDA = "\u03BB";
 
 
 	/**
@@ -71,6 +93,7 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 
 
 	/**
+	 * allocate legend display
 	 * @param ID symbol for the x-axis
 	 * @return a legend description object for lambda plots
 	 */
@@ -78,18 +101,17 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	{
 		return new PlotLegend.SampleDisplay ()
 		{
-			public void display (String x, String[] samples) {}
+			public String getVariable () { return ID; }								// x-axis variable
+			public String [] getPlotExpressions () { return getLambdaList (); }		// list of functions
+			public void display (String x, String [] samples) {}					// - for y-axis f(ID)
 			public void setVariable (String variable) {}
-			public String getVariable () { return ID; }
-			public String[] getPlotExpressions ()
-			{ return new String[]{LAMBDA+"0",LAMBDA+"1"}; }
 			public void showLegend () {}
 		};
 	}
-	public static final String LAMBDA = "\u03BB";
 
 
 	// xpr = [OPR   (, IDN   J0, OPR   (, IDN   x, OPR   ), OPR   ,, IDN   I0, OPR   (, IDN   x, OPR   ), OPR   ,, IDN   K0, OPR   (, IDN   x, OPR   ), OPR   )]
 
 
 }
+

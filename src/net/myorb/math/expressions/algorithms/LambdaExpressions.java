@@ -12,6 +12,9 @@ import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.TokenParser;
 
+import net.myorb.math.Function;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,8 +35,8 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 		this.valueManager = environment.getValueManager ();
 		this.allocateLambdaList ();
 	}
-	protected ValueManager<T> valueManager;
-	protected Environment<T> environment;
+	protected ValueManager <T> valueManager;
+	protected Environment <T> environment;
 
 
 	/**
@@ -55,6 +58,7 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 				environment.getSymbolMap ()
 			);
 		environment.processDefinedFunction (definition);
+		functionList.add (definition);
 		return getAccessToProc
 		(
 			getProcParm
@@ -102,6 +106,11 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	}
 
 
+	/*
+	 * the lambda array posted to the symbol table
+	 */
+
+
 	/**
 	 * maintain a list of lambda functions
 	 * @param value a new lambda resulting from expression execution
@@ -120,8 +129,10 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 		if (lambdas != null) return;
 		this.lambdas = new ValueManager.GenericValueList ();
 		this.lambdaList = environment.getValueManager ().newValueList (lambdas);
+		this.functionList = new ArrayList< DefinedFunction<T> > ();
 		this.environment.getSymbolMap ().add (post ());
 	}
+	protected List< DefinedFunction <T> > functionList;
 
 
 	/**
@@ -138,6 +149,43 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 			public GenericValue getValue () { return lambdaList; }
 			public void rename (String to) {}
 		};
+	}
+
+
+	/*
+	 * functions collected for PLOTL processing
+	 */
+
+
+	/**
+	 * build a list of the lambda functions
+	 *  that have the profile of unary operators
+	 * @return list of indexes of functions matching the profile
+	 */
+	public List<Integer> unaryFunctionProfiles ()
+	{
+		List<Integer> functions = new ArrayList<Integer>();
+		for (int i = 0; i < functionList.size (); i++)
+		{
+			DefinedFunction <T> f = functionList.get (i);
+			if (f.parameterCount () == 1)						// functions with profiles
+			{ functions.add (i); }								// matching unary operators
+		}
+		return functions;
+	}
+
+
+	/**
+	 * get the lambda functions that will be in a multi-unary-plot
+	 * @return a list of lambda UDFs that have unary function profiles
+	 */
+	public List < Function <T> > getSimpleFunctionList ()
+	{
+		List < Function <T> > f =
+			new ArrayList < Function <T> > ();
+		for (int id : unaryFunctionProfiles ())
+		{ f.add (functionList.get (id).toSimpleFunction ()); }
+		return f;
 	}
 
 
@@ -171,6 +219,10 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	public static final String PREFIX = OperatorNomenclature.LAMBDA_FUNCTION_NAME_PREFIX;
 	protected int nextLambdaIndex = 0;
 
+
+	/*
+	 * display options for functions
+	 */
 
 	/**
 	 * format a display using Python syntax

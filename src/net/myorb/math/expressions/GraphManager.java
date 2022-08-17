@@ -107,21 +107,21 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	/**
 	 * plot the lambda functions
 	 * @param descriptor the descriptor for the domain
-	 * @param domainValues the DataSequence holding domain values
+	 * @param domainValueSequence the DataSequence holding domain values
 	 * @param lambda the lambda processor for the plots
 	 */
 	public void doMultiLambdaPlot
 		(
 			Arrays.Descriptor <T> descriptor,
-			DataSequence <T> domainValues,
+			DataSequence <T> domainValueSequence,
 			LambdaFunctionPlotter <T> lambda
 		)
 	{
 		this.multiLambdaPlot
 		(
 			descriptor,
-			new ExtendedRealSeries (domainValues),
-			lambda.computeLambdaRange (domainValues),
+			new ExtendedRealSeries (domainValueSequence),
+			lambda.computeLambdaRange (domainValueSequence),
 			lambda.getSimpleLegend (descriptor)
 		);
 	}

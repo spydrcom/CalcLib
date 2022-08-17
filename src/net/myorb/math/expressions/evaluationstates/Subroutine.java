@@ -341,7 +341,7 @@ public class Subroutine<T>
 	public static List<String> listOfNames (String... name)
 	{
 		List<String> list = new ArrayList<String> ();
-		for (String n : name) list.add (n);
+		for (String n : name) list.add (n.trim ());
 		return list;
 	}
 
