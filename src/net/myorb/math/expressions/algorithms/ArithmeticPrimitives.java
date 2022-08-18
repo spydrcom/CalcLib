@@ -240,7 +240,8 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				environment.provideAccessTo (lambda);
 
 				ValueManager.GenericValue value =
-					lambda.processDeclaration (parameters, "(" + funcBody + ")");
+					lambda.processDeclaration (parameters, funcBody);
+					//lambda.processDeclaration (parameters, "(" + funcBody + ")");
 				return value;
 			}
 
