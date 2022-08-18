@@ -1,15 +1,14 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.charting.PlotMatrixForFunctionList;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
+
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.DataSequence;
 
-import net.myorb.math.Function;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,37 +26,11 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	 * @return the description of the range
 	 */
 	public ValueManager.ValueList
-		computeLambdaRange (DataSequence <T> domainValues)
+	computeLambdaRange (DataSequence <T> domainValues)
 	{
-		// the list of function matching the criteria
-		List < Function <T> > functions = getSimpleFunctionList ();
-
-		// construct the matrix, a plot per row, a range per column
-		List < List <T> > plots = new ArrayList < List <T> > ();
-		for (int i = 0; i < functions.size (); i++)
-		{ plots.add (new ArrayList <T> ()); }
-
-		// evaluate each function for each domain value
-
-		for (T x : domainValues)
-		{
-			for (int i = 0; i < functions.size (); i++)
-			{
-				T functionResult = functions.get (i).eval (x);
-				plots.get (i).add (functionResult);
-			}
-		}
-
-		// convert matrix to value list range representation
-		ValueManager.ValueList range = valueManager.newValueList ();
-		ValueManager.GenericValueList valueList = range.getValues ();
-		for (int i = 0; i < functions.size (); i++)
-		{ add (plots.get (i), valueList); }
-
-		return range;
+		return new PlotMatrixForFunctionList <T> ().evaluate
+			(domainValues, getSimpleFunctionList ());
 	}
-	void add (List<T> plot, ValueManager.GenericValueList to)
-	{ to.add (valueManager.newDimensionedValue (plot)); }
 
 
 	/**
