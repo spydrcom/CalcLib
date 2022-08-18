@@ -5,11 +5,9 @@ import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.ValueManager;
 
-import net.myorb.math.Function;
-
 import net.myorb.data.abstractions.DataSequence;
 
-import net.myorb.charting.PlotLegend;
+import net.myorb.math.Function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,37 +78,36 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 
 
 	/**
-	 * build a legend for lambda plots
+	 * construct the legend to display for the plot
 	 * @param descriptor the descriptor for the domain
-	 * @return a simple legend for the display
+	 * @return a simple legend object for the plot
 	 */
 	public SimpleLegend <T> getSimpleLegend (Arrays.Descriptor <T> descriptor)
 	{
-		SimpleLegend <T> legend = new SimpleLegend <T> ();
-		legend.setDisplay (getLambdaLegend (descriptor.getVariable ()));
-		return legend;
+		return SimpleLegend.buildLegendFor
+			(
+				new SimpleLegend.LegendProperties ()
+				{
+
+					/* (non-Javadoc)
+					 * @see net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend.LegendProperties#getPlotSymbols()
+					 */
+					public String [] getPlotSymbols ()
+					{
+						return getLambdaList ();
+					}
+
+					/* (non-Javadoc)
+					 * @see net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend.LegendProperties#getVariable()
+					 */
+					public String getVariable ()
+					{
+						return descriptor.getVariable ();
+					}
+
+				}
+			);
 	}
-
-
-	/**
-	 * allocate legend display
-	 * @param ID symbol for the x-axis
-	 * @return a legend description object for lambda plots
-	 */
-	public PlotLegend.SampleDisplay getLambdaLegend (String ID)
-	{
-		return new PlotLegend.SampleDisplay ()
-		{
-			public String getVariable () { return ID; }								// x-axis variable
-			public String [] getPlotExpressions () { return getLambdaList (); }		// list of functions
-			public void display (String x, String [] samples) {}					// - for y-axis f(ID)
-			public void setVariable (String variable) {}
-			public void showLegend () {}
-		};
-	}
-
-
-	// xpr = [OPR   (, IDN   J0, OPR   (, IDN   x, OPR   ), OPR   ,, IDN   I0, OPR   (, IDN   x, OPR   ), OPR   ,, IDN   K0, OPR   (, IDN   x, OPR   ), OPR   )]
 
 
 }

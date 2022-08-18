@@ -52,32 +52,6 @@ public class ExpressionGraphing<T> extends DisplayGraph
 
 
 	/**
-	 * @return a legend description object for Real/Imaginary plots
-	 */
-	PlotLegend.SampleDisplay getRealImagLegend ()
-	{
-		return new PlotLegend.SampleDisplay ()
-		{
-			public void display(String x, String[] samples) {}
-			public void setVariable(String variable) {}
-			public String getVariable () { return "x"; }
-			public String[] getPlotExpressions ()
-			{ return new String[]{"Re", "Im"}; }
-			public void showLegend () {}
-		};
-	}
-
-	/**
-	 * @return a trigger object holding the real/imag legend
-	 */
-	MouseSampleTrigger<T> getRealImagTrigger ()
-	{
-		MouseSampleTrigger<T> t = new MouseSampleTrigger<T> ();
-		t.setDisplay (getRealImagLegend ());
-		return t;
-	}
-
-	/**
 	 * wrap function for working with double float domain values
 	 * @param functionSymbol the symbol for the function being plotted
 	 * @param parameter the name of the parameter to the function
@@ -169,9 +143,17 @@ public class ExpressionGraphing<T> extends DisplayGraph
 		(
 			colors, funcPlot,
 			ConventionalNotations.determineNotationFor (functionName),
-			getRealImagTrigger ()
+			SimpleLegend.buildLegendFor
+			(
+				new SimpleLegend.LegendProperties ()
+				{
+					public String[] getPlotSymbols () { return RE_IM; }
+					public String getVariable () { return parameter; }
+				}
+			)
 		);
 	}
+	public static final String[] RE_IM = new String[]{"Re", "Im"};
 
 
 	/**

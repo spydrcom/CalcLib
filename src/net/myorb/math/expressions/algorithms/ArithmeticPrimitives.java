@@ -242,6 +242,10 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				ValueManager.GenericValue value =
 					lambda.processDeclaration (parameters, funcBody);
 					//lambda.processDeclaration (parameters, "(" + funcBody + ")");
+					// this must align properly with the precedence assigned the operator
+					// the parenthesis in the first version offset a 9 precedence on ->
+					// absent the parenthesis seems aligned with a 7 precedence
+					// this may yet be shown in error
 				return value;
 			}
 

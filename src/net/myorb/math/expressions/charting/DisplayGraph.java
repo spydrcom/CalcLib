@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.charting;
 
 import net.myorb.charting.Histogram;
+import net.myorb.charting.PlotLegend;
 
 import javax.swing.JComponent;
 
@@ -18,11 +19,66 @@ public class DisplayGraph extends DisplayGraphAtomic
 
 
 	/**
-	 * a trigger type that just support legen data
+	 * a trigger type that just supports legend data
 	 * @param <T> data type used in plots
 	 */
 	public static class SimpleLegend <T> extends MouseSampleTrigger <T>
-	{ private static final long serialVersionUID = -3457937988434277359L; }
+	{
+
+		/**
+		 * properties that are required to define a simple legend
+		 */
+		public interface LegendProperties
+		{
+
+			/**
+			 * @return list of function names for y-axis f(ID)
+			 */
+			String [] getPlotSymbols ();
+
+			/**
+			 * @return x-axis variable defining the domain
+			 */
+			String getVariable ();
+
+		}
+
+		/**
+		 * provide a legend object for a plot
+		 * @param properties the properties to build from
+		 * @return the simple legend object built
+		 * @param <T> data type used in plots
+		 */
+		public static <T> SimpleLegend <T> buildLegendFor
+				(LegendProperties properties)
+		{
+			SimpleLegend <T> legend = new SimpleLegend <T> ();
+			legend.setDisplay (getPlotLegend (properties));
+			return legend;
+		}
+
+		/**
+		 * implementation of the SampleDisplay interface
+		 * @param properties the properties to build a legend from
+		 * @return the sample display implementation
+		 */
+		public static PlotLegend.SampleDisplay getPlotLegend
+				(LegendProperties properties)
+		{
+			return new PlotLegend.SampleDisplay ()
+			{
+				public String getVariable ()
+				{ return properties.getVariable (); }
+				public String [] getPlotExpressions ()
+				{ return properties.getPlotSymbols (); }
+				public void display (String x, String [] samples) {}
+				public void setVariable (String variable) {}
+				public void showLegend () {}
+			};
+		}
+
+		private static final long serialVersionUID = -3457937988434277359L;
+	}
 
 
 	/*
