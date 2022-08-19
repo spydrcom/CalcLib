@@ -34,6 +34,7 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 
 
 	/**
+	 * names for lambda functions are generated as lambda#n
 	 * @return the list of names for the lambda plot legend
 	 */
 	public String[] getLambdaList ()
