@@ -5,10 +5,15 @@ import net.myorb.math.expressions.charting.PlotMatrixForFunctionList;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 
 import net.myorb.math.expressions.evaluationstates.Arrays;
+import net.myorb.math.expressions.symbols.DefinedFunction;
+import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.DataSequence;
 
+import net.myorb.math.Function;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +36,48 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 		return new PlotMatrixForFunctionList <T> ().evaluate
 			(domainValues, getSimpleFunctionList ());
 	}
+
+
+	/*
+	 * functions collected for PLOTL processing
+	 */
+
+
+	/**
+	 * build a list of the lambda functions
+	 *  that have the profile of unary operators
+	 * @return list of indexes of functions matching the profile
+	 */
+	public List<Integer> unaryFunctionProfiles ()
+	{
+		List<Integer> functions = new ArrayList<Integer>();
+		for (int i = 0; i < functionList.size (); i++)
+		{
+			DefinedFunction <T> f = functionList.get (i);
+			if (f.parameterCount () == 1)						// functions with profiles
+			{ functions.add (i); }								// matching unary operators
+		}
+		return functions;
+	}
+
+
+	/**
+	 * get the lambda functions that will be in a multi-unary-plot
+	 * @return a list of lambda UDFs that have unary function profiles
+	 */
+	public List < Function <T> > getSimpleFunctionList ()
+	{
+		List < Function <T> > f =
+			new ArrayList < Function <T> > ();
+		for (int id : unaryFunctionProfiles ())
+		{ f.add (functionList.get (id).toSimpleFunction ()); }
+		return f;
+	}
+
+
+	/*
+	 * legend construction processing
+	 */
 
 
 	/**
@@ -76,7 +123,8 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 					 */
 					public String getVariable ()
 					{
-						return descriptor.getVariable ();
+						return ConventionalNotations.determineNotationFor
+								(descriptor.getVariable ());
 					}
 
 				}
