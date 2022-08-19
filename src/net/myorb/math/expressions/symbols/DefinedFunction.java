@@ -1,18 +1,19 @@
 
 package net.myorb.math.expressions.symbols;
 
-import net.myorb.math.expressions.SymbolMap;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.Function;
 
 import java.util.List;
 
 /**
- * symbol descriptor for a defined function
+ * symbol descriptor for a User-Defined-Function
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
@@ -65,13 +66,12 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param functionSymbol the symbol found in symbol table, null if not found
 	 * @return the function on declared type
 	 */
-	public static <T> AbstractFunction<T> verifyAbstractFunction (SymbolMap.Named functionSymbol)
+	public static <T> AbstractFunction<T> verifyAbstractFunction
+			(SymbolMap.Named functionSymbol)
 	{
 		if (functionSymbol == null)
 		{ throw new RuntimeException ("Function not found"); }
-		AbstractFunction<T> f = AbstractFunction.cast (functionSymbol);
-		if (f == null) throw new RuntimeException ("Selected symbol is not an abstract function");
-		else return f;
+		return udfCheck (AbstractFunction.cast (functionSymbol));
 	}
 
 
@@ -81,13 +81,12 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param functionSymbol the symbol found in symbol table, null if not found
 	 * @return the function on declared type
 	 */
-	public static <T> Subroutine<T> verifySubroutine (SymbolMap.Named functionSymbol)
+	public static <T> Subroutine<T> verifySubroutine
+			(SymbolMap.Named functionSymbol)
 	{
-		AbstractFunction<T> function =
-			verifyAbstractFunction (functionSymbol);
-		Subroutine<T> subroutine = Subroutine.cast (function);
-		if (subroutine == null) throw new RuntimeException ("Selected symbol is not a user defined function");
-		else return subroutine;
+		AbstractFunction<T>
+			function = verifyAbstractFunction (functionSymbol);
+		return udfCheck (Subroutine.cast (function));
 	}
 
 
@@ -99,26 +98,29 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 */
 	public static <T> Function<T> verifyFunction (SymbolMap.Named functionSymbol)
 	{
-		Subroutine<T> s = verifySubroutine (functionSymbol);
-		return s.toSimpleFunction ();
+		Subroutine<T>
+			subroutine = verifySubroutine (functionSymbol);
+		return subroutine.toSimpleFunction ();
 	}
 
 
 	/**
-	 * ensure symbol is UDF
+	 * ensure symbol is a User-Defined-Function
 	 * @param functionSymbol the symbol found in symbol table, null if not found
 	 * @param <T> type of data processed in function
 	 * @return the function on declared type
 	 */
 	public static <T> Function<T> verifyDefinedFunction (SymbolMap.Named functionSymbol)
 	{
-		AbstractFunction<T> function = verifyAbstractFunction (functionSymbol);
+		AbstractFunction<T>
+			function = verifyAbstractFunction (functionSymbol);
 		if (functionSymbol instanceof Subroutine) return verifyFunction (function);
-		else throw new RuntimeException ("Selected symbol is not a user defined function");
+		else throw new RuntimeException (UDF_ERROR);
 	}
 
 
 	/**
+	 * post a UDF to symbol table
 	 * @param name the name of the function
 	 * @param parameterNames the list of function parameters
 	 * @param functionTokens the token sequence making the function
@@ -143,6 +145,25 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 		symbols.add (f);
 		return f;
 	}
+
+
+	/**
+	 * verify symbol is a User-Defined-Function
+	 * @param symbol the symbol object being verified
+	 * @return the symbol that was passed into the verification
+	 * @throws RuntimeException for symbols failing verification
+	 * @param <Symbol> the symbol type to verify
+	 */
+	public static <Symbol>
+		Symbol udfCheck (Symbol symbol)
+	throws RuntimeException
+	{
+		if (symbol == null)
+		{ throw new RuntimeException (UDF_ERROR); }
+		return symbol;
+	}
+	public static final String UDF_ERROR =
+	"Selected symbol is not a user defined function";
 
 
 }
