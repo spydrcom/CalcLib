@@ -3,6 +3,7 @@ package net.myorb.math.expressions.gui;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.GreekSymbols;
+import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.symbols.OperationObject;
 
 import net.myorb.gui.components.DisplayFrame;
@@ -48,9 +49,15 @@ public class DisplaySymbols extends MenuManager
 	 * @param object a symbol table Parameterized Function
 	 * @param description the columns for describing the symbol
 	 */
-	public static void formatFunction (SymbolMap.ParameterizedFunction object, String [] description)
+	public static void formatFunction
+	(String name, SymbolMap.ParameterizedFunction object, String [] description)
 	{
-		description [1] = object.getParameterList ();
+		String pretty = ConventionalNotations.determineNotationFor (name);
+		String profile = pretty + " (  " + object.getParameterList () + ")";
+
+		description [1] = profile;
+		// original treatment as parameter list rather than profile
+		// description [1] = object.getParameterList ();
 		description [2] = object.formatPretty ();
 	}
 
@@ -74,11 +81,11 @@ public class DisplaySymbols extends MenuManager
 			o = map.get (name = symArray.get (i));
 
 			if (o instanceof SymbolMap.ParameterizedFunction)
-			{ formatFunction ((SymbolMap.ParameterizedFunction) o, symTable [i]); }
+			{ formatFunction (name, (SymbolMap.ParameterizedFunction) o, symTable [i]); }
 			else if (o instanceof OperationObject) formatOperation ((OperationObject) o, symTable [i]);
 			else formatNamed ((SymbolMap.Named) o, symTable [i]);
 
-			symTable [i] [0] = name;
+			symTable [i] [0] = name; // the pretty printed version causes lookup errors
 		}
 
 		return symTable;
@@ -171,7 +178,7 @@ public class DisplaySymbols extends MenuManager
 		includeTable (tabulation, ToolBar.getFunctionTableMenuFactory (), menuBar, coreMap, DisplayEnvironment.FunctionTable);
 		return tabulation;
 	}
-	static final String FUNCTION_TABLE_COLUMNS [] = {"Function", "Parameters", "Equation"};
+	static final String FUNCTION_TABLE_COLUMNS [] = {"Function", "Profile", "Equation"};
 
 
 	/**
