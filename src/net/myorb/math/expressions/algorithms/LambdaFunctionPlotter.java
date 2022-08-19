@@ -6,7 +6,6 @@ import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.symbols.DefinedFunction;
-import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.DataSequence;
