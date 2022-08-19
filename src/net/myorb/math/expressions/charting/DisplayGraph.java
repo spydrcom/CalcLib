@@ -1,8 +1,10 @@
 
 package net.myorb.math.expressions.charting;
 
-import net.myorb.charting.Histogram;
+import net.myorb.math.expressions.ConventionalNotations;
+
 import net.myorb.charting.PlotLegend;
+import net.myorb.charting.Histogram;
 
 import javax.swing.JComponent;
 
@@ -58,6 +60,17 @@ public class DisplayGraph extends DisplayGraphAtomic
 		}
 
 		/**
+		 * get the x-axis variable and check for notations
+		 * @param properties the properties to build from
+		 * @return the annotated variable for x-axis
+		 */
+		public static String annotatedVariable (LegendProperties properties)
+		{
+			return ConventionalNotations.determineNotationFor
+					(properties.getVariable ());
+		}
+
+		/**
 		 * implementation of the SampleDisplay interface
 		 * @param properties the properties to build a legend from
 		 * @return the sample display implementation
@@ -68,7 +81,7 @@ public class DisplayGraph extends DisplayGraphAtomic
 			return new PlotLegend.SampleDisplay ()
 			{
 				public String getVariable ()
-				{ return properties.getVariable (); }
+				{ return annotatedVariable (properties); }
 				public String [] getPlotExpressions ()
 				{ return properties.getPlotSymbols (); }
 				public void display (String x, String [] samples) {}

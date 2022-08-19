@@ -123,8 +123,7 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 					 */
 					public String getVariable ()
 					{
-						return ConventionalNotations.determineNotationFor
-								(descriptor.getVariable ());
+						return descriptor.getVariable ();
 					}
 
 				}
