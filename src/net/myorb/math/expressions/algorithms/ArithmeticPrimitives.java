@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
@@ -255,11 +256,15 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 					boolean lfence, boolean rfence, NodeFormatting using
 				)
 			{
+				String sp = MathMarkupNodes.space ("10");
+				String op = sp + using.formatOperatorReference (LAMBDA_NOTATION) + sp;
 				String left = using.formatParenthetical (firstOperand, lfence), right = using.formatParenthetical (secondOperand, rfence);
-				return using.formatBinaryOperation (left, OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR, right);
+				//return using.formatBinaryOperation (left, OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR, right);
+				return left + op + right;
 			}
 		};
 	}
+	public static final String LAMBDA_NOTATION = "\u039E"; // 2016 3D6 39E
 
 
 	/**
