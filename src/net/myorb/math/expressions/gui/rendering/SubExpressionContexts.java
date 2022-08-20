@@ -2,7 +2,6 @@
 package net.myorb.math.expressions.gui.rendering;
 
 import net.myorb.math.expressions.OperatorNomenclature;
-
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
 

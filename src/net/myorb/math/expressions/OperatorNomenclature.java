@@ -330,6 +330,7 @@ public class OperatorNomenclature
 	ADDRESS_OF_OPERATOR			= "&@",			// &@ symbol		take indirect access to a symbol (only limited symbols allowed)
 	POINTER_DEREF_OPERATOR		= "@|",			// @| pointer		dereference a pointer to get access to the object pointed to
 	LAMBDA_EXPRESSION_INDICATOR	= "->",			// {x}->{f(x)}		declaration of a lambda expression between parameters and formula
+	LAMBDA_DECLARATION_NOTATION	= ":",			// {x} : f(x)		display of a declaration of a lambda function with a specific notation
 	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			increment {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation

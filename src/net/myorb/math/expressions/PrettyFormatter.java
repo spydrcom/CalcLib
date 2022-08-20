@@ -202,16 +202,58 @@ public class PrettyFormatter<T>
 	}
 
 
-	/** convert token stream to MML
+	/**
+	 * convert token stream to MML
 	 * @param tokens the sequence to render using MML
+	 * @param parameterNames a list of the names of the parameters of function profiles
 	 * @return the rendered text formatted as MML
 	 * @throws Exception for any errors
 	 */
 	public String render
-	(List<TokenParser.TokenDescriptor> tokens)
+		(
+			List<TokenParser.TokenDescriptor> tokens,
+			List<String> parameterNames
+		)
 	throws Exception
 	{
-		return new MathML (getSymbolMap ()).render (tokens);
+		SymbolMap s =
+			getContextSpecificSymbolMap (parameterNames);
+		return new MathML (s).render (tokens);
+	}
+
+
+	/**
+	 * this is a bug fix (8/20/2022)
+	 *  - for rendering function parameters
+	 * @param parameterNames the list of names from a function profile,
+	 * 			this is NULL if the object being rendered is not a function.
+	 * @return a copy of the symbol map with the named parameters removed
+	 */
+	SymbolMap getContextSpecificSymbolMap (List<String> parameterNames)
+	{
+		SymbolMap s = getSymbolMap ();
+		if (parameterNames == null) return s;
+		SymbolMap context = new SymbolMap (); context.putAll (s);
+		return getReducedSymbolMap (context, parameterNames);
+	}
+
+
+	/**
+	 * removing the parameter names from the symbol table,
+	 *  - this eliminates confusion for parameters that have
+	 *  - names matching functions already posted to the symbol map
+	 * @param context a copy of the system symbol table to be modified
+	 * @param parameterNames the list of names from a function profile
+	 * @return a copy of the symbol map with the named parameters removed
+	 */
+	SymbolMap getReducedSymbolMap
+	(SymbolMap context, List<String> parameterNames)
+	{
+		for (String p : parameterNames)
+		{
+			context.remove (p);
+		}
+		return context;
 	}
 
 

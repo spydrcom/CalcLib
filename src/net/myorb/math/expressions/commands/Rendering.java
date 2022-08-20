@@ -8,6 +8,8 @@ import net.myorb.math.expressions.symbols.AbstractFunction;
 import net.myorb.math.expressions.PrettyPrinter;
 import net.myorb.math.expressions.TokenParser;
 
+import java.util.List;
+
 /**
  * support for commands performing renders
  * @param <T> type on which operations are to be executed
@@ -24,7 +26,7 @@ public class Rendering<T> extends PrettyPrinter<T>
 	 */
 	public Rendering (String nameForFrame, Environment<T> environment)
 	{ super (nameForFrame, 500, 1000, environment); this.environment = environment; }
-	Environment<T> environment;
+	protected Environment<T> environment;
 
 
 	/**
@@ -35,9 +37,9 @@ public class Rendering<T> extends PrettyPrinter<T>
 	{
 		if ( renderSuppressed )
 		{ renderSuppressed = false; return; }
-		prettyPrint (Utilities.startingFrom (1, sequence));
+		prettyPrint (Utilities.startingFrom (1, sequence), null);
 	}
-	boolean renderSuppressed = false;
+	protected boolean renderSuppressed = false;
 
 
 	/**
@@ -53,7 +55,7 @@ public class Rendering<T> extends PrettyPrinter<T>
 		if ( ! OperatorNomenclature.isIndexReference (functionName) )
 		{   tokens = getProfileTokens (functionName, f);   }
 		else tokens = getLambdaTokens (functionName, f);
-		prettyPrint (tokens);
+		prettyPrint (tokens, f.getParameterNames ());
 	}
 
 
@@ -84,7 +86,7 @@ public class Rendering<T> extends PrettyPrinter<T>
 		}
 		else
 		{
-			try { prettyPrint (deqMgr.getRenderSequence (functionName)); }
+			try { prettyPrint (deqMgr.getRenderSequence (functionName), null); }
 			catch (Alert alert) { alert.presentDialog (); }
 		}
 	}
@@ -93,14 +95,16 @@ public class Rendering<T> extends PrettyPrinter<T>
 	/**
 	 * call pretty printer to render function
 	 * @param functionTokens the tokens that make up the function
+	 * @param parameterNames a list of the names of the parameters
 	 */
-	private void prettyPrint (TokenParser.TokenSequence functionTokens)
+	private void prettyPrint
+	(TokenParser.TokenSequence functionTokens, List <String> parameterNames)
 	{
 		try
 		{
-			render (functionTokens, TokenParser.toPrettyText (functionTokens));
+			render (functionTokens, parameterNames, TokenParser.toPrettyText (functionTokens));
 		}
-		catch (Exception e) { e.printStackTrace(); }
+		catch (Exception e) { e.printStackTrace (); }
 	}
 
 
@@ -147,7 +151,7 @@ public class Rendering<T> extends PrettyPrinter<T>
 			.append (START).append (" ").append (parameterList).append (" ")
 			.append (END).append (" ").append (LAMBDA).append (" ");
 	}
-	static final String
+	public static final String
 	LAMBDA = OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR,
 	START = OperatorNomenclature.START_OF_FORMAL_LIST_DELIMITER,
 	END = OperatorNomenclature.END_OF_FORMAL_LIST_DELIMITER;

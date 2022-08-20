@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.gui.rendering;
 
 import net.myorb.math.expressions.symbols.AbstractVectorReduction;
+
 import net.myorb.math.expressions.GreekSymbols;
 import net.myorb.math.expressions.SymbolMap;
 
@@ -48,17 +49,9 @@ public class SubExpressionProcessing
 	 */
 	public String idFor (String name)
 	{
-		String notation;
-		if (!name.endsWith (PRIME)) notation = notationFor (name);
-		else notation = notationFor (name.substring (0, name.length () - 1)) + PRIME;
-		return nodeFormater.formatIdentifierReference (notation);
+		return nodeFormater.formatIdentifierReference
+		(GreekSymbols.determineNotationFor (name));
 	}
-	public String notationFor (String name)
-	{
-		String notation = GreekSymbols.findNotationFor (name);
-		return notation==null? name: notation;
-	}
-	static final String PRIME = "'";
 
 
 	/*
@@ -230,20 +223,13 @@ public class SubExpressionProcessing
 		{
 			String arg = lastLeaf; int argPrec = lastLeafPrec;
 			arg = nodeFormater.formatParenthetical (arg); argPrec = ATOMIC_LEAF_PRECEDENCE;
-			//lastLeaf = bracket (nodeFormater.formatIdentifierReference (lastOp) + arg);
+
 			if (op instanceof SymbolMap.EnhancedFunctionFormattingRequirement)
 			{
 				SymbolMap.ParameterizedFunction enhancedFunction = (SymbolMap.ParameterizedFunction) op;
 				lastLeaf = enhancedFunction.markupForDisplay (lastOp, bracket (lastLeaf), nodeFormater);
-			}
-			else
-			lastLeaf = bracket (idFor (lastOp) + arg);// OLD
-//			if (op instanceof SymbolMap.UnaryOperator)
-//			{
-//				SymbolMap.UnaryOperator uop = (SymbolMap.UnaryOperator)op;
-//				//lastLeaf = uop.markupForDisplay (lastOp, bracket (lastLeaf), lastLeafPrec < lastPrec, nodeFormater);
-//				lastLeaf = uop.markupForDisplay (lastOp, bracket (lastLeaf), nodeFormater);
-//			} else lastLeaf = bracket (idFor (lastOp) + arg);
+			} else lastLeaf = bracket (idFor (lastOp) + arg);
+
 			lastLeafPrec = argPrec;
 		}
 		else if (op instanceof SymbolMap.BinaryOperator)
@@ -263,13 +249,11 @@ public class SubExpressionProcessing
 		{
 			SymbolMap.UnaryPostfixOperator upop = (SymbolMap.UnaryPostfixOperator)op;
 			lastLeaf = upop.markupForDisplay (bracket (lastLeaf), lastLeafPrec < lastPrec, lastOp, nodeFormater);
-			//lastLeafPrec = Math.min (lastPrec, lastLeafPrec);
 			lastLeafPrec = ATOMIC_LEAF_PRECEDENCE;
 		}
 		else if (op instanceof SymbolMap.UnaryOperator)
 		{
 			SymbolMap.UnaryOperator uop = (SymbolMap.UnaryOperator)op;
-			//lastLeaf = uop.markupForDisplay (lastOp, bracket (lastLeaf), lastLeafPrec < lastPrec, nodeFormater);
 			lastLeaf = uop.markupForDisplay (lastOp, bracket (lastLeaf), nodeFormater);
 			lastLeafPrec = ATOMIC_LEAF_PRECEDENCE;
 		}

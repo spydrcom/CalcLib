@@ -3,7 +3,7 @@ package net.myorb.math.expressions.gui;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.GreekSymbols;
-import net.myorb.math.expressions.ConventionalNotations;
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.symbols.OperationObject;
 
 import net.myorb.gui.components.DisplayFrame;
@@ -24,6 +24,7 @@ public class DisplaySymbols extends MenuManager
 
 
 	/**
+	 * display for non-function and non-op
 	 * @param object simple symbol table Named object
 	 * @param description the columns for describing the symbol
 	 */
@@ -36,6 +37,7 @@ public class DisplaySymbols extends MenuManager
 
 
 	/**
+	 * format a display for an operator
 	 * @param object symbol table Operation object
 	 * @param description the columns for describing the symbol
 	 */
@@ -46,19 +48,18 @@ public class DisplaySymbols extends MenuManager
 
 
 	/**
+	 * format the columns for the function table
 	 * @param object a symbol table Parameterized Function
 	 * @param description the columns for describing the symbol
 	 */
 	public static void formatFunction
 	(String name, SymbolMap.ParameterizedFunction object, String [] description)
 	{
-		String pretty = ConventionalNotations.determineNotationFor (name);
-		String profile = pretty + " (  " + object.getParameterList () + ")";
-
-		description [1] = profile;
-		// original treatment as parameter list rather than profile
-		// description [1] = object.getParameterList ();
-		description [2] = object.formatPretty ();
+		// check this symbol for the lambda convention 
+		String profile, list = object.getParameterList ();
+		if (OperatorNomenclature.isIndexReference (name)) { profile = "{  " + list + "}"; }
+		else { profile = GreekSymbols.determineNotationFor (name) + " (  " + list + ")"; }
+		description [1] = profile; description [2] = object.formatPretty ();
 	}
 
 
@@ -78,8 +79,8 @@ public class DisplaySymbols extends MenuManager
 		for (int i = 0; i < size; i++)
 		{
 			symTable [i] [1] = "";
-			o = map.get (name = symArray.get (i));
 
+			o = map.get (name = symArray.get (i));
 			if (o instanceof SymbolMap.ParameterizedFunction)
 			{ formatFunction (name, (SymbolMap.ParameterizedFunction) o, symTable [i]); }
 			else if (o instanceof OperationObject) formatOperation ((OperationObject) o, symTable [i]);

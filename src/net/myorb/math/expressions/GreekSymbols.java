@@ -95,4 +95,23 @@ public class GreekSymbols
 	public static String getSpecialCaseFor (String name) { return Special_Cases.get (name); }
 
 
+	/**
+	 * check for derivative syntax on function which uses Greek symbol name
+	 * @param name the name of the symbol to find notation for
+	 * @return the notation to use for symbol
+	 */
+	public static String determineNotationFor (String name)
+	{
+		if (!name.endsWith (PRIME)) return lookupNotationFor (name);
+		return lookupNotationFor (name.substring (0, name.length () - 1)) + PRIME;
+	}
+	public static String lookupNotationFor (String name)
+	{
+		String notation = findNotationFor (name);
+		return notation == null ? name : notation;
+	}
+	static final String PRIME = OperatorNomenclature.PRIME_OPERATOR;
+
+
 }
+

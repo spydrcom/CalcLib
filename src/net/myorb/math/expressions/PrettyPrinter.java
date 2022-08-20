@@ -174,6 +174,7 @@ public class PrettyPrinter<T> extends RenderingDisplay
 	public static void setMathMarkupRenderer (MathMarkupRendering markupRenderer)
 	{ renderer = markupRenderer; }
 
+
 	/**
 	 * @param renderer the rendering implementation
 	 * @return the renderer with properties applied
@@ -186,30 +187,48 @@ public class PrettyPrinter<T> extends RenderingDisplay
 		return renderer;
 	}
 
+
 	/**
 	 * add an entry to the display of rendered expressions
 	 * @param tokens the token list that comprises the expression to be rendered
-	 * @param ttText tool tip text for this section of the display
+	 * @param parameterNames a list of the names of the parameters of function profiles
+	 * @param toolTipText tool tip text for this section of the display
 	 * @throws Exception for any errors
 	 */
-	public void render (List<TokenParser.TokenDescriptor> tokens, String ttText) throws Exception
+	public void render
+		(
+			List<TokenParser.TokenDescriptor> tokens,
+			List<String> parameterNames,
+			String toolTipText
+		)
+	throws Exception
 	{
 		if (renderer == null) throw new RuntimeException ("Expression renderer is not configured");
 		if (tokens.get (0).getTokenType() == TokenParser.TokenType.QOT) display (tokens);
-		else display (toMML (tokens), ttText);
+		else display (toMML (tokens, parameterNames), toolTipText);
 	}
+
 
 	/**
 	 * construct MML description from token stream
 	 * @param tokens the token list that comprises the expression to be rendered
+	 * @param parameterNames a list of the names of the parameters of function profiles
 	 * @return the MML text equivalent for the token stream specified
 	 * @throws Exception for any errors
 	 */
 	public String toMML
-	(List<TokenParser.TokenDescriptor> tokens) throws Exception
-	{ return formatter.render (tokens); }
+		(
+			List<TokenParser.TokenDescriptor> tokens,
+			List<String> parameterNames
+		)
+	throws Exception
+	{
+		return formatter.render (tokens, parameterNames);
+	}
+
 
 	/**
+	 * build a GUI to display help documentation
 	 * @param commands the document covering commands
 	 * @param operators the document covering operators
 	 */
@@ -243,6 +262,10 @@ class MmlPrintMenu extends SimpleMenu<Runnable>
 	private static final long serialVersionUID = 8182517370848406352L;
 }
 
+
+/**
+ * actions for the menu
+ */
 class MmlPrintMenuItems
 {
 	List<Runnable> getItemList ()

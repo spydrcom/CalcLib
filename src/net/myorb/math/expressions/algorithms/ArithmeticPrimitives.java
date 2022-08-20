@@ -1,11 +1,14 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
+
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
+
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
 
@@ -16,6 +19,23 @@ import net.myorb.math.expressions.ValueManager;
  */
 public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 {
+
+
+	/**
+	 * provide emphasis on a declaration operator for display of lambda,
+	 *  a unique notation for display of a function declared in a lambda expression
+	 * alternatives considered \u2016 \u03D6 \u039E
+	 */
+	static final String LAMBDA_DECLARATION_OPERATOR;
+
+	static
+	{
+		String
+			SPACE = MathMarkupNodes.space ("10"),										// wider space gives emphasis
+			NOTATION = OperatorNomenclature.LAMBDA_DECLARATION_NOTATION,				// the notation chosen for display
+			MO = MathMarkupNodes.enclose (NOTATION, MathMarkupNodes.OPERATOR_TAG);		// MO tag for MML use in lambda operator
+		LAMBDA_DECLARATION_OPERATOR = SPACE + MO + SPACE;
+	}
 
 
 	/**
@@ -236,18 +256,7 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				String parameters = lefts.substring (1, lefts.length () - 1);
 				String funcBody = rights.substring (1, rights.length () - 1);
 
-				LambdaExpressions<T> lambda =
-					environment.getLambdaExpressionProcessor ();
-				environment.provideAccessTo (lambda);
-
-				ValueManager.GenericValue value =
-					lambda.processDeclaration (parameters, funcBody);
-					//lambda.processDeclaration (parameters, "(" + funcBody + ")");
-					// this must align properly with the precedence assigned the operator
-					// the parenthesis in the first version offset a 9 precedence on ->
-					// absent the parenthesis seems aligned with a 7 precedence
-					// this may yet be shown in error
-				return value;
+				return processDeclaration (parameters, funcBody);
 			}
 
 			public String markupForDisplay
@@ -256,15 +265,39 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 					boolean lfence, boolean rfence, NodeFormatting using
 				)
 			{
-				String sp = MathMarkupNodes.space ("10");
-				String op = sp + using.formatOperatorReference (LAMBDA_NOTATION) + sp;
-				String left = using.formatParenthetical (firstOperand, lfence), right = using.formatParenthetical (secondOperand, rfence);
-				//return using.formatBinaryOperation (left, OperatorNomenclature.LAMBDA_EXPRESSION_INDICATOR, right);
-				return left + op + right;
+				String left = using.formatParenthetical (firstOperand, lfence),
+						right = using.formatParenthetical (secondOperand, rfence);
+				return left + LAMBDA_DECLARATION_OPERATOR + right;
 			}
 		};
 	}
-	public static final String LAMBDA_NOTATION = "\u039E"; // 2016 3D6 39E
+
+	/**
+	 * process a lambda function definition operator
+	 * @param parameters the parameter text captured in the operator parse
+	 * @param funcBody the tokens of the function body captured in the operator parse
+	 * @return a generic value the holds a procedure parameter reference
+	 */
+	ValueManager.GenericValue processDeclaration
+		(String parameters, String funcBody)
+	{
+		//	lambda.processDeclaration
+		//			(parameters, "(" + funcBody + ")");
+		//		this must align properly with the operator precedence
+		//		the parenthesis in the first version offset a 9 precedence on ->
+		//		absent the parenthesis seems aligned with a 7 precedence, this may yet be shown in error
+		return getLambdaProcessor ().processDeclaration (parameters, funcBody);
+	}
+	/**
+	 * @return the Lambda Expression Processor
+	 */
+	LambdaExpressions <T> getLambdaProcessor ()
+	{
+		LambdaExpressions<T> lambda =
+			environment.getLambdaExpressionProcessor ();
+		environment.provideAccessTo (lambda);
+		return lambda;
+	}
 
 
 	/**
@@ -275,6 +308,8 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getDerefAlgorithm (String symbol, int precedence)
 	{
+		// this needs to be in place to provide a target for configuration
+		// the actual operation is executed in-line for efficiency
 		return new AbstractUnaryOperator (symbol, precedence)
 		{
 			/* (non-Javadoc)
@@ -286,7 +321,6 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				return null;
 			}
 		};
-	
 	}
 
 
