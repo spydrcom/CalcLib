@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.GreekSymbols;
 import net.myorb.math.expressions.charting.PlotMatrixForFunctionList;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 
@@ -22,6 +23,13 @@ import java.util.List;
  */
 public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 {
+
+
+	/**
+	 * get a copy of the unicode character
+	 */
+	public static final String LAMBDA;
+	static { LAMBDA = GreekSymbols.Symbol_Map.get ("lambda"); }
 
 
 	/**
@@ -94,7 +102,6 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 		}
 		return legendNames;
 	}
-	public static final String LAMBDA = "\u03BB";
 
 
 	/**

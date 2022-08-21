@@ -12,7 +12,7 @@ public class GreekSymbols
 {
 
 
-	static final Map<String,String>
+	public static final Map<String,String>
 	Symbol_Map = new HashMap<String,String>(),
 	Special_Cases = new HashMap<String,String>();
 
