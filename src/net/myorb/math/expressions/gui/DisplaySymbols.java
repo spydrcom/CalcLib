@@ -49,6 +49,7 @@ public class DisplaySymbols extends MenuManager
 
 	/**
 	 * format the columns for the function table
+	 * @param name the name of the function to show
 	 * @param object a symbol table Parameterized Function
 	 * @param description the columns for describing the symbol
 	 */

@@ -41,8 +41,8 @@ public class PlotMatrixForFunctionList <T> extends PlotMatrix <T>
 
 	/**
 	 * compute a plot matrix for the described plots
-	 * @param domainValues the sequence of the domain values
-	 * @param functions a list of functions to plot
+	 * @param forDomainValues the sequence of the domain values
+	 * @param usingFunctions a list of functions to plot
 	 * @return the value list of the matrix
 	 */
 	public ValueList evaluate
