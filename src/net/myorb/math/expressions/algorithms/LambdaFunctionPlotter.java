@@ -6,6 +6,7 @@ import net.myorb.math.expressions.charting.PlotMatrixForFunctionList;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 
 import net.myorb.math.expressions.evaluationstates.Arrays;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.ValueManager;
 
@@ -134,6 +135,39 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 
 				}
 			);
+	}
+
+
+	/**
+	 * format MML nodes that describe the formal parameters
+	 * @param source the MN node that the render has so far constructed
+	 * @param using an MML node formatting object to use for this translation
+	 * @return MML that describes the formal parameters
+	 */
+	public String profileFor (String source, NodeFormatting using)
+	{
+		String list = source
+			// must remove <mn> enclosure
+			.substring (5, source.length () - 6);
+		StringBuffer contents = new StringBuffer ();
+		String [] ids = list.split (",");
+
+		for ( int i = 0; i < ids.length; )
+		{
+			contents.append
+			(
+				using.formatBracket
+				(
+					using.formatIdentifierReference
+						(ids[i++].trim ())
+				)
+			);
+		}
+
+		return using.formatParenthetical
+		(
+			contents.toString ()
+		);
 	}
 
 

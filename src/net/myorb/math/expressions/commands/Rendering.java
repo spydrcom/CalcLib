@@ -77,18 +77,18 @@ public class Rendering<T> extends PrettyPrinter<T>
 	 */
 	public void RenderDifferentialEquation (CommandSequence sequence)
 	{
+		DifferentialEquationsManager <T>
+			deqMgr = environment.getDifferentialEquationsManager ();
 		String functionName = Utilities.getSequenceFollowing (1, sequence);
-		DifferentialEquationsManager <T> deqMgr = environment.getDifferentialEquationsManager ();
 
-		if (deqMgr.wasRendered (functionName))
-		{
-			renderSuppressed = true;
-		}
-		else
-		{
-			try { prettyPrint (deqMgr.getRenderSequence (functionName), null); }
-			catch (Alert alert) { alert.presentDialog (); }
-		}
+		if ( ! deqMgr.wasRendered (functionName) )
+		{ prettyPrint (deqMgr, functionName); }
+		else { renderSuppressed = true; }
+	}
+	void prettyPrint (DifferentialEquationsManager <T> DEQ, String functionName)
+	{
+		try { prettyPrint (DEQ.getRenderSequence (functionName), null); }
+		catch (Alert alert) { alert.presentDialog (); }
 	}
 
 
@@ -102,7 +102,11 @@ public class Rendering<T> extends PrettyPrinter<T>
 	{
 		try
 		{
-			render (functionTokens, parameterNames, TokenParser.toPrettyText (functionTokens));
+			render
+			(
+				functionTokens, parameterNames,
+				TokenParser.toPrettyText (functionTokens)
+			);
 		}
 		catch (Exception e) { e.printStackTrace (); }
 	}

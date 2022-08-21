@@ -44,7 +44,7 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public ArithmeticPrimitives (Environment<T> environment)
 	{
-		super (environment);
+		super (environment); this.setLambdaProcessor ();
 	}
 
 
@@ -256,7 +256,7 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				String parameters = lefts.substring (1, lefts.length () - 1);
 				String funcBody = rights.substring (1, rights.length () - 1);
 
-				return processDeclaration (parameters, funcBody);
+				return lambda.processDeclaration (parameters, funcBody);
 			}
 
 			public String markupForDisplay
@@ -267,37 +267,16 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 			{
 				String left = using.formatParenthetical (firstOperand, lfence),
 						right = using.formatParenthetical (secondOperand, rfence);
-				return left + LAMBDA_DECLARATION_OPERATOR + right;
+				return lambda.profileFor (left, using) + LAMBDA_DECLARATION_OPERATOR + right;
 			}
 		};
 	}
-
-	/**
-	 * process a lambda function definition operator
-	 * @param parameters the parameter text captured in the operator parse
-	 * @param funcBody the tokens of the function body captured in the operator parse
-	 * @return a generic value the holds a procedure parameter reference
-	 */
-	ValueManager.GenericValue processDeclaration
-		(String parameters, String funcBody)
+	void setLambdaProcessor ()
 	{
-		//	lambda.processDeclaration
-		//			(parameters, "(" + funcBody + ")");
-		//		this must align properly with the operator precedence
-		//		the parenthesis in the first version offset a 9 precedence on ->
-		//		absent the parenthesis seems aligned with a 7 precedence, this may yet be shown in error
-		return getLambdaProcessor ().processDeclaration (parameters, funcBody);
-	}
-	/**
-	 * @return the Lambda Expression Processor
-	 */
-	LambdaExpressions <T> getLambdaProcessor ()
-	{
-		LambdaExpressions<T> lambda =
-			environment.getLambdaExpressionProcessor ();
+		this.lambda = environment.getLambdaExpressionProcessor ();
 		environment.provideAccessTo (lambda);
-		return lambda;
 	}
+	protected LambdaFunctionPlotter <T> lambda;
 
 
 	/**

@@ -37,6 +37,18 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	protected Environment <T> environment;
 
 
+	/*
+	 * this is the original coding for reference to the declaration method
+	 * 
+		//	lambda.processDeclaration
+		//			(parameters, "(" + funcBody + ")");
+		//		this must align properly with the operator precedence
+		//		the parenthesis in the first version offset a 9 precedence on ->
+		//		absent the parenthesis seems aligned with a 7 precedence, this may yet be shown in error
+	 * 
+	 */
+
+
 	/**
 	 * process a lambda function definition operator
 	 * @param parameters the parameter text captured in the operator parse
