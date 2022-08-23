@@ -63,31 +63,35 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	{
 		return new AbstractUnaryOperator (symbol, precedence)
 		{
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.UnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-			 */
-			public ValueManager.GenericValue
-			execute (ValueManager.GenericValue parameter)
+			public ValueManager.GenericValue execute
+					(ValueManager.GenericValue parameter)
 			{
-				DimensionedDataSupport<T> support = getDimensionedDataSupport ();
-
+				DimensionedDataSupport<T>
+						support = getDimensionedDataSupport ();
 				if (valueManager.isDimensioned (parameter))
 				{
-					return valueManager.newDimensionedValue (support.vectorNegate (parameter));
+					return valueManager.newDimensionedValue
+					(support.vectorNegate (parameter));
 				}
-				else
-				{
-					T discreteValue = valueManager.toDiscrete (parameter);
-					return valueManager.newDiscreteValue (spaceManager.negate (discreteValue));
-				}
+
+				T discreteValue =
+						valueManager.toDiscrete (parameter);
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.negate (discreteValue)
+				);
 			}
 
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.UnaryOperator#markupForDisplay(java.lang.String, java.lang.String)
-			 */
-			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			public String markupForDisplay
+					(
+						String operator, String operand,
+						NodeFormatting using
+					)
 			{
-				return using.formatOperatorReference (OperatorNomenclature.SUBTRACTION_OPERATOR) + using.formatBracket (operand);
+				return
+					using.formatOperatorReference
+						(OperatorNomenclature.SUBTRACTION_OPERATOR)
+					+ using.formatBracket (operand);
 			}
 		};
 	}
@@ -112,11 +116,13 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				{
 					return support.dimensionedAdd (left, right);
 				}
-				else
-				{
-					T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-					return valueManager.newDiscreteValue (spaceManager.add (leftDiscrete, rightDiscrete));
-				}
+
+				T leftDiscrete = valueManager.toDiscrete (left),
+					rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue
+					(
+						spaceManager.add (leftDiscrete, rightDiscrete)
+					);
 			}
 		};
 	}
@@ -135,21 +141,29 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				DimensionedDataSupport<T> support = getDimensionedDataSupport ();
-
+				DimensionedDataSupport<T>
+					support = getDimensionedDataSupport ();
 				if (support.dimensionedParameterPresent (left, right))
-				{
-					return support.dimensionedSubtract (left, right);
-				}
-				else
-				{
-					T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-					return valueManager.newDiscreteValue (spaceManager.add (leftDiscrete, spaceManager.negate (rightDiscrete)));
-				}
+				{ return support.dimensionedSubtract (left, right); }
+
+				T leftDiscrete = valueManager.toDiscrete (left),
+					rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.add
+					(
+						leftDiscrete, spaceManager.negate (rightDiscrete)
+					)
+				);
 			}
+
 			public String shortCircuit (String left, String right)
 			{
-				/* bug fix for render of binary operation 0-x, where 0 was inserted to allow binary operator - to represent unary negate */
+				/*
+				 * bug fix for render of binary operation 0-x,
+				 *	where 0 was inserted to allow binary operator - 
+				 *	to represent unary negate
+				 */
 				if ( ! ZERO.equals (left) ) return null; // TOTAL HACK, but ...
 				else return NEGATE + right;
 			}
@@ -174,14 +188,14 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 				DimensionedDataSupport<T> support = getDimensionedDataSupport ();
 
 				if (support.dimensionedParameterPresent (left, right))
-				{
-					return support.dimensionedMultiply (left, right);
-				}
-				else
-				{
-					T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-					return valueManager.newDiscreteValue (spaceManager.multiply (leftDiscrete, rightDiscrete));
-				}
+				{ return support.dimensionedMultiply (left, right); }
+
+				T leftDiscrete = valueManager.toDiscrete (left),
+					rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue
+					(
+						spaceManager.multiply (leftDiscrete, rightDiscrete)
+					);
 			}
 		};
 	}
@@ -198,15 +212,31 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 		return new AbstractBinaryOperator (symbol, precedence)
 		{
 			public ValueManager.GenericValue execute
-			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+				(
+					ValueManager.GenericValue left,
+					ValueManager.GenericValue right
+				)
 			{
-				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-				return valueManager.newDiscreteValue (spaceManager.multiply (leftDiscrete, spaceManager.invert (rightDiscrete)));
+				T leftDiscrete = valueManager.toDiscrete (left),
+					rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue
+					(
+						spaceManager.multiply
+						(
+							leftDiscrete, spaceManager.invert (rightDiscrete)
+						)
+					);
 			}
 
-			public String markupForDisplay (String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			public String markupForDisplay
+				(
+					String operator, String firstOperand,
+					String secondOperand, boolean lfence,
+					boolean rfence, NodeFormatting using
+				)
 			{
-				return using.formatOverUnderOperation (firstOperand, secondOperand);
+				return using.formatOverUnderOperation
+					(firstOperand, secondOperand);
 			}
 		};
 	}
@@ -223,16 +253,35 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 		return new AbstractBinaryOperator (symbol, precedence)
 		{
 			public ValueManager.GenericValue execute
-			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+				(
+					ValueManager.GenericValue left,
+					ValueManager.GenericValue right
+				)
 			{
-				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-				return valueManager.newDiscreteValue (spaceManager.multiply (leftDiscrete, spaceManager.invert (rightDiscrete)));
+				T leftDiscrete = valueManager.toDiscrete (left),
+					rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue
+					(
+						spaceManager.multiply
+						(
+							leftDiscrete, spaceManager.invert (rightDiscrete)
+						)
+					);
 			}
 
-			public String markupForDisplay (String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			public String markupForDisplay
+				(
+					String operator, String firstOperand,
+					String secondOperand, boolean lfence,
+					boolean rfence, NodeFormatting using
+				)
 			{
-				String left = using.formatParenthetical (firstOperand, lfence), right = using.formatParenthetical (secondOperand, rfence);
-				return using.formatBinaryOperation (left, OperatorNomenclature.DIVISION_OPERATOR, right);
+				String left = using.formatParenthetical (firstOperand, lfence),
+					right = using.formatParenthetical (secondOperand, rfence);
+				return using.formatBinaryOperation
+					(
+						left, OperatorNomenclature.DIVISION_OPERATOR, right
+					);
 			}
 		};
 	}
@@ -244,7 +293,8 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	 * @param precedence the associated precedence
 	 * @return operation implementation object
 	 */
-	public AbstractBinaryOperator getLambdaAlgorithm (String symbol, int precedence)
+	public AbstractBinaryOperator getLambdaAlgorithm
+			(String symbol, int precedence)
 	{
 		return new AbstractBinaryOperator (symbol, precedence)
 		{
@@ -267,7 +317,9 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 			{
 				String left = using.formatParenthetical (firstOperand, lfence),
 						right = using.formatParenthetical (secondOperand, rfence);
-				return lambda.profileFor (left, using) + LAMBDA_DECLARATION_OPERATOR + right;
+				return lambda.profileFor (left, using) +
+						LAMBDA_DECLARATION_OPERATOR +
+						right;
 			}
 		};
 	}
@@ -287,17 +339,21 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getDerefAlgorithm (String symbol, int precedence)
 	{
-		// this needs to be in place to provide a target for configuration
-		// the actual operation is executed in-line for efficiency
 		return new AbstractUnaryOperator (symbol, precedence)
 		{
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.UnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-			 */
 			public ValueManager.GenericValue
 			execute (ValueManager.GenericValue parameter)
 			{
+				// this needs to be in place to provide a target for configuration
+				// the actual operation is executed in-line for efficiency
 				return null;
+			}
+
+			public String markupForDisplay
+			(String operator, String operand, NodeFormatting using)
+			{
+				// just show parameter name as a function call
+				return operand;	// avoid display of the operator
 			}
 		};
 	}

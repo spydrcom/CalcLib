@@ -14,6 +14,9 @@ import net.myorb.data.abstractions.DataSequence;
 
 import net.myorb.math.Function;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,6 +141,12 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	}
 
 
+	/*
+	 * MML formatting for formal parameter lists
+	 * declared by lambda expressions
+	 */
+
+
 	/**
 	 * format MML nodes that describe the formal parameters
 	 * @param source the MN node that the render has so far constructed
@@ -146,29 +155,73 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	 */
 	public String profileFor (String source, NodeFormatting using)
 	{
-		String list = source
-			// must remove <mn> enclosure
-			.substring (5, source.length () - 6);
-		StringBuffer contents = new StringBuffer ();
-		String [] ids = list.split (",");
+		StringBuffer list;
 
-		for ( int i = 0; i < ids.length; )
+		formalParameters
+		(
+			mnContents (source).split (","),
+			list = new StringBuffer (), using
+		);
+
+		return using.formatParenthetical
+		(
+			list.toString ()
+		);
+	}
+
+
+	/**
+	 * construct MML parameter list from an identifier list
+	 * @param identifiers the identifiers making up the parameter list
+	 * @param theProfile a buffer collecting the parameter list
+	 * @param using an MML node formatting object
+	 */
+	public void formalParameters
+		(
+			String [] identifiers,
+			StringBuffer theProfile,
+			NodeFormatting using
+		)
+	{
+		for ( int i = 0; i < identifiers.length; )
 		{
-			contents.append
+			theProfile.append
 			(
 				using.formatBracket
 				(
 					using.formatIdentifierReference
-						(ids[i++].trim ())
+					  (identifiers[i++].trim ())
 				)
 			);
 		}
-
-		return using.formatParenthetical
-		(
-			contents.toString ()
-		);
 	}
+
+
+	/*
+	 * the rendering system MML encoder
+	 * processes the {p0,...,pn} formal parameter list of lambda expressions
+	 * into an MML number (MN) node so access to the list requires tag removal
+	 */
+
+
+	/**
+	 * get contents of a MN node
+	 * @param mnNode the text of the node with contents
+	 * @return the content after removal of the tags
+	 */
+	public String mnContents (String mnNode)
+	{
+		StringBuffer buffer = new StringBuffer ();
+		removeTag (p.matcher (mnNode), buffer);
+		return buffer.toString ();
+	}
+	void removeTag (Matcher pattern, StringBuffer into)
+	{
+		while (pattern.find ())
+			pattern.appendReplacement (into, "");
+		pattern.appendTail (into);
+	}
+	protected Pattern p = Pattern.compile ("<mn>\\S|\\S</mn>");
 
 
 }
