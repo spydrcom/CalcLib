@@ -31,16 +31,15 @@ public class ExpressionAnalysis<T>
 			Function<T> f,
 			TypedRangeDescription.TypedRangeProperties<T> domainDescription,
 			List<DisplayGraphTypes.Point.Series> series, 
-			Environment<T> environment
+			ExpressionComponentSpaceManager<T> mgr
 		)
 	{
-		ExpressionComponentSpaceManager<T> mgr =
-			(ExpressionComponentSpaceManager<T>) environment.getSpaceManager ();
-		T x = domainDescription.getTypedLo (), inc = domainDescription.getTypedIncrement (),
+		T x = domainDescription.getTypedLo (),
+			inc = domainDescription.getTypedIncrement (),
 			hi = domainDescription.getTypedHi ();
 		int seriesCount = series.size ();
 
-		while (mgr.lessThan (x, hi))
+		while ( ! mgr.lessThan (hi, x) )
 		{
 			T y = f.eval (x);
 			double domain = mgr.component (x, 0);
@@ -68,6 +67,7 @@ public class ExpressionAnalysis<T>
 
 }
 
+
 /**
  * provide vector enabled plot functionality for generic functions
  * @param <T> type used for calculations
@@ -78,14 +78,17 @@ class TransformEngine<T> implements VectorPlotEnabled<T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.VectorPlotEnabled#evaluateSeries(net.myorb.math.expressions.TypedRangeDescription.TypedRangeProperties, java.util.List, net.myorb.math.expressions.evaluationstates.Environment)
 	 */
-	@Override
 	public void evaluateSeries
 		(
 			TypedRangeProperties<T> domainDescription, List<Series> series,
 			Environment<T> environment
 		)
 	{
-		ea.evaluateSeries (f, domainDescription, series, environment);
+		ea.evaluateSeries
+		(
+			f, domainDescription, series,
+			( ExpressionComponentSpaceManager <T> ) environment.getSpaceManager ()
+		);
 	}
 
 	/**

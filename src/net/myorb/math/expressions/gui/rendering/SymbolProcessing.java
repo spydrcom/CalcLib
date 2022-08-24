@@ -18,8 +18,9 @@ public class SymbolProcessing extends SubExpressionProcessing
 	 * context for conversion is a symbol map
 	 * @param s the symbol map object that will be used for context
 	 */
-	public void setSymbolMap (SymbolMap s) { this.s = s; }
-	private SymbolMap s;
+	public void setSymbolMap (SymbolMap conversionContext)
+	{ this.conversionContext = conversionContext; }
+	private SymbolMap conversionContext;
 
 
 	/*
@@ -65,7 +66,7 @@ public class SymbolProcessing extends SubExpressionProcessing
 	 */
 	public SymbolMap.Named lookupNamedSymbol (String name)
 	{
-		return (SymbolMap.Named) s.get (name);
+		return (SymbolMap.Named) conversionContext.get (name);
 	}
 
 
@@ -115,7 +116,7 @@ public class SymbolProcessing extends SubExpressionProcessing
 	{
 		SymbolMap.Operation symbol =
 			new UndefinedFunctionSpecification (name);
-		s.add (symbol);
+		conversionContext.add (symbol);
 		return symbol;
 	}
 
@@ -141,7 +142,7 @@ public class SymbolProcessing extends SubExpressionProcessing
 	 */
 	public void processRangeDescription (TokenSequence seq)
 	{
-		setRangeDescription (new RangeDescription (seq.getMarked (), s));
+		setRangeDescription (new RangeDescription (seq.getMarked (), conversionContext));
 	}
 
 

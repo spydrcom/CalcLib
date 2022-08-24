@@ -2,11 +2,12 @@
 package net.myorb.math.expressions.managers;
 
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
-
+import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.data.abstractions.ValueDisplayProperties;
 
 import net.myorb.math.expressions.*;
 
+import java.awt.Color;
 import java.util.List;
 
 /**
@@ -160,5 +161,19 @@ public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
 	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#getComponentCount()
 	 */
 	public int getComponentCount () { return 1; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#axisLabels()
+	 */
+	public String[] axisLabels () { return LABEL; }
+	static final String[] LABEL = new String[]{"Y"};
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#assignColors(net.myorb.charting.DisplayGraphTypes.Colors)
+	 */
+	public void assignColors (DisplayGraphTypes.Colors colors)
+	{
+		colors.add (Color.BLACK);
+	}
 
 }

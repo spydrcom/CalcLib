@@ -3,6 +3,7 @@ package net.myorb.math.expressions.managers;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.complexnumbers.ComplexPrimitives;
+
 import net.myorb.math.complexnumbers.ComplexFieldManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 
@@ -11,6 +12,10 @@ import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.EvaluationEngine;
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.TokenParser;
+
+import net.myorb.charting.DisplayGraphTypes;
+
+import java.awt.Color;
 
 /**
  * expression manager for complex domains
@@ -189,6 +194,20 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 		return new ComplexValue<Double> (real, imaginary, this.manager);
 	}
 	static String CONSTRUCTION_ERROR = "Complex values can be constructed from one or two values only";
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#axisLabels()
+	 */
+	public String[] axisLabels () { return LABELS; }
+	static final String[] LABELS = new String[]{"Re", "Im"};
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#assignColors(net.myorb.charting.DisplayGraphTypes.Colors)
+	 */
+	public void assignColors (DisplayGraphTypes.Colors colors)
+	{
+		colors.add (Color.BLUE); colors.add (Color.RED);
+	}
 
 }
 

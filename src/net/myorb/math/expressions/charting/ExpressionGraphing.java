@@ -8,14 +8,9 @@ import net.myorb.math.complexnumbers.FunctionDerivativesTable;
 // expressions
 import net.myorb.math.expressions.*;
 import net.myorb.math.expressions.evaluationstates.Environment;
-//import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.Polynomial;
-
-// 3D plotter
-//import net.myorb.math.computational.SurfaceAnalyzer;
-//import net.myorb.rinearn.SurfacePlotter;
 
 // xtn libraries
 import net.myorb.data.abstractions.Function;
@@ -75,22 +70,46 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	 * @param parameter the name of the parameter to the function
 	 * @param domainDescription the properties of the domain
 	 */
-	@SuppressWarnings("unchecked")
 	public void singlePlotOfComplexValues
 		(
 			SymbolMap.Named functionSymbol, String parameter,
 			TypedRangeDescription.TypedRangeProperties<T> domainDescription
 		)
 	{
-		VectorPlotEnabled<T> transform = null;
-		if (functionSymbol instanceof VectorPlotEnabled)
-		{ transform = (VectorPlotEnabled<T>) functionSymbol; }
-		else
-		{
-			Function<T> f = DefinedFunction.verifyDefinedFunction (functionSymbol);
-			transform = new ExpressionAnalysis<T>().getTransformEngine (f);
-		}
-		singlePlotOfComplexValues (functionSymbol.getName (), transform, parameter, domainDescription);
+		plotMultiDimensionalRange
+		(
+			functionSymbol.getName (),
+			forceEnabled (functionSymbol),
+			parameter, domainDescription
+		);
+	}
+
+
+	/**
+	 * force a symbol to be enabled for Vector Plot conventions
+	 * @param functionSymbol the symbol for the function being plotted
+	 * @return the symbol as an implementer of VectorPlotEnabled
+	 */
+	@SuppressWarnings("unchecked")
+	VectorPlotEnabled <T> forceEnabled (SymbolMap.Named functionSymbol)
+	{
+		return
+		functionSymbol instanceof VectorPlotEnabled ?
+		( VectorPlotEnabled <T> ) functionSymbol : enabled (functionSymbol);
+	}
+
+
+	/**
+	 * wrap a function in ExpressionAnalysis to enable Vector Plot conventions
+	 * @param functionSymbol the symbol for the function being plotted
+	 * @return the symbol wrapped in ExpressionAnalysis ransform
+	 */
+	VectorPlotEnabled <T> enabled (SymbolMap.Named functionSymbol)
+	{
+		return new ExpressionAnalysis <T> ().getTransformEngine
+		(
+			DefinedFunction.verifyDefinedFunction (functionSymbol)
+		);
 	}
 
 
@@ -117,43 +136,29 @@ public class ExpressionGraphing<T> extends DisplayGraph
 
 
 	/**
-	 * build call to chart library
+	 * Multi-Dimensional function range plot
 	 * @param functionName the name of the function
 	 * @param transform an object that implements the vector plot contract
 	 * @param parameter the name of the parameter to the function
 	 * @param domainDescription descriptor of domain
 	 */
-	public void singlePlotOfComplexValues
+	public void plotMultiDimensionalRange
 		(
 			String functionName, VectorPlotEnabled<T> transform, String parameter,
 			TypedRangeDescription.TypedRangeProperties<T> domainDescription
 		)
 	{
-		DisplayGraphTypes.PlotCollection
-			funcPlot = new DisplayGraphTypes.PlotCollection ();
-		DisplayGraphTypes.Point.Series realSeries = new DisplayGraphTypes.Point.Series ();
-		DisplayGraphTypes.Point.Series imagSeries = new DisplayGraphTypes.Point.Series ();
-		funcPlot.add (realSeries); funcPlot.add (imagSeries);
-
-		transform.evaluateSeries (domainDescription, funcPlot, environment);
-		DisplayGraphTypes.Colors colors = new DisplayGraphTypes.Colors ();
-		colors.add (Color.BLUE); colors.add (Color.RED);
+		MultiDimensionalUtilities <T> util = new MultiDimensionalUtilities <T> (environment);
+		DisplayGraphTypes.PlotCollection funcPlot = util.evaluateSeries (transform, domainDescription);
+		DisplayGraphTypes.Colors colors = new DisplayGraphTypes.Colors (); util.assignColors (colors);
+		String displayName = ConventionalNotations.determineNotationFor (functionName);
 
 		getChartLibrary ().multiPlotWithAxis
 		(
-			colors, funcPlot,
-			ConventionalNotations.determineNotationFor (functionName),
-			SimpleLegend.buildLegendFor
-			(
-				new SimpleLegend.LegendProperties ()
-				{
-					public String[] getPlotSymbols () { return RE_IM; }
-					public String getVariable () { return parameter; }
-				}
-			)
+			colors, funcPlot, displayName,
+			util.buildSimpleLegend (parameter)
 		);
 	}
-	public static final String[] RE_IM = new String[]{"Re", "Im"};
 
 
 	/**
