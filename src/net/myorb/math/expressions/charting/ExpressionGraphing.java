@@ -26,7 +26,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class ExpressionGraphing<T> extends DisplayGraph
+public class ExpressionGraphing <T> extends DisplayGraph
 {
 
 
@@ -192,7 +192,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 			ValueManager.ValueList rangeValues, SimpleLegend <T> legend
 		)
 	{
-		this.multiPlot (domainValues, rangeValues, "Lambda Functions", legend);
+		new PlotSeries <T> (environment).multiPlot
+		(
+			domainValues, rangeValues,
+			"Lambda Functions", legend
+		);
 	}
 
 
@@ -212,8 +216,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	{
 		if (rangeValues instanceof ValueManager.ValueList)
 		{
-			MouseSampleTrigger<T> trigger = makeTrigger (domainDescriptor, environment);
-			multiPlot (domainValues, (ValueManager.ValueList)rangeValues, title, trigger);
+			new PlotSeries <T> (environment).multiPlot
+			(
+				domainValues, (ValueManager.ValueList) rangeValues, title,
+				makeTrigger (domainDescriptor, environment)
+			);
 		}
 		else
 		{
@@ -236,8 +243,13 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	 */
 	public void plotStructuredData (ValueManager.GenericValue array)
 	{
-		Arrays.Descriptor<T> domainDescriptor = environment.getArrayMetadataFor (array);
-		plotStructuredData (domainDescriptor.formatTitle (), domainDescriptor, array);
+		Arrays.Descriptor<T> domainDescriptor =
+				environment.getArrayMetadataFor (array);
+		new PlotSeries <T> (environment).plotStructuredData
+		(
+			domainDescriptor.formatTitle (),
+			domainDescriptor, array
+		);
 	}
 
 
@@ -267,108 +279,9 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	public static <T> PlotLegend.SampleDisplay legendFor (Arrays.Descriptor<T> arrayDescriptor)
 	{
 		PlotLegend.SampleDisplay legendDisplay = PlotLegend.constructLegend
-				(TokenParser.toPrettyText (arrayDescriptor.getExpression ()));
+			(TokenParser.toPrettyText (arrayDescriptor.getExpression ()));
 		legendDisplay.setVariable (arrayDescriptor.getVariable ());
 		return legendDisplay;
-	}
-
-
-	/*
-	 * SeriesBuilder mechanism
-	 */
-
-
-	/**
-	 * convert value structure to plot functions
-	 */
-	interface SeriesBuilder
-	{
-		/**
-		 * procedure parameter allowing different types of functions
-		 * @param value a value manager generic value.  must be DimensionedValue
-		 * @return a series of plot points
-		 */
-		Point.Series getFunction (ValueManager.GenericValue value);
-	}
-
-
-	/**
-	 * @param plots a value manager ValueList of data points
-	 * @param title a title for the plot frame taken from the domain descriptor
-	 * @param trigger screen input for mouse over and zoom control
-	 * @param builder implementation of SeriesBuilder
-	 */
-	public void multiPlot
-		(
-			ValueManager.ValueList plots, String title,
-			MouseSampleTrigger<T> trigger, SeriesBuilder builder
-		)
-	{
-		int c = 0;
-		Colors colors = new Colors ();
-		PlotCollection plotList = new PlotCollection ();
-		List<ValueManager.GenericValue> plotArrays =  plots.getValues ();
-	
-		for (ValueManager.GenericValue v : plotArrays)
-		{
-			if (v instanceof ValueManager.DimensionedValue)
-			{
-				Point.Series function = builder.getFunction (v);
-				plotList.add (function); colors.add (PlotLegend.COLORS[c++]);
-				if (c == PlotLegend.COLORS.length) break;
-			}
-			else throw new RuntimeException ("Dimensioned value expected in expression");
-		}
-	
-		getChartLibrary ().multiPlotWithAxis (colors, plotList, title, trigger);
-	}
-
-
-	/**
-	 * process multiple parallel plots based on a single domain
-	 * @param domain the domain values for the basis of the plots
-	 * @param plots the value list holding the plot values
-	 * @param title a title for the plot frame
-	 * @param trigger screen input
-	 */
-	public void multiPlot (RealSeries domain, ValueManager.ValueList plots, String title, MouseSampleTrigger<T> trigger)
-	{
-		multiPlot
-		(
-			plots, title, trigger,
-			new SeriesBuilder ()
-			{
-				public Point.Series getFunction (ValueManager.GenericValue value)
-				{
-					return pointsFor (domain, new RealSeries (conversion.convertToSeries (value)));
-				}
-			}
-		);
-	}
-
-
-	/**
-	 * structured data plot
-	 * @param title a title for the plot frame
-	 * @param domainDescriptor description of the domain
-	 * @param plots the data points collected for plot
-	 */
-	public void plotStructuredData
-	(String title, Arrays.Descriptor<T> domainDescriptor, ValueManager.GenericValue plots)
-	{
-		multiPlot
-		(
-			(ValueManager.ValueList) plots, title, null,
-			new SeriesBuilder ()
-			{
-				public Point.Series getFunction (ValueManager.GenericValue value)
-				{
-					RealSeries x = new RealSeries (), y = new RealSeries ();
-					conversion.convertToStructure (valueManager.toDiscreteValues (value), x, y);
-					return pointsFor (x, y);
-				}
-			}
-		);
 	}
 
 
