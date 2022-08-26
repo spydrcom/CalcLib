@@ -25,7 +25,7 @@ public class ExpressionAnalysis<T>
 	 * @param f function used to calculate series
 	 * @param domainDescription the parameters of the real domain
 	 * @param series the series of points per component to be constructed
-	 * @param environment the control state of the simulation
+	 * @param mgr data type management object
 	 */
 	public void evaluateSeries
 		(

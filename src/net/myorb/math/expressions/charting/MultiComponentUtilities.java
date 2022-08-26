@@ -149,6 +149,7 @@ public class MultiComponentUtilities <T>
 	 * @param funcPlot the set of plot points for each function
 	 * @param colors the color to use for each plot
 	 * @param legend a legend for the plot
+	 * @param <T> data type in legend
 	 */
 	public static <T> void multiPlotWithAxis
 		(

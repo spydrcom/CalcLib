@@ -36,6 +36,7 @@ public class ExpressionComponentElaboration
 	 * @param domainDescription the description of the domain of operations
 	 * @param series the container of the series being generated
 	 * @param mgr a data type manager for the operations
+	 * @param <T> data type of evaluations
 	 */
 	public static <T> void evaluateSeries
 		(

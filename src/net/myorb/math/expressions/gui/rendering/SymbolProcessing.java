@@ -16,7 +16,7 @@ public class SymbolProcessing extends SubExpressionProcessing
 
 	/**
 	 * context for conversion is a symbol map
-	 * @param s the symbol map object that will be used for context
+	 * @param conversionContext the symbol map object that will be used for context
 	 */
 	public void setSymbolMap (SymbolMap conversionContext)
 	{ this.conversionContext = conversionContext; }
