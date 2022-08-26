@@ -80,7 +80,7 @@ public class ExpressionAnalysis <T>
 
 				for (int n = 0; n < s.size (); n++)
 				{
-					series.get (n).add
+					s.get (n).add
 					(
 						new DisplayGraphTypes.Point
 						(domain, componentManager.component (y, n))

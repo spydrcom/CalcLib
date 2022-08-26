@@ -59,7 +59,7 @@ public class LambdaFunctionContext <T>
 				{
 					T y = functions.get (n).eval (x);
 					
-					series.get (n).add
+					s.get (n).add
 					(
 						new DisplayGraphTypes.Point (domain, mgr.convertToDouble (y))
 					);
