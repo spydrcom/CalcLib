@@ -46,8 +46,8 @@ public class LambdaFunctionContext <T>
 			Environment <T> environment
 		)
 	{
-		ExpressionComponentSpaceManager <T> mgr =
-			(ExpressionComponentSpaceManager <T>)
+		ExpressionComponentSpaceManager <T>
+			mgr = (ExpressionComponentSpaceManager <T>)
 				environment.getSpaceManager ();
 		ExpressionComponentElaboration.evaluateSeries
 		(
@@ -64,7 +64,6 @@ public class LambdaFunctionContext <T>
 						new DisplayGraphTypes.Point (domain, mgr.convertToDouble (y))
 					);
 				}
-
 			},
 			domainDescription, series, mgr
 		);
