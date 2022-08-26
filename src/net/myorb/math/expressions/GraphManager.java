@@ -9,17 +9,17 @@ import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.algorithms.LambdaFunctionPlotter;
 
 // evaluation states
+import net.myorb.math.expressions.evaluationstates.Arrays;
+import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
 import net.myorb.math.expressions.evaluationstates.ExtendedArrayFeatures;
 import net.myorb.math.expressions.evaluationstates.Environment;
-
-import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
-import net.myorb.math.expressions.evaluationstates.Arrays;
 
 // charting
 import net.myorb.math.expressions.charting.DisplayGraph;
 import net.myorb.math.expressions.charting.DisplayGraph3D;
 import net.myorb.math.expressions.charting.ExpressionGraphing;
 import net.myorb.math.expressions.charting.HighDefinitionPlots;
+import net.myorb.math.expressions.charting.MultiComponentUtilities;
 
 import net.myorb.charting.DisplayGraphLibraryInterface.Portions;
 import net.myorb.charting.DisplayGraphLibraryInterface.CategorizedPortion;
@@ -129,9 +129,10 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 
 	/**
 	 * plot lambda functions over range
+	 * - older version using the PlotMatrix devices
 	 * @param descriptor the descriptor for the domain
 	 */
-	public void lambdaFunctionPlots (Arrays.Descriptor <T> descriptor)
+	@Deprecated public void lambdaFunctionPlots (Arrays.Descriptor <T> descriptor)
 	{
 		this.doMultiLambdaPlot
 		(
@@ -149,7 +150,35 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	public void lambdaFunctionPlots (CommandSequence sequence)
 	{
 		ExtendedArrayFeatures <T> arrays = new ExtendedArrayFeatures <T> ();
-		this.lambdaFunctionPlots (arrays.getArrayDescriptor (sequence, 1, environment));
+		ArrayDescriptor <T> domain = arrays.getArrayDescriptor (sequence, 1, environment);
+		this.lambdaFunctionPlots (domain);
+	}
+
+
+	/**
+	 * plot lambda functions over range
+	 * @param descriptor the descriptor for the domain
+	 */
+	public void lambdaFunctionPlots (ArrayDescriptor <T> descriptor)
+	{
+		LambdaFunctionPlotter <T> lambdaProcessor = getLambdaProcessor ();
+		lambdaFunctionPlots (lambdaProcessor.getVectorEnabledContext (), descriptor);
+	}
+
+
+	/**
+	 * plot lambda functions over range
+	 * @param context a vector plot enabled wrapper for lambda functions
+	 * @param descriptor the descriptor for the domain
+	 */
+	public void lambdaFunctionPlots
+		(
+			LambdaFunctionPlotter.VectorEnabledContext <T> context,
+			ArrayDescriptor <T> descriptor
+		)
+	{
+		new MultiComponentUtilities <T> (context, environment).multiComponentPlot
+			   ("Lambda Declared User Functions", context, descriptor);
 	}
 
 
@@ -216,9 +245,9 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	 */
 	public void singleComplexFunctionPlot (String functionName, ArrayDescriptor<T> descriptor)
 	{
-		SymbolMap.Named functionSymbol = environment.getSymbolMap ().lookup (functionName);
-		String parameterNotation = ConventionalNotations.determineNotationFor (descriptor.getVariable ());
-		singlePlotOfComplexValues (functionSymbol, parameterNotation, descriptor);
+		SymbolMap.Named functionSymbol =
+				environment.getSymbolMap ().lookup (functionName);
+		singlePlotOfComplexValues (functionSymbol, descriptor);
 	}
 
 

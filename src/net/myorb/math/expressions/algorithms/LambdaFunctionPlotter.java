@@ -1,13 +1,16 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.GreekSymbols;
+import net.myorb.math.expressions.charting.MultiComponentUtilities;
 import net.myorb.math.expressions.charting.PlotMatrixForFunctionList;
 import net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend;
 
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+
+import net.myorb.math.expressions.GreekSymbols;
+import net.myorb.math.expressions.VectorPlotEnabled;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.DataSequence;
@@ -30,6 +33,16 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 
 
 	/**
+	 * meta-data collection
+	 *  for using the vector enabled plot mechanisms
+	 * @param <T> type on which operations are to be executed
+	 */
+	public interface VectorEnabledContext <T>
+	extends MultiComponentUtilities.ContextProperties, VectorPlotEnabled <T>
+	{}
+
+
+	/**
 	 * get a copy of the unicode character
 	 */
 	public static final String LAMBDA;
@@ -41,11 +54,21 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 	 * @param domainValues the values of the domain
 	 * @return the description of the range
 	 */
-	public ValueManager.ValueList
-	computeLambdaRange (DataSequence <T> domainValues)
+	@Deprecated public ValueManager.ValueList
+		computeLambdaRange (DataSequence <T> domainValues)
 	{
 		return new PlotMatrixForFunctionList <T> ().evaluate
 			(domainValues, getSimpleFunctionList ());
+	}
+
+
+	/**
+	 * produce a vector enabled wrapper for this plot
+	 * @return a context wrapper for the function list
+	 */
+	public VectorEnabledContext <T> getVectorEnabledContext ()
+	{
+		return new LambdaFunctionContext <T> (getSimpleFunctionList (), this);
 	}
 
 

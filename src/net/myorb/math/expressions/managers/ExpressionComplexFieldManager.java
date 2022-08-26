@@ -196,9 +196,9 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	static String CONSTRUCTION_ERROR = "Complex values can be constructed from one or two values only";
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#axisLabels()
+	 * @see net.myorb.math.expressions.charting.MultiDimensionalUtilities.ContextProperties#componentIdentifiers()
 	 */
-	public String[] axisLabels () { return LABELS; }
+	public String[] componentIdentifiers () { return LABELS; }
 	static final String[] LABELS = new String[]{"Re", "Im"};
 
 	/* (non-Javadoc)

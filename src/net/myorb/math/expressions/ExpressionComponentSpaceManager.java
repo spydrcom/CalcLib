@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.math.expressions.charting.MultiDimensionalUtilities;
+
 import net.myorb.charting.DisplayGraphTypes;
 
 /**
@@ -9,7 +11,7 @@ import net.myorb.charting.DisplayGraphTypes;
  * @author Michael Druckman
  */
 public interface ExpressionComponentSpaceManager<T>
-	extends ExpressionSpaceManager<T>
+	extends ExpressionSpaceManager <T>, MultiDimensionalUtilities.ContextProperties
 {
 
 	/**
@@ -44,7 +46,7 @@ public interface ExpressionComponentSpaceManager<T>
 	 * return label names for axis display in plots
 	 * @return traditional axis labels for this type
 	 */
-	String[] axisLabels ();
+	String[] componentIdentifiers ();
 
 	/**
 	 * give a set of traditional colors for plots of this type

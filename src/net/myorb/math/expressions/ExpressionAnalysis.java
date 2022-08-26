@@ -4,8 +4,9 @@ package net.myorb.math.expressions;
 import net.myorb.math.expressions.TypedRangeDescription.TypedRangeProperties;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.DisplayGraphTypes.Point.Series;
+import net.myorb.charting.DisplayGraphTypes;
+
 import net.myorb.data.abstractions.Function;
 
 import java.util.List;
@@ -28,32 +29,30 @@ public class ExpressionAnalysis<T>
 	 */
 	public void evaluateSeries
 		(
-			Function<T> f,
-			TypedRangeDescription.TypedRangeProperties<T> domainDescription,
-			List<DisplayGraphTypes.Point.Series> series, 
-			ExpressionComponentSpaceManager<T> mgr
+			Function <T> f,
+			TypedRangeDescription.TypedRangeProperties <T> domainDescription,
+			List <DisplayGraphTypes.Point.Series> series, 
+			ExpressionComponentSpaceManager <T> mgr
 		)
 	{
-		T x = domainDescription.getTypedLo (),
-			inc = domainDescription.getTypedIncrement (),
-			hi = domainDescription.getTypedHi ();
-		int seriesCount = series.size ();
-
-		while ( ! mgr.lessThan (hi, x) )
-		{
-			T y = f.eval (x);
-			double domain = mgr.component (x, 0);
-
-			for (int s = 0; s < seriesCount; s++)
+		ExpressionComponentElaboration.evaluateSeries
+		(
+			(x, s) ->
 			{
-				series.get (s).add
-				(
-					new DisplayGraphTypes.Point (domain, mgr.component (y, s))
-				);
-			}
+				T y = f.eval (x);
+				double domain = mgr.component (x, 0);
 
-			x = mgr.add (x, inc);
-		}
+				for (int n = 0; n < s.size (); n++)
+				{
+					series.get (n).add
+					(
+						new DisplayGraphTypes.Point (domain, mgr.component (y, n))
+					);
+				}
+
+			},
+			domainDescription, series, mgr
+		);
 	}
 
 	/**

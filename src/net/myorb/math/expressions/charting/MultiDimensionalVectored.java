@@ -12,7 +12,7 @@ import net.myorb.math.expressions.SymbolMap;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class MultiDimensionalVectored<T>
+public class MultiDimensionalVectored <T>
 {
 
 

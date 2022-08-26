@@ -12,7 +12,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public interface VectorPlotEnabled<T>
+public interface VectorPlotEnabled <T>
 {
 	/**
 	 * construct graph point series
@@ -23,8 +23,8 @@ public interface VectorPlotEnabled<T>
 	 */
 	public void evaluateSeries
 	(
-		TypedRangeDescription.TypedRangeProperties<T> domainDescription,
-		List<DisplayGraphTypes.Point.Series> series, 
-		Environment<T> environment
+		TypedRangeDescription.TypedRangeProperties <T> domainDescription,
+		List <DisplayGraphTypes.Point.Series> series, 
+		Environment <T> environment
 	);
 }

@@ -1,10 +1,10 @@
 
 package net.myorb.math.expressions.evaluationstates;
 
-import net.myorb.math.expressions.TypedRangeDescription;
-import net.myorb.math.expressions.ConventionalNotations;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.TypedRangeDescription;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.ConventionalNotations;
 
 import net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor;
 
@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * a value metadata descriptor for arrays
+ * a value meta-data descriptor for arrays
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class ArrayDescriptor<T>
-	implements Arrays.Descriptor<T>, TypedRangeDescription.TypedRangeProperties<T>
+public class ArrayDescriptor <T>
+	implements Arrays.Descriptor <T>, TypedRangeDescription.TypedRangeProperties <T>
 {
 
 

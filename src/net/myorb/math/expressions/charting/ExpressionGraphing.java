@@ -2,19 +2,19 @@
 package net.myorb.math.expressions.charting;
 
 // computation
+import net.myorb.math.Polynomial;
 import net.myorb.math.computational.PolynomialEvaluation;
 import net.myorb.math.complexnumbers.FunctionDerivativesTable;
 
 // expressions
 import net.myorb.math.expressions.*;
-import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.symbols.DefinedFunction;
-import net.myorb.math.Polynomial;
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
+import net.myorb.math.expressions.evaluationstates.Arrays;
 
 // xtn libraries
 import net.myorb.data.abstractions.Function;
-import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.PlotLegend;
 
 // JRE
@@ -67,20 +67,19 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	/**
 	 * wrap function for working with complex domain values
 	 * @param functionSymbol the symbol for the function being plotted
-	 * @param parameter the name of the parameter to the function
 	 * @param domainDescription the properties of the domain
 	 */
 	public void singlePlotOfComplexValues
 		(
-			SymbolMap.Named functionSymbol, String parameter,
-			TypedRangeDescription.TypedRangeProperties<T> domainDescription
+			SymbolMap.Named functionSymbol,
+			ArrayDescriptor<T> domainDescription
 		)
 	{
 		plotMultiDimensionalRange
 		(
 			functionSymbol.getName (),
 			forceEnabled (functionSymbol),
-			parameter, domainDescription
+			domainDescription
 		);
 	}
 
@@ -102,7 +101,7 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	/**
 	 * wrap a function in ExpressionAnalysis to enable Vector Plot conventions
 	 * @param functionSymbol the symbol for the function being plotted
-	 * @return the symbol wrapped in ExpressionAnalysis ransform
+	 * @return the symbol wrapped in ExpressionAnalysis transform
 	 */
 	VectorPlotEnabled <T> enabled (SymbolMap.Named functionSymbol)
 	{
@@ -139,25 +138,21 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	 * Multi-Dimensional function range plot
 	 * @param functionName the name of the function
 	 * @param transform an object that implements the vector plot contract
-	 * @param parameter the name of the parameter to the function
 	 * @param domainDescription descriptor of domain
 	 */
 	public void plotMultiDimensionalRange
 		(
-			String functionName, VectorPlotEnabled<T> transform, String parameter,
-			TypedRangeDescription.TypedRangeProperties<T> domainDescription
+			String functionName, VectorPlotEnabled <T> transform,
+			ArrayDescriptor <T> domainDescription
 		)
 	{
-		MultiDimensionalUtilities <T> util = new MultiDimensionalUtilities <T> (environment);
-		DisplayGraphTypes.PlotCollection funcPlot = util.evaluateSeries (transform, domainDescription);
-		DisplayGraphTypes.Colors colors = new DisplayGraphTypes.Colors (); util.assignColors (colors);
-		String displayName = ConventionalNotations.determineNotationFor (functionName);
-
-		getChartLibrary ().multiPlotWithAxis
-		(
-			colors, funcPlot, displayName,
-			util.buildSimpleLegend (parameter)
-		);
+		new MultiDimensionalUtilities <T>
+			(
+				( MultiDimensionalUtilities.ContextProperties )
+					environment.getSpaceManager (),
+				environment
+			)
+		.multiDimensionalFunctionPlot (functionName, transform, domainDescription);
 	}
 
 

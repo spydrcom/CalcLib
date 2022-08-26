@@ -163,9 +163,9 @@ public class ExpressionFloatingFieldManager extends DoubleFloatingFieldManager
 	public int getComponentCount () { return 1; }
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#axisLabels()
+	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#componentIdentifiers()
 	 */
-	public String[] axisLabels () { return LABEL; }
+	public String[] componentIdentifiers () { return LABEL; }
 	static final String[] LABEL = new String[]{"Y"};
 
 	/* (non-Javadoc)
