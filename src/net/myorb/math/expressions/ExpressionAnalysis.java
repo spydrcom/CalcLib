@@ -1,12 +1,14 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.charting.DisplayGraphTypes;
+import net.myorb.charting.DisplayGraphTypes.Point.Series;
+
 import net.myorb.math.expressions.TypedRangeDescription.TypedRangeProperties;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.symbols.DefinedFunction;
 
-import net.myorb.charting.DisplayGraphTypes.Point.Series;
-import net.myorb.charting.DisplayGraphTypes;
-
+import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.data.abstractions.Function;
 
 import java.util.List;
@@ -16,8 +18,40 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class ExpressionAnalysis<T>
+public class ExpressionAnalysis <T>
 {
+
+
+	/**
+	 * force a symbol to be enabled for Vector Plot conventions
+	 * @param functionSymbol the symbol for the function being plotted
+	 * @return the symbol as an implementer of VectorPlotEnabled
+	 * @param <T> type on which operations are to be executed
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> VectorPlotEnabled <T>
+		forceEnabled (SymbolMap.Named functionSymbol)
+	{
+		return
+		functionSymbol instanceof VectorPlotEnabled ?
+		( VectorPlotEnabled <T> ) functionSymbol : enable (functionSymbol);
+	}
+
+
+	/**
+	 * wrap a function in ExpressionAnalysis to enable Vector Plot conventions
+	 * @param functionSymbol the symbol for the function being plotted
+	 * @return the symbol wrapped in ExpressionAnalysis transform
+	 * @param <T> type on which operations are to be executed
+	 */
+	public static <T> VectorPlotEnabled <T> enable (SymbolMap.Named functionSymbol)
+	{
+		return new ExpressionAnalysis <T> ().getTransformEngine
+		(
+			DefinedFunction.verifyDefinedFunction (functionSymbol)
+		);
+	}
+
 
 	/**
 	 * construct graph point series
@@ -32,37 +66,55 @@ public class ExpressionAnalysis<T>
 			Function <T> f,
 			TypedRangeDescription.TypedRangeProperties <T> domainDescription,
 			List <DisplayGraphTypes.Point.Series> series, 
-			ExpressionComponentSpaceManager <T> mgr
+			SpaceDescription <T> spaceManager
 		)
 	{
+		ExpressionComponentSpaceManager <T>
+			componentManager = getComponentManager (spaceManager);
 		ExpressionComponentElaboration.evaluateSeries
 		(
 			(x, s) ->
 			{
 				T y = f.eval (x);
-				double domain = mgr.component (x, 0);
+				double domain = componentManager.component (x, 0);
 
 				for (int n = 0; n < s.size (); n++)
 				{
 					series.get (n).add
 					(
-						new DisplayGraphTypes.Point (domain, mgr.component (y, n))
+						new DisplayGraphTypes.Point
+						(domain, componentManager.component (y, n))
 					);
 				}
 
 			},
-			domainDescription, series, mgr
+			domainDescription, series, componentManager
 		);
 	}
 
+
 	/**
+	 * convert between space managers
+	 * @param mgr a space description object
+	 * @return the space description treated as a component manager
+	 */
+	public static final <T> ExpressionComponentSpaceManager <T>
+		getComponentManager (SpaceDescription <T> mgr)
+	{
+		return ( ExpressionComponentSpaceManager <T> ) mgr;
+	}
+
+
+	/**
+	 * construct a plot object
 	 * @param f the function that requires a wrapper
 	 * @return a transform engine that enables vector plot functionality
 	 */
-	public VectorPlotEnabled<T> getTransformEngine (Function<T> f)
+	public VectorPlotEnabled<T> getTransformEngine (Function <T> f)
 	{
-		return new TransformEngine<T> (f, this);
+		return new TransformEngine <T> (f, this);
 	}
+
 
 }
 
@@ -71,7 +123,7 @@ public class ExpressionAnalysis<T>
  * provide vector enabled plot functionality for generic functions
  * @param <T> type used for calculations
  */
-class TransformEngine<T> implements VectorPlotEnabled<T>
+class TransformEngine <T> implements VectorPlotEnabled <T>
 {
 
 	/* (non-Javadoc)
@@ -79,28 +131,29 @@ class TransformEngine<T> implements VectorPlotEnabled<T>
 	 */
 	public void evaluateSeries
 		(
-			TypedRangeProperties<T> domainDescription, List<Series> series,
-			Environment<T> environment
+			TypedRangeProperties <T> domainDescription,
+			List <Series> series, Environment <T> environment
 		)
 	{
 		ea.evaluateSeries
 		(
 			f, domainDescription, series,
-			( ExpressionComponentSpaceManager <T> ) environment.getSpaceManager ()
+			environment.getSpaceManager ()
 		);
 	}
 
 	/**
+	 * represent a function
 	 * @param f the function to enable
 	 * @param ea the Expression Analysis object to use
 	 */
-	public TransformEngine (Function<T> f, ExpressionAnalysis<T> ea)
+	public TransformEngine (Function <T> f, ExpressionAnalysis <T> ea)
 	{
 		this.ea = ea;
 		this.f = f;
 	}
-	ExpressionAnalysis<T> ea;
-	Function<T> f;
+	ExpressionAnalysis <T> ea;
+	Function <T> f;
 
 }
 

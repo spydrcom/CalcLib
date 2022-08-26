@@ -46,6 +46,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	protected Environment<T> environment;
 
 
+	/*
+	 * simple plots
+	 */
+
+
 	/**
 	 * wrap function for working with double float domain values
 	 * @param functionSymbol the symbol for the function being plotted
@@ -61,54 +66,6 @@ public class ExpressionGraphing<T> extends DisplayGraph
 		DisplayGraph.RealFunction functionDescription =
 			conversion.toRealFunction (DefinedFunction.verifyDefinedFunction (functionSymbol));
 		singlePlotOfValues (functionSymbol.getName (), functionDescription, parameter, domainDescription);
-	}
-
-
-	/**
-	 * wrap function for working with complex domain values
-	 * @param functionSymbol the symbol for the function being plotted
-	 * @param domainDescription the properties of the domain
-	 */
-	public void singlePlotOfComplexValues
-		(
-			SymbolMap.Named functionSymbol,
-			ArrayDescriptor<T> domainDescription
-		)
-	{
-		plotMultiDimensionalRange
-		(
-			functionSymbol.getName (),
-			forceEnabled (functionSymbol),
-			domainDescription
-		);
-	}
-
-
-	/**
-	 * force a symbol to be enabled for Vector Plot conventions
-	 * @param functionSymbol the symbol for the function being plotted
-	 * @return the symbol as an implementer of VectorPlotEnabled
-	 */
-	@SuppressWarnings("unchecked")
-	VectorPlotEnabled <T> forceEnabled (SymbolMap.Named functionSymbol)
-	{
-		return
-		functionSymbol instanceof VectorPlotEnabled ?
-		( VectorPlotEnabled <T> ) functionSymbol : enabled (functionSymbol);
-	}
-
-
-	/**
-	 * wrap a function in ExpressionAnalysis to enable Vector Plot conventions
-	 * @param functionSymbol the symbol for the function being plotted
-	 * @return the symbol wrapped in ExpressionAnalysis transform
-	 */
-	VectorPlotEnabled <T> enabled (SymbolMap.Named functionSymbol)
-	{
-		return new ExpressionAnalysis <T> ().getTransformEngine
-		(
-			DefinedFunction.verifyDefinedFunction (functionSymbol)
-		);
 	}
 
 
@@ -134,6 +91,31 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	}
 
 
+	/*
+	 * multi-dimensional plots
+	 */
+
+
+	/**
+	 * wrap function for working with complex domain values
+	 * @param functionSymbol the symbol for the function being plotted
+	 * @param domainDescription the properties of the domain
+	 */
+	public void singlePlotOfComplexValues
+		(
+			SymbolMap.Named functionSymbol,
+			ArrayDescriptor<T> domainDescription
+		)
+	{
+		plotMultiDimensionalRange
+		(
+			functionSymbol.getName (),
+			ExpressionAnalysis.forceEnabled (functionSymbol),
+			domainDescription
+		);
+	}
+
+
 	/**
 	 * Multi-Dimensional function range plot
 	 * @param functionName the name of the function
@@ -154,6 +136,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 			)
 		.multiDimensionalFunctionPlot (functionName, transform, domainDescription);
 	}
+
+
+	/*
+	 * domain processing
+	 */
 
 
 	/**
@@ -187,6 +174,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	}
 
 
+	/*
+	 * domain to range transition
+	 */
+
+
 	/**
 	 * plot multiple lambda functions
 	 * @param domainDescriptor descriptor of domain array
@@ -194,7 +186,7 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	 * @param rangeValues list of values of range
 	 * @param legend lambda specific legend
 	 */
-	public void multiLambdaPlot
+	@Deprecated public void multiLambdaPlot
 		(
 			Arrays.Descriptor<T> domainDescriptor, RealSeries domainValues,
 			ValueManager.ValueList rangeValues, SimpleLegend <T> legend
@@ -232,6 +224,11 @@ public class ExpressionGraphing<T> extends DisplayGraph
 			);
 		}
 	}
+
+
+	/*
+	 * meta-data processing
+	 */
 
 
 	/**
@@ -276,43 +273,54 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	}
 
 
-	/**
-	 * verify properties for the plot
-	 * @param title a title for the plot frame
-	 * @param expression the notation describing the plot
-	 * @param domain the domain values for the basis of the plots
-	 * @param rangeValues the array of points making the plot range
-	 * @param f the function being plotted
+	/*
+	 * SeriesBuilder mechanism
 	 */
-	public void plotOverDomain
-		(
-			String title, String expression, RealSeries domain,
-			ValueManager.GenericValue rangeValues, Function<T> f
-		)
+
+
+	/**
+	 * convert value structure to plot functions
+	 */
+	interface SeriesBuilder
 	{
-		if (!(rangeValues instanceof ValueManager.DimensionedValue))
-			throw new RuntimeException ("Dimensioned value expected in expression");
-		plotOverDimensionedDomain (title, expression, domain, valueManager.getDimensionedValue (rangeValues), f);
+		/**
+		 * procedure parameter allowing different types of functions
+		 * @param value a value manager generic value.  must be DimensionedValue
+		 * @return a series of plot points
+		 */
+		Point.Series getFunction (ValueManager.GenericValue value);
 	}
 
 
 	/**
-	 * convert abstract data to double float
-	 * @param title a title for the plot frame
-	 * @param expression the notation describing the plot
-	 * @param domain the domain values for the basis of the plots
-	 * @param dimensioned the array of plot points
-	 * @param f the function being plotted
+	 * @param plots a value manager ValueList of data points
+	 * @param title a title for the plot frame taken from the domain descriptor
+	 * @param trigger screen input for mouse over and zoom control
+	 * @param builder implementation of SeriesBuilder
 	 */
-	public void plotOverDimensionedDomain
+	public void multiPlot
 		(
-			String title, String expression, RealSeries domain,
-			ValueManager.DimensionedValue<T> dimensioned, Function<T> f
+			ValueManager.ValueList plots, String title,
+			MouseSampleTrigger<T> trigger, SeriesBuilder builder
 		)
 	{
-		Point.Series function =
-			pointsFor (domain, new RealSeries (conversion.convertToSeries (dimensioned.getValues ())));
-		plotPoints (function, title, expression, f);
+		int c = 0;
+		Colors colors = new Colors ();
+		PlotCollection plotList = new PlotCollection ();
+		List<ValueManager.GenericValue> plotArrays =  plots.getValues ();
+	
+		for (ValueManager.GenericValue v : plotArrays)
+		{
+			if (v instanceof ValueManager.DimensionedValue)
+			{
+				Point.Series function = builder.getFunction (v);
+				plotList.add (function); colors.add (PlotLegend.COLORS[c++]);
+				if (c == PlotLegend.COLORS.length) break;
+			}
+			else throw new RuntimeException ("Dimensioned value expected in expression");
+		}
+	
+		getChartLibrary ().multiPlotWithAxis (colors, plotList, title, trigger);
 	}
 
 
@@ -364,49 +372,48 @@ public class ExpressionGraphing<T> extends DisplayGraph
 	}
 
 
-	/**
-	 * convert value structure to plot functions
+	/*
+	 * plot drivers
 	 */
-	interface SeriesBuilder
+
+
+	/**
+	 * verify properties for the plot
+	 * @param title a title for the plot frame
+	 * @param expression the notation describing the plot
+	 * @param domain the domain values for the basis of the plots
+	 * @param rangeValues the array of points making the plot range
+	 * @param f the function being plotted
+	 */
+	public void plotOverDomain
+		(
+			String title, String expression, RealSeries domain,
+			ValueManager.GenericValue rangeValues, Function<T> f
+		)
 	{
-		/**
-		 * procedure parameter allowing different types of functions
-		 * @param value a value manager generic value.  must be DimensionedValue
-		 * @return a series of plot points
-		 */
-		Point.Series getFunction (ValueManager.GenericValue value);
+		if (!(rangeValues instanceof ValueManager.DimensionedValue))
+			throw new RuntimeException ("Dimensioned value expected in expression");
+		plotOverDimensionedDomain (title, expression, domain, valueManager.getDimensionedValue (rangeValues), f);
 	}
 
 
 	/**
-	 * @param plots a value manager ValueList of data points
-	 * @param title a title for the plot frame taken from the domain descriptor
-	 * @param trigger screen input for mouse over and zoom control
-	 * @param builder implementation of SeriesBuilder
+	 * convert abstract data to double float
+	 * @param title a title for the plot frame
+	 * @param expression the notation describing the plot
+	 * @param domain the domain values for the basis of the plots
+	 * @param dimensioned the array of plot points
+	 * @param f the function being plotted
 	 */
-	public void multiPlot
+	public void plotOverDimensionedDomain
 		(
-			ValueManager.ValueList plots, String title,
-			MouseSampleTrigger<T> trigger, SeriesBuilder builder
+			String title, String expression, RealSeries domain,
+			ValueManager.DimensionedValue<T> dimensioned, Function<T> f
 		)
 	{
-		int c = 0;
-		Colors colors = new Colors ();
-		PlotCollection plotList = new PlotCollection ();
-		List<ValueManager.GenericValue> plotArrays =  plots.getValues ();
-	
-		for (ValueManager.GenericValue v : plotArrays)
-		{
-			if (v instanceof ValueManager.DimensionedValue)
-			{
-				Point.Series function = builder.getFunction (v);
-				plotList.add (function); colors.add (PlotLegend.COLORS[c++]);
-				if (c == PlotLegend.COLORS.length) break;
-			}
-			else throw new RuntimeException ("Dimensioned value expected in expression");
-		}
-	
-		getChartLibrary ().multiPlotWithAxis (colors, plotList, title, trigger);
+		Point.Series function =
+			pointsFor (domain, new RealSeries (conversion.convertToSeries (dimensioned.getValues ())));
+		plotPoints (function, title, expression, f);
 	}
 
 

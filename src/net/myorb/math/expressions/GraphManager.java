@@ -110,7 +110,7 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 	 * @param domainValueSequence the DataSequence holding domain values
 	 * @param lambda the lambda processor for the plots
 	 */
-	public void doMultiLambdaPlot
+	@Deprecated public void doMultiLambdaPlot
 		(
 			Arrays.Descriptor <T> descriptor,
 			DataSequence <T> domainValueSequence,
