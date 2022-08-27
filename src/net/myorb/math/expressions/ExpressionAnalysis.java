@@ -59,7 +59,7 @@ public class ExpressionAnalysis <T>
 	 * @param f function used to calculate series
 	 * @param domainDescription the parameters of the real domain
 	 * @param series the series of points per component to be constructed
-	 * @param mgr data type management object
+	 * @param spaceManager data type management object
 	 */
 	public void evaluateSeries
 		(
@@ -97,6 +97,7 @@ public class ExpressionAnalysis <T>
 	 * convert between space managers
 	 * @param mgr a space description object
 	 * @return the space description treated as a component manager
+	 * @param <T> type on which operations are to be executed
 	 */
 	public static final <T> ExpressionComponentSpaceManager <T>
 		getComponentManager (SpaceDescription <T> mgr)
