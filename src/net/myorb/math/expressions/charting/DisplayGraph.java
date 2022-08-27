@@ -34,6 +34,11 @@ public class DisplayGraph extends DisplayGraphAtomic
 		{
 
 			/**
+			 * @return function name to treat as primary segment
+			 */
+			String getPrimarySegmentName ();
+
+			/**
 			 * @return list of function names for y-axis f(ID)
 			 */
 			String [] getPlotSymbols ();
@@ -55,9 +60,21 @@ public class DisplayGraph extends DisplayGraphAtomic
 				(LegendProperties properties)
 		{
 			SimpleLegend <T> legend = new SimpleLegend <T> ();
+			legend.primarySegmentName = properties.getPrimarySegmentName ();
 			legend.setDisplay (getPlotLegend (properties));
 			return legend;
 		}
+
+		/**
+		 * maintain a name for the y-axis
+		 * @return the name of the Primary Segment
+		 * 		as listed in the LegendProperties
+		 */
+		public String getPrimarySegmentName ()
+		{
+			return primarySegmentName;
+		}
+		protected String primarySegmentName = null;
 
 		/**
 		 * get the x-axis variable and check for notations

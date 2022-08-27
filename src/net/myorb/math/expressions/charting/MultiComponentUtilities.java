@@ -93,6 +93,19 @@ public class MultiComponentUtilities <T>
 	 */
 	public SimpleLegend <T> buildSimpleLegend (String parameter)
 	{
+		return buildSimpleLegend (null, parameter);
+	}
+
+
+	/**
+	 * build a legend using the axis labels traditionally shown
+	 * @param primarySegmentName the name of the function to show for the y-axis
+	 * @param parameter the name of the parameter to show for the x-axis
+	 * @return a simple legend object
+	 */
+	public SimpleLegend <T> buildSimpleLegend
+		(String primarySegmentName, String parameter)
+	{
 		return SimpleLegend.buildLegendFor
 		(
 			new SimpleLegend.LegendProperties ()
@@ -100,6 +113,8 @@ public class MultiComponentUtilities <T>
 				public String[] getPlotSymbols ()
 				{ return contextProperties.componentIdentifiers (); }
 				public String getVariable () { return parameter; }
+				public String getPrimarySegmentName ()
+				{ return primarySegmentName; }
 			}
 		);
 	}
@@ -185,9 +200,10 @@ public class MultiComponentUtilities <T>
 		multiPlotWithAxis
 			(
 				title, funcPlot, colors,
-				buildSimpleLegend (parameter)
+				buildSimpleLegend (primarySegment, parameter)
 			);
 	}
+	protected String primarySegment = null;
 
 
 	/**

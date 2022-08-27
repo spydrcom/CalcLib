@@ -69,6 +69,11 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	}
 
 
+	/*
+	 * segment plots
+	 */
+
+
 	/**
 	 * build call to chart library
 	 * @param functionName the name of the function
@@ -82,12 +87,12 @@ public class ExpressionGraphing <T> extends DisplayGraph
 			TypedRangeDescription.TypedRangeProperties<T> domainDescription
 		)
 	{
-		getChartLibrary ().singlePlotWithAxis
+		new MultiSegmentUtilities <T>
 		(
-			Color.BLUE,
-			getPlotList (f, domainDescription, environment.getSpaceManager ()), 
-			ConventionalNotations.determineNotationFor (functionName), parameter, f
-		);
+			getPlotList (f, domainDescription, environment.getSpaceManager ()),
+			environment
+		)
+		.multiSegmentPlot (functionName, parameter);
 	}
 
 

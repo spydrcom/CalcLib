@@ -144,6 +144,14 @@ public class LambdaFunctionPlotter <T> extends LambdaExpressions <T>
 				{
 
 					/* (non-Javadoc)
+					 * @see net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend.LegendProperties#getPrimarySegmentName()
+					 */
+					public String getPrimarySegmentName ()
+					{
+						return LAMBDA;
+					}
+
+					/* (non-Javadoc)
 					 * @see net.myorb.math.expressions.charting.DisplayGraph.SimpleLegend.LegendProperties#getPlotSymbols()
 					 */
 					public String [] getPlotSymbols ()

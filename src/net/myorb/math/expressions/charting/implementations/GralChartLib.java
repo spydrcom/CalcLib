@@ -2,7 +2,6 @@
 package net.myorb.math.expressions.charting.implementations;
 
 // CalcLib expressions
-import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
 
@@ -15,6 +14,7 @@ import net.myorb.charting.DisplayGraphUtil;
 
 //CalcLib charting
 import net.myorb.math.expressions.charting.MouseSampleTrigger;
+import net.myorb.math.expressions.charting.MultiSegmentUtilities;
 import net.myorb.math.expressions.charting.ExpressionGraphing;
 
 //Chart Providers
@@ -27,8 +27,7 @@ import java.awt.Color;
  * an implementation of the chart library using GRAL
  * @author Michael Druckman
  */
-public class GralChartLib
-	extends ChartLibSupport
+public class GralChartLib extends ChartLibSupport
 	implements DisplayGraphLibraryInterface
 {
 
@@ -78,9 +77,21 @@ public class GralChartLib
 			Colors colors, PlotCollection funcPlots, String title, MouseSampleTrigger trigger
 		)
 	{
-		String exprs[] = trigger.getDisplay ().getPlotExpressions (),
-			var = ConventionalNotations.determineNotationFor (trigger.getDisplay ().getVariable ());
-		showComponentFrame (title, axisChartComponent (funcPlots, title, exprs, var, "f(" + var + ")"));
+		MultiSegmentUtilities.SegmentManager mgr =
+			new MultiSegmentUtilities.SegmentManager ();
+		mgr.examine (trigger);
+
+		showComponentFrame
+		(
+			title,
+
+			axisChartComponent
+			(
+				funcPlots, title,
+				mgr.getExprs (), mgr.getVar (),
+				mgr.getAxisDisplay ()
+			)
+		);
 	}
 
 

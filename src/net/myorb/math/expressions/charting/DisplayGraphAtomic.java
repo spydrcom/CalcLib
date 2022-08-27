@@ -315,9 +315,10 @@ public class DisplayGraphAtomic extends DisplayGraphTypes
 	 */
 	public static PlotCollection makePlotCollection (Point.Series... plots)
 	{
-		PlotCollection collection = new PlotCollection ();
+		PlotCollection collection = new PlotCollection (), segments = new PlotCollection ();
 		for (Point.Series series : plots) collection.add (DisplayGraphSegmentTools.checkRange (series));
-		return collection;
+		DisplayGraphSegmentTools.separateSegments (collection, segments);
+		return segments;
 	}
 
 

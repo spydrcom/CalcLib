@@ -7,16 +7,17 @@ import net.myorb.charting.DisplayGraphTypes.Point;
 import net.myorb.charting.DisplayGraphTypes.Colors;
 import net.myorb.charting.DisplayGraphTypes.RealFunction;
 import net.myorb.charting.DisplayGraphTypes.PlotCollection;
-import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
 import net.myorb.charting.DisplayGraphUtil;
 
+import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
+import net.myorb.math.expressions.charting.MultiSegmentUtilities;
+
+//CalcLib expressions
 import net.myorb.math.expressions.charting.ExpressionGraphing;
 import net.myorb.math.expressions.charting.DisplayGraphPrimitives;
 import net.myorb.math.expressions.charting.MouseSampleTrigger;
 
-//CalcLib expressions
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.math.expressions.ConventionalNotations;
 
 //Chart Providers
 import net.myorb.jfree.ChartLibSupport;
@@ -29,8 +30,7 @@ import java.awt.Color;
  * an implementation of the chart library using JFreeChart
  * @author Michael Druckman
  */
-public class JfreeChartLib
-	extends ChartLibSupport
+public class JfreeChartLib extends ChartLibSupport
 	implements DisplayGraphLibraryInterface
 {
 
@@ -46,17 +46,26 @@ public class JfreeChartLib
 	@SuppressWarnings("rawtypes")
 	public void multiPlotWithAxis
 		(
-			Colors colors, PlotCollection funcPlots, String title, MouseSampleTrigger trigger
+			Colors colors, PlotCollection funcPlots,
+			String title, MouseSampleTrigger trigger
 		)
 	{
-		String var = "x", exprs[] = new String[]{"f"};
-		if (trigger != null)
-		{
-			PlotLegend.SampleDisplay display = trigger.getDisplay ();
-			var = ConventionalNotations.determineNotationFor (display.getVariable ());
-			exprs = display.getPlotExpressions ();
-		}
-		DisplayGraphPrimitives.showFrame (title, axisChart (title, funcPlots, exprs, var, "f(" + var + ")", colors));
+		MultiSegmentUtilities.SegmentManager mgr =
+			new MultiSegmentUtilities.SegmentManager ();
+		mgr.examine (trigger);
+
+		DisplayGraphPrimitives.showFrame
+		(
+			title,
+
+			axisChart
+			(
+				title, funcPlots,
+				mgr.getExprs (), mgr.getVar (),
+				mgr.getAxisDisplay (),
+				colors
+			)
+		);
 	}
 
 
@@ -65,7 +74,8 @@ public class JfreeChartLib
 	 */
 	public void multiPlotWithAxis
 		(
-			Colors colors, PlotCollection funcPlots, String title, String expression, RealFunction f
+			Colors colors, PlotCollection funcPlots, String title,
+			String expression, RealFunction f
 		)
 	{
 		DisplayGraphPrimitives.showFrame (title, axisChart (title, funcPlots, new String[]{expression}, "X", "f(X)", colors));
