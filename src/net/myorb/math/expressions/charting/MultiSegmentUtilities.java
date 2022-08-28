@@ -11,8 +11,6 @@ import net.myorb.charting.DisplayGraphTypes.Colors;
 
 import net.myorb.charting.PlotLegend;
 
-import java.util.ArrayList;
-
 /**
  * segment breaks being treated as components
  * @param <T> type on which operations are to be executed
@@ -85,6 +83,11 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 	}
 
 
+	/**
+	 * break plots into segments
+	 * @param plots the plot collection to evaluate
+	 * @param environment the core to the application
+	 */
 	public MultiSegmentUtilities
 	(PlotCollection plots, Environment <T> environment)
 	{
@@ -92,6 +95,7 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 		this.plots = plots;
 	}
 	protected PlotCollection plots;
+
 
 	/**
 	 * build a segment plot
@@ -111,11 +115,12 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 		);
 	}
 
+
 	/**
 	 * identify the function in the legend
 	 * @param functionName the name of the function being plotted
 	 */
-	void setPrimaryFunction (String functionName)
+	public void setPrimaryFunction (String functionName)
 	{
 		/*
 		 * this will replace 1 in legend
@@ -127,7 +132,9 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 				functionName;
 	}
 
+
 }
+
 
 /**
  * plot context for segment breaks being treated as components
@@ -136,7 +143,10 @@ class SegmentedPlotContext implements MultiComponentUtilities.ContextProperties
 {
 
 	SegmentedPlotContext (int plotCount)
-	{ this.plotCount = plotCount; initialSegmentNames (); }
+	{
+		this.plotCount = plotCount;
+		this.initialSegmentNames ();
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#getComponentCount()
@@ -147,6 +157,12 @@ class SegmentedPlotContext implements MultiComponentUtilities.ContextProperties
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#componentIdentifiers()
+	 */
+	public String[] componentIdentifiers () { return this.segmentsNameList; }
+	protected String[] segmentsNameList;
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#assignColors(net.myorb.charting.DisplayGraphTypes.Colors)
 	 */
 	public void assignColors (Colors colors)
@@ -155,26 +171,27 @@ class SegmentedPlotContext implements MultiComponentUtilities.ContextProperties
 				(colors, this.plotCount);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#componentIdentifiers()
+	/*
+	 * segment name generation
 	 */
-	public String[] componentIdentifiers ()
-	{
-		return this.segmentsNameList;
-	}
 
 	/**
 	 * construct names for the segments
 	 */
-	void initialSegmentNames ()
+	public void initialSegmentNames ()
 	{
-		ArrayList<String> segmentsNames =
-			new ArrayList<String> ();
-		for (int i = plotCount; i > 0; i--)
-		{ segmentsNames.add ("#" + Integer.toString (plotCount - i + 1)); }
-		this.segmentsNameList = segmentsNames.toArray (new String[]{});
+		this.segmentsNameList = new String [this.plotCount];
+		for (int i = 0; i < this.plotCount; i++)
+		{ this.addNameFor (i); }
 	}
-	protected String[] segmentsNameList;
+
+	/**
+	 * assign a name to the segment identified by index
+	 * @param item the index into the plot collection
+	 */
+	public void addNameFor (int item)
+	{ this.segmentsNameList [item] = "#" + Integer.toString (item + 1); }
 	protected int plotCount;
 
 }
+

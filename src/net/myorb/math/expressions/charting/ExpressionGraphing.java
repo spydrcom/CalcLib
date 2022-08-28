@@ -7,13 +7,13 @@ import net.myorb.math.computational.PolynomialEvaluation;
 import net.myorb.math.complexnumbers.FunctionDerivativesTable;
 
 // expressions
-import net.myorb.math.expressions.*;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.ArrayDescriptor;
 import net.myorb.math.expressions.evaluationstates.Arrays;
+import net.myorb.math.expressions.*;
 
-// xtn libraries
+// external libraries
 import net.myorb.data.abstractions.Function;
 import net.myorb.charting.PlotLegend;
 
@@ -34,16 +34,51 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 * space manager is used to convert values to float
 	 * @param environment the common environment object for the engine
 	 */
-	public ExpressionGraphing (Environment<T> environment)
+	public ExpressionGraphing (Environment <T> environment)
 	{
 		this.conversion = environment.getConversionManager ();
 		this.valueManager = environment.getValueManager ();
 		this.environment = environment;
 	}
-	protected DataConversions<T> conversion = null;
-	protected ValueManager<T> valueManager = null;
+	protected DataConversions <T> conversion;
+	protected ValueManager <T> valueManager;
+	protected Environment <T> environment;
+
+
+	/*
+	 * accessories and utility methods
+	 */
+
+
+	/**
+	 * verify plot contains data
+	 * @param plotPoints the computed points for the plot
+	 * @throws RuntimeException error condition for empty plots
+	 */
+	public void checkPlot
+		(Point.Series plotPoints)
+	throws RuntimeException
+	{
+		if (plotPoints.size () > 0) return;
+		throw new RuntimeException ("Empty plot");
+	}
+
+
+	/**
+	 * on option a derivative of the series is added to the collection
+	 * @param plotPoints the points of the series to plot for the function
+	 * @param plotList the collection of plots to be displayed
+	 * @param colors a list of colors for the plots
+	 */
+	public void includeDerivative
+	(Point.Series plotPoints, PlotCollection plotList, Colors colors)
+	{
+		if ( ! addDerivative ) return;
+		Point.Series derivative = computeDerivative (plotPoints);
+		colors.add (Color.GREEN); plotList.add (derivative);
+	}
 	protected boolean addDerivative = false;
-	protected Environment<T> environment;
+
 
 
 	/*
@@ -60,7 +95,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	public void singlePlotOfValues
 		(
 			SymbolMap.Named functionSymbol, String parameter,
-			TypedRangeDescription.TypedRangeProperties<T> domainDescription
+			TypedRangeDescription.TypedRangeProperties <T> domainDescription
 		)
 	{
 		DisplayGraph.RealFunction functionDescription =
@@ -75,7 +110,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 
 
 	/**
-	 * build call to chart library
+	 * identify segments for the plot
 	 * @param functionName the name of the function
 	 * @param f the function wrapped for operation on double float
 	 * @param parameter the name of the parameter to the function
@@ -84,7 +119,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	public void singlePlotOfValues
 		(
 			String functionName, DisplayGraph.RealFunction f, String parameter,
-			TypedRangeDescription.TypedRangeProperties<T> domainDescription
+			TypedRangeDescription.TypedRangeProperties <T> domainDescription
 		)
 	{
 		new MultiSegmentUtilities <T>
@@ -109,7 +144,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	public void singlePlotOfComplexValues
 		(
 			SymbolMap.Named functionSymbol,
-			ArrayDescriptor<T> domainDescription
+			ArrayDescriptor <T> domainDescription
 		)
 	{
 		plotMultiDimensionalRange
@@ -156,7 +191,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 */
 	public void plotValues (ValueManager.GenericValue array)
 	{
-		Arrays.Descriptor<T> domainDescriptor =
+		Arrays.Descriptor <T> domainDescriptor =
 				environment.getArrayMetadataFor (array);
 		plotValues (domainDescriptor, array, domainDescriptor.formatTitle ());
 	}
@@ -169,7 +204,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 */
 	public void plotValues
 		(
-			Arrays.Descriptor<T> domainDescriptor,
+			Arrays.Descriptor <T> domainDescriptor,
 			ValueManager.GenericValue values,
 			String titled
 		)
@@ -193,7 +228,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 */
 	@Deprecated public void multiLambdaPlot
 		(
-			Arrays.Descriptor<T> domainDescriptor, RealSeries domainValues,
+			Arrays.Descriptor <T> domainDescriptor, RealSeries domainValues,
 			ValueManager.ValueList rangeValues, SimpleLegend <T> legend
 		)
 	{
@@ -207,7 +242,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 
 	/**
 	 * choose chart generation interface
-	 * @param title a title for the chart
+	 * @param title a title for display on the chart
 	 * @param domainDescriptor descriptor of domain array
 	 * @param domainValues list of values of domain
 	 * @param rangeValues list of values of range
@@ -215,7 +250,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	public void plotValues
 		(
 			String title,
-			Arrays.Descriptor<T> domainDescriptor, RealSeries domainValues,
+			Arrays.Descriptor <T> domainDescriptor, RealSeries domainValues,
 			ValueManager.GenericValue rangeValues
 		)
 	{
@@ -248,7 +283,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 */
 	public void plotStructuredData (ValueManager.GenericValue array)
 	{
-		Arrays.Descriptor<T> domainDescriptor =
+		Arrays.Descriptor <T> domainDescriptor =
 				environment.getArrayMetadataFor (array);
 		new PlotSeries <T> (environment).plotStructuredData
 		(
@@ -266,9 +301,9 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 * @return a mouse trigger for the legend
 	 */
 	public static <T> MouseSampleTrigger<T> makeTrigger
-	(Arrays.Descriptor<T> arrayDescriptor, Environment<T> environment)
+	(Arrays.Descriptor <T> arrayDescriptor, Environment <T> environment)
 	{
-		MouseSampleTrigger<T> trigger = new MouseSampleTrigger<T>();
+		MouseSampleTrigger <T> trigger = new MouseSampleTrigger <T> ();
 		trigger.setMacro (arrayDescriptor.genMacro (environment, true));
 		trigger.setDisplay (legendFor (arrayDescriptor));
 		return trigger;
@@ -281,7 +316,8 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 * @param <T> data type used in all expressions
 	 * @return a sample display for the legend
 	 */
-	public static <T> PlotLegend.SampleDisplay legendFor (Arrays.Descriptor<T> arrayDescriptor)
+	public static <T> PlotLegend.SampleDisplay legendFor
+			(Arrays.Descriptor <T> arrayDescriptor)
 	{
 		PlotLegend.SampleDisplay legendDisplay = PlotLegend.constructLegend
 			(TokenParser.toPrettyText (arrayDescriptor.getExpression ()));
@@ -306,12 +342,18 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	public void plotOverDomain
 		(
 			String title, String expression, RealSeries domain,
-			ValueManager.GenericValue rangeValues, Function<T> f
+			ValueManager.GenericValue rangeValues, Function <T> f
 		)
 	{
-		if (!(rangeValues instanceof ValueManager.DimensionedValue))
-			throw new RuntimeException ("Dimensioned value expected in expression");
-		plotOverDimensionedDomain (title, expression, domain, valueManager.getDimensionedValue (rangeValues), f);
+		if (rangeValues instanceof ValueManager.DimensionedValue)
+		{
+			plotOverDimensionedDomain
+				(
+					title, expression, domain,
+					valueManager.getDimensionedValue (rangeValues),
+					f
+				);
+		} else throw new RuntimeException ("Dimensioned value expected in expression");
 	}
 
 
@@ -325,13 +367,25 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 */
 	public void plotOverDimensionedDomain
 		(
-			String title, String expression, RealSeries domain,
-			ValueManager.DimensionedValue<T> dimensioned, Function<T> f
+			String title,
+			String expression, RealSeries domain,
+			ValueManager.DimensionedValue <T> dimensioned,
+			Function <T> f
 		)
 	{
-		Point.Series function =
-			pointsFor (domain, new RealSeries (conversion.convertToSeries (dimensioned.getValues ())));
-		plotPoints (function, title, expression, f);
+		RealSeries
+			series = new RealSeries
+			(
+				conversion.convertToSeries
+				(
+					dimensioned.getValues ()
+				)
+			);
+		plotPoints
+			(
+				pointsFor (domain, series),
+				title, expression, f
+			);
 	}
 
 
@@ -346,17 +400,43 @@ public class ExpressionGraphing <T> extends DisplayGraph
 		(
 			Point.Series plotPoints,
 			String title, String expression,
-			Function<T> f
+			Function <T> f
 		)
 	{
-		if (plotPoints.size() == 0)
-			throw new RuntimeException ("Empty plot");
-		Colors colors = makeColorList (Color.WHITE);
+		checkPlot (plotPoints);
+		Colors colors = makeColorList (Color.BLUE);
 		PlotCollection plotList = makePlotCollection (plotPoints);
-
-		if (addDerivative) { colors.add (Color.GREEN); plotList.add (computeDerivative (plotPoints)); }
-		getChartLibrary ().multiPlotWithAxis (colors, plotList, title, expression, conversion.toRealFunction (f));
+		if (addDerivative) { includeDerivative (plotPoints, plotList, colors); }
+		displayPlotCollection (title, expression, plotList, colors, f);
 	}
+
+
+	/**
+	 * call the charting package to display plots
+	 * @param title for display on the frame of the plot
+	 * @param expression the notation of request being plotted
+	 * @param plotList the collection of plots to display
+	 * @param colors the colors to use for collection
+	 * @param f function implementation
+	 */
+	public void displayPlotCollection
+		(
+			String title, String expression,
+			PlotCollection plotList, Colors colors,
+			Function <T> f
+		)
+	{
+		getChartLibrary ().multiPlotWithAxis
+		(
+			colors, plotList, title, expression,
+			conversion.toRealFunction (f)
+		);
+	}
+
+
+	/*
+	 * calculus utilities
+	 */
 
 
 	/**
@@ -364,11 +444,12 @@ public class ExpressionGraphing <T> extends DisplayGraph
 	 * @param function the plot of the function to be derived
 	 * @return the points of the derivative plot
 	 */
-	public static Point.Series computeDerivative (List<Point> function)
+	public static Point.Series computeDerivative (List <Point> function)
 	{
 		double difference, midPoint, slope;
 		Point previous = function.get (0), next;
 		Point.Series points = new Point.Series ();
+
 		for (int i = 1; i < function.size (); i++)
 		{
 			next = function.get (i);
@@ -378,8 +459,14 @@ public class ExpressionGraphing <T> extends DisplayGraph
 			points.add (new Point (midPoint, slope));
 			previous = next;
 		}
+
 		return points;
 	}
+
+
+	/*
+	 * polynomial utilities
+	 */
 
 
 	/**

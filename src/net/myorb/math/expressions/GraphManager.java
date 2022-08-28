@@ -82,7 +82,7 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 		SymbolMap.Named functionSymbol = environment.getSymbolMap ().lookup (functionName);
 		String parameterNotation = ConventionalNotations.determineNotationFor (descriptor.getVariable ());
 		singlePlotOfValues (functionSymbol, parameterNotation, descriptor);
-	} //TODO: check for segments before assuming single plot
+	}
 
 
 	/*
