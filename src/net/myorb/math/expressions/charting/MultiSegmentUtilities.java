@@ -7,6 +7,7 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.charting.DisplayGraph;
 
 import net.myorb.charting.DisplayGraphTypes.PlotCollection;
+import net.myorb.charting.DisplayGraphSegmentTools;
 import net.myorb.charting.DisplayGraphTypes.Colors;
 
 import net.myorb.charting.PlotLegend;
@@ -144,17 +145,18 @@ class SegmentedPlotContext implements MultiComponentUtilities.ContextProperties
 
 	SegmentedPlotContext (int plotCount)
 	{
-		this.plotCount = plotCount;
-		this.initialSegmentNames ();
+		this.segmentsNameList =
+			DisplayGraphSegmentTools.segmentNames
+				(
+					this.plotCount = plotCount, "f"
+				);
 	}
+	protected int plotCount;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#getComponentCount()
 	 */
-	public int getComponentCount ()
-	{
-		return this.plotCount;
-	}
+	public int getComponentCount () { return this.plotCount; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.MultiComponentUtilities.ContextProperties#componentIdentifiers()
@@ -168,30 +170,8 @@ class SegmentedPlotContext implements MultiComponentUtilities.ContextProperties
 	public void assignColors (Colors colors)
 	{
 		MultiComponentUtilities.assignStandardColors
-				(colors, this.plotCount);
+			(colors, this.plotCount);
 	}
-
-	/*
-	 * segment name generation
-	 */
-
-	/**
-	 * construct names for the segments
-	 */
-	public void initialSegmentNames ()
-	{
-		this.segmentsNameList = new String [this.plotCount];
-		for (int i = 0; i < this.plotCount; i++)
-		{ this.addNameFor (i); }
-	}
-
-	/**
-	 * assign a name to the segment identified by index
-	 * @param item the index into the plot collection
-	 */
-	public void addNameFor (int item)
-	{ this.segmentsNameList [item] = "#" + Integer.toString (item + 1); }
-	protected int plotCount;
 
 }
 
