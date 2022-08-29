@@ -198,6 +198,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 
 
 	/**
+	 * construct plot from domain descriptor and generic array
 	 * @param domainDescriptor the array descriptor for the domain
 	 * @param values the values of the functions at the domain points
 	 * @param titled a title for the plot
@@ -279,6 +280,7 @@ public class ExpressionGraphing <T> extends DisplayGraph
 
 
 	/**
+	 * build a plot series from the generic array
 	 * @param array the data for the plot with meta-data
 	 */
 	public void plotStructuredData (ValueManager.GenericValue array)
@@ -291,6 +293,11 @@ public class ExpressionGraphing <T> extends DisplayGraph
 			domainDescriptor, array
 		);
 	}
+
+
+	/*
+	 * triggers and legends
+	 */
 
 
 	/**

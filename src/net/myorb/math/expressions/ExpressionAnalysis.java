@@ -22,6 +22,11 @@ public class ExpressionAnalysis <T>
 {
 
 
+	/*
+	 * enable vector mechanisms for transforms
+	 */
+
+
 	/**
 	 * force a symbol to be enabled for Vector Plot conventions
 	 * @param functionSymbol the symbol for the function being plotted
@@ -53,10 +58,15 @@ public class ExpressionAnalysis <T>
 	}
 
 
+	/*
+	 * ExpressionComponentElaboration wrapper for function
+	 */
+
+
 	/**
 	 * construct graph point series
 	 *  for values that have multiple components
-	 * @param f function used to calculate series
+	 * @param f function being wrapped used to calculate series
 	 * @param domainDescription the parameters of the real domain
 	 * @param series the series of points per component to be constructed
 	 * @param spaceManager data type management object
@@ -86,11 +96,15 @@ public class ExpressionAnalysis <T>
 						(domain, componentManager.component (y, n))
 					);
 				}
-
 			},
 			domainDescription, series, componentManager
 		);
 	}
+
+
+	/*
+	 * utility methods
+	 */
 
 
 	/**
@@ -122,6 +136,7 @@ public class ExpressionAnalysis <T>
 
 /**
  * provide vector enabled plot functionality for generic functions
+ * - wrapper class for simple functions using ExpressionAnalysis implementation
  * @param <T> type used for calculations
  */
 class TransformEngine <T> implements VectorPlotEnabled <T>

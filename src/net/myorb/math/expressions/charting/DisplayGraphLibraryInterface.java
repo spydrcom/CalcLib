@@ -19,11 +19,10 @@ public interface DisplayGraphLibraryInterface
 	 * @param title a text title for use by the display frame
 	 * @param trigger the mouse handler for the legend
 	 */
-	@SuppressWarnings ("rawtypes")
 	public void multiPlotWithAxis
 		(
 			Colors colors, PlotCollection funcPlot,
-			String title, MouseSampleTrigger trigger
+			String title, MouseSampleTrigger <?> trigger
 		);
 
 }

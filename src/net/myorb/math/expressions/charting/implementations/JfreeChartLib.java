@@ -9,19 +9,22 @@ import net.myorb.charting.DisplayGraphTypes.RealFunction;
 import net.myorb.charting.DisplayGraphTypes.PlotCollection;
 import net.myorb.charting.DisplayGraphUtil;
 
-import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
-import net.myorb.math.expressions.charting.MultiSegmentUtilities;
-
 //CalcLib expressions
 import net.myorb.math.expressions.charting.ExpressionGraphing;
 import net.myorb.math.expressions.charting.DisplayGraphPrimitives;
+import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
+import net.myorb.math.expressions.charting.MultiSegmentUtilities;
 import net.myorb.math.expressions.charting.MouseSampleTrigger;
 
+//CalcLib UDF support
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 //Chart Providers
 import net.myorb.jfree.ChartLibSupport;
 import net.myorb.jfree.BarCharts;
+
+//JRE swing
+import javax.swing.JComponent;
 
 // JRE AWT
 import java.awt.Color;
@@ -35,35 +38,85 @@ public class JfreeChartLib extends ChartLibSupport
 {
 
 
-    /*
-     * line plots for multiple functions using JFreeChart
-     */
+	/*
+	 * helper methods
+	 */
+
+
+	public MultiSegmentUtilities.SegmentManager getSegmentManager
+				(MouseSampleTrigger <?> trigger)
+	{
+		return MultiSegmentUtilities.getSegmentUtilities (trigger);
+	}
+
+	public MultiSegmentUtilities.SegmentManager getSegmentManager
+		(MouseSampleTrigger <?> trigger, String expression)
+	{
+		MultiSegmentUtilities.SegmentManager mgr =
+			getSegmentManager (trigger);
+		mgr.setExprs (new String[]{expression});
+		return mgr;
+	}
+
+	public void show (String title, JComponent display)
+	{
+		DisplayGraphPrimitives.showFrame
+			(title, display);
+	}
+
+
+	/*
+	 * axis chart components based on segment infrastructure
+	 */
+
+
+	/**
+	 * build the display component
+	 * @param title title for the chart
+	 * @param funcPlots collection of plots to include
+	 * @param colors display choices for the plots
+	 * @param mgr segment utilities manager
+	 * @return Swing component
+	 */
+	public JComponent axisForSegments
+		(
+			String title, PlotCollection funcPlots, Colors colors,
+			MultiSegmentUtilities.SegmentManager mgr
+		)
+	{
+		return axisChart
+		(
+			title, funcPlots,
+			mgr.getExprs (), mgr.getVar (),
+			mgr.getAxisDisplay (),
+			colors
+		);
+	}
+
+
+	/*
+	 * multiple plots against axis
+	 * - implementation of DisplayGraphLibraryInterface
+	 */
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphPrimitives#multiPlotWithAxis(net.myorb.math.expressions.charting.DisplayGraphAtomic.Colors, net.myorb.math.expressions.charting.DisplayGraphAtomic.PlotCollection, java.lang.String, net.myorb.math.expressions.charting.MouseSampleTrigger)
 	 */
-	@SuppressWarnings("rawtypes")
 	public void multiPlotWithAxis
 		(
 			Colors colors, PlotCollection funcPlots,
-			String title, MouseSampleTrigger trigger
+			String title, MouseSampleTrigger <?> trigger
 		)
 	{
-		MultiSegmentUtilities.SegmentManager mgr =
-			new MultiSegmentUtilities.SegmentManager ();
-		mgr.examine (trigger);
-
-		DisplayGraphPrimitives.showFrame
+		show
 		(
 			title,
 
-			axisChart
+			axisForSegments
 			(
-				title, funcPlots,
-				mgr.getExprs (), mgr.getVar (),
-				mgr.getAxisDisplay (),
-				colors
+				title, funcPlots, colors,
+				getSegmentManager (trigger)
 			)
 		);
 	}
@@ -78,7 +131,16 @@ public class JfreeChartLib extends ChartLibSupport
 			String expression, RealFunction f
 		)
 	{
-		DisplayGraphPrimitives.showFrame (title, axisChart (title, funcPlots, new String[]{expression}, "X", "f(X)", colors));
+		show
+		(
+			title,
+
+			axisForSegments
+			(
+				title, funcPlots, colors,
+				getSegmentManager (null, expression)
+			)
+		);
 	}
 
 
@@ -94,7 +156,17 @@ public class JfreeChartLib extends ChartLibSupport
 		String profile = Subroutine.formatFullFormalProfile
 				(functionName, ExpressionGraphing.makeStringsList (parameter));
 		String title = DisplayGraphUtil.titleFor (profile, parameter, functionPlot.get (0));
-		DisplayGraphPrimitives.showFrame (title, axisChart (title, functionPlot, new String[]{profile}, parameter, profile, PlotLegend.getColorList ()));
+
+		show
+		(
+			title,
+
+			axisChart
+			(
+				title, functionPlot, new String[]{profile},
+				parameter, profile, PlotLegend.getColorList ()
+			)
+		);
 	}
 
 
@@ -113,7 +185,7 @@ public class JfreeChartLib extends ChartLibSupport
 			String title
 		)
 	{
-    	DisplayGraphPrimitives.showFrame (title, regressionPlotComponent (dataPoints, funcPlot, title));
+    	show (title, regressionPlotComponent (dataPoints, funcPlot, title));
 	}
 
 
@@ -131,7 +203,7 @@ public class JfreeChartLib extends ChartLibSupport
 			String title
 		)
 	{
-		DisplayGraphPrimitives.showFrame (title, BarCharts.makeBarChartComponent (title, levels));
+		show (title, BarCharts.makeBarChartComponent (title, levels));
 	}
 
 
@@ -144,7 +216,7 @@ public class JfreeChartLib extends ChartLibSupport
 			Portions portions
 		)
 	{
-		DisplayGraphPrimitives.showFrame (null, BarCharts.makeChartComponent (styleName, null, portions));
+		show (null, BarCharts.makeChartComponent (styleName, null, portions));
 	}
 
 

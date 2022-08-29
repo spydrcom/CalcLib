@@ -6,8 +6,9 @@ import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.charting.DisplayGraph;
 
-import net.myorb.charting.DisplayGraphTypes.PlotCollection;
 import net.myorb.charting.DisplayGraphSegmentTools;
+
+import net.myorb.charting.DisplayGraphTypes.PlotCollection;
 import net.myorb.charting.DisplayGraphTypes.Colors;
 
 import net.myorb.charting.PlotLegend;
@@ -45,13 +46,20 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 			func = "f"; var = "x";
 			exprs = new String[]{"f"};
 		}
-		String func, var, exprs[];
 
+		/*
+		 * bean methods for the segment manager
+		 */
+
+		public void setExprs
+		(String[] exprs) { this.exprs = exprs; }
 		public String[] getExprs () { return exprs; }
 		public String getFunc () { return func; }
 		public String getVar () { return var; }
+		protected String func, var, exprs[];
 
 		/**
+		 * function profile as axis label
 		 * @return a formatted Y-axis display tag
 		 */
 		public String getAxisDisplay ()
@@ -65,20 +73,35 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 		 */
 		public void examine (MouseSampleTrigger <?> trigger)
 		{
-			if (trigger != null)
+			if (trigger == null) return;
+
+			if (trigger instanceof DisplayGraph.SimpleLegend)
 			{
-				if (trigger instanceof DisplayGraph.SimpleLegend)
-				{
-					String name = ((DisplayGraph.SimpleLegend <?>) trigger)
-							.getPrimarySegmentName ();
-					if (name != null) func = name;
-				}
-	
-				PlotLegend.SampleDisplay display = trigger.getDisplay ();
-				var = ConventionalNotations.determineNotationFor
-						(display.getVariable ());
-				exprs = display.getPlotExpressions ();
+				useLegendComponents ( (DisplayGraph.SimpleLegend <?>) trigger );
 			}
+
+			useLegendComponents (trigger.getDisplay ());
+		}
+
+		/**
+		 * collect profile meta-data from a legend
+		 * @param legend a simple legend taken from a meta-data collection
+		 */
+		public void useLegendComponents (DisplayGraph.SimpleLegend <?> legend)
+		{
+			String name = legend.getPrimarySegmentName ();
+			if (name != null) func = name;
+		}
+
+		/**
+		 * take variable and expressions from legend
+		 * @param legendDisplay a legend display
+		 */
+		public void useLegendComponents (PlotLegend.SampleDisplay legendDisplay)
+		{
+			var = ConventionalNotations.determineNotationFor
+				(legendDisplay.getVariable ());
+			exprs = legendDisplay.getPlotExpressions ();
 		}
 
 	}
@@ -131,6 +154,26 @@ public class MultiSegmentUtilities <T> extends MultiComponentUtilities <T>
 		this.contextProperties
 			.componentIdentifiers()[0] =
 				functionName;
+	}
+
+
+    /*
+     * line plots for multiple functions
+     */
+
+
+	/**
+	 * capture the meta-data found in a trigger object
+	 * @param trigger the trigger object to be examined for meta-data
+	 * @return the Segment Manager holding the meta-data
+	 */
+	public static SegmentManager getSegmentUtilities
+			(MouseSampleTrigger <?> trigger)
+	{
+		SegmentManager mgr =
+			new MultiSegmentUtilities.SegmentManager ();
+		mgr.examine (trigger);
+		return mgr;
 	}
 
 
