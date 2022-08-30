@@ -461,6 +461,7 @@ public class ToolBarMenu
 		public ActionListener getScatterAction () { return scatter; }
 		public ActionListener getAngularAction () { return angular; }
 		public ActionListener getRadialAction () { return radial; }
+		public ActionListener getSysSelectAction () { return sysSelect; }
 
 		public ChartsActions (DisplayIO.CommandProcessor processor, Component parent)
 		{
@@ -468,8 +469,9 @@ public class ToolBarMenu
 			scatter = new OrderedDualSelectedCommand (OperatorNomenclature.SCATTER_KEYWORD, "SymbolTable", processor, parent);
 			angular = new PolarCommand (OperatorNomenclature.POLAR_ANGULAR_KEYWORD, ANGULAR_PROMPTS, list, processor, parent);
 			radial = new PolarCommand (OperatorNomenclature.POLAR_RADIAL_KEYWORD, RADIAL_PROMPTS, list, processor, parent);
+			sysSelect = new SystemSelection ();
 		}
-		ActionListener scatter, angular, radial;
+		ActionListener scatter, angular, radial, sysSelect;
 		TrackingList list;
 	}
 	static final String[]

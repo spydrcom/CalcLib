@@ -11,7 +11,6 @@ import net.myorb.charting.DisplayGraphUtil;
 
 //CalcLib expressions
 import net.myorb.math.expressions.charting.ExpressionGraphing;
-import net.myorb.math.expressions.charting.DisplayGraphPrimitives;
 import net.myorb.math.expressions.charting.DisplayGraphLibraryInterface;
 import net.myorb.math.expressions.charting.MultiSegmentUtilities;
 import net.myorb.math.expressions.charting.MouseSampleTrigger;
@@ -36,33 +35,6 @@ import java.awt.Color;
 public class JfreeChartLib extends ChartLibSupport
 	implements DisplayGraphLibraryInterface
 {
-
-
-	/*
-	 * helper methods
-	 */
-
-
-	public MultiSegmentUtilities.SegmentManager getSegmentManager
-				(MouseSampleTrigger <?> trigger)
-	{
-		return MultiSegmentUtilities.getSegmentUtilities (trigger);
-	}
-
-	public MultiSegmentUtilities.SegmentManager getSegmentManager
-		(MouseSampleTrigger <?> trigger, String expression)
-	{
-		MultiSegmentUtilities.SegmentManager mgr =
-			getSegmentManager (trigger);
-		mgr.setExprs (new String[]{expression});
-		return mgr;
-	}
-
-	public void show (String title, JComponent display)
-	{
-		DisplayGraphPrimitives.showFrame
-			(title, display);
-	}
 
 
 	/*
@@ -109,14 +81,14 @@ public class JfreeChartLib extends ChartLibSupport
 			String title, MouseSampleTrigger <?> trigger
 		)
 	{
-		show
+		ChartHelpers.show
 		(
 			title,
 
 			axisForSegments
 			(
 				title, funcPlots, colors,
-				getSegmentManager (trigger)
+				ChartHelpers.getSegmentManager (trigger)
 			)
 		);
 	}
@@ -131,14 +103,14 @@ public class JfreeChartLib extends ChartLibSupport
 			String expression, RealFunction f
 		)
 	{
-		show
+		ChartHelpers.show
 		(
 			title,
 
 			axisForSegments
 			(
 				title, funcPlots, colors,
-				getSegmentManager (null, expression)
+				ChartHelpers.getSegmentManager (null, expression)
 			)
 		);
 	}
@@ -157,7 +129,7 @@ public class JfreeChartLib extends ChartLibSupport
 				(functionName, ExpressionGraphing.makeStringsList (parameter));
 		String title = DisplayGraphUtil.titleFor (profile, parameter, functionPlot.get (0));
 
-		show
+		ChartHelpers.show
 		(
 			title,
 
@@ -185,7 +157,7 @@ public class JfreeChartLib extends ChartLibSupport
 			String title
 		)
 	{
-    	show (title, regressionPlotComponent (dataPoints, funcPlot, title));
+    	ChartHelpers.show (title, regressionPlotComponent (dataPoints, funcPlot, title));
 	}
 
 
@@ -203,7 +175,7 @@ public class JfreeChartLib extends ChartLibSupport
 			String title
 		)
 	{
-		show (title, BarCharts.makeBarChartComponent (title, levels));
+		ChartHelpers.show (title, BarCharts.makeBarChartComponent (title, levels));
 	}
 
 
@@ -216,7 +188,7 @@ public class JfreeChartLib extends ChartLibSupport
 			Portions portions
 		)
 	{
-		show (null, BarCharts.makeChartComponent (styleName, null, portions));
+		ChartHelpers.show (null, BarCharts.makeChartComponent (styleName, null, portions));
 	}
 
 

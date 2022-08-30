@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/jmtex-0224.zip"/>
 	<classpathentry kind="lib" path="lib/CalcLibSpline.zip"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Xchart"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

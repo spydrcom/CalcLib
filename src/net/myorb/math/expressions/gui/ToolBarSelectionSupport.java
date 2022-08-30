@@ -12,7 +12,10 @@ import net.myorb.math.expressions.DifferentialEquationsManager;
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayTable;
 import net.myorb.gui.components.MenuManager;
+import net.myorb.gui.components.GuiToolkit;
 import net.myorb.gui.components.Alerts;
+
+import net.myorb.jxr.JxrScriptChoice;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -476,6 +479,24 @@ class TrackingList implements ActionListener
 	private DisplayIO.CommandProcessor processor;
 	private SpaceManager.DataType dataType;
 
+}
+
+/**
+ * use JXR script to select a chart system primitive solution
+ */
+class SystemSelection implements ActionListener
+{
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed (ActionEvent e)
+	{
+		GuiToolkit.setApplicationIcon (MASTER_ICON);
+		JxrScriptChoice.runScript (SCRIPT);
+	}
+	public static String
+	MASTER_ICON = "images/logo.gif",
+	SCRIPT = "cfg/gui/ChartLibChoice.xml";
 }
 
 /**
