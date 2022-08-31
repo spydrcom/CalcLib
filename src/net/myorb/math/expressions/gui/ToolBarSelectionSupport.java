@@ -481,12 +481,13 @@ class TrackingList implements ActionListener
 }
 
 /**
- * use JXR script to select a chart system primitive solution
+ * chart library system management
  */
 class SystemSelection
 {
 
 	/**
+	 * use JXR script to select a chart system primitive solution
 	 * @return the action listener for the Charts menu Selection item
 	 */
 	public static ActionListener getSystemSelectionAction ()
@@ -496,6 +497,7 @@ class SystemSelection
 	public static String SCRIPT = "cfg/gui/ChartLibChoice.xml";
 
 	/**
+	 * pass request to PalateManager
 	 * @return the action listener for the Charts menu Palate action
 	 */
 	public static ActionListener getPalateToolAction ()
