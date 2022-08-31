@@ -20,12 +20,21 @@ public class ChartHelpers
 	 */
 
 
+	/**
+	 * @param trigger a trigger object holding legend meta-data
+	 * @return a segment manager with the data organized
+	 */
 	public static MultiSegmentUtilities.SegmentManager getSegmentManager
 				(MouseSampleTrigger <?> trigger)
 	{
 		return MultiSegmentUtilities.getSegmentUtilities (trigger);
 	}
 
+	/**
+	 * @param trigger a trigger object holding legend meta-data
+	 * @param expression text of an expression to use as meta-data
+	 * @return a segment manager with the data organized
+	 */
 	public static MultiSegmentUtilities.SegmentManager getSegmentManager
 		(MouseSampleTrigger <?> trigger, String expression)
 	{
@@ -35,6 +44,10 @@ public class ChartHelpers
 		return mgr;
 	}
 
+	/**
+	 * @param title a title for the frame
+	 * @param display a swing component with the chart
+	 */
 	public static void show (String title, JComponent display)
 	{
 		DisplayGraphPrimitives.showFrame

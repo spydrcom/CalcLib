@@ -78,12 +78,13 @@ public class XChartLib
 
 
 	/**
-	 * @param chartTitle
-	 * @param xTitle
-	 * @param yTitle
-	 * @param seriesNames
-	 * @param funcPlot
-	 * @return
+	 * prepare data to build an XChart from
+	 * @param chartTitle a title for the chart
+	 * @param xTitle a label to describe the x axis
+	 * @param yTitle a label to describe the y axis
+	 * @param seriesNames a list of the names of the series
+	 * @param funcPlot the collection of plot points
+	 * @return the swing component holding the chart
 	 */
 	public static JPanel getChart
 		(
@@ -102,9 +103,6 @@ public class XChartLib
 			xAxis = new ArrayList<Number>();
 			yAxis = new ArrayList<Number>();
 			s.toCoordinateLists (xAxis, yAxis);
-//			System.out.println (xAxis);
-//			System.out.println (yAxis);
-//			System.out.println ("===");
 			xData.add (xAxis); yData.add (yAxis);
 		}
 		
