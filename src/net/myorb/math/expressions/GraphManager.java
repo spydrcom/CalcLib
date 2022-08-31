@@ -21,6 +21,7 @@ import net.myorb.math.expressions.charting.ExpressionGraphing;
 import net.myorb.math.expressions.charting.HighDefinitionPlots;
 import net.myorb.math.expressions.charting.MultiComponentUtilities;
 
+//charting . DisplayGraphLibraryInterface
 import net.myorb.charting.DisplayGraphLibraryInterface.Portions;
 import net.myorb.charting.DisplayGraphLibraryInterface.CategorizedPortion;
 import net.myorb.charting.DisplayGraphLibraryInterface.CategorizedPortions;

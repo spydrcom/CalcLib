@@ -12,7 +12,6 @@ import net.myorb.math.expressions.DifferentialEquationsManager;
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayTable;
 import net.myorb.gui.components.MenuManager;
-import net.myorb.gui.components.GuiToolkit;
 import net.myorb.gui.components.Alerts;
 
 import net.myorb.jxr.JxrScriptChoice;
@@ -484,19 +483,26 @@ class TrackingList implements ActionListener
 /**
  * use JXR script to select a chart system primitive solution
  */
-class SystemSelection implements ActionListener
+class SystemSelection
 {
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+
+	/**
+	 * @return the action listener for the Charts menu Selection item
 	 */
-	public void actionPerformed (ActionEvent e)
+	public static ActionListener getSystemSelectionAction ()
 	{
-		GuiToolkit.setApplicationIcon (MASTER_ICON);
-		JxrScriptChoice.runScript (SCRIPT);
+		return (e) -> { JxrScriptChoice.runScript (SCRIPT); };
 	}
-	public static String
-	MASTER_ICON = "images/logo.gif",
-	SCRIPT = "cfg/gui/ChartLibChoice.xml";
+	public static String SCRIPT = "cfg/gui/ChartLibChoice.xml";
+
+	/**
+	 * @return the action listener for the Charts menu Palate action
+	 */
+	public static ActionListener getPalateToolAction ()
+	{
+		return (e) -> { PalateManager.showPalateTool (); };
+	}
+
 }
 
 /**

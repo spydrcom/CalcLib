@@ -3,8 +3,10 @@ package net.myorb.math.expressions.commands;
 
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.DifferentialEquationsManager;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.symbols.AbstractFunction;
+
 import net.myorb.math.expressions.PrettyPrinter;
 import net.myorb.math.expressions.TokenParser;
 
@@ -15,7 +17,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class Rendering<T> extends PrettyPrinter<T>
+public class Rendering <T> extends PrettyPrinter <T>
 {
 
 

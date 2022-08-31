@@ -125,7 +125,7 @@ public class ExpressionAnalysis <T>
 	 * @param f the function that requires a wrapper
 	 * @return a transform engine that enables vector plot functionality
 	 */
-	public VectorPlotEnabled<T> getTransformEngine (Function <T> f)
+	public VectorPlotEnabled <T> getTransformEngine (Function <T> f)
 	{
 		return new TransformEngine <T> (f, this);
 	}

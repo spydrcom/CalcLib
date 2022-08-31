@@ -8,6 +8,7 @@ import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.tree.Gardener;
 import net.myorb.math.expressions.tree.Expression;
 import net.myorb.math.expressions.commands.CommandSequence;
+
 import net.myorb.math.computational.integration.RealDomainIntegration;
 import net.myorb.math.computational.Spline.Operations;
 

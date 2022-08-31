@@ -17,7 +17,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class DefinedFunction<T> extends AbstractFunction<T>
+public class DefinedFunction <T> extends AbstractFunction <T>
 {
 
 
@@ -30,7 +30,7 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 */
 	public DefinedFunction
 		(
-			String name, List<String> parameterNames,
+			String name, List <String> parameterNames,
 			TokenParser.TokenSequence functionTokens
 		)
 	{
@@ -66,7 +66,7 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param functionSymbol the symbol found in symbol table, null if not found
 	 * @return the function on declared type
 	 */
-	public static <T> AbstractFunction<T> verifyAbstractFunction
+	public static <T> AbstractFunction <T> verifyAbstractFunction
 			(SymbolMap.Named functionSymbol)
 	{
 		if (functionSymbol == null)
@@ -81,7 +81,7 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param functionSymbol the symbol found in symbol table, null if not found
 	 * @return the function on declared type
 	 */
-	public static <T> Subroutine<T> verifySubroutine
+	public static <T> Subroutine <T> verifySubroutine
 			(SymbolMap.Named functionSymbol)
 	{
 		AbstractFunction<T>
@@ -96,7 +96,8 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param <T> type of data processed in function
 	 * @return the function on declared type
 	 */
-	public static <T> Function<T> verifyFunction (SymbolMap.Named functionSymbol)
+	public static <T> Function <T> verifyFunction
+		(SymbolMap.Named functionSymbol)
 	{
 		Subroutine<T>
 			subroutine = verifySubroutine (functionSymbol);
@@ -110,7 +111,8 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @param <T> type of data processed in function
 	 * @return the function on declared type
 	 */
-	public static <T> Function<T> verifyDefinedFunction (SymbolMap.Named functionSymbol)
+	public static <T> Function <T> verifyDefinedFunction
+			(SymbolMap.Named functionSymbol)
 	{
 		AbstractFunction<T>
 			function = verifyAbstractFunction (functionSymbol);
@@ -129,7 +131,7 @@ public class DefinedFunction<T> extends AbstractFunction<T>
 	 * @return the newly defined function
 	 * @param <T> data type used
 	 */
-	public static <T> DefinedFunction<T> defineUserFunction
+	public static <T> DefinedFunction <T> defineUserFunction
 		(
 			String name,
 			List<String> parameterNames,

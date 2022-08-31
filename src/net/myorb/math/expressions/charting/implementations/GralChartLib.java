@@ -72,9 +72,10 @@ public class GralChartLib extends ChartLibSupport
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphPrimitives#multiPlotWithAxis(net.myorb.math.expressions.charting.DisplayGraphAtomic.Colors, net.myorb.math.expressions.charting.DisplayGraphAtomic.PlotCollection, java.lang.String, net.myorb.math.expressions.charting.MouseSampleTrigger)
 	 */
-	@SuppressWarnings ("rawtypes") public void multiPlotWithAxis
+	public void multiPlotWithAxis
 		(
-			Colors colors, PlotCollection funcPlots, String title, MouseSampleTrigger trigger
+			Colors colors, PlotCollection funcPlots,
+			String title, MouseSampleTrigger <?> trigger
 		)
 	{
 		MultiSegmentUtilities.SegmentManager mgr =
@@ -143,6 +144,7 @@ public class GralChartLib extends ChartLibSupport
 	{
 		showComponentFrame (null, componentFor (styleName, portions));
 	}
+
 
 }
 
