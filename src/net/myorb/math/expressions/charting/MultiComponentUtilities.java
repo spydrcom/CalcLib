@@ -79,7 +79,7 @@ public class MultiComponentUtilities <T>
 	 */
 	public static void assignStandardColors (DisplayGraphTypes.Colors colors, int plotCount)
 	{
-		Color[] legendColors = PlotLegend.COLORS;
+		Color[] legendColors = PlotLegend.getPalate ();
 		if (plotCount > legendColors.length) throw new RuntimeException (EXCESSIVE);
 		for (int i = 0; i < plotCount; i++) colors.add (legendColors[i]);
 	}
