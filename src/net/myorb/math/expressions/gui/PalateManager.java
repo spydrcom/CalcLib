@@ -6,7 +6,7 @@ import net.myorb.gui.components.DisplayFrame;
 
 import net.myorb.gui.palate.PalateTool;
 
-import javax.swing.JComponent;
+import java.awt.Component;
 
 /**
  * manage the availability of the palate tool
@@ -23,7 +23,7 @@ public class PalateManager extends PalateTool
 	{
 		if (palateToolDisplay == null)
 		{
-			showFrame (new PalateManager ());
+			showFrame (new PalateManager ().getPalatePanel ().toComponent ());
 		}
 		else
 		{
@@ -35,16 +35,15 @@ public class PalateManager extends PalateTool
 	/**
 	 * @param component the display component for the tool
 	 */
-	public static void showFrame (JComponent component)
+	public static void showFrame (Component component)
 	{
 		palateToolDisplay =
 			new DisplayFrame (component, "Palate Tool");
-		component.setPreferredSize (SimpleScreenIO.wXh (900, 500));
+		component.setPreferredSize (SimpleScreenIO.wXh (300, 500));
 		palateToolDisplay.showOrHide ();
 	}
 	static DisplayFrame palateToolDisplay = null;
 
 
-	private static final long serialVersionUID = -822309604759704569L;
-
 }
+
