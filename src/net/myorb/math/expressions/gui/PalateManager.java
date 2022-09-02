@@ -4,7 +4,7 @@ package net.myorb.math.expressions.gui;
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayFrame;
 
-import net.myorb.gui.palate.PalateTool;
+import net.myorb.charting.PlotLegend;
 
 import java.awt.Component;
 
@@ -12,7 +12,7 @@ import java.awt.Component;
  * manage the availability of the palate tool
  * @author Michael Druckman
  */
-public class PalateManager extends PalateTool
+public class PalateManager
 {
 
 
@@ -23,7 +23,11 @@ public class PalateManager extends PalateTool
 	{
 		if (palateToolDisplay == null)
 		{
-			showFrame (new PalateManager ().getPalatePanel ().toComponent ());
+			showFrame
+			(
+				PlotLegend.getPalateTool ()
+					.getPalatePanel ().toComponent ()
+			);
 		}
 		else
 		{
@@ -38,7 +42,7 @@ public class PalateManager extends PalateTool
 	public static void showFrame (Component component)
 	{
 		palateToolDisplay =
-			new DisplayFrame (component, "Palate Tool");
+			new DisplayFrame (component, "Current Plot Palate");
 		component.setPreferredSize (SimpleScreenIO.wXh (300, 500));
 		palateToolDisplay.showOrHide ();
 	}
