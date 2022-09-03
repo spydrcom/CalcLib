@@ -1,6 +1,8 @@
 
 package net.myorb.math.expressions.gui;
 
+import net.myorb.gui.palate.PalateTool;
+
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayFrame;
 
@@ -23,10 +25,11 @@ public class PalateManager
 	{
 		if (palateToolDisplay == null)
 		{
+			PalateTool tool = PlotLegend.getPalateTool ();
+
 			showFrame
 			(
-				PlotLegend.getPalateTool ()
-					.getPalatePanel ().toComponent ()
+				tool.getPalatePanel (tool.getStandardPalatePopupFactory ()).toComponent ()
 			);
 		}
 		else
