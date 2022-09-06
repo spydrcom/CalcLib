@@ -85,8 +85,8 @@ public class DisplayTests extends DisplayGraph
 	    Point scaleFactors = scale (fpoints);
 	    adjustScale (dpoints, scaleFactors);
 
-	    plot (getColor ("RED"), fpoints, scaleFactors, image);
-	    plot (getColor ("GREEN"), dpoints, scaleFactors, image);
+	    plot (Color.getColor ("RED"), fpoints, scaleFactors, image);
+	    plot (Color.getColor ("GREEN"), dpoints, scaleFactors, image);
 
 	    showImage (image, "-x^2 + x - 1", null);
 	}

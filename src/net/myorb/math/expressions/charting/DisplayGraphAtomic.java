@@ -30,7 +30,7 @@ public class DisplayGraphAtomic extends DisplayGraphTypes
 
 
 	public static final int DEFAULT_PLOT_SIZE = DisplayFrame.DEFAULT_DISPLAY_AREA_SIZE;
-	public static Color getColor (String named) { return DisplayFrame.getColor (named); }
+	public static Color getColor (String named) { return Color.getColor (named); }
 
 
 	/*

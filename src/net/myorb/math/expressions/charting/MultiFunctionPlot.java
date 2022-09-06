@@ -3,6 +3,9 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
+// Charting
+import net.myorb.charting.PlotLegend;
+
 // IOLIB abstractions
 import net.myorb.data.abstractions.Function;
 
@@ -13,6 +16,7 @@ import java.awt.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * describe a chart plotting multiple functions
@@ -113,10 +117,12 @@ public class MultiFunctionPlot extends DisplayGraph
 			plots.add (computeDerivative (plots.get (plots.size () - 1), scalingFactors));
 		add2Percent (scalingFactors);
 
+		Map<String,Color> palate =
+				PlotLegend.getPalateTool ().getColorMap ();
 		for (int i = 0; i < plots.size(); i++)
 		{
-			Color color =
-				getColor (plotList.get (i).getColor ());
+			Color color = palate.get
+					(plotList.get (i).getColor ());
 			plot (color, plots.get (i), scalingFactors, image);
 		}
 
@@ -252,7 +258,7 @@ class PlotDescriptorStorage implements MultiFunctionPlot.PlotDescriptors
 
 
 /**
- * stortage for function plot
+ * storage for function plot
  */
 class FunctionPlotStorage implements MultiFunctionPlot.FunctionPlot
 {
@@ -274,8 +280,8 @@ class FunctionPlotStorage implements MultiFunctionPlot.FunctionPlot
 	 */
 	public DisplayGraph.RealFunction getRealFunction ()
 	{
-		if (function instanceof DisplayGraph.RealFunction) return (DisplayGraph.RealFunction)function;
-		ExpressionSpaceManager<Double> mgr = ((ExpressionSpaceManager<Double>)function.getSpaceDescription());
+		if (function instanceof DisplayGraph.RealFunction) return (DisplayGraph.RealFunction) function;
+		ExpressionSpaceManager<Double> mgr = ((ExpressionSpaceManager<Double>) function.getSpaceDescription ());
 		return mgr.getDataConversions ().toRealFunction (function);
 	}
 

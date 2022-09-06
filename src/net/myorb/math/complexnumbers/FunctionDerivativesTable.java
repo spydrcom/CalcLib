@@ -9,6 +9,9 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.computational.*;
 
 import net.myorb.gui.components.*;
+import net.myorb.gui.graphics.ColorNames;
+
+import net.myorb.charting.PlotLegend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +50,10 @@ public class FunctionDerivativesTable extends PolynomialComplexFunctionCharacter
 			String title
 		)
 	{
-		int cNo = 0, cLast = color.length - 1;
+		ColorNames.ColorList color =
+			PlotLegend.getPalateTool ()
+			.getColorNames ();
+		int cNo = 0, cLast = color.size () - 1;
 		Double lo = roots.get (0).Re (), hi = roots.get (roots.size () - 1).Re ();
 		DisplayGraph.RealSeries domain = MultiFunctionPlot.domain (lo, hi, (hi - lo) / 100);
 		MultiFunctionPlot.PlotDescriptors descriptors = MultiFunctionPlot.newPlotDescriptor
@@ -56,13 +62,13 @@ public class FunctionDerivativesTable extends PolynomialComplexFunctionCharacter
 		{
 			MultiFunctionPlot.addFunctionPlot
 			(
-				descriptors, color[cNo > cLast? cLast: cNo++],
+				descriptors, color.get (cNo > cLast? cLast: cNo++),
 				ComplexPrimitives.convertToReal (poly)
 			);
 		}
 		MultiFunctionPlot.plot (descriptors);
 	}
-	static String[] color = new String[]{"WHITE", "GREEN", "RED", "BLUE"};
+	//static String[] color = new String[]{"WHITE", "GREEN", "RED", "BLUE"};
 	
 	/**
 	 * get the function expression text to use for screen identity
