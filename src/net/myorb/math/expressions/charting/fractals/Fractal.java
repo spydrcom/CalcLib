@@ -4,13 +4,15 @@ package net.myorb.math.expressions.charting.fractals;
 import net.myorb.math.expressions.charting.DisplayGraph3D;
 import net.myorb.math.expressions.charting.ContourPlotProperties;
 import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
-import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
+
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
-import net.myorb.sitstat.Activity;
+import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.SpaceManager;
 
 import net.myorb.data.abstractions.Function;
+
+import net.myorb.sitstat.Activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

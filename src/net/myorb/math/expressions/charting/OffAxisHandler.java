@@ -226,7 +226,7 @@ public class OffAxisHandler extends MouseMotionHandler
 			setLowCorner ( new DisplayGraph.Point (loX, loY) );
 			setEdgeSize ( (float) (xLen > yLen ? xLen : yLen) );
 		}
-		catch (Exception e) {}
+		catch (Exception e) { e.printStackTrace(); }
 	}
 	protected DisplayGraph.Point releasedAt;
 

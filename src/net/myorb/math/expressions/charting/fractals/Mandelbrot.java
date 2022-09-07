@@ -83,11 +83,10 @@ public class Mandelbrot extends Fractal implements Fractal.Descriptor
 	public Cycles newCycleDetector ()
 	{
 		if (!CycleDectionEnabled) return null;
-		Cycles test = new Cycles (this.getEdgeSize ());
-		released = test.setBuffer (released);
-		return test;
+		master.setEdgeSize (this.getEdgeSize ());
+		return master;
 	}
-	Cycles.Cache released = null;
+	Cycles master = new Cycles ();
 
 
 	/**

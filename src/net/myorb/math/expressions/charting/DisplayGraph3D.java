@@ -3,11 +3,13 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.charting.PlotComputers;
 import net.myorb.math.expressions.charting.PlotComputers.TransformResultsCollection;
+
 import net.myorb.charting.ColorSelection;
 import net.myorb.charting.Histogram;
 
 import net.myorb.rinearn.SurfacePlotter;
 import net.myorb.sitstat.Activity;
+
 import net.myorb.gui.components.SimpleScreenIO;
 
 import javax.swing.JComponent;
@@ -77,7 +79,7 @@ public class DisplayGraph3D extends DisplayGraph
 		Point[] points = new Point[pointsPerAxis * pointsPerAxis];
 		Object[] range = new Object[pointsPerAxis * pointsPerAxis];
 
-		compute (proprties, pointsPerAxis, points, range);
+		compute (proprties, pointsPerAxis, points, range); //TODO: fix properties (Y)
 
 		offAxisContourPlot
 		(
@@ -235,6 +237,7 @@ public class DisplayGraph3D extends DisplayGraph
 			Object[] range
 		)
 	{
+		//TODO: fix
 		if (DUMP) dump (descriptor);
 		Histogram histogram = new Histogram ();
 		descriptor.getPlotComputer ().computeRange
@@ -243,8 +246,9 @@ public class DisplayGraph3D extends DisplayGraph
 		if (showHistogramPlot) DisplayGraph.histogramPlot (histogram, HISTOGRAM_TITLE);
 		descriptor.getColorSelector ().substituteColors (range, histogram);
 	}
-	static void dump (ContourPlotDescriptor descriptor) {System.out.println ("COMPUTE: " + descriptor); }
-	static boolean showHistogramBarChart =  true, showHistogramPlot = false, DUMP = false;
+	static void dump (ContourPlotDescriptor descriptor)
+	{ System.out.println ("COMPUTE: " + descriptor); System.out.println (); }
+	static boolean showHistogramBarChart =  false, showHistogramPlot = false, DUMP = false; //TODO: fix
 	static String HISTOGRAM_TITLE = "Display Spectrum";
 
 

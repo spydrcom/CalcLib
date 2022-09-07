@@ -57,8 +57,11 @@ public class ContourPlotProperties extends HashMap<String,Object>
 			);
 	}
 	public void setLowCorner (DisplayGraphTypes.Point point)
-	{ put (X_AXIS, point.x); put (Y_AXIS, point.y); }
-	public static String X_AXIS = "X", Y_AXIS = "Y";
+	{
+		put (X_AXIS, point.x); put (Y_AXIS, point.y);
+//		System.out.println ("new LC: " + getLowCorner ());
+	}
+	public static String X_AXIS = "Xaxis", Y_AXIS = "Yaxis";
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.ViewSpace#getEdgeSize()
