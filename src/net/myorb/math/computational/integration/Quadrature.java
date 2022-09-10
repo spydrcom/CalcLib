@@ -1,8 +1,10 @@
 
 package net.myorb.math.computational.integration;
 
+import net.myorb.math.computational.Parameterization;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import java.util.Map;
 
@@ -35,6 +37,24 @@ public class Quadrature
 		 * @return the count of function evaluations used
 		 */
 		public int getEvaluationCount ();
+	}
+
+	/**
+	 * apply a transform to the integrand for the integral
+	 * @param <T> data type for operations
+	 */
+	public interface UsingTransform <T>
+	{
+		/**
+		 * @param digest the digest from the declaration
+		 * @param options parameters to the computations
+		 * @return the integral object to use
+		 */
+		Quadrature.Integral constructIntegral
+		(
+			RangeNodeDigest <T> digest,
+			Parameterization.Hash options
+		);
 	}
 
 	/**
@@ -76,6 +96,21 @@ public class Quadrature
 	}
 
 	/**
+	 * given the quadrature configuration parameters
+	 *  build an object that will provide numerical integration for a transformed integrand
+	 * @param <T> the data type to be used for operations
+	 * @return a newly constructed transform object
+	 */
+	public <T> UsingTransform <T> getTransform ()
+	{
+		switch (parameters.getMethod ())
+		{
+			case LIOUVILLE:	return new LiouvilleCalculus <T> (null, parameters);
+			default: throw new RuntimeException ("No transform generation supported");
+		}
+	}
+
+	/**
 	 * format a special case portion of a render
 	 * @param range the range descriptor that introduced the integral
 	 * @param using the node formatting support object supplied for the render
@@ -85,9 +120,6 @@ public class Quadrature
 	{
 		switch (parameters.getMethod ())
 		{
-			case LIOUVILLE:
-				return LiouvilleCalculus.specialCaseRenderSection (range, using, parameters);
-
 			case GAUSS:
 				if (GaussQuadrature.getType (parameters) == GaussQuadrature.GaussTypes.LAGUERRE)
 				{
