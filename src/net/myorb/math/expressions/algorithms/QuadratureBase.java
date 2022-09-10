@@ -9,6 +9,8 @@ import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
+import net.myorb.math.computational.integration.Quadrature;
+
 import net.myorb.math.expressions.symbols.AbstractVectorConsumer;
 import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
 import net.myorb.math.expressions.symbols.IterationConsumerImporter;
@@ -25,6 +27,18 @@ import net.myorb.math.expressions.tree.RangeNodeDigest;
 public class QuadratureBase<T> extends AbstractVectorConsumer
 			implements NumericalAnalysis<T>, IterationConsumerImporter
 {
+
+
+	/**
+	 * provide access to the configured algorithm
+	 */
+	public interface AlgorithmExposure
+	{
+		/**
+		 * @return the quadrature object configured for this consumer
+		 */
+		Quadrature getAlgorithm ();
+	}
 
 
 	public QuadratureBase (String name, Environment<T> environment)

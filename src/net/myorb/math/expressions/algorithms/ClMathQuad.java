@@ -80,7 +80,7 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 	 * Quad function object base class
 	 */
 	public class QuadAbstraction extends QuadratureBase<T>
-			implements SymbolMap.ImportedConsumer
+			implements SymbolMap.ImportedConsumer, QuadratureBase.AlgorithmExposure
 	{
 
 		QuadAbstraction (String sym)
@@ -90,6 +90,11 @@ public class ClMathQuad<T> extends InstanciableFunctionLibrary<T>
 			this.cvt = environment.getConversionManager ();
 			this.algorithm = new Quadrature (this.configuration);
 		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.QuadratureBase.AlgorithmExposure#getAlgorithm()
+		 */
+		public Quadrature getAlgorithm () { return algorithm; }
 		protected Quadrature algorithm;
 
 		/* (non-Javadoc)

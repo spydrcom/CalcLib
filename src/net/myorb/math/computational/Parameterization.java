@@ -150,5 +150,7 @@ public class Parameterization
 	}
 
 
+	public String toString () { return configuration.toString (); }
+
 }
 
