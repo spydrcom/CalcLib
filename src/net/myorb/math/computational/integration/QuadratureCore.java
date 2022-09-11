@@ -5,6 +5,10 @@ import net.myorb.math.computational.Parameterization;
 import net.myorb.math.expressions.algorithms.QuadratureBase;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
+
+import net.myorb.data.abstractions.SpaceDescription;
+import net.myorb.data.abstractions.Function;
+
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
 
@@ -103,6 +107,29 @@ public class QuadratureCore <T>
 		return this;
 	}
 	protected Quadrature.Integral integral;
+
+
+	/**
+	 * @return the integral treated as a function
+	 */
+	public Function <Double> getIntegralFunction (double lo)
+	{
+		return new Function <Double> ()
+			{
+
+				@SuppressWarnings("unchecked")
+				public SpaceDescription <Double> getSpaceDescription ()
+				{
+					return (SpaceDescription <Double>) environment.getSpaceManager ();
+				}
+
+				public Double eval (Double t)
+				{
+					return integral.eval (0, lo, t);
+				}
+			
+			};
+	}
 
 
 	/*

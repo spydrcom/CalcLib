@@ -66,6 +66,15 @@ public class CauchyMultiIntegralTransform <T>
 	protected double alpha;		// order of the integral			}	alpha > 1 to avoid asymptote
 	
 
+	/**
+	 * @return the required order of derivative
+	 */
+	public int getDerivativeOrder ()
+	{
+		return k;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.IntegrandCore#mu(double)
 	 */

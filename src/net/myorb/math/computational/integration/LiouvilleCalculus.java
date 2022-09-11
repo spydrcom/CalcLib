@@ -3,6 +3,7 @@ package net.myorb.math.computational.integration;
 
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.computational.Parameterization;
+import net.myorb.data.abstractions.Function;
 
 /**
  * configuration object for Liouville Calculus algorithms
@@ -33,9 +34,22 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 	{
 		this.setIntegrand
 		(
-			new CauchyMultiIntegralTransform <T>
-			(digest, options, environment)
+				transform = new CauchyMultiIntegralTransform <T>
+						(digest, options, environment)
 		);
+	}
+	protected CauchyMultiIntegralTransform <T> transform;
+
+	/* (non-Javadoc)
+	* @see net.myorb.math.computational.integration.Quadrature.Integral#eval(double, double, double)
+	*/
+	public double eval (double x, double lo, double hi)
+	{
+		int order = transform.getDerivativeOrder ();
+		if (order == 0) return this.integral.eval (x, lo, hi);
+		Function <Double> I = this.getIntegralFunction (lo);
+		Function <Double> f = transform.getDerivativeFor (I, order);
+		return f.eval (hi);
 	}
 
 }

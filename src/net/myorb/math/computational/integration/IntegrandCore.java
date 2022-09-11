@@ -132,6 +132,22 @@ public class IntegrandCore <T>
 
 
 	/**
+	 * build derivative for source function
+	 * @param sourceOfDerivative the function to target
+	 * @param k the order of the operation 1-2
+	 * @return the derivative function
+	 */
+	public Function <Double> getDerivativeFor
+		(
+			Function <Double> sourceOfDerivative, int k
+		)
+	{
+		prepareDerivatives (sourceOfDerivative, k);
+		return selectedDerivative;
+	}
+
+
+	/**
 	 * evaluate the digest target
 	 * @param t the parameter to the integrand
 	 * @return the target evaluated at the parameter
@@ -159,7 +175,7 @@ public class IntegrandCore <T>
 
 				public Double eval (Double t)
 				{
-					return evaluateTarget (t) * mu (t);
+					return evaluateTarget (t);
 				}
 			
 			};
@@ -171,7 +187,8 @@ public class IntegrandCore <T>
 	 */
 	public Double eval (Double t)
 	{
-		return evaluateTarget (t) * mu (t);
+		try { return evaluateTarget (t) * mu (t); }
+		catch (Exception e) { e.printStackTrace(); return 0d; }
 	}
 
 
