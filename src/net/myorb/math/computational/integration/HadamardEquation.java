@@ -6,13 +6,13 @@ import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.computational.Parameterization;
 
 /**
- * configuration object for Liouville Calculus algorithms
+ * configuration object for Hadamard fractional integral equation
  * @author Michael Druckman
  */
-public class LiouvilleCalculus <T> extends QuadratureCore <T>
+public class HadamardEquation <T> extends QuadratureCore <T>
 {
 
-	public LiouvilleCalculus
+	public HadamardEquation
 		(
 			RealIntegrandFunctionBase integrand,
 			Configuration parameters
@@ -22,10 +22,8 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 		this.integrand = integrand;
 	}
 
-	/**
-	 * set the local integrand object
-	 * @param digest the digest that holds the declaration
-	 * @param options the parameters for the integrand
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.QuadratureCore#constructIntegrand(net.myorb.math.expressions.tree.RangeNodeDigest, net.myorb.math.computational.Parameterization.Hash)
 	 */
 	public void constructIntegrand
 		(
