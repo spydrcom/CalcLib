@@ -10,6 +10,7 @@ import net.myorb.math.SpaceManager;
 
 /**
  * configuration core object for fractional Calculus algorithms
+ * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class QuadratureCore <T>
@@ -77,6 +78,17 @@ public class QuadratureCore <T>
 	}
 
 
+	/**
+	 * identify the target of quadrature operations
+	 * @param integrand the object to operate on
+	 */
+	public void setIntegrand (RealIntegrandFunctionBase integrand)
+	{
+		this.integrand = integrand;
+	}
+	protected RealIntegrandFunctionBase integrand;
+
+
 	/* (non-Javadoc)
 	* @see net.myorb.math.computational.integration.Quadrature.UsingTransform#constructIntegral(net.myorb.math.expressions.tree.RangeNodeDigest, net.myorb.math.computational.Parameterization.Hash)
 	*/
@@ -90,9 +102,12 @@ public class QuadratureCore <T>
 		useQuadratureMethod (quad);
 		return this;
 	}
-	protected RealIntegrandFunctionBase integrand;
 	protected Quadrature.Integral integral;
 
+
+	/*
+	 * implementation of Quadrature.Integral
+	 */
 
 	/* (non-Javadoc)
 	* @see net.myorb.math.computational.integration.Quadrature.Integral#eval(double, double, double)

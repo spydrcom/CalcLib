@@ -79,12 +79,15 @@ public class Quadrature
 	{
 		switch (parameters.getMethod ())
 		{
+
 			case TSQ:		return new TSQuadrature (integrand, parameters);
 			case CCQ:		return new CCQuadrature (integrand, parameters);
 			case VCQ:		return new VCQuadrature (integrand, parameters);
 			case ASQ:		return new ASQuadrature (integrand, parameters);
 			case CPC:		return new CPQuadrature (integrand, parameters);
 
+			case CAPUTO:	return new CaputoFabrizio <Double> (integrand, parameters);
+			case HADAMARD:	return new HadamardEquation <Double> (integrand, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <Double> (integrand, parameters);
 			case GAUSS:		return new GaussQuadrature (integrand, parameters).getIntegral ();
 
@@ -92,6 +95,7 @@ public class Quadrature
 			case CTAA:		return new TrapezoidalApproximation (integrand, parameters, true);
 
 			default: throw new RuntimeException ("Integration method not recognized");
+
 		}
 	}
 
@@ -105,8 +109,13 @@ public class Quadrature
 	{
 		switch (parameters.getMethod ())
 		{
+
+			case CAPUTO:	return new CaputoFabrizio <T> (null, parameters);
+			case HADAMARD:	return new HadamardEquation <T> (null, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <T> (null, parameters);
+
 			default: throw new RuntimeException ("No transform generation supported");
+
 		}
 	}
 

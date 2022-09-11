@@ -56,6 +56,8 @@ public class Configuration extends Parameterization
 		CTA,		// Common Trapezoidal Approximation, no adjustment
 		CTAA,		// Common Trapezoidal Approximation, using adjustment
 		GAUSS,		// Gauss algorithms including Laguerre and Lagrange
+		CAPUTO,		// Caputo-Fabrizio derivative equation
+		HADAMARD,	// Hadamard fractional integral equation
 		LIOUVILLE,	// fractional calculus algorithm
 		UNKNOWN
 	}
