@@ -1,17 +1,17 @@
 
 package net.myorb.math.computational.integration;
 
-import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.splines.GenericSplineQuad.AccessToTarget;
 import net.myorb.math.computational.DerivativeApproximation;
+import net.myorb.math.computational.Parameterization;
 
-import net.myorb.math.expressions.algorithms.ParameterManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.algorithms.ParameterManager;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.expressions.DataConversions;
 
+import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.math.specialfunctions.Gamma;
-import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.data.abstractions.Function;
 
 /**
@@ -164,21 +164,7 @@ public class IntegrandCore <T>
 	 */
 	public Function <Double> getTargetFunction ()
 	{
-		return new Function <Double> ()
-			{
-
-				@SuppressWarnings("unchecked")
-				public SpaceDescription <Double> getSpaceDescription ()
-				{
-					return (SpaceDescription <Double>) environment.getSpaceManager ();
-				}
-
-				public Double eval (Double t)
-				{
-					return evaluateTarget (t);
-				}
-			
-			};
+		return new RealFunctionWrapper ( (x) -> evaluateTarget (x) );
 	}
 
 
@@ -187,8 +173,7 @@ public class IntegrandCore <T>
 	 */
 	public Double eval (Double t)
 	{
-		try { return evaluateTarget (t) * mu (t); }
-		catch (Exception e) { e.printStackTrace(); return 0d; }
+		return evaluateTarget (t) * mu (t);
 	}
 
 

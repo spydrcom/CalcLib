@@ -12,6 +12,7 @@ import net.myorb.math.expressions.symbols.*;
 import net.myorb.math.expressions.*;
 
 import net.myorb.data.abstractions.ErrorHandling;
+import net.myorb.data.abstractions.SpaceDescription;
 import net.myorb.data.abstractions.Function;
 
 import java.io.PrintStream;
@@ -76,10 +77,12 @@ public class Primitives<T>
 	 * get the type manager set for this engine
 	 * @return the type management object
 	 */
-	public ExpressionSpaceManager<T>
+	public ExpressionSpaceManager <T>
 	getSpaceManager () { return spaceManager; }
-	private ExpressionSpaceManager<T> spaceManager;
+	private ExpressionSpaceManager <T> spaceManager;
 
+	public SpaceDescription <T> getSpaceDescription ()
+	{ return spaceManager; }
 
 	/**
 	 * get a copy of the conversion manager object

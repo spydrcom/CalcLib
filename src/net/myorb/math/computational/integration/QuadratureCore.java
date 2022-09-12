@@ -6,7 +6,7 @@ import net.myorb.math.expressions.algorithms.QuadratureBase;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
-import net.myorb.data.abstractions.SpaceDescription;
+import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.data.abstractions.Function;
 
 import net.myorb.math.ExtendedPowerLibrary;
@@ -114,21 +114,7 @@ public class QuadratureCore <T>
 	 */
 	public Function <Double> getIntegralFunction (double lo)
 	{
-		return new Function <Double> ()
-			{
-
-				@SuppressWarnings("unchecked")
-				public SpaceDescription <Double> getSpaceDescription ()
-				{
-					return (SpaceDescription <Double>) environment.getSpaceManager ();
-				}
-
-				public Double eval (Double t)
-				{
-					return integral.eval (0, lo, t);
-				}
-			
-			};
+		return new RealFunctionWrapper ( (t) -> integral.eval (t, lo, t) );
 	}
 
 

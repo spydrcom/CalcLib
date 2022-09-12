@@ -45,11 +45,14 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 	*/
 	public double eval (double x, double lo, double hi)
 	{
+//		return this.integral.eval (x, lo, hi);
 		int order = transform.getDerivativeOrder ();
 		if (order == 0) return this.integral.eval (x, lo, hi);
 		Function <Double> I = this.getIntegralFunction (lo);
+		System.out.println ("EVAL " + lo + ".." + hi + " x = " + x);
 		Function <Double> f = transform.getDerivativeFor (I, order);
-		return f.eval (hi);
+		double eval = f.eval (hi);
+		return eval;
 	}
 
 }
