@@ -40,14 +40,24 @@ public class CauchyMultiIntegralTransform <T>
 			Parameterization.Hash options
 		)
 	{
-		this.upperBound =
-				cvt.toDouble (digest.getHiBnd ());
+		evaluateAt
+			(cvt.toDouble (digest.getHiBnd ()));
 		this.processOrder ("D", "I");
 
 		options.put ("alpha", alpha);
 		options.put ("K", k);
 	}
-	protected double upperBound, exponent, coef;
+	protected double exponent, coef;
+
+
+	/**
+	 * @param t the value for the upper-bound
+	 */
+	public void evaluateAt (double t)
+	{
+		this.upperBound = t;
+	}
+	protected double upperBound;
 	
 
 	/* (non-Javadoc)
@@ -82,6 +92,7 @@ public class CauchyMultiIntegralTransform <T>
 	{
 		return coef * Math.pow (upperBound - t, exponent);
 	}
+
 
 }
 

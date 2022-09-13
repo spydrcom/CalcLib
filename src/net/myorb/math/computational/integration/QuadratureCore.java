@@ -114,7 +114,7 @@ public class QuadratureCore <T>
 	 */
 	public Function <Double> getIntegralFunction (double lo)
 	{
-		return new RealFunctionWrapper ( (t) -> integral.eval (t, lo, t) );
+		return new RealFunctionWrapper ( (t) -> integral.eval (0, lo, t) );
 	}
 
 

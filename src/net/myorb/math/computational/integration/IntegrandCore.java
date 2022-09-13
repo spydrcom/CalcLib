@@ -113,6 +113,15 @@ public class IntegrandCore <T>
 	
 
 	/**
+	 * @return the delta value from the parameterization of the library object
+	 */
+	public double getDelta ()
+	{
+		return eval (options.get ("delta").toString ());
+	}
+
+
+	/**
 	 * prepare a derivative object for the specified function
 	 * @param sourceOfDerivative the function to target
 	 * @param k the order of the operation 1-2
@@ -122,7 +131,7 @@ public class IntegrandCore <T>
 			Function <Double> sourceOfDerivative, int k
 		)
 	{
-		double delta = eval (options.get ("delta").toString ());
+		double delta = getDelta ();
 		this.derivatives = DerivativeApproximation.getDerivativesFor
 				(sourceOfDerivative, delta);
 		this.selectedDerivative = this.derivatives.forOrder (k);
