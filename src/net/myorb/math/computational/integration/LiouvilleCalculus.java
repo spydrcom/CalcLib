@@ -49,6 +49,7 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 	*/
 	public double eval (double x, double lo, double hi)
 	{
+		this.a = lo;
 		switch (transform.getDerivativeOrder ())
 		{
 			case 0: return this.eval (hi);
@@ -58,6 +59,7 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 		}
 		throw new RuntimeException ("Too many derivatives required");
 	}
+	double a;	// low bound of the inegration range
 
 
 	/**
@@ -98,7 +100,7 @@ public class LiouvilleCalculus <T> extends QuadratureCore <T>
 	double eval (double t)
 	{
 		transform.evaluateAt (t);
-		return integral.eval (0, 0, t);
+		return integral.eval (0, a, t);
 	}
 
 

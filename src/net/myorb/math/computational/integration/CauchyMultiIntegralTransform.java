@@ -17,6 +17,21 @@ public class CauchyMultiIntegralTransform <T>
 {
 
 
+	/*
+	 * I[a,t] f(t) = 1/GAMMA(alpha) * INTEGRAL [a <= tau <= t] 
+	 * 					( (t - tau)^(alpha - 1) * f(tau) * <*> tau ) 
+	 * 		mu(t,tau) = (t-tau) ^ (alpha-1) / GAMMA(alpha)
+	 * t > a
+	 */
+
+	/*
+	 * I[t,b] f(t) = 1/GAMMA(alpha) * INTEGRAL [t <= tau <= b] 
+	 * 					( (tau - t)^(alpha - 1) * f(tau) * <*> tau ) 
+	 * 		mu(t,tau) = (tau-t) ^ (alpha-1) / GAMMA(alpha)
+	 * t < b
+	 */
+
+
 	public CauchyMultiIntegralTransform
 		(
 			RangeNodeDigest <T> digest,
