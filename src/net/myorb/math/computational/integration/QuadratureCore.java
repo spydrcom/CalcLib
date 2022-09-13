@@ -110,10 +110,13 @@ public class QuadratureCore <T>
 
 
 	/**
+	 * integral evaluation in real function wrapper
+	 * @param lo the low-bound to use in the integration interval
 	 * @return the integral treated as a function
 	 */
 	public Function <Double> getIntegralFunction (double lo)
 	{
+		// lo must be specified since operations are non-local
 		return new RealFunctionWrapper ( (t) -> integral.eval (0, lo, t) );
 	}
 
