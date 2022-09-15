@@ -2,7 +2,6 @@
 package net.myorb.math.computational.integration;
 
 import net.myorb.math.computational.splines.GenericSplineQuad.AccessToTarget;
-import net.myorb.math.computational.DerivativeApproximation;
 import net.myorb.math.computational.Parameterization;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -118,41 +117,6 @@ public class IntegrandCore <T>
 	public double getDelta ()
 	{
 		return eval (options.get ("delta").toString ());
-	}
-
-
-	/**
-	 * prepare a derivative object for the specified function
-	 * @param sourceOfDerivative the function to target
-	 * @param k the order of the operation 1-2
-	 */
-	public void prepareDerivatives
-		(
-			Function <Double> sourceOfDerivative, int k
-		)
-	{
-		double delta = getDelta ();
-		this.derivatives = DerivativeApproximation.getDerivativesFor
-				(sourceOfDerivative, delta);
-		this.selectedDerivative = this.derivatives.forOrder (k);
-	}
-	protected DerivativeApproximation.Functions <Double> derivatives;
-	protected Function <Double> selectedDerivative;
-
-
-	/**
-	 * build derivative for source function
-	 * @param sourceOfDerivative the function to target
-	 * @param k the order of the operation 1-2
-	 * @return the derivative function
-	 */
-	public Function <Double> getDerivativeFor
-		(
-			Function <Double> sourceOfDerivative, int k
-		)
-	{
-		prepareDerivatives (sourceOfDerivative, k);
-		return selectedDerivative;
 	}
 
 

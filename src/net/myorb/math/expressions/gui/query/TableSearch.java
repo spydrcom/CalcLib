@@ -37,6 +37,5 @@ public class TableSearch extends RegExTool
 
 
 	private static final long serialVersionUID = 665332542534273250L;
-
 }
 

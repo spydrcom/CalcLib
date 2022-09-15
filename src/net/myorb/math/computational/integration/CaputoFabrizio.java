@@ -3,6 +3,8 @@ package net.myorb.math.computational.integration;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
+
+import net.myorb.data.abstractions.DerivativeApproximations;
 import net.myorb.math.computational.Parameterization;
 
 /**
@@ -34,10 +36,11 @@ public class CaputoFabrizio <T> extends QuadratureCore <T>
 	{
 		this.setIntegrand
 		(
-			new CaputoFabrizioIntegrand <T>
-			(digest, options, environment)
+			this.transform = new CaputoFabrizioIntegrand <T>
+					(digest, options, environment)
 		);
 	}
+	protected CaputoFabrizioIntegrand <T> transform;
 
 }
 
@@ -66,7 +69,9 @@ class CaputoFabrizioIntegrand <T>
 	{
 		super (digest, options, environment);
 		this.prepareMu (digest, options);
+		this.delta = this.getDelta ();
 	}
+	protected double delta;
 
 	/**
 	 * compute the values needed for the mu computation
@@ -79,8 +84,6 @@ class CaputoFabrizioIntegrand <T>
 			Parameterization.Hash options
 		)
 	{
-		this.prepareDerivatives
-			(this.getTargetFunction (), 1);
 		this.t = cvt.toDouble (digest.getHiBnd ());
 		this.processOrder (null, "C");
 		this.checkAlpha ();
@@ -118,7 +121,12 @@ class CaputoFabrizioIntegrand <T>
 	 */
 	public Double eval (Double t)
 	{
-		return this.selectedDerivative.eval (t) * mu (t);
+		// first order derivative applied to the target function
+		return mu (t) * DerivativeApproximations.first
+		(
+			(tau) -> this.evaluateTarget (tau),
+			t, this.delta
+		);
 	}
 
 }

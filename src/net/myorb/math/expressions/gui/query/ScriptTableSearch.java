@@ -15,13 +15,18 @@ public class ScriptTableSearch extends TableSearch
 {
 
 
+	/**
+	 * prepare search specific to script files
+	 * - action connected will be to open a snip editor
+	 * @param environment access to display components
+	 */
 	public ScriptTableSearch  (Environment <?> environment)
 	{
-		super ("Matching Scripts");
-		this.setSelectionAction (this);
-		this.environment = environment;
+		super ("Matching Scripts");				// header title in search display
+		this.setSelectionAction (this);			// point to SelectionAction processor
+		this.environment = environment;			// environment used by editor
 	}
-	Environment <?> environment;
+	protected Environment <?> environment;
 
 
 	/* (non-Javadoc)
@@ -29,16 +34,16 @@ public class ScriptTableSearch extends TableSearch
 	 */
 	public void process (String text)
 	{
-		CalcLibSnipTool.addSnip (environment);
-
+		CalcLibSnipTool.initializeSnip
+			(environment);						// on first reference properties must be initialized
 		CalcLibSnipTool.addSnip
 		(
-			new File ("scripts/" + text),
-			environment.getSnipProperties ()
+			new File ("scripts/" + text),		// now script file can be opened
+			environment.getSnipProperties ()	// using properties
 		);
 	}
 
 
 	private static final long serialVersionUID = -3989005302308141720L;
-
 }
+
