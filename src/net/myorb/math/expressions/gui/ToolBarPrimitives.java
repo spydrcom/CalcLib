@@ -141,7 +141,7 @@ class SimpleCommandWOSE extends ToolBarPrimitives implements ActionListener
 
 
 /**
- * simplist for of command that presents request to user
+ * easiest for of command that presents request to user
  */
 class DialogCommand extends SimpleCommand
 {

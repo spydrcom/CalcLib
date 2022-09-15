@@ -2,9 +2,7 @@
 package net.myorb.math.expressions.gui.query;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-//import net.myorb.math.expressions.gui.editor.CalcLibSnipTool;
-import net.myorb.gui.editor.SnipToolPropertyAccess;
-import net.myorb.gui.editor.SnipTool;
+import net.myorb.math.expressions.gui.editor.CalcLibSnipTool;
 
 import java.io.File;
 
@@ -31,9 +29,13 @@ public class ScriptTableSearch extends TableSearch
 	 */
 	public void process (String text)
 	{
-		//TODO: fix bug
-		SnipToolPropertyAccess access = environment.getSnipProperties ();
-		SnipTool.addSnip (new File ("scripts/" + text), access);
+		CalcLibSnipTool.addSnip (environment);
+
+		CalcLibSnipTool.addSnip
+		(
+			new File ("scripts/" + text),
+			environment.getSnipProperties ()
+		);
 	}
 
 
