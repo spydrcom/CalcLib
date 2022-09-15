@@ -50,6 +50,7 @@ public class ToolBar extends ToolBarTabbedPanes
 		list.add (new ExecuteCommand ("READ", "Read", "ScriptFiles", processor, true, c));
 		list.add (new BackgroundSymbolsCommand ("RECOGNIZE", "ScriptFiles", processor, true, c));
 		list.add (new CreateCommand ("NEW ", "ScriptFiles", processor, false, c));
+		list.add (new LookupCommand ("LOOKUP ", "ScriptFiles", processor, c));
 		list.add (new EditCommand ("EDIT ", "ScriptFiles", processor, true, c));
 
 		list.add (new ScriptFilesCommand (processor, c));

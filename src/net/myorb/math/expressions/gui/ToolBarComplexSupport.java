@@ -1311,7 +1311,7 @@ class SplineToolCommand extends SelectedCommand implements MenuManager.HotKeyAva
 	/* (non-Javadoc)
 	 * @see net.myorb.gui.components.MenuManager.HotKeyAvailable#getHotKey()
 	 */
-	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_T, ActionEvent.CTRL_MASK); }
+	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_O, ActionEvent.CTRL_MASK); }
 
 }
 

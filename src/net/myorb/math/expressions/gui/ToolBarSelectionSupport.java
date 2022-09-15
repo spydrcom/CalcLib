@@ -3,11 +3,15 @@ package net.myorb.math.expressions.gui;
 
 import net.myorb.math.Function;
 import net.myorb.math.SpaceManager;
+
 import net.myorb.math.expressions.SymbolMap;
-import net.myorb.math.expressions.charting.fractals.Fractal;
-import net.myorb.math.expressions.gui.DisplayIO.CommandProcessor;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.DifferentialEquationsManager;
+
+import net.myorb.math.expressions.gui.DisplayIO.CommandProcessor;
+import net.myorb.math.expressions.gui.query.ScriptTableSearch;
+
+import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.charting.fractals.Fractal;
 
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.gui.components.DisplayTable;
@@ -27,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.Component;
 
 import java.io.File;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -696,6 +701,43 @@ class CreateCommand extends SelectedCommand implements TextEditor.TextProcessor,
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString () { return "New Script"; }
+
+}
+
+
+/**
+ * RegEx search for script file
+ */
+class LookupCommand extends SelectedCommand
+	implements MenuManager.MnemonicAvailable, MenuManager.HotKeyAvailable
+{
+
+	public LookupCommand
+	(String command, String tableName, CommandProcessor processor, Component c)
+	{ super (command, tableName, processor, false, c); }
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed (ActionEvent e)
+	{
+		new ScriptTableSearch (processor.getEnvironment ()).showTable (0, getTable (), "Script Search");
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.gui.MenuManager.MnemonicAvailable#getMnemonic()
+	 */
+	public char getMnemonic () { return 'L'; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.gui.MenuManager.HotKeyAvailable#getHotKey()
+	 */
+	public KeyStroke getHotKey () { return KeyStroke.getKeyStroke (KeyEvent.VK_L, ActionEvent.CTRL_MASK); }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "Lookup Script"; }
 
 }
 
