@@ -39,6 +39,7 @@ public class GrünwaldLetnikov <T> extends QuadratureCore <T>
 			Parameterization.Hash options
 		)
 	{
+		constructIntegrand (digest, options);
 		return this;
 	}
 
