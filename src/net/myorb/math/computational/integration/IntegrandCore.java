@@ -50,7 +50,7 @@ public class IntegrandCore <T>
 	 * @param source text of a formula
 	 * @return the double equivalent
 	 */
-	double eval (String source)
+	protected double eval (String source)
 	{
 		parameters.setExpression (source);
 		return cvt.toDouble (parameters.eval ());

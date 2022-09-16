@@ -87,6 +87,7 @@ public class Quadrature
 			case CPC:		return new CPQuadrature (integrand, parameters);
 
 			case CAPUTO:	return new CaputoFabrizio <Double> (integrand, parameters);
+			case GRUNWALD:	return new GrünwaldLetnikov <Double> (integrand, parameters);
 			case HADAMARD:	return new HadamardEquation <Double> (integrand, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <Double> (integrand, parameters);
 			case GAUSS:		return new GaussQuadrature (integrand, parameters).getIntegral ();
@@ -113,6 +114,7 @@ public class Quadrature
 			case CAPUTO:	return new CaputoFabrizio <T> (null, parameters);
 			case HADAMARD:	return new HadamardEquation <T> (null, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <T> (null, parameters);
+			case GRUNWALD:	return new GrünwaldLetnikov <T> (null, parameters);
 
 			default: throw new RuntimeException ("No transform generation supported");
 
