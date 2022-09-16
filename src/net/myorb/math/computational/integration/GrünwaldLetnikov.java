@@ -134,7 +134,17 @@ class GrünwaldLetnikovOperator <T>
 
 	public double eval (double x, double lo, double hi)
 	{
-		return 1.23456;
+		T qt = cvt.fromDouble (q);
+		double sum = 0.0, sign = 1;
+		for (int m = 0; m < terms.intValue (); m++)
+		{
+			double p = x - m * h;
+			T mt = cvt.fromDouble (m);
+			double f = this.evaluateTarget (p);
+			sum += sign * cvt.toDouble (BC (mt, qt)) * f;
+			sign = - sign;
+		}
+		return sum / Math.pow (h, q);
 	}
 
 
