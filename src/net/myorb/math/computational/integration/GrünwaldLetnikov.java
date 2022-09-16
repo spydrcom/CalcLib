@@ -15,7 +15,9 @@ import net.myorb.math.computational.Combinatorics;
  * @author Michael Druckman
  */
 public class GrünwaldLetnikov <T> extends QuadratureCore <T>
+	implements Quadrature.Integral
 {
+
 
 	public GrünwaldLetnikov
 		(
@@ -26,6 +28,29 @@ public class GrünwaldLetnikov <T> extends QuadratureCore <T>
 		super (null);					// summation in place of integral
 		this.setIntegrand (integrand);
 	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.QuadratureCore#constructIntegral(net.myorb.math.expressions.tree.RangeNodeDigest, net.myorb.math.computational.Parameterization.Hash)
+	 */
+	public Quadrature.Integral constructIntegral
+		(
+			RangeNodeDigest <T> digest,
+			Parameterization.Hash options
+		)
+	{
+		return this;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.integration.QuadratureCore#eval(double, double, double)
+	 */
+	public double eval (double x, double lo, double hi)
+	{
+		return transform.eval (x, lo, hi);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.QuadratureCore#constructIntegrand(net.myorb.math.expressions.tree.RangeNodeDigest, net.myorb.math.computational.Parameterization.Hash)
@@ -43,6 +68,7 @@ public class GrünwaldLetnikov <T> extends QuadratureCore <T>
 		);
 	}
 	protected GrünwaldLetnikovOperator <T> transform;
+
 
 }
 
@@ -77,12 +103,16 @@ class GrünwaldLetnikovOperator <T>
 	public void parameterize (double p)
 	{
 		this.setCombinatorics ();
-		this.terms = (int) eval ("INFINITY");
+		this.terms = (Number) cvt.toDouble (digest.getHiBnd ());
 		this.h = this.getDelta ();
 		this.q = p;
+
+		System.out.println ("order: " + q);
+		System.out.println ("terms: " + terms);
+		System.out.println ("h: " + h);
 	}
 	protected double q;		// this algorithm identifies order with q
-	protected int terms;	// count of terms to sum (approximation of INFINITY)
+	protected Number terms;	// count of terms to sum (approximation of INFINITY)
 	protected double h;		// equation using LIM [h->0]
 
 
@@ -99,6 +129,12 @@ class GrünwaldLetnikovOperator <T>
 	protected Combinatorics <T> combinatorics;
 	protected ExtendedPowerLibrary <T> lib;
 	protected SpaceManager <T> manager;
+
+
+	public double eval (double x, double lo, double hi)
+	{
+		return 1.23456;
+	}
 
 
 }
