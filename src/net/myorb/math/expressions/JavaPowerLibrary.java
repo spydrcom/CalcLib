@@ -9,8 +9,54 @@ import net.myorb.math.*;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class JavaPowerLibrary<T> implements PowerLibrary<T>
+public class JavaPowerLibrary<T> implements ExtendedPowerLibrary<T>
 {
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public T GAMMA (T value)
+	{
+		throw new RuntimeException ("No GAMMA support present in library");
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#magnitude(java.lang.Object)
+	 */
+	public T magnitude (T x)
+	{
+		return manager.convertFromDouble (Math.abs (manager.convertToDouble (x)));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#power(java.lang.Object, java.lang.Object)
+	 */
+	public T power (T x, T y)
+	{
+		return manager.convertFromDouble
+			(
+				Math.pow
+				(
+					manager.convertToDouble (x),
+					manager.convertToDouble (y)
+				)
+			);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#nThRoot(java.lang.Object, int)
+	 */
+	public T nThRoot(T x, int root)
+	{
+		return manager.convertFromDouble
+				(
+					Math.pow
+					(
+						manager.convertToDouble (x),
+						1.0 / (double) root
+					)
+				);
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.PowerLibrary#factorial(java.lang.Object)

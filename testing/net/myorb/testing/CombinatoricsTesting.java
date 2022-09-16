@@ -1,19 +1,19 @@
 
 package net.myorb.testing;
 
-import net.myorb.math.HighSpeedMathLibrary;
-import net.myorb.math.PowerLibrary;
-import net.myorb.math.SpaceManager;
+import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.primenumbers.Factorization;
 import net.myorb.math.primenumbers.FactorizationFieldManager;
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
+import net.myorb.math.HighSpeedMathLibrary;
+import net.myorb.math.SpaceManager;
 
 public class CombinatoricsTesting<T> extends Combinatorics<T>
 {
 
 	public CombinatoricsTesting
-	(SpaceManager<T> manager, PowerLibrary<T> lib)
+	(SpaceManager<T> manager, ExtendedPowerLibrary<T> lib)
 	{
 		super (manager, lib);
 	}
@@ -25,7 +25,7 @@ public class CombinatoricsTesting<T> extends Combinatorics<T>
 	}
 
 	public static void Htest
-	(Combinatorics<Double> c, PowerLibrary<Double> lib)
+	(Combinatorics<Double> c, ExtendedPowerLibrary<Double> lib)
 	{
 		double Hhalf = 2 - 2 * lib.ln (2d);
 		System.out.println ("actual H(0.5) = " + Hhalf);
@@ -117,7 +117,7 @@ public class CombinatoricsTesting<T> extends Combinatorics<T>
 		net.myorb.math.expressions.controls.FactorizedEvaluationControl.initializeFactorizationTable();
 		new CombinatoricsTesting<Factorization>(ffm, null).testOptBernoulli ();
 
-		PowerLibrary<Double> lib = new HighSpeedMathLibrary ();
+		ExtendedPowerLibrary<Double> lib = new HighSpeedMathLibrary ();
 		CombinatoricsTesting<Double> c = new CombinatoricsTesting<Double>
 		(new DoubleFloatingFieldManager (), lib);
 

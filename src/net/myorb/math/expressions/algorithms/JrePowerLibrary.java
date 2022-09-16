@@ -60,6 +60,14 @@ public class JrePowerLibrary implements ExtendedPowerLibrary<Double>
 	public Double dFactorial (Double value) { return taylor.dFactorial (value); }
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public Double GAMMA (Double value)
+	{
+		throw new RuntimeException ("No GAMMA support present in library");
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.ExtendedPowerLibrary#magnitude(java.lang.Object)
 	 */
 	public Double magnitude (Double x) { return Math.abs (x); }

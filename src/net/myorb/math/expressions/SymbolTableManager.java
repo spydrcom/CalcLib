@@ -537,7 +537,7 @@ public class SymbolTableManager<T> extends DimensionedValueProcessing<T> impleme
 	public void importFromPowerLibrary (SymbolMap into) {} // replaces deprecated method in refactor
 
 
-	public void importFromCombinatorics (final PowerLibrary<T> powerLibrary, SymbolMap into)
+	public void importFromCombinatorics (final ExtendedPowerLibrary<T> powerLibrary, SymbolMap into)
 	{
 		final Combinatorics<T> combinatorics = new Combinatorics<T>(spaceManager, powerLibrary);
 

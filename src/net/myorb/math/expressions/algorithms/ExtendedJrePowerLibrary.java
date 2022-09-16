@@ -79,4 +79,12 @@ public class ExtendedJrePowerLibrary<T> implements ExtendedPowerLibrary<T>
 		return conversion.convertFromDouble (Math.abs (conversion.convertToDouble (x)));
 	}
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public T GAMMA (T value)
+	{
+		throw new RuntimeException ("No GAMMA support present in library");
+	}
+
 }

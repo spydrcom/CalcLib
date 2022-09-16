@@ -379,6 +379,14 @@ public class ComplexLibrary<T> extends Arithmetic<T>
 	public Function <ComplexValue<T>> getGammaFunction () { return gammaFunctionImplementation; }
 	protected GammaLanczos<T> gammaFunctionImplementation = null;
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public ComplexValue<T> GAMMA (ComplexValue<T> value)
+	{
+		return gamma (value);
+	}
+
 	/**
 	 * test imaginary part of value is real
 	 * @param x complex value to be checked for imaginary component

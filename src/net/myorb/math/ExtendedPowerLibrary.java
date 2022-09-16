@@ -47,4 +47,11 @@ public interface ExtendedPowerLibrary<T>
 	 */
 	T dFactorial (T value);
 
+	/**
+	 * compute GAMMA(x)
+	 * @param value parameter for computation
+	 * @return computed result
+	 */
+	T GAMMA (T value);
+
 }

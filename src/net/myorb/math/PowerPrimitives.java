@@ -258,6 +258,15 @@ public class PowerPrimitives<T> extends Tolerances<T>
 
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public T GAMMA (T value)
+	{
+		throw new RuntimeException ("No GAMMA support present in library");
+	}
+
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.PowerLibrary#exp(java.lang.Object)
 	 */
 	public T exp (T value)

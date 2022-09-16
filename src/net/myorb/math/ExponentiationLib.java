@@ -291,6 +291,14 @@ public class ExponentiationLib<T> extends Tolerances<T> implements ExtendedPower
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)
+	 */
+	public T GAMMA (T value)
+	{
+		throw new RuntimeException ("No GAMMA support present in library");
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.PowerLibrary#dFactorial(java.lang.Object)
 	 */
 	public T dFactorial (T n)

@@ -38,5 +38,4 @@ public interface PowerLibrary<T>
 	 */
 	T sqrt (T value);
 
-
 }

@@ -27,7 +27,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param lib a power library for the type
 	 */
 	public Combinatorics
-		(SpaceManager<T> manager, PowerLibrary<T> lib)
+		(SpaceManager<T> manager, ExtendedPowerLibrary<T> lib)
 	{
 		super (manager);
 		this.expressionManager = (ExpressionSpaceManager<T>)manager;
@@ -40,7 +40,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 	ExpressionSpaceManager<T> expressionManager;
 	T ZERO, ONE, NEGONE, TWO, HALF;
-	PowerLibrary<T> lib;
+	ExtendedPowerLibrary<T> lib;
 
 
 	/**
@@ -159,7 +159,13 @@ public class Combinatorics<T>  extends Tolerances<T>
 			);
 	}
 
-
+	/**
+	 * binomial coefficients
+	 * - specifically for integer operands
+	 * @param n the upper number of the set
+	 * @param k the lower number of the set
+	 * @return n! / ( k! * (n - k)! )
+	 */
 	public double binomialCoefficient (int n, int k)
 	{
 		if (k < 0 || k > n) return 0;
@@ -176,6 +182,36 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 
 		return c;
+	}
+
+	/**
+	 * binomial coefficients
+	 * - general case for all data types
+	 * @param x the upper number of the set
+	 * @param y the lower number of the set
+	 * @return GAMMA based computation
+	 */
+	public T gammaBinomialCoefficient (T x, T y)
+	{
+		T	one = manager.getOne (),
+			ny	= manager.negate (y),
+			x1	= manager.add (x, one),
+			xy	= manager.add (x1, ny),
+			y1	= manager.add (y, one);
+
+		return manager.multiply
+			(
+				lib.GAMMA (x1),
+			//  ----------------
+				manager.invert
+				(
+					manager.multiply
+					(
+						lib.GAMMA (y1),
+						lib.GAMMA (xy)
+					)
+				)
+			);
 	}
 
 
