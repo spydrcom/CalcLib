@@ -104,23 +104,29 @@ class GrünwaldLetnikovOperator <T>
 	public void parameterize (double p)
 	{
 		this.setCombinatorics ();
-		this.terms = (Number) cvt.toDouble (digest.getHiBnd ());
 		this.h = this.getDelta ();
-		this.q = p;
+		this.terms = (Number) cvt.toDouble (digest.getHiBnd ());
+		this.q = cvt.fromDouble (p);
+		this.p = p;
+	}
+	protected T q;			// this algorithm identifies order with q
+	protected Number terms;	// count of terms to sum (approximation of INFINITY)
+	protected double h;		// equation using LIM [h->0]
+	protected double p;
 
+
+	void dump ()
+	{
 		System.out.println ("order: " + q);
 		System.out.println ("terms: " + terms);
 		System.out.println ("h: " + h);
 	}
-	protected double q;		// this algorithm identifies order with q
-	protected Number terms;	// count of terms to sum (approximation of INFINITY)
-	protected double h;		// equation using LIM [h->0]
 
 
 	T BC (T x, T y)
-	{
-		return combinatorics.gammaBinomialCoefficient (x, y);
-	}
+	{ return combinatorics.gammaBinomialCoefficient (x, y); }
+	T BC (T q, double m) { return BC (q, cvt.fromDouble (m)); }
+
 	void setCombinatorics ()
 	{
 		this.lib = environment.getLibrary ();
@@ -134,17 +140,15 @@ class GrünwaldLetnikovOperator <T>
 
 	public double eval (double x, double lo, double hi)
 	{
-		T qt = cvt.fromDouble (q);
 		double sum = 0.0, sign = 1;
+		x = cvt.toDouble (digest.getDelta ());
 		for (int m = 0; m < terms.intValue (); m++)
 		{
-			double p = x - m * h;
-			T mt = cvt.fromDouble (m);
-			double f = this.evaluateTarget (p);
-			sum += sign * cvt.toDouble (BC (mt, qt)) * f;
+			sum += sign * cvt.toDouble (BC (q, m)) *
+				this.evaluateTarget (x - m * h);
 			sign = - sign;
 		}
-		return sum / Math.pow (h, q);
+		return sum / Math.pow (h, p);
 	}
 
 
