@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.specialfunctions.Gamma;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.ExtendedPowerLibrary;
@@ -64,8 +65,11 @@ public class JrePowerLibrary implements ExtendedPowerLibrary<Double>
 	 */
 	public Double GAMMA (Double value)
 	{
-		throw new RuntimeException ("No GAMMA support present in library");
+//		throw new RuntimeException ("No GAMMA support present in library");
+		if (gamma == null) gamma = new Gamma ();
+		return gamma.eval (value);
 	}
+	Gamma gamma = null;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.ExtendedPowerLibrary#magnitude(java.lang.Object)
