@@ -14,12 +14,12 @@ import net.myorb.math.computational.Combinatorics;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class GrünwaldLetnikov <T> extends QuadratureCore <T>
+public class GrunwaldLetnikov <T> extends QuadratureCore <T>
 	implements Quadrature.Integral
 {
 
 
-	public GrünwaldLetnikov
+	public GrunwaldLetnikov
 		(
 			RealIntegrandFunctionBase integrand,
 			Configuration parameters
