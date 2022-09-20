@@ -6,7 +6,6 @@ import net.myorb.math.SpaceManager;
 
 /**
  * Binomial Coefficient on real domain using Gamma from spline
- * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class BinomialRealDomain extends Binomial <Double>
