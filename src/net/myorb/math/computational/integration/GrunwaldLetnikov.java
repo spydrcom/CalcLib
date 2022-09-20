@@ -5,9 +5,9 @@ import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.computational.Parameterization;
+import net.myorb.math.specialfunctions.Binomial;
 import net.myorb.math.ExtendedPowerLibrary;
 import net.myorb.math.SpaceManager;
-import net.myorb.math.computational.Combinatorics;
 
 /**
  * configuration object for Grünwald-Letnikov derivative equation
@@ -124,16 +124,16 @@ class GrünwaldLetnikovOperator <T>
 
 
 	T BC (T x, T y)
-	{ return combinatorics.gammaBinomialCoefficient (x, y); }
+	{ return Binomial.gammaBinomialCoefficient (x, y); }
 	T BC (T q, double m) { return BC (q, cvt.fromDouble (m)); }
 
 	void setCombinatorics ()
 	{
 		this.lib = environment.getLibrary ();
 		this.manager = environment.getSpaceManager ();
-		this.combinatorics = new Combinatorics <T> (manager, lib);
+//		this.Binomial = new Binomial <T> (manager, lib);
 	}
-	protected Combinatorics <T> combinatorics;
+	protected Binomial <T> Binomial;
 	protected ExtendedPowerLibrary <T> lib;
 	protected SpaceManager <T> manager;
 
