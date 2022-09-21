@@ -13,25 +13,17 @@ import net.myorb.math.SpaceManager;
 public class Binomial <T>
 {
 
-	public interface SFLibrary <T>
-	{
-		T GAMMA (T z);
-	}
-
 	public Binomial
 		(
 			SpaceManager <T> manager,
-			ExtendedPowerLibrary <T> lib,
-			SFLibrary <T> sflib
+			ExtendedPowerLibrary <T> lib
 		)
 	{
 		this.manager = (ExpressionSpaceManager<T>) manager;
-		this.sflib = sflib;
 		this.lib = lib;
 	}
 	ExpressionSpaceManager <T> manager;
 	ExtendedPowerLibrary <T> lib;
-	SFLibrary <T> sflib;
 
 	/**
 	 * binomial coefficients
@@ -50,14 +42,14 @@ public class Binomial <T>
 
 		return manager.multiply
 			(
-				sflib.GAMMA (x1),
+				lib.GAMMA (x1),
 			//  ----------------
 				manager.invert
 				(
 					manager.multiply
 					(
-						sflib.GAMMA (y1),
-						sflib.GAMMA (xy)
+						lib.GAMMA (y1),
+						lib.GAMMA (xy)
 					)
 				)
 			);
@@ -81,14 +73,14 @@ public class Binomial <T>
 
 		return lib.exp (manager.add
 			(
-				lib.ln (sflib.GAMMA (x1)),
+				lib.ln (lib.GAMMA (x1)),
 			//  ----------------
 				manager.negate
 				(
 					manager.add
 					(
-						lib.ln (sflib.GAMMA (y1)),
-						lib.ln (sflib.GAMMA (xy))
+						lib.ln (lib.GAMMA (y1)),
+						lib.ln (lib.GAMMA (xy))
 					)
 				)
 			));
