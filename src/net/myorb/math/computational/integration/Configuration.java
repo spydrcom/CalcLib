@@ -34,7 +34,7 @@ public class Configuration extends Parameterization
 	public Approaches identifyApproach ()
 	{
 		String method;
-		if ((method = getMethood ()) != null)
+		if ((method = getMethodName ()) != null)
 		{
 			try
 			{ return Approaches.valueOf (method); }
@@ -71,7 +71,7 @@ public class Configuration extends Parameterization
 	{
 		try
 		{
-			String methodName = getMethood ();
+			String methodName = getMethodName ();
 			if (methodName == null) return Methods.CCQ;
 			return Methods.valueOf (methodName);
 		}

@@ -119,7 +119,7 @@ public class Parameterization
 	/**
 	 * @return the kind of transform specified as METHOD
 	 */
-	public String getMethood ()
+	public String getMethodName ()
 	{
 		return getParameterUC ("method");
 	}
