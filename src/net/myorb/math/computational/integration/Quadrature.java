@@ -1,9 +1,11 @@
 
 package net.myorb.math.computational.integration;
 
+import net.myorb.math.computational.integration.Configuration;
 import net.myorb.math.computational.Parameterization;
-import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import java.util.Map;
@@ -14,6 +16,34 @@ import java.util.Map;
  */
 public class Quadrature
 {
+
+	/**
+	 * support exported from external sources
+	 * @param <T> data type used
+	 */
+	public interface ExternalSupport <T>
+	{
+
+		public Integral getIntegralFor
+		(
+			Configuration.Methods m,
+			RealIntegrandFunctionBase integrand,
+			Configuration parameters
+		);
+
+		public UsingTransform <T> getSupportFor
+		(
+			Configuration.Methods m,
+			Configuration parameters
+		);
+
+	}
+
+	public static void setExternalSupport (ExternalSupport <?> external)
+	{
+		externalSupport = external;
+	}
+	static ExternalSupport <?> externalSupport = null;
 
 	/**
 	 * the access to numerical integration of an integrand (function)
@@ -86,18 +116,23 @@ public class Quadrature
 			case ASQ:		return new ASQuadrature (integrand, parameters);
 			case CPC:		return new CPQuadrature (integrand, parameters);
 
-			case CAPUTO:	return new CaputoFabrizio <Double> (integrand, parameters);
-			case GRUNWALD:	return new GrunwaldLetnikov <Double> (integrand, parameters);
-			case HADAMARD:	return new HadamardEquation <Double> (integrand, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <Double> (integrand, parameters);
 			case GAUSS:		return new GaussQuadrature (integrand, parameters).getIntegral ();
 
 			case CTA:		return new TrapezoidalApproximation (integrand, parameters, false);
 			case CTAA:		return new TrapezoidalApproximation (integrand, parameters, true);
 
-			default: throw new RuntimeException ("Integration method not recognized");
+			default:		return getIntegralFor (parameters.getMethod (), integrand, parameters);
 
 		}
+	}
+
+	public <T> Integral getIntegralFor
+	(Configuration.Methods m, RealIntegrandFunctionBase integrand, Configuration parameters)
+	{
+		if (externalSupport != null)
+			return externalSupport.getIntegralFor (m, integrand, parameters);
+		throw new RuntimeException ("No support for method");
 	}
 
 	/**
@@ -110,15 +145,18 @@ public class Quadrature
 	{
 		switch (parameters.getMethod ())
 		{
-
-			case CAPUTO:	return new CaputoFabrizio <T> (null, parameters);
-			case HADAMARD:	return new HadamardEquation <T> (null, parameters);
 			case LIOUVILLE:	return new LiouvilleCalculus <T> (null, parameters);
-			case GRUNWALD:	return new GrunwaldLetnikov <T> (null, parameters);
-
-			default: throw new RuntimeException ("No transform generation supported");
-
+			default: return getSupportFor (parameters.getMethod (), parameters);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> UsingTransform <T> getSupportFor
+	(Configuration.Methods m, Configuration parameters)
+	{
+		if (externalSupport != null)
+			return (UsingTransform <T>) externalSupport.getSupportFor (m, parameters);
+		throw new RuntimeException ("No support for method");
 	}
 
 	/**

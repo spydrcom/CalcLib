@@ -21,5 +21,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Xchart"/>
 	<classpathentry kind="lib" path="lib/CalcSpline0917.zip"/>
+	<classpathentry kind="lib" path="lib/Fraculus.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
