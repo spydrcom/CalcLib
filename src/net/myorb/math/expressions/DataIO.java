@@ -68,6 +68,13 @@ public class DataIO<T>
 			throw new RuntimeException ("File writer failed");
 		}
 	}
+	public void write (String filepath, Matrix<T> m, String called)
+	{
+		PrintStream out = environment.getOutStream ();
+		out.println ("Export to file: " + filepath);
+		out.println ("From matrix:    " + called);
+		write (filepath, m);
+	}
 
 
 	/**

@@ -284,7 +284,7 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	 * @return the text of a filename
 	 */
 	public static String filename (CommandSequence tokens)
-	{ return getTextOfSequence (withCommandRemoved (tokens)); }
+	{ return getTextOfSequence (withCommandRemoved (tokens)).replaceAll (" ", ""); }
 
 
 }
