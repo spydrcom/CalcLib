@@ -167,4 +167,9 @@ public class Vector<T> extends ListOperations<T> implements VectorAccess<T>
 	 */
 	public int size () { return elements.size (); }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return this.elements.toString (); }
+
 }
