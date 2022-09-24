@@ -284,7 +284,22 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 	 * @return the text of a filename
 	 */
 	public static String filename (CommandSequence tokens)
-	{ return getTextOfSequence (withCommandRemoved (tokens)).replaceAll (" ", ""); }
+	{ return getTextOfSequence (withCommandRemoved (tokens)); }
+
+
+	/**
+	 * treat token list as a filename
+	 * - token parser may have inserted spaces
+	 * @param tokens the list of tokens to translate
+	 * @param removeSpaces TRUE for removal of whitespace
+	 * @return the text of a filename
+	 */
+	public static String filename (CommandSequence tokens, boolean removeSpaces)
+	{
+		String fn = getTextOfSequence (withCommandRemoved (tokens));
+		if (removeSpaces) fn = fn.replaceAll (" ", "");
+		return fn;
+	}
 
 
 }
