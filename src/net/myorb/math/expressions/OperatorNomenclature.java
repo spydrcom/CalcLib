@@ -171,7 +171,9 @@ public class OperatorNomenclature
 	POLY_ABBREVIATION_KEYWORD = "POLY",			// POLY (1, 2, 3)		an abbreviation for POLYNOMIAL (short form)
 	EVALSPLINE_FUNCTION = "EVALSPLINE",			// EVALSPLINE (M, b, x)	evaluate a Chebyshev spline function at X
 	DERIVE_KEYWORD = "DERIVE",					// DERIVE (1, 2, 3)		show table of derivatives of polynomial
-	APPEND_FUNCTION = "APPEND",					// APPEND (A1,A2)		append arrays in sequence presented
+	APPEND_FUNCTION = "APPEND",					// APPEND (A1,An)		append arrays in sequence presented
+	CONCAT_FUNCTION = "CONCAT",					// CONCAT (A1,An)		concatenate arrays (as consumer)
+	STACK_FUNCTION = "STACK",					// STACK (A1,An)		stack arrays as rows producing matrix
 	DYADIC_FUNCTION = "DYADIC",					// DYADIC (A1,A2)		compute dyadic product of arrays
 	ROOTS_KEYWORD = "ROOTS",					// ROOTS (1, 2, 3)		compute roots of polynomials
 	PIVOT_FUNCTION = "PIVOT",					// PIVOT (A, order)		reorder a vector to pattern
@@ -252,14 +254,16 @@ public class OperatorNomenclature
 
 	public static
 		final String
-	ASSIGNMENT_DELIMITER = "=",					// let A = 1		identify variable assignment
-	GROUP_CONTINUATION_DELIMITER = ",",			// f(a,b,c,d,e)		separation of parameters
-	END_OF_STATEMENT_DELIMITER = ";",			// @A=1; @B=2		separation of statements
-	START_OF_GROUP_DELIMITER = "(",				// (a+b)*(c+d)		increased precedence
-	START_OF_ARRAY_DELIMITER = "[",				// [0<=i<=10]()		limits of domain
-	START_OF_FORMAL_LIST_DELIMITER = "{",		// {  p1, p2  }		formal parameters to a
-	END_OF_FORMAL_LIST_DELIMITER = "}",			// -> func(p1,p2)	lambda expression
-	END_OF_ARRAY_DELIMITER = "]",
+	ASSIGNMENT_DELIMITER = "=",						// let A = 1		identify variable assignment
+	GROUP_CONTINUATION_DELIMITER = ",",				// f(a,b,c,d,e)		separation of parameters
+	END_OF_STATEMENT_DELIMITER = ";",				// @A=1; @B=2		separation of statements
+	START_OF_GROUP_DELIMITER = "(",					// (a+b)*(c+d)		increased precedence
+	START_OF_ARRAY_DELIMITER = "[",					// [0<=i<=10]()		limits of domain
+	START_OF_FORMAL_LIST_DELIMITER = "{",			// {  p1, p2  }		formal parameters to a
+	END_OF_FORMAL_LIST_DELIMITER = "}",				// -> func(p1,p2)		lambda expression
+	START_OF_CONDITIONAL_BLOCK_DELIMITER = "?{",	// ?{  id   }?		test id for id=0 non-existing
+	END_OF_CONDITIONAL_BLOCK_DELIMITER = "}?",		//						and = 0 fail condition
+	END_OF_ARRAY_DELIMITER = "]",					// [ lo < id < hi ]	values for range
 	END_OF_GROUP_DELIMITER = ")"
 		;
 
