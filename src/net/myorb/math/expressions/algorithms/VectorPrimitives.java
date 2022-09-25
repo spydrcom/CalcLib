@@ -12,6 +12,7 @@ import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.computational.Statistics;
 import net.myorb.math.expressions.*;
+import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.matrices.*;
 
 import java.util.ArrayList;
@@ -242,6 +243,39 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 
 
 	/**
+	 * Collect values into array array
+	 * @param value the value to be concatenated
+	 * @return the array with value appended
+	 */
+	public ValueManager.GenericValue array (ValueManager.GenericValue value)
+	{
+		return value;
+	}
+
+
+	/**
+	 * Append a series of arrays into one long array
+	 * @param values the series of arrays to be concatenated
+	 * @return the array with all values appended
+	 */
+	public ValueManager.GenericValue concat (ValueManager.GenericValue values)
+	{
+		throw new RuntimeException ("CONCAT only available as consumer");
+	}
+
+
+	/**
+	 * Append a series of arrays as rows into one matrix
+	 * @param values the series of arrays to be concatenated
+	 * @return the array with all values appended
+	 */
+	public ValueManager.GenericValue stack (ValueManager.GenericValue values)
+	{
+		throw new RuntimeException ("STACK only available as consumer");
+	}
+
+
+	/**
 	 * standard mathematical SIGMA function.
 	 *  the sum of all elements of the array are computed
 	 * @param values the values that comprise the array
@@ -329,6 +363,76 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters) { return append (parameters); }
 		};
 	}
+
+
+	/**
+	 * implement function - ARRAY
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getArrayAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters) { return array (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement function - CONCAT
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractVectorConsumer getConcatAlgorithm (String symbol)
+	{
+		return new AbstractVectorConsumer (symbol)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractVectorConsumer#getIterationConsumer()
+			 */
+			public IterationConsumer getIterationConsumer ()
+			{
+				return IterationConsumerImplementations.getConcatIterationConsumer (spaceManager);
+			}
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public GenericValue execute (GenericValue parameter)
+			{
+				return concat (parameter);
+			}
+		};
+	}
+
+
+	/**
+	 * implement function - STACK
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractVectorConsumer getStackAlgorithm (String symbol)
+	{
+		return new AbstractVectorConsumer (symbol)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractVectorConsumer#getIterationConsumer()
+			 */
+			public IterationConsumer getIterationConsumer ()
+			{
+				return IterationConsumerImplementations.getStackIterationConsumer (spaceManager);
+			}
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public GenericValue execute (GenericValue parameter)
+			{
+				return stack (parameter);
+			}
+		};
+	}//TODO:
 
 
 	/**

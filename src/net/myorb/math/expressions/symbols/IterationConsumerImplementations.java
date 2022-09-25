@@ -23,7 +23,8 @@ public class IterationConsumerImplementations
 	 */
 	public enum Names
 	{
-		AggregateConsumer, SummationConsumer, IntegralConsumer, QuadratureConsumer, ProductConsumer, PlotConsumer
+		AggregateConsumer, ConcatConsumer, StackConsumer, SummationConsumer,
+		IntegralConsumer, QuadratureConsumer, ProductConsumer, PlotConsumer
 	}
 
 
@@ -40,6 +41,8 @@ public class IterationConsumerImplementations
 		{
 			case PlotConsumer:			return getPlotIterationConsumer (using);
 			case AggregateConsumer: 	return getArrayIterationConsumer (using);
+			case ConcatConsumer: 		return getConcatIterationConsumer (using);
+			case StackConsumer: 		return getStackIterationConsumer (using);
 			case SummationConsumer: 	return getSummationIterationConsumer (using);
 			case ProductConsumer:		return getProductIterationConsumer (using);
 			case IntegralConsumer:		return getIntegralIterationConsumer (using);
@@ -58,6 +61,26 @@ public class IterationConsumerImplementations
 	public static <T> IterationConsumer
 	getArrayIterationConsumer (SpaceManager<T> manager)
 	{ return new AggregateConsumer<T>(manager); }
+
+	/**
+	 * result of iterations is concatenation of multiple arrays
+	 * @param manager the type manager for the discrete data type
+	 * @return the new consumer object
+	 * @param <T> data type
+	 */
+	public static <T> IterationConsumer
+	getConcatIterationConsumer (SpaceManager<T> manager)
+	{ return new ConcatConsumer<T>(manager); }
+
+	/**
+	 * result of iterations is row appending into matrix
+	 * @param manager the type manager for the discrete data type
+	 * @return the new consumer object
+	 * @param <T> data type
+	 */
+	public static <T> IterationConsumer
+	getStackIterationConsumer (SpaceManager<T> manager)
+	{ return new StackConsumer<T>(manager); }
 
 	/**
 	 * result of iterations is sum of values
@@ -314,7 +337,85 @@ class AggregateConsumer<T> extends AbstractConsumer<T>
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString () { return ""; }
+	public String toString () { return "ARRAY"; }
+
+}
+
+
+/**
+ * aggregation of iteration values (STACK operator)
+ * @param <T> data type
+ */
+class StackConsumer<T> extends AbstractConsumer<T>
+{
+
+	StackConsumer (SpaceManager<T> manager) { super (manager); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#accept(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public void accept (GenericValue value)
+	{
+		aggregate.add (valueManager.toDimensionedValue (value));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#getCalculatedResult()
+	 */
+	public GenericValue getCalculatedResult ()
+	{
+		throw new RuntimeException ("Matrix STACK not implemented"); //TODO:
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#init()
+	 */
+	public void init () { this.aggregate = new ArrayList<>(); }
+	protected ArrayList <ValueManager.DimensionedValue <T>> aggregate;
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "STACK"; }
+
+}
+
+
+/**
+ * aggregation of iteration values (CONCAT operator)
+ * @param <T> data type
+ */
+class ConcatConsumer<T> extends AbstractConsumer<T>
+{
+
+	ConcatConsumer (SpaceManager<T> manager) { super (manager); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#accept(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public void accept (GenericValue value)
+	{
+		aggregate.addAll (valueManager.toDimensionedValue (value).getValues ());
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#getCalculatedResult()
+	 */
+	public GenericValue getCalculatedResult ()
+	{ 
+		return valueManager.newDimensionedValue (aggregate);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.symbols.IterationConsumer#init()
+	 */
+	public void init () { this.aggregate = new ArrayList<T>(); }
+	protected ArrayList<T> aggregate;
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString () { return "CONCAT"; }
 
 }
 
