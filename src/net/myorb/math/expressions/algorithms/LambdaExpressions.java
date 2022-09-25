@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
@@ -23,6 +24,26 @@ import java.util.List;
 public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 {
 
+	
+	/**
+	 * use default array name lambda
+	 */
+	public LambdaExpressions ()
+	{
+		this.PREFIX = OperatorNomenclature.LAMBDA_FUNCTION_NAME_PREFIX;
+	}
+
+	/**
+	 * @param name non-default name for the array of lambda declarations
+	 */
+	public LambdaExpressions (String name)
+	{
+		this.PREFIX = name + "#";
+		this.identifier = name;
+	}
+	protected String identifier = "lambda";
+	public final String PREFIX;
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
@@ -31,7 +52,7 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	{
 		this.environment = environment;
 		this.valueManager = environment.getValueManager ();
-		this.allocateLambdaList ();
+		this.allocateLambdaList ();								// array symbol is posted at point environment is provided
 	}
 	protected ValueManager <T> valueManager;
 	protected Environment <T> environment;
@@ -55,7 +76,7 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	 * @param funcBody the tokens of the function body captured in the operator parse
 	 * @return a generic value the holds a procedure parameter reference
 	 */
-	public ValueManager.GenericValue processDeclaration 
+	public ValueManager.GenericValue processDeclaration
 		(String parameters, String funcBody)
 	{
 		DefinedFunction<T> definition =
@@ -153,7 +174,7 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	{
 		return new SymbolMap.VariableLookup ()
 		{
-			public String getName () { return "lambda"; }
+			public String getName () { return identifier; }
 			public String toString () { return lambdaList.toString (); }
 			public SymbolType getSymbolType () { return SymbolType.IDENTIFIER; }
 			public GenericValue getValue () { return lambdaList; }
@@ -189,7 +210,6 @@ public class LambdaExpressions <T> implements Environment.AccessAcceptance <T>
 	 */
 	public String nextName () { return PREFIX + allocateNextIndex (); }
 	public String allocateNextIndex () { return Integer.toString (nextLambdaIndex++); }
-	public static final String PREFIX = OperatorNomenclature.LAMBDA_FUNCTION_NAME_PREFIX;
 	protected int nextLambdaIndex = 0;
 
 
