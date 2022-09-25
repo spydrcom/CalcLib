@@ -799,7 +799,11 @@ public class ValueManager<T>
 				T discrete = toDiscreteValue (value).getValue ();
 				return new RawValueList<T> (discrete);
 			}
-			else throw new UnableToConvert ();
+			else
+			{
+				System.out.println ("Type is " + value.getClass().getCanonicalName());
+				throw new UnableToConvert ();
+			}
 		}
 		catch (EmptyParameterList emptyList) { return new RawValueList<T> (); }
 		catch (Exception others) { throw new Expected ("Array", others); }
