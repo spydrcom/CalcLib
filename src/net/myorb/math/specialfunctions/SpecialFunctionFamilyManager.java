@@ -6,6 +6,7 @@ import net.myorb.math.expressions.symbols.DefinedTransform;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.polynomial.PolynomialFamilyManager;
+
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.math.Function;
 
@@ -99,12 +100,16 @@ public class SpecialFunctionFamilyManager
 	 * @param name the name of the family
 	 * @param kind the kind (typically first &amp; second) 
 	 * @param count the highest order of function to be imported
+	 * @param lambda TRUE for lambda array generation of functions
 	 * @param environment the central environment object
 	 * @param <T> type of data in environment
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> void importFamilyFunctions
-	(String name, String kind, int count, Environment<T> environment)
+		(
+			String name, String kind, int count,
+			boolean lambda, Environment<T> environment
+		)
 	{
 		boolean kindIsPolynomial = false;
 		SpecialFunctionsFamily sfFamily = families.get (name);
@@ -112,8 +117,16 @@ public class SpecialFunctionFamilyManager
 
 		if (sfFamily == null || kindIsPolynomial)
 		{
-			PolynomialFamilyManager.importFamilyFunctions
+			if (lambda)
+			{
+				PolynomialFamilyManager.importFamilyLambdaFunctions
 				(name, kind, count, environment);
+			}
+			else
+			{
+				PolynomialFamilyManager.importFamilyFunctions
+				(name, kind, count, environment);
+			}
 			return;
 		}
 
@@ -121,6 +134,24 @@ public class SpecialFunctionFamilyManager
 				functions = sfFamily.getFunctions (kind, count);				// count of functions of the kind
 		//dump (functions, environment.getSpaceManager ());
 		
+		for (int i=0; i<functions.size(); i++)
+		{
+			postFunctionDefinition (functions.get (i), environment);			// function definition posted
+		}
+	}
+
+
+	/**
+	 * non-lambda posting
+	 * @param functions the list of functions
+	 * @param environment the application core description
+	 */
+	public static <T> void commonPost
+		(
+			SpecialFunctionFamilyManager.FunctionList<T> functions,
+			Environment<T> environment
+		)
+	{
 		for (int i=0; i<functions.size(); i++)
 		{
 			postFunctionDefinition (functions.get (i), environment);			// function definition posted

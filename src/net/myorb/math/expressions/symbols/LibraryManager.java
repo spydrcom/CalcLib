@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.FunctionDefinition;
 
@@ -47,17 +48,38 @@ public class LibraryManager<T>
 	 */
 	public void importFamily (List<TokenParser.TokenDescriptor> tokens)
 	{
-		String kind = null;
-		String name = tokens.get (1).getTokenImage ();
-		String count = tokens.get (2).getTokenImage ();
+		String
+			kind = null, count = null,
+			name = tokens.get (1).getTokenImage (),
+			second = tokens.get (2).getTokenImage ();
+		boolean lambda = false;
+		int tokenCount;
 
-		int tokenCount = tokens.size ();
-		if (tokenCount > 3) kind = tokens.get (3).getTokenImage ();
-		for (int i=4; i<tokenCount; i++) kind += tokens.get (i).getTokenImage ();
+		// check for lambda array request
+
+		if (OperatorNomenclature.INDEXING_OPERATOR.equals (second))
+		{
+			lambda = true;
+			tokens.remove (2);
+			count = tokens.get (2).getTokenImage ();
+		} else count = second;
+
+		// process information about the kind requested
+
+		if ((tokenCount = tokens.size ()) > 3)
+		{
+			kind = tokens.get (3).getTokenImage ();
+			for (int i=4; i<tokenCount; i++)
+			{
+				kind += tokens.get (i).getTokenImage ();
+			}
+		}
+
+		// pass request to Family Manager
 
 		SpecialFunctionFamilyManager.importFamilyFunctions
 		(
-			name, kind, Integer.parseInt (count), environment
+			name, kind, Integer.parseInt (count), lambda, environment
 		);
 	}
 
