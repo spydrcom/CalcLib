@@ -11,7 +11,7 @@ import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.ValueManager;
 
 /**
- * implementations of algorithms computing basic algebraic funtions
+ * implementations of algorithms computing basic algebraic functions
  * @param <T> manager for data type
  * @author Michael Druckman
  */
@@ -161,21 +161,7 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getFloorAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
-		{
-			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
-			{
-				T p = valueManager.toDiscrete (parameter);
-
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.convertFromDouble
-					(
-						Math.floor (spaceManager.convertToDouble (p))
-					)
-				);
-			}
-		};
+		return translationFor (symbol, precedence, (p) -> Math.floor (p));
 	}
 
 
@@ -187,21 +173,7 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getCeilAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
-		{
-			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
-			{
-				T p = valueManager.toDiscrete (parameter);
-
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.convertFromDouble
-					(
-						Math.ceil (spaceManager.convertToDouble (p))
-					)
-				);
-			}
-		};
+		return translationFor (symbol, precedence, (p) -> Math.ceil (p));
 	}
 
 

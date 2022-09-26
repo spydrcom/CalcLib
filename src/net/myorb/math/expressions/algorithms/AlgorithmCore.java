@@ -2,6 +2,8 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
+import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
@@ -102,6 +104,78 @@ public class AlgorithmCore<T> extends OperatorNomenclature
 		return results;
 	}
 	T abs (T x) { return spaceManager.isNegative (x)? spaceManager.negate (x): x; }
+
+
+	/**
+	 * describe unary functions
+	 */
+	public interface Unary
+	{
+		double f (double p);
+	}
+
+
+	/**
+	 * @param symbol the text of the symbol name
+	 * @param precedence the precedence for the operation
+	 * @param op the function for double parameters
+	 * @return the operation implementation
+	 */
+	public AbstractUnaryOperator translationFor
+	(String symbol, int precedence, Unary op)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				T p = valueManager.toDiscrete (parameter);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.convertFromDouble
+					(
+						op.f (spaceManager.convertToDouble (p))
+					)
+				);
+			}
+		};
+	}
+
+
+	/**
+	 * describe binary functions
+	 */
+	public interface Binary
+	{
+		double f (double l, double r);
+	}
+
+	/**
+	 * @param symbol the text of the symbol name
+	 * @param precedence the precedence for the operation
+	 * @param op the function for double parameters
+	 * @return the operation implementation
+	 */
+	public AbstractBinaryOperator translationFor
+	(String symbol, int precedence, Binary op)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				T l = valueManager.toDiscrete (left), r = valueManager.toDiscrete (right);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.convertFromDouble
+					(
+						op.f (spaceManager.convertToDouble (l), spaceManager.convertToDouble (r))
+					)
+				);
+			}
+		};
+	}
 
 
 }
