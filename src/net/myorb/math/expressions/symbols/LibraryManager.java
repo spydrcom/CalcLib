@@ -57,7 +57,7 @@ public class LibraryManager<T>
 
 		// check for lambda array request
 
-		if (OperatorNomenclature.INDEXING_OPERATOR.equals (second))
+		if (OperatorNomenclature.isIndexReference (second))
 		{
 			lambda = true;
 			tokens.remove (2);
