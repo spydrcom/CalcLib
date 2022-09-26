@@ -3,9 +3,15 @@ package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager.RawValueList;
 import net.myorb.math.expressions.tree.NumericalAnalysis;
 import net.myorb.math.expressions.tree.RangeNodeDigest;
+
 import net.myorb.data.abstractions.DataSequence2D;
+
+import net.myorb.math.matrices.VectorAccess;
+import net.myorb.math.matrices.Matrix;
+
 import net.myorb.math.SpaceManager;
 
 import java.util.ArrayList;
@@ -364,14 +370,89 @@ class StackConsumer<T> extends AbstractConsumer<T>
 	 */
 	public GenericValue getCalculatedResult ()
 	{
-		throw new RuntimeException ("Matrix STACK not implemented"); //TODO:
+		int rows = aggregate.size ();
+
+		// check for valid aggregate to use for matrix
+		if (rows == 0) throw new RuntimeException (EMPTY);
+
+		// retrieve first row of data, aggregate is 0 based
+		// but getRow translates from matrix convention,
+		// this makes the use of index consistent
+		RawValueList <T> firstRow = getRow (1);
+
+		// build model matrix and fill from aggregate
+
+		return valueManager.newMatrix
+		(
+			fill
+			(
+				new Matrix <T>
+					(rows, firstRow.size (), manager),
+				firstRow
+			)
+		);
 	}
+	static final String EMPTY = "No rows presented in STACK request";
+
+	/**
+	 * copy rows into new matrix
+	 * @param m the matrix being filled
+	 * @param row the row of values to be copied
+	 * @return the filled matrix
+	 */
+	Matrix <T> fill (Matrix <T> m, RawValueList<T> row)
+	{
+		for ( int n = 1, rows = m.rowCount (); ; )		// matrix is 1 based
+		{
+			copy (row, m.getRowAccess (n));
+			if (++n > rows) break;
+			row = getRow (n);
+		}
+		return m;
+	}
+
+	/**
+	 * copy a row of data into the equivalent matrix row vector
+	 * @param row copy of values taken from aggregate
+	 * @param to access into proper row of matrix
+	 */
+	void copy (RawValueList <T> row, VectorAccess <T> to)
+	{
+		int cols;
+		if (row.size () != (cols = to.size ()))			// verify row size
+		{
+			throw new RuntimeException (BADROW);
+		}
+		for (int c = 0; c < cols; c++)					// aggregate is 0 based
+		{
+			to.set (c + 1, row.get (c));				// matrix is 1 based
+		}
+	}
+	static final String BADROW = "STACK found inconsistent row in source";
+
+	/*
+	 * aggregate storage of rows of data to be made into matrix
+	 */
+
+	/**
+	 * read a row from the aggregate data collection
+	 * @param n the row number to be retrieved (using 1 based matrix convention)
+	 * @return Nth row read from aggregate
+	 */
+	RawValueList <T> getRow (int n)						// aggregate is 0 based
+	{
+		return aggregate.get (n - 1).getValues ();		// translated from matrix convention
+	}
+	protected ArrayList <ValueManager.DimensionedValue <T>> aggregate;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.symbols.IterationConsumer#init()
 	 */
 	public void init () { this.aggregate = new ArrayList<>(); }
-	protected ArrayList <ValueManager.DimensionedValue <T>> aggregate;
+
+	/*
+	 * recognize iteration consumer STACK
+	 */
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
