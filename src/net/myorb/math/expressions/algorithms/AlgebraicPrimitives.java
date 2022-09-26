@@ -68,17 +68,7 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getSgnAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
-		{
-			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
-			{
-				T p = valueManager.toDiscrete (parameter);
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.isNegative (p)? spaceManager.newScalar (-1): spaceManager.newScalar (1)
-				);
-			}
-		};
+		return translationFor (symbol, precedence, (p) -> Math.signum (p));
 	}
 
 
@@ -134,22 +124,7 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractBinaryOperator getFloorDivAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractBinaryOperator (symbol, precedence)
-		{
-			public ValueManager.GenericValue execute
-			(ValueManager.GenericValue left, ValueManager.GenericValue right)
-			{
-				T l = valueManager.toDiscrete (left), r = valueManager.toDiscrete (right);
-
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.convertFromDouble
-					(
-						(double) Math.floorDiv (spaceManager.toNumber (l).longValue (), spaceManager.toNumber (r).longValue ())
-					)
-				);
-			}
-		};
+		return translationFor (symbol, precedence, (l, r) -> Math.floorDiv ( (long) l, (long) r ) );
 	}
 
 
