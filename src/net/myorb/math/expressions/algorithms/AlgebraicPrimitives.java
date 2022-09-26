@@ -127,6 +127,85 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 
 
 	/**
+	 * implement operator - floordiv
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getFloorDivAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				T l = valueManager.toDiscrete (left), r = valueManager.toDiscrete (right);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.convertFromDouble
+					(
+						(double) Math.floorDiv (spaceManager.toNumber (l).longValue (), spaceManager.toNumber (r).longValue ())
+					)
+				);
+			}
+		};
+	}
+
+
+	/**
+	 * implement operator - floor
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getFloorAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				T p = valueManager.toDiscrete (parameter);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.convertFromDouble
+					(
+						Math.floor (spaceManager.convertToDouble (p))
+					)
+				);
+			}
+		};
+	}
+
+
+	/**
+	 * implement operator - ceil
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getCeilAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				T p = valueManager.toDiscrete (parameter);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.convertFromDouble
+					(
+						Math.ceil (spaceManager.convertToDouble (p))
+					)
+				);
+			}
+		};
+	}
+
+
+	/**
 	 * identify value - pi
 	 * @param symbol the symbol associated with this object
 	 * @return variable object referencing value
