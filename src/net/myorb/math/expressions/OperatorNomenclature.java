@@ -76,6 +76,8 @@ public class OperatorNomenclature
 	EDIT_KEYWORD = "EDIT",						// EDIT					edit selected snip of text
 	STOP_KEYWORD = "STOP",						// STOP					Stop Anaconda server
 	DOCS_KEYWORD = "DOCS",						// DOCS					show JavaDocs HTML
+	TIC_KEYWORD = "TIC",						// TIC					start stop-watch
+	TOC_KEYWORD = "TOC",						// TOC					show stop-watch
 	RPN_KEYWORD = "RPN"							// RPN					RPN calculator
 		;
 
