@@ -114,7 +114,6 @@ public class AlgorithmCore<T> extends OperatorNomenclature
 		double f (double p);
 	}
 
-
 	/**
 	 * @param symbol the text of the symbol name
 	 * @param precedence the precedence for the operation
@@ -128,17 +127,28 @@ public class AlgorithmCore<T> extends OperatorNomenclature
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
-				T p = valueManager.toDiscrete (parameter);
-
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.convertFromDouble
-					(
-						op.f (spaceManager.convertToDouble (p))
-					)
-				);
+				return compute (op, parameter);
 			}
 		};
+	}
+
+	/**
+	 * @param op operation to compute
+	 * @param on parameter to operation
+	 * @return computed value
+	 */
+	ValueManager.GenericValue compute
+	(Unary op, ValueManager.GenericValue on)
+	{
+		T p = valueManager.toDiscrete (on);
+
+		return valueManager.newDiscreteValue
+		(
+			spaceManager.convertFromDouble
+			(
+				op.f (spaceManager.convertToDouble (p))
+			)
+		);
 	}
 
 
@@ -164,17 +174,29 @@ public class AlgorithmCore<T> extends OperatorNomenclature
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				T l = valueManager.toDiscrete (left), r = valueManager.toDiscrete (right);
-
-				return valueManager.newDiscreteValue
-				(
-					spaceManager.convertFromDouble
-					(
-						op.f (spaceManager.convertToDouble (l), spaceManager.convertToDouble (r))
-					)
-				);
+				return compute (op, left, right);
 			}
 		};
+	}
+
+	/**
+	 * @param op operation to compute
+	 * @param left parameter to operation from left side
+	 * @param right parameter to operation from right side
+	 * @return computed value
+	 */
+	ValueManager.GenericValue compute
+	(Binary op, ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		T l = valueManager.toDiscrete (left), r = valueManager.toDiscrete (right);
+
+		return valueManager.newDiscreteValue
+		(
+			spaceManager.convertFromDouble
+			(
+				op.f (spaceManager.convertToDouble (l), spaceManager.convertToDouble (r))
+			)
+		);
 	}
 
 

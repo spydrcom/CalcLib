@@ -64,6 +64,21 @@ public class Atomics
 
 
 	/**
+	 * enclosed bracketing format
+	 * @param operand the operand to be enclosed
+	 * @param leftSide the symbol to display on the left side
+	 * @param rightSde the symbol to display on the right side
+	 * @param using the node formatting support object supplied for the render
+	 * @return mark-up for a bracketed display
+	 */
+	public static String bracketed
+	(String operand, String leftSide, String rightSde, NodeFormatting using)
+	{
+		return using.formatOperatorReference (leftSide) + operand + using.formatOperatorReference (rightSde);
+	}
+
+
+	/**
 	 * format non-local operation reference
 	 * @param identifier the identifier that symbolizes the operation
 	 * @param range the range for the operation identifying the local

@@ -1,12 +1,16 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.rendering.Atomics;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
-import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
 import net.myorb.math.expressions.symbols.AbstractBuiltinVariableLookup;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
+
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
+import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.ValueManager;
 
@@ -54,7 +58,7 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{
-				return using.formatOperatorReference ("|") + operand + using.formatOperatorReference ("|");
+				return Atomics.bracketed (operand, "|", "|", using);
 			}
 		};
 	}
@@ -136,7 +140,24 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getFloorAlgorithm (String symbol, int precedence)
 	{
-		return translationFor (symbol, precedence, (p) -> Math.floor (p));
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return compute ((p) -> Math.floor (p), parameter);
+			}
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return Atomics.bracketed (operand, "\u230A", "\u230B", using);
+			}
+		};
 	}
 
 
@@ -148,7 +169,24 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 	 */
 	public AbstractUnaryOperator getCeilAlgorithm (String symbol, int precedence)
 	{
-		return translationFor (symbol, precedence, (p) -> Math.ceil (p));
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return compute ((p) -> Math.ceil (p), parameter);
+			}
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return Atomics.bracketed (operand, "\u2308", "\u2309", using);
+			}
+		};
 	}
 
 
