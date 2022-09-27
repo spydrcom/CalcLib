@@ -2,6 +2,10 @@
 package net.myorb.math.realnumbers;
 
 import net.myorb.data.abstractions.FunctionWrapper;
+import net.myorb.data.abstractions.SpaceDescription;
+
+import net.myorb.math.SpaceManager;
+import net.myorb.math.Function;
 
 /**
  * simple lambda expression declaration wrapper for Real functions
@@ -22,7 +26,35 @@ public class RealFunctionWrapper extends FunctionWrapper <Double>
 	 */
 	public RealFunctionWrapper (RealFunctionBodyWrapper f)
 	{
-		super (f, new DoubleFloatingFieldManager ());
+		super (f, manager);
 	}
 
+	/**
+	 * @return a core application function object
+	 */
+	public Function <Double> toCommonFunction ()
+	{
+		return new Function <Double> ()
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
+			 */
+			public Double eval (Double x)
+			{ return f.body (x); }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+			 */
+			public SpaceDescription <Double> getSpaceDescription ()
+			{ return manager; }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.Function#getSpaceManager()
+			 */
+			public SpaceManager <Double> getSpaceManager ()
+			{ return manager; }
+		};
+	}
+
+	static final DoubleFloatingFieldManager manager = new DoubleFloatingFieldManager ();
 }
