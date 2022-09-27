@@ -51,7 +51,16 @@ public class VCN22LUD extends VCSupport
 	 */
 	double [] chebyshevDomain (Double lo, Double hi)
 	{
+		double range = hi - lo;
+		double halfRange = range / 2;
+		double zeroPoint = lo + halfRange;
+
 		double [] domain = new double [POINTS.length];
+
+		for (int i = 0; i < domain.length; i++)
+		{
+			domain [i] = zeroPoint + halfRange * POINTS[i];
+		}
 
 		return domain;
 	}
