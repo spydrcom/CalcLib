@@ -263,6 +263,8 @@ public class OperatorNomenclature
 	END_OF_FORMAL_LIST_DELIMITER = "}",				// -> func(p1,p2)		lambda expression
 	START_OF_CONDITIONAL_BLOCK_DELIMITER = "?{",	// ?{  id   }?		test id for id=0 non-existing
 	END_OF_CONDITIONAL_BLOCK_DELIMITER = "}?",		//						and = 0 fail condition
+	START_OF_LOOP_BLOCK_DELIMITER = "*{",			// *{  id   }*		count id number of iterations
+	END_OF_LOOP_BLOCK_DELIMITER = "}*",				//						non-existing equivalent of 0
 	END_OF_ARRAY_DELIMITER = "]",					// [ lo < id < hi ]	values for range
 	END_OF_GROUP_DELIMITER = ")"
 		;
@@ -338,7 +340,20 @@ public class OperatorNomenclature
 	DELTA_INCREMENT_OPERATOR	= "<>",			// delta			increment {used in array declaration and derivative approximation}
 	DELTA_INTEGRATION_OPERATOR	= "<*>",		// delta			variable change limit {used in integration approximation}
 	DPRIME_OPERATOR				= "''",			// f''(x)			second derivative evaluation
-	PRIME_OPERATOR				= "'",			// f'(x)			first derivative evaluation
+	PRIME_OPERATOR				= "'"			// f'(x)			first derivative evaluation
+		;
+
+
+	/*
+	 * unicode character values for renders
+	 */
+
+	public static
+		final String
+	OPEN_CEIL_RENDER			= "\u2308",		// |^				render characters for floor brackets
+	CLOSE_CEIL_RENDER			= "\u2309",		// ^|						closing bracket
+	OPEN_FLOOR_RENDER			= "\u230A",		// |_				render characters for floor brackets
+	CLOSE_FLOOR_RENDER			= "\u230B",		// _|						closing bracket
 	PRIME_RENDER				= "\u00B4"		// f'(x)			render character for prime
 		;
 

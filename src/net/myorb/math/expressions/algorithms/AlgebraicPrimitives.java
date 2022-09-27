@@ -11,7 +11,7 @@ import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
 
 /**
@@ -155,10 +155,11 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{
-				return Atomics.bracketed (operand, "\u230A", "\u230B", using);
+				return Atomics.bracketed (operand, OPEN_FLOOR, CLOSE_FLOOR, using);
 			}
 		};
 	}
+	public static String OPEN_FLOOR = OperatorNomenclature.OPEN_FLOOR_RENDER, CLOSE_FLOOR = OperatorNomenclature.CLOSE_FLOOR_RENDER;
 
 
 	/**
@@ -184,10 +185,11 @@ public class AlgebraicPrimitives<T> extends AlgorithmCore<T>
 			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{
-				return Atomics.bracketed (operand, "\u2308", "\u2309", using);
+				return Atomics.bracketed (operand, OPEN_CEIL, CLOSE_CEIL, using);
 			}
 		};
 	}
+	public static String OPEN_CEIL = OperatorNomenclature.OPEN_CEIL_RENDER, CLOSE_CEIL = OperatorNomenclature.CLOSE_CEIL_RENDER;
 
 
 	/**
