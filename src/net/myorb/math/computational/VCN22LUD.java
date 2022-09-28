@@ -9,6 +9,8 @@ import net.myorb.math.computational.splines.ChebyshevNodes;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.Vector;
 
+import net.myorb.math.linalg.Solution;
+
 import net.myorb.math.Function;
 
 import java.io.File;
@@ -17,7 +19,7 @@ import java.io.File;
  * Lower-Upper Decomposition for VanCheNodes-22 algorithm (Vandermonde-Chebychev Nodes)
  * @author Michael Druckman
  */
-public class VCN22LUD extends VCSupport
+public class VCN22LUD extends VCSupport implements Solution
 {
 
 
@@ -94,10 +96,7 @@ public class VCN22LUD extends VCSupport
 	 */
 	public GeneratingFunctions.Coefficients<Double> solve (Vector<Double> b)
 	{
-		GeneratingFunctions.Coefficients<Double> c =
-				new GeneratingFunctions.Coefficients<Double>();
-		tri.luXb (L, U, b, P).addToList (c);
-		return c;
+		return bundle (tri.luXb (L, U, b, P));
 	}
 
 

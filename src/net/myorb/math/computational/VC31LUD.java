@@ -1,10 +1,12 @@
 
 package net.myorb.math.computational;
 
-import net.myorb.math.GeneratingFunctions;
+import net.myorb.math.linalg.Solution;
 
 import net.myorb.math.computational.Parameterization;
 import net.myorb.math.computational.splines.ChebyshevSpline;
+
+import net.myorb.math.GeneratingFunctions;
 
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.Vector;
@@ -17,7 +19,7 @@ import java.io.File;
  * Lower-Upper Decomposition for VanChe-31 algorithm (Vandermonde-Chebychev)
  * @author Michael Druckman
  */
-public class VC31LUD extends VCSupport
+public class VC31LUD extends VCSupport implements Solution
 {
 
 
@@ -69,10 +71,7 @@ public class VC31LUD extends VCSupport
 	 */
 	public GeneratingFunctions.Coefficients<Double> solve (Vector<Double> b)
 	{
-		GeneratingFunctions.Coefficients<Double> c =
-				new GeneratingFunctions.Coefficients<Double>();
-		tri.luXb (L, U, b, P).addToList (c);
-		return c;
+		return bundle (tri.luXb (L, U, b, P));
 	}
 
 
