@@ -145,6 +145,7 @@ public class SpecialFunctionFamilyManager
 	 * non-lambda posting
 	 * @param functions the list of functions
 	 * @param environment the application core description
+	 * @param <T> type of data in environment
 	 */
 	public static <T> void commonPost
 		(
