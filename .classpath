@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="lib/jmtex-0224.zip" sourcepath="/JMTeX/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Xchart"/>
-	<classpathentry kind="lib" path="lib/CalcSpline0917.zip"/>
 	<classpathentry kind="lib" path="lib/Fraculus.zip"/>
+	<classpathentry kind="lib" path="lib/CalcSpline-220929.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

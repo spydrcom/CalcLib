@@ -13,7 +13,8 @@ import net.myorb.math.computational.Spline;
 import net.myorb.math.GeneratingFunctions;
 
 /**
- * implement mechanisms of Chebyshev T-Polynomial spline algorithms
+ * implement mechanisms of Chebyshev T-Polynomial spline algorithms.
+ * - this functionality is just Chebyshev based and should not differ for sample models.
  * @author Michael Druckman
  */
 public abstract class ChebyshevCoreFunctionality
