@@ -1,6 +1,8 @@
 
 package net.myorb.math.computational.splines;
 
+import net.myorb.data.abstractions.DataSequence;
+
 /**
  * implement mechanisms of Chebyshev spline
  *  using approximation theory algorithms of points
@@ -76,6 +78,63 @@ public class ChebyshevNodes
 	{
 		return ChebyshevNodes.class.getCanonicalName ();
 	}
+
+
+	/**
+	 * @param lo the lo end of the domain
+	 * @param hi the hi end of the domain
+	 * @param mul the multipliers for the points
+	 * @return the sequence of points in the domain
+	 */
+	public static DataSequence <Double> compute (double lo, double hi, double [] mul)
+	{
+		DataSequence <Double> domain = new DataSequence <> ();
+		double range = hi - lo, halfRange = range / 2, mid = lo + halfRange;
+		for (int i = 0; i < mul.length; i++) { domain.add ( mid + halfRange * mul [i] ); }
+		return domain;
+	}
+
+
+	/**
+	 * apply points to the range of the domain
+	 * @param lo the low end of the span of the domain
+	 * @param hi the high end of the span of the domain
+	 * @return a data sequence holding domain values
+	 */
+	public static DataSequence <Double>
+		getSplineDomainFor (double lo, double hi)
+	{ return compute (lo, hi, CHEBYSHEV_POINTS); }
+
+
+	/**
+	 * select points between the Chebyshev points
+	 * - these are the test points for the regression
+	 * - these are added to the points used to build the model
+	 * @return the list of multipliers
+	 */
+	public static double [] getCombMultipliers ()
+	{
+		double last = CHEBYSHEV_POINTS[0];
+		double [] comb = new double [CHEBYSHEV_POINTS.length-1];
+		for (int i = 1; i < CHEBYSHEV_POINTS.length; i++)
+		{
+			double next = CHEBYSHEV_POINTS[i];
+			comb[i-1] = (last + next) / 2;
+			last = next;
+		}
+		return comb;
+	}
+
+
+	/**
+	 * compute comb points for the specified range
+	 * @param lo the low end of the span of the domain
+	 * @param hi the high end of the span of the domain
+	 * @return a data sequence holding domain values
+	 */
+	public static DataSequence <Double>
+		getCombDomainFor (double lo, double hi)
+	{ return compute (lo, hi, getCombMultipliers ()); }
 
 
 }
