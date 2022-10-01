@@ -150,9 +150,9 @@ public class LibraryManager<T>
 	 * @param c class to be mapped
 	 * @return a Map of methods from name
 	 */
-	public static Map<String,Method> getMethodMap (Class<?> c)
+	public static Map <String, Method> getMethodMap (Class <?> c)
 	{
-		Map<String,Method> methods = new HashMap<String,Method> ();
+		Map <String, Method> methods = new HashMap <> ();
 		for (Method m : c.getMethods ()) { methods.put (m.getName (), m); }
 		return methods;
 	}
@@ -162,10 +162,10 @@ public class LibraryManager<T>
 	 * supply configuration parameters for library
 	 * @param tokens the tokens of the configuration string
 	 */
-	public void configureLibrary (List<TokenParser.TokenDescriptor> tokens)
+	public void configureLibrary (List <TokenParser.TokenDescriptor> tokens)
 	{
-		String name; Map<String, Object> parameters; tokens.remove (0);
-		LibraryObject<T> lib = getLib (name = tokens.remove (0).getTokenImage ());
+		String name; Map <String, Object> parameters; tokens.remove (0);
+		LibraryObject <T> lib = getLib (name = tokens.remove (0).getTokenImage ());
 		if (lib == null) throw new RuntimeException ("Unrecognized library: " + name);
 		ConfigurationParser.process (tokens, getProcessor (parameters = lib.getParameterization ()));
 		System.out.println ("Lib " + name + " config " + parameters);

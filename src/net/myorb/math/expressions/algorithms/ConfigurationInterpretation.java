@@ -32,32 +32,36 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 	 */
 	public void process (String symbol, TokenDescriptor token)
 	{
+		Object value;
+
 		switch (token.getTokenType ())
 		{
 			case IDN:
 				// identifier to be found in symbol table
-				parameters.put (symbol, lookup (token.getTokenImage ()));
+				value = lookup (token.getTokenImage ());
+				break;
+			case INT:
+				// an integer value
+				value = Integer.parseInt (token.getTokenImage ());
+				break;
+			case FLT:
+				// a float value
+				value = Double.parseDouble (token.getTokenImage ());
+				break;
+			case DEC:
+				// a decimal value
+				value = new java.math.BigDecimal (token.getTokenImage ());
 				break;
 			case QOT:
 				// simple string as parameter value
 				ConfigurationParser.addParameterValue (parameters, token, symbol);
-				break;
-			case FLT:
-				// a float value
-				parameters.put (symbol, Double.parseDouble (token.getTokenImage ()));
-				break;
-			case DEC:
-				// a decimal value
-				parameters.put (symbol, new java.math.BigDecimal (token.getTokenImage ()));
-				break;
-			case INT:
-				// an integer value
-				parameters.put (symbol, Integer.parseInt (token.getTokenImage ()));
-				break;
+				return;
 			default:
 				// not a legal value association
 				throw new RuntimeException ("Expected configuration: " + token.getTokenImage ());
 		}
+
+		parameters.put (symbol, value);
 	}
 
 
