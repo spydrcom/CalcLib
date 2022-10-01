@@ -131,9 +131,14 @@ public class Parameterization
 	 */
 	public Number getValue (String named)
 	{
-		String p = getParameter (named);
-		if (p == null) return null;
-		return Double.parseDouble (p);
+		Object found;
+		if ((found = configuration.get (named)) != null)
+		{
+			if (found instanceof Number) return (Number) found;
+			if (found instanceof String) return Double.parseDouble ( (String) found );
+			throw new RuntimeException ("Number expected: " + found);
+		}
+		return null;
 	}
 
 
