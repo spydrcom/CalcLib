@@ -35,13 +35,20 @@ public class SymbolMap extends HashMap <String, Object>
 	public enum SymbolType
 	{
 		DELIMITER,		// a delimiter
+		CONSTANT,		// a value to be held with a name
 		ASSIGNMENT,		// VariableAssignment | IndexedVariableAssignment
 		POSTFIX,		// UnaryPostfixOperator
 		PARAMETERIZED,	// ParameterizedFunction
 		BINARY,			// BinaryOperator
 		UNARY,			// UnaryOperator
 		IDENTIFIER,		// Identifier
-		LIBRARY
+		LIBRARY			// a library
+	}
+
+	public enum ConstantType
+	{
+		NUMBER,			// value will be a number type
+		TEXT			// value will be a String
 	}
 
 
@@ -85,6 +92,24 @@ public class SymbolMap extends HashMap <String, Object>
 		 * @return identification of symbol type
 		 */
 		SymbolType getSymbolType ();
+	}
+
+	/**
+	 * generic posting for a value in the symbol table
+	 */
+	public interface NamedConstant extends Named
+	{
+		/**
+		 * get the value of the symbol
+		 * @return the value of the constant
+		 */
+		Object getValue ();
+
+		/**
+		 * get type of constant
+		 * @return identification of constant type
+		 */
+		ConstantType getConstantType ();
 	}
 
 	/**
@@ -395,7 +420,30 @@ public class SymbolMap extends HashMap <String, Object>
 		return null;
 	}
 	protected HashMap<String, String> helpTable = new HashMap<String, String> ();
-	
+
+
+	/**
+	 * post a named constant
+	 * @param name the name of the constant
+	 * @param value the value of the constant
+	 */
+	public void addConstant (String name, Object value)
+	{
+		Named symbol = new NamedConstant ()
+			{
+				public ConstantType getConstantType ()
+				{
+					return constantValue instanceof Number ?
+						ConstantType.NUMBER : ConstantType.TEXT;
+				}
+				public String getName () { return constantName; }
+				public SymbolType getSymbolType () { return SymbolType.CONSTANT; }
+				public Object getValue () { return constantValue; }
+				Object constantValue = value;
+				String constantName = name;
+			};
+		this.add (symbol);
+	}
 
 
 	/**
@@ -446,7 +494,13 @@ public class SymbolMap extends HashMap <String, Object>
 	public ValueManager.GenericValue getValue (Named item) throws RuntimeException
 	{
 		if (item instanceof VariableLookup)
-		{ return ((VariableLookup) item).getValue (); }
+		{
+			return ((VariableLookup) item).getValue ();
+		}
+		if (item instanceof NamedConstant)
+		{
+			return ValueManager.newNamedConstant ((NamedConstant) item);
+		}
 		throw new RuntimeException ("Value expected, symbol " + item.getName () + " found");
 	}
 

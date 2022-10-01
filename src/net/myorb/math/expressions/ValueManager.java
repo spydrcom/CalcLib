@@ -3,7 +3,8 @@ package net.myorb.math.expressions;
 
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.GeneratingFunctions;
-
+import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.SymbolMap.ConstantType;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 
@@ -87,6 +88,33 @@ public class ValueManager<T>
 	 */
 	public static class GenericValueList extends java.util.ArrayList<GenericValue>
 	{ private static final long serialVersionUID = 1395649219122888859L; }
+
+
+	/**
+	 * a wrapper for symbol table named constants
+	 */
+	public interface NamedConstant extends GenericValue
+	{
+		/**
+		 * @return identifier for the type of value
+		 */
+		SymbolMap.ConstantType getConstantType ();
+	}
+	public interface NamedNumericConstant extends NamedConstant
+	{
+		/**
+		 * @return the value as a Number
+		 */
+		Number getValue ();
+	}
+	public interface NamedTextConstant extends NamedConstant
+	{
+		/**
+		 * @return the value as a String
+		 */
+		String getValue ();
+	}
+
 
 	/**
 	 * uses generic type so may require special treatment
@@ -486,6 +514,22 @@ public class ValueManager<T>
 		T v = toDiscreteValue (value).getValue ();
 		T negIntVal = manager.newScalar (- manager.toNumber (v).intValue ());
 		return manager.isZero (manager.add (v, negIntVal));
+	}
+
+
+	/**
+	 * represent a value from the symbol table
+	 * @param value a value posted in the symbol table
+	 * @return the GenericValue representation for the value
+	 */
+	public static NamedConstant newNamedConstant (SymbolMap.NamedConstant value)
+	{
+		switch (value.getConstantType ())
+		{
+			case NUMBER:	return new NumericStorage ((Number) value.getValue ());
+			case TEXT:		return new TextStorage (value.getValue ().toString ());
+			default:		throw new RuntimeException ("Internal Error");
+		}
 	}
 
 
@@ -1123,16 +1167,48 @@ class MatrixStorage<T> extends NamedValue
  * storage of any text
  */
 class TextStorage extends NamedValue
-	implements ValueManager.TextValue, ValueManager.CapturedValue
+	implements ValueManager.TextValue, ValueManager.CapturedValue,
+			ValueManager.NamedTextConstant
 {
 
-	public TextStorage(String text)
-	{
-		this.text = text;
-	}
-	public String getText() { return text; }
+	public TextStorage (String text) { this.text = text; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.NamedConstant#getConstantType()
+	 */
+	public ConstantType getConstantType () { return SymbolMap.ConstantType.TEXT; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.NamedTextConstant#getValue()
+	 */
+	public String getValue () { return text; }
 	public String toString () { return text; }
-	String text;
+	public String getText () { return text; }
+	protected String text;
+	
+}
+
+
+/**
+ * storage of any Number value
+ */
+class NumericStorage extends NamedValue
+	implements ValueManager.NamedNumericConstant
+{
+
+	public NumericStorage (Number number) { this.number = number; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.NamedConstant#getConstantType()
+	 */
+	public ConstantType getConstantType () { return SymbolMap.ConstantType.NUMBER; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.NamedNumericConstant#getValue()
+	 */
+	public Number getValue () { return number; }
+	public String toString () { return number.toString (); }
+	protected Number number;
 	
 }
 
