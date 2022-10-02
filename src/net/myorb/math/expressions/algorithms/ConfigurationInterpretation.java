@@ -90,8 +90,9 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 
 	/**
 	 * use evaluation control to get value for text
-	 * @param value the text to evaluate
-	 * @return the resulting value 
+	 * @param value the text to evaluate as expression
+	 * @return the resulting computed value 
+	 * @param <T> type for operations
 	 */
 	private <T> T evaluate (String value)
 	{
@@ -103,6 +104,7 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 
 	/**
 	 * @return a space manager from the environment
+	 * @param <T> type for operations
 	 */
 	@SuppressWarnings("unchecked")
 	private <T> ExpressionSpaceManager <T> getMgr ()
@@ -115,6 +117,7 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 	 * get value for symbol table entry
 	 * @param name the name of the symbol table entry
 	 * @return the value for the symbol
+	 * @param <T> type for operations
 	 */
 	public <T> T getValueFor (String name)
 	{
