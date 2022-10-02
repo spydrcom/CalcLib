@@ -160,7 +160,7 @@ public class ChebyshevPolynomial<T> extends Polynomial<T>
 
 	/**
 	 * the the Chebyshev T (first kind) functions
-	 * @param upTo the number of indexed funtions
+	 * @param upTo the number of indexed functions
 	 * @return a list of the functions
 	 */
 	public PolynomialFamilyManager.PowerFunctionList<T> getT (int upTo)

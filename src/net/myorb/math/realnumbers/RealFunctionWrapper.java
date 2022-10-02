@@ -56,5 +56,5 @@ public class RealFunctionWrapper extends FunctionWrapper <Double>
 		};
 	}
 
-	static final DoubleFloatingFieldManager manager = new DoubleFloatingFieldManager ();
+	public static final DoubleFloatingFieldManager manager = new DoubleFloatingFieldManager ();
 }
