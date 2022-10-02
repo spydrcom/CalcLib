@@ -2,6 +2,8 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.EvaluationControlI;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor;
@@ -18,12 +20,13 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 
 
 	public ConfigurationInterpretation
-	(Map <String, Object> parameters, Environment<?> environment)
+	(Map <String, Object> parameters, Environment <?> environment)
 	{
 		this.symbols = environment.getSymbolMap ();
 		this.parameters = parameters;
 	}
 	protected Map <String, Object> parameters;
+	protected Environment <?> environment;
 	protected SymbolMap symbols;
 
 
@@ -82,6 +85,61 @@ public class ConfigurationInterpretation implements ConfigurationParser.Interpre
 			throw new RuntimeException ("Illegal symbol: " + ValueIdentifier);
 		}
 		return ( (SymbolMap.NamedConstant) sym ).getValue ();
+	}
+
+
+	/**
+	 * use evaluation control to get value for text
+	 * @param value the text to evaluate
+	 * @return the resulting value 
+	 */
+	private <T> T evaluate (String value)
+	{
+		@SuppressWarnings("unchecked") EvaluationControlI <T> control =
+			(EvaluationControlI <T>) environment.getControl ();
+		return control.evaluate (value.toString ());
+	}
+
+
+	/**
+	 * @return a space manager from the environment
+	 */
+	@SuppressWarnings("unchecked")
+	private <T> ExpressionSpaceManager <T> getMgr ()
+	{
+		return (ExpressionSpaceManager <T>) environment.getSpaceManager ();
+	}
+
+
+	/**
+	 * get value for symbol table entry
+	 * @param name the name of the symbol table entry
+	 * @return the value for the symbol
+	 */
+	public <T> T getValueFor (String name)
+	{
+		Object found = lookup (name);
+		if (found instanceof Number)
+		{
+			Number n = (Number) found;
+			ExpressionSpaceManager <T> mgr = getMgr ();
+			return mgr.convertFromDouble (n.doubleValue ());
+		}
+		return evaluate (found.toString ());
+	}
+
+
+	/**
+	 * get value for symbol table entry as a Number
+	 * @param name the name of the symbol table entry
+	 * @return the value for the symbol converted to Number
+	 */
+	public Number getNumericValueFor (String name)
+	{
+		Object found = lookup (name);
+		if (found instanceof Number) return (Number) found;
+		return getMgr ().toNumber (evaluate (found.toString ()));
+
 	}
 
 

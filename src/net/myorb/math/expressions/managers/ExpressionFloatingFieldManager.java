@@ -2,8 +2,8 @@
 package net.myorb.math.expressions.managers;
 
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
-import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.data.abstractions.ValueDisplayProperties;
+import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.math.expressions.*;
 
