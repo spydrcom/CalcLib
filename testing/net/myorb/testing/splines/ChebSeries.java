@@ -8,6 +8,20 @@ import net.myorb.math.realnumbers.RealFunctionWrapper;
 public class ChebSeries
 {
 
+	// 2^(1-s) GAMMA (s+1) eta (s) = INTEGRAL [ 0 <= t <= INFINITY ] ( t^s / cosh^2 (t) )
+
+	public static double etaCosh (double b, double t)
+	{
+		return Math.cos ( b * Math.log (t) )  / ( coshSq (t) * Math.sqrt (t) );
+	}
+	public static double coshSq (double t) { return sq (Math.cosh (t)); }
+	public static double sq (double t) { return t*t; }
+
+	public static double eta_cosh_s (double z)
+	{
+		return etaCosh (B, (z+1)/32);
+	}
+
 	// cos ( b * ln t )  / ( (exp t + 1) * sqrt t )
 
 	static final double B = 2;
@@ -31,7 +45,7 @@ public class ChebSeries
 		RealFunctionWrapper f =
 			new RealFunctionWrapper
 			(
-				(x) -> eta_s (x)
+				(x) -> eta_cosh_s (x)
 			);
 		ChebyshevSeriesExpansion series = new ChebyshevSeriesExpansion ();
 		Coefficients <Double> c = series.computeSeries (f.toCommonFunction (), order);
