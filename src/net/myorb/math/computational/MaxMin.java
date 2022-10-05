@@ -16,6 +16,7 @@ import java.util.List;
 public class MaxMin
 {
 
+
 	/**
 	 * @param lo the low value of the interval
 	 * @param hi the high value of the interval to test
@@ -25,7 +26,8 @@ public class MaxMin
 	public List <Double> find (double lo, double hi, double delta)
 	{
 		List <Double> found = new ArrayList <Double> ();
-		double cur = lo, prev = f.eval (cur+=delta), next = f.eval (cur+=delta);
+		double cur = lo, prev = f.eval (cur), next = f.eval (cur+=delta);
+//		double cur = lo, prev = f.eval (cur+=delta), next = f.eval (cur+=delta);	// useful for zero asymptotes
 		boolean positiveDerivative = next > prev;
 		double lastFound = Double.NaN;
 
@@ -37,8 +39,8 @@ public class MaxMin
 			{
 				if (next < prev)
 				{
-					System.out.println (next);
 					positiveDerivative = false;
+					System.out.println ("x="+cur+" \t f(x)="+next);
 					found.add (lastFound = cur);
 				}
 			}
@@ -46,8 +48,8 @@ public class MaxMin
 			{
 				if (next > prev)
 				{
-					System.out.println (next);
 					positiveDerivative = true;
+					System.out.println ("x="+cur+" \t f(x)="+next);
 					found.add (lastFound = cur);
 				}
 			}
@@ -57,6 +59,7 @@ public class MaxMin
 
 		return found;
 	}
+
 
 	/**
 	 * @param lo the low end of an integration range
@@ -68,12 +71,16 @@ public class MaxMin
 		double result =
 			TanhSinhQuadratureAlgorithms.Integrate
 				(f, lo, hi, targetAbsoluteError, stats);
-		System.out.println (result + " : " + stats);
+		System.out.println (lo + ".." + hi);
+		System.out.println ("\t : " + stats);
+		System.out.println ("\t I=" + result);
+		System.out.println ();
 		return result;
 	}
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats =
 		new TanhSinhQuadratureTables.ErrorEvaluation ();
 	protected double targetAbsoluteError = 1E-4;
+
 
 	/**
 	 * @param maxMin the list of max and min domain points
@@ -91,10 +98,13 @@ public class MaxMin
 		return result;
 	}
 
+
 	/**
 	 * @param f the function to be tested
 	 */
 	public void setFunction (Function <Double> f) { this.f = f; }
 	Function <Double> f;
 
+
 }
+
