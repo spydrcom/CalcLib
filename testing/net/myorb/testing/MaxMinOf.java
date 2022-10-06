@@ -8,22 +8,19 @@ import java.util.List;
 public class MaxMinOf
 {
 
-	static double ImagPart = 5;
+//	static double ImagPart = 5;
 //	static double ImagPart = 14.134725;
 	static MaxMin maxMin = new MaxMin ();
 
-	static double F (double t)
-//	{ return Math.sin ( ImagPart * Math.log (t) ) * Math.sqrt (t) / SQ ( Math.cosh (t) ); }
-	{ return Math.cos ( ImagPart * Math.log (t) ) * Math.sqrt (t) / SQ ( Math.cosh (t) ); }
+	static double REAL_PART (double t, double sigma)
+	{ return Math.cos ( sigma * Math.log (t) ) * Math.sqrt (t) / COSH2SQ (t); }
+	static double IMAG_PART (double t, double sigma)
+	{ return Math.sin ( sigma * Math.log (t) ) * Math.sqrt (t) / COSH2SQ (t); }
+	static double COSH2SQ (double x) { return SQ ( Math.cosh (x) ); }
 	static double SQ (double x) { return x*x; }
 
-	public static void main (String[] args)
+	static void compute (RealFunctionWrapper f)
 	{
-		RealFunctionWrapper f =
-			new RealFunctionWrapper
-			(
-				(x) -> F (x)
-			);
 		maxMin.setFunction (f.toCommonFunction ());
 		List <Double> c = maxMin.find (0, 1, 1E-8);
 		System.out.println (c);
@@ -34,6 +31,13 @@ public class MaxMinOf
 
 		System.out.println ("0..1:  " + loEnd);
 		System.out.println ("0..20:  " + full);
+	}
+
+	public static void main (String[] args)
+	{
+		double sigma = 5;
+		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> REAL_PART (x, sigma)));
+		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> IMAG_PART (x, sigma)));
 	}
 
 }

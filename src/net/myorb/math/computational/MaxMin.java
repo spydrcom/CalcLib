@@ -74,7 +74,6 @@ public class MaxMin
 		System.out.println (lo + ".." + hi);
 		System.out.println ("\t : " + stats);
 		System.out.println ("\t I=" + result);
-		System.out.println ();
 		return result;
 	}
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats =
@@ -88,11 +87,12 @@ public class MaxMin
 	 */
 	public double integralOver (List <Double> maxMin)
 	{
-		double result = 0, l = maxMin.get (0);
+		double h, result = 0, l = maxMin.get (0);
 		for (int i = 1; i < maxMin.size (); i++)
 		{
-			double h = maxMin.get (i);
-			result += eval (l, h);
+			result += eval (l, h = maxMin.get (i));
+			System.out.println ("\t AGG=" + result);
+			System.out.println ();
 			l = h;
 		}
 		return result;
