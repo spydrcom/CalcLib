@@ -2,6 +2,7 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.computational.TanhSinhQuadratureTables;
+import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 
 import net.myorb.math.Function;
@@ -15,6 +16,18 @@ import java.util.List;
  */
 public class MaxMin
 {
+
+
+	// 	!!  d (t, k)  =  t *  ( exp (pi/k) - 1 )
+
+
+	public static boolean TRC = false;
+
+
+	/**
+	 * simple description of a function
+	 */
+	public interface FunctionBody extends RealFunctionWrapper.RealFunctionBodyWrapper {}
 
 
 	/**
@@ -40,7 +53,7 @@ public class MaxMin
 				if (next < prev)
 				{
 					positiveDerivative = false;
-					System.out.println ("x="+cur+" \t f(x)="+next);
+					if (TRC) System.out.println ("x="+cur+" \t f(x)="+next);
 					found.add (lastFound = cur);
 				}
 			}
@@ -49,7 +62,7 @@ public class MaxMin
 				if (next > prev)
 				{
 					positiveDerivative = true;
-					System.out.println ("x="+cur+" \t f(x)="+next);
+					if (TRC) System.out.println ("x="+cur+" \t f(x)="+next);
 					found.add (lastFound = cur);
 				}
 			}
@@ -71,9 +84,12 @@ public class MaxMin
 		double result =
 			TanhSinhQuadratureAlgorithms.Integrate
 				(f, lo, hi, targetAbsoluteError, stats);
-		System.out.println (lo + ".." + hi);
-		System.out.println ("\t : " + stats);
-		System.out.println ("\t I=" + result);
+		if (TRC)
+		{
+			System.out.println (lo + ".." + hi);
+			System.out.println ("\t : " + stats);
+			System.out.println ("\t I=" + result);
+		}
 		return result;
 	}
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats =
@@ -82,21 +98,90 @@ public class MaxMin
 
 
 	/**
+	 * compute k * ln(t)
+	 * @param k multiple of ln t
+	 * @param t distance on the real axis
+	 * @return computed product
+	 */
+	public static double kLnT (double k, double t)
+	{
+		return k * Math.log (t);
+	}
+
+
+	/**
+	 * for forms k * ln t in a cyclic function.
+	 * - this shows up in complex polylog integrals.
+	 * - t^s where s has imaginary part presents this form.
+	 * @param t distance on the real axis
+	 * @param k multiple of ln t
+	 * @return real axis step
+	 */
+	public static double cycleStep (double t, double k)
+	{
+		return t * ( Math.exp (Math.PI / k) - 1 );
+	}
+
+
+	/**
+	 * @param f function being evaluated
+	 * @param startingAt the starting low value of the range
+	 * @param multiple number of steps to use per increment
+	 * @param upTo the high value of the range
+	 * @param k the multiple of ln t
+	 * @return the list of points
+	 */
+	public List <Double> computeCycleSyncPoints
+		(
+			FunctionBody f,
+			double startingAt,
+			double multiple,
+			double upTo,
+			double k
+		)
+	{
+		List <Double> domain = new ArrayList <Double> ();
+		setFunction (new RealFunctionWrapper (f).toCommonFunction ());
+		
+		for
+			(
+				double x = startingAt; x <= upTo;
+				x += multiple * cycleStep (x, k)
+			)
+		{
+			domain.add (x);
+		}
+
+		return domain;
+	}
+
+
+	/**
 	 * @param maxMin the list of max and min domain points
 	 * @return the calculated integral
 	 */
 	public double integralOver (List <Double> maxMin)
 	{
+		aggError = 0; ops = 0;
 		double h, result = 0, l = maxMin.get (0);
 		for (int i = 1; i < maxMin.size (); i++)
 		{
 			result += eval (l, h = maxMin.get (i));
-			System.out.println ("\t AGG=" + result);
-			System.out.println ();
+			ops += stats.numFunctionEvaluations;
+			aggError += stats.errorEstimate;
+
+			if (TRC)
+			{
+				System.out.println ("\t AGG=" + result);
+				System.out.println ();
+			}
+
 			l = h;
 		}
 		return result;
 	}
+	protected double aggError;
+	protected int ops;
 
 
 	/**

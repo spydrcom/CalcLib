@@ -376,6 +376,8 @@ public class ComplexLibrary<T> extends Arithmetic<T>
 		if (gammaFunctionImplementation != null) return;
 		gammaFunctionImplementation = new GammaLanczos<T> (this);
 	}
+	public void initializeGamma (int precision)
+	{ initializeGamma (); gammaFunctionImplementation.setPrecision (precision); }
 	public Function <ComplexValue<T>> getGammaFunction () { return gammaFunctionImplementation; }
 	protected GammaLanczos<T> gammaFunctionImplementation = null;
 
