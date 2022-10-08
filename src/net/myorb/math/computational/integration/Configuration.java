@@ -60,6 +60,7 @@ public class Configuration extends Parameterization
 		CAPUTO,		// Caputo-Fabrizio derivative equation
 		HADAMARD,	// Hadamard fractional integral equation
 		LIOUVILLE,	// fractional calculus algorithm
+		WATTEN,		// Watten cyclic algorithm
 		UNKNOWN
 	}
 
