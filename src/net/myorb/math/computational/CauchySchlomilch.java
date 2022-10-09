@@ -163,5 +163,10 @@ public class CauchySchlomilch
 		return sinSigmaT (t, sigma, alpha);
 	}
 
+	/**
+	 * allow as base class for static reference
+	 */
+	public CauchySchlomilch () {}
+
 }
 
