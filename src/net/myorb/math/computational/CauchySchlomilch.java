@@ -56,10 +56,11 @@ public class CauchySchlomilch
 	 *  real part of the integrand
 	 * @param t the integration variable
 	 * @param sigma the IM part of the parameter
+	 * @param alpha the RE part of the parameter
 	 * @return the computed value
 	 */
-	public static double cosSigmaT (double t, double sigma)
-	{ return Math.cos ( kLnT (sigma, t) ) * mu (sigma, t); }
+	public static double cosSigmaT (double t, double sigma, double alpha)
+	{ return Math.cos ( kLnT (sigma, t) ) * mu (alpha, t); }
 
 	/**
 	 * compute the
@@ -77,10 +78,12 @@ public class CauchySchlomilch
 	 *  imag part of the integrand
 	 * @param t the integration variable
 	 * @param sigma the IM part of the parameter
+	 * @param alpha the RE part of the parameter
 	 * @return the computed value
 	 */
-	public static double sinSigmaT (double t, double sigma)
-	{ return Math.sin ( kLnT (sigma, t) ) * mu (sigma, t); }
+	public static double sinSigmaT
+		(double t, double sigma, double alpha)
+	{ return Math.sin ( kLnT (sigma, t) ) * mu (alpha, t); }
 
 	/**
 	 * compute the

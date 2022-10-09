@@ -3,19 +3,13 @@ package net.myorb.testing;
 
 import net.myorb.math.computational.MaxMin;
 import net.myorb.math.realnumbers.RealFunctionWrapper;
+import net.myorb.math.computational.CauchySchlomilch;
 import java.util.List;
 
-public class MaxMinOf
+public class MaxMinOf extends CauchySchlomilch
 {
 
 	static MaxMin maxMin = new MaxMin ();
-
-	static double REAL_PART (double t, double sigma)
-	{ return Math.cos ( sigma * Math.log (t) ) * Math.sqrt (t) / COSH2SQ (t); }
-	static double IMAG_PART (double t, double sigma)
-	{ return Math.sin ( sigma * Math.log (t) ) * Math.sqrt (t) / COSH2SQ (t); }
-	static double COSH2SQ (double x) { return SQ ( Math.cosh (x) ); }
-	static double SQ (double x) { return x*x; }
 
 	static void compute (RealFunctionWrapper f)
 	{
@@ -34,8 +28,8 @@ public class MaxMinOf
 	public static void main (String[] args)
 	{
 		double sigma = 14.1347;
-		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> REAL_PART (x, sigma)));
-		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> IMAG_PART (x, sigma)));
+		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> cosSigmaT (x, sigma, 0.5)));
+		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> sinSigmaT (x, sigma, 0.5)));
 	}
 
 }
