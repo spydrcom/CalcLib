@@ -1,12 +1,13 @@
 
 package net.myorb.testing;
 
-import net.myorb.math.computational.MaxMin;
 import net.myorb.math.realnumbers.RealFunctionWrapper;
-import net.myorb.math.computational.CauchySchlomilch;
+import net.myorb.math.computational.DirichletEta;
+import net.myorb.math.computational.MaxMin;
+
 import java.util.List;
 
-public class MaxMinOf extends CauchySchlomilch
+public class MaxMinOf extends DirichletEta
 {
 
 	static MaxMin maxMin = new MaxMin ();
@@ -28,8 +29,8 @@ public class MaxMinOf extends CauchySchlomilch
 	public static void main (String[] args)
 	{
 		double sigma = 14.1347;
-		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> cosSigmaT (x, sigma, 0.5)));
-		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> sinSigmaT (x, sigma, 0.5)));
+		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> cosSigmaTmu (x, sigma, 0.5)));
+		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> sinSigmaTmu (x, sigma, 0.5)));
 	}
 
 }

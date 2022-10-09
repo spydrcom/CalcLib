@@ -229,7 +229,7 @@ public class MaxMin
 	{
 		List <Double> domain = new ArrayList <Double> ();
 		setFunction (new RealFunctionWrapper (f).toCommonFunction ());
-		
+
 		for
 			(
 				double x = startingAt; x <= upTo;
