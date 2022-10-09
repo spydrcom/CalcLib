@@ -8,8 +8,6 @@ import java.util.List;
 public class MaxMinOf
 {
 
-//	static double ImagPart = 5;
-//	static double ImagPart = 14.134725;
 	static MaxMin maxMin = new MaxMin ();
 
 	static double REAL_PART (double t, double sigma)
@@ -35,7 +33,7 @@ public class MaxMinOf
 
 	public static void main (String[] args)
 	{
-		double sigma = 5;
+		double sigma = 14.1347;
 		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> REAL_PART (x, sigma)));
 		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> IMAG_PART (x, sigma)));
 	}
