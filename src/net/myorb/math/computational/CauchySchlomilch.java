@@ -112,5 +112,56 @@ public class CauchySchlomilch
 		return s.C (cosSigmaT (t, s), sinSigmaT (t, s));
 	}
 
+	/**
+	 * evaluate integral in fully complex arithmetic
+	 * @param s complex parameter to function
+	 */
+	public CauchySchlomilch (ComplexValue <Double> s)
+	{
+		this.s = s;
+	}
+	ComplexValue <Double> s;
+
+	/**
+	 * evaluate integrand at point t
+	 * @param t the integration variable value
+	 * @return the complex result
+	 */
+	public ComplexValue <Double> eval (double t)
+	{
+		return eval (t, s);
+	}
+
+	/**
+	 * prepare evaluation using just real numbers
+	 * @param alpha the real part of the parameter
+	 * @param sigma the imag part of the parameter
+	 */
+	public CauchySchlomilch (double alpha, double sigma)
+	{
+		this.alpha = alpha; this.sigma = sigma;
+	}
+	double alpha, sigma;
+
+	/**
+	 * evaluate integrand at point t
+	 * @param t the integration variable value
+	 * @return the real part of the result
+	 */
+	public double evalRealPart (double t)
+	{
+		return cosSigmaT (t, sigma, alpha);
+	}
+
+	/**
+	 * evaluate integrand at point t
+	 * @param t the integration variable value
+	 * @return the imag part of the result
+	 */
+	public double evalImagPart (double t)
+	{
+		return sinSigmaT (t, sigma, alpha);
+	}
+
 }
 
