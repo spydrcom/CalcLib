@@ -3,6 +3,10 @@ package net.myorb.math.computational;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 
+/**
+ * algorithms for evaluation of the integral form t^z
+ * @author Michael Druckman
+ */
 public class CauchySchlomilch
 {
 
