@@ -1,9 +1,9 @@
 
 package net.myorb.math.computational;
 
-import net.myorb.math.computational.TanhSinhQuadratureTables;
 import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
+import net.myorb.math.computational.TanhSinhQuadratureTables;
 
 import net.myorb.math.Function;
 
@@ -105,7 +105,7 @@ public class MaxMin
 	 */
 	public static double kLnT (double k, double t)
 	{
-		return k * Math.log (t);
+		return CauchySchlomilch.kLnT (k, t);
 	}
 
 
