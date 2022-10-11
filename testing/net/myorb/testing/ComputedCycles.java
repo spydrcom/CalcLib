@@ -54,8 +54,8 @@ mul=4;sp=1e-20
 
 		System.out.println (); System.out.print (part);
 		System.out.print (" - N=" + domain.size ());
-		System.out.print (" - E=" + computer.aggError);
-		System.out.print (" - O=" + computer.ops);
+		System.out.print (" - E=" + computer.aggregateError);
+		System.out.print (" - O=" + computer.evaluations);
 		System.out.println (); System.out.println ();
 
 		return I;
