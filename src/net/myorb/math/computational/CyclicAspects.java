@@ -18,6 +18,9 @@ public class CyclicAspects
 {
 
 
+	/**
+	 * enable trace output
+	 */
 	public static boolean TRC = false;
 
 
@@ -89,6 +92,7 @@ public class CyclicAspects
 
 
 	/**
+	 * enumerate derivative shifts over domain
 	 * @param found a list to compile the results
 	 * @param x the low end value to start the scan at
 	 * @param hi the high value of the interval to test
@@ -159,26 +163,6 @@ public class CyclicAspects
 
 
 	/**
-	 * @param lo the low end of an integration range
-	 * @param hi the high end of an integration range
-	 * @return the calculated integral
-	 */
-	public double eval (double lo, double hi)
-	{
-		double result =
-			TanhSinhQuadratureAlgorithms.Integrate
-				(f, lo, hi, targetAbsoluteError, stats);
-		if (TRC)
-		{
-			System.out.println (lo + ".." + hi);
-			System.out.println ("\t : " + stats);
-			System.out.println ("\t I=" + result);
-		}
-		return result;
-	}
-
-
-	/**
 	 * compute k * ln(t)
 	 * @param k multiple of ln t
 	 * @param t distance on the real axis
@@ -205,6 +189,7 @@ public class CyclicAspects
 
 
 	/**
+	 * generate step-cycle sync points
 	 * @param f function being evaluated
 	 * @param startingAt the starting low value of the range
 	 * @param multiple number of steps to use per increment
@@ -252,11 +237,10 @@ public class CyclicAspects
 
 
 	/**
+	 * generate half-cycle sync points
 	 * @param f function being evaluated
-	 * @param startingAt the starting low value of the range
-	 * @param multiple number of steps to use per increment
-	 * @param upTo the high value of the range
-	 * @param k the multiple of ln t
+	 * @param k the imag part multiple of ln t
+	 * @param N max multiple of PI as domain point
 	 * @return the list of points
 	 */
 	public List <Double> computeCycleSyncPoints
@@ -281,18 +265,40 @@ public class CyclicAspects
 
 
 	/**
-	 * @param maxMin the list of max and min domain points
+	 * compute function integral
+	 * @param lo the low end of an integration range
+	 * @param hi the high end of an integration range
 	 * @return the calculated integral
 	 */
-	public double integralOver (List <Double> maxMin)
+	public double eval (double lo, double hi)
 	{
-		aggError = 0; ops = 0;
-		double h, result = 0, l = maxMin.get (0);
-		for (int i = 1; i < maxMin.size (); i++)
+		double result =
+			TanhSinhQuadratureAlgorithms.Integrate
+				(f, lo, hi, targetAbsoluteError, stats);
+		if (TRC)
 		{
-			result += eval (l, h = maxMin.get (i));
-			ops += stats.numFunctionEvaluations;
-			aggError += stats.errorEstimate;
+			System.out.println (lo + ".." + hi);
+			System.out.println ("\t : " + stats);
+			System.out.println ("\t I=" + result);
+		}
+		return result;
+	}
+
+
+	/**
+	 * compute series of integrals over domain points
+	 * @param points the list of domain points to establish the series
+	 * @return the calculated integral
+	 */
+	public double integralOver (List <Double> points)
+	{
+		aggregateError = 0; evaluations = 0;
+		double h, result = 0, l = points.get (0);
+		for (int i = 1; i < points.size (); i++)
+		{
+			result += eval (l, h = points.get (i));
+			evaluations += stats.numFunctionEvaluations;
+			aggregateError += stats.errorEstimate;
 
 			if (TRC)
 			{
@@ -304,8 +310,9 @@ public class CyclicAspects
 		}
 		return result;
 	}
-	protected double aggError;
-	protected int ops;
+	// the aggregate error and count of evaluations
+	protected double aggregateError;
+	protected int evaluations;
 
 
 	/*
