@@ -5,8 +5,6 @@ import net.myorb.math.computational.DirichletEta;
 
 import net.myorb.math.computational.CyclicAspects;
 
-import net.myorb.math.realnumbers.RealFunctionWrapper;
-
 import java.util.List;
 
 public class MaxMinOf extends DirichletEta
@@ -14,9 +12,9 @@ public class MaxMinOf extends DirichletEta
 
 	static CyclicAspects aspects = new CyclicAspects ();
 
-	static void compute (RealFunctionWrapper f)
+	static void compute (CyclicAspects.FunctionBody f)
 	{
-		aspects.setFunction (f.toCommonFunction ());
+		aspects.setFunction (f);
 		List <Double> c = aspects.find (0, 1, 1E-8);
 		System.out.println (c);
 
@@ -31,8 +29,8 @@ public class MaxMinOf extends DirichletEta
 	public static void main (String[] args)
 	{
 		double sigma = 14.1347;
-		System.out.println ("Re: "); compute (new RealFunctionWrapper ((x) -> cosSigmaTmu (x, sigma, 0.5)));
-		System.out.println ("Im: "); compute (new RealFunctionWrapper ((x) -> sinSigmaTmu (x, sigma, 0.5)));
+		System.out.println ("Re: "); compute ((x) -> cosSigmaTmu (x, sigma, 0.5));
+		System.out.println ("Im: "); compute ((x) -> sinSigmaTmu (x, sigma, 0.5));
 	}
 
 }

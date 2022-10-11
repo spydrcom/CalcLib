@@ -310,6 +310,10 @@ public class CyclicAspects
 		}
 		return result;
 	}
+
+
+	public double getAggregateError () { return aggregateError; }
+	public int getEvaluationCount () { return evaluations; }
 	// the aggregate error and count of evaluations
 	protected double aggregateError;
 	protected int evaluations;
