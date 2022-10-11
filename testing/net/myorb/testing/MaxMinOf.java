@@ -1,25 +1,27 @@
 
 package net.myorb.testing;
 
-import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.math.computational.DirichletEta;
-import net.myorb.math.computational.MaxMin;
+
+import net.myorb.math.computational.CyclicAspects;
+
+import net.myorb.math.realnumbers.RealFunctionWrapper;
 
 import java.util.List;
 
 public class MaxMinOf extends DirichletEta
 {
 
-	static MaxMin maxMin = new MaxMin ();
+	static CyclicAspects aspects = new CyclicAspects ();
 
 	static void compute (RealFunctionWrapper f)
 	{
-		maxMin.setFunction (f.toCommonFunction ());
-		List <Double> c = maxMin.find (0, 1, 1E-8);
+		aspects.setFunction (f.toCommonFunction ());
+		List <Double> c = aspects.find (0, 1, 1E-8);
 		System.out.println (c);
 
-		double loEnd = maxMin.integralOver (c);
-		double hiEnd = maxMin.eval (1, 20);
+		double loEnd = aspects.integralOver (c);
+		double hiEnd = aspects.eval (1, 20);
 		double full = loEnd+hiEnd;
 
 		System.out.println ("0..1:  " + loEnd);

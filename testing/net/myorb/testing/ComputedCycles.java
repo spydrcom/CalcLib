@@ -1,11 +1,11 @@
 
 package net.myorb.testing;
 
-import net.myorb.math.computational.MaxMin;
+import net.myorb.math.computational.CyclicAspects;
 
 import java.util.List;
 
-public class ComputedCycles extends MaxMin
+public class ComputedCycles extends CyclicAspects
 {
 
 

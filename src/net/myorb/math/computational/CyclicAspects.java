@@ -14,14 +14,11 @@ import java.util.List;
  * identify maximum and minimum points for a function over an interval
  * @author Michael Druckman
  */
-public class MaxMin
+public class CyclicAspects
 {
 
 
-	// 	!!  d (t, k)  =  t *  ( exp (pi/k) - 1 )
-
-
-	public static boolean TRC = true;
+	public static boolean TRC = false;
 
 
 	/**
@@ -179,9 +176,6 @@ public class MaxMin
 		}
 		return result;
 	}
-	protected TanhSinhQuadratureTables.ErrorEvaluation stats =
-		new TanhSinhQuadratureTables.ErrorEvaluation ();
-	protected double targetAbsoluteError = 1E-4;
 
 
 	/**
@@ -227,8 +221,9 @@ public class MaxMin
 			double k
 		)
 	{
-		List <Double> domain = new ArrayList <Double> ();
-		setFunction (new RealFunctionWrapper (f).toCommonFunction ());
+		List <Double> domain =
+			new ArrayList <Double> ();
+		setFunction (f);
 
 		for
 			(
@@ -237,6 +232,48 @@ public class MaxMin
 			)
 		{
 			domain.add (x);
+		}
+
+		return domain;
+	}
+
+
+	/**
+	 * alternate form for cycles:
+	 * - multiples of PI / k as exponent
+	 * @param n multiple of PI as domain point
+	 * @param k multiple of ln t
+	 * @return real axis point
+	 */
+	public static double halfCycle (int n, double k)
+	{
+		return Math.exp (n * Math.PI / k);
+	}
+
+
+	/**
+	 * @param f function being evaluated
+	 * @param startingAt the starting low value of the range
+	 * @param multiple number of steps to use per increment
+	 * @param upTo the high value of the range
+	 * @param k the multiple of ln t
+	 * @return the list of points
+	 */
+	public List <Double> computeCycleSyncPoints
+		(
+			FunctionBody f,
+			double k,
+			int N
+		)
+	{
+		List <Double> domain =
+			new ArrayList <Double> ();
+		setFunction (f);
+
+		while (N >= 0)
+		{
+			domain.add (halfCycle (-N, k));
+			N--;
 		}
 
 		return domain;
@@ -271,11 +308,38 @@ public class MaxMin
 	protected int ops;
 
 
-	/**
-	 * @param f the function to be tested
+	/*
+	 * function representing the integrand
 	 */
+
+	public void setFunction (FunctionBody f)
+	{ setFunction (new RealFunctionWrapper (f).toCommonFunction ()); }
 	public void setFunction (Function <Double> f) { this.f = f; }
-	Function <Double> f;
+	protected Function <Double> f;
+
+
+	/**
+	 * initialize quadrature structures
+	 */
+	public CyclicAspects ()
+	{
+		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
+		this.targetAbsoluteError = 1E-10;
+	}
+	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
+
+
+	/**
+	 * identify a target error value.
+	 * - the smaller the target the more work done
+	 * - too small and the algorithm falls apart and results go crazy
+	 * @param to use this value for target error
+	 */
+	public void setTargetError (double to)
+	{
+		this.targetAbsoluteError = to;
+	}
+	protected double targetAbsoluteError;
 
 
 }
