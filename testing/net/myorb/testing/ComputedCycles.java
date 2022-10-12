@@ -1,7 +1,7 @@
 
 package net.myorb.testing;
 
-import net.myorb.math.computational.CyclicAspects;
+import net.myorb.math.computational.integration.polylog.*;
 
 import java.util.List;
 

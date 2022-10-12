@@ -1,49 +1,22 @@
 
-package net.myorb.math.computational;
+package net.myorb.math.computational.integration.polylog;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 
 /**
- * cosh formula for computation of Dirichlet eta
+ * common base class for complex exponential formulas
  * @author Michael Druckman
  */
-public class DirichletEta extends CauchySchlomilch
+public abstract class ComplexExponentComponents extends CauchySchlomilch
 {
 
 	/**
-	 * compute t^s / cosh
-	 * @param s the exponent
+	 * the real part factor of the formula
+	 * @param s the real part of the exponent
 	 * @param t the integration variable
 	 * @return the computed value
 	 */
-	public static double mu (double s, double t)
-	{ return Math.pow (t, s) / COSH2SQ (t); }
-
-	/**
-	 * compute t^s / cosh
-	 * @param s the complex exponent
-	 * @param t the integration variable
-	 * @return the computed value
-	 */
-	public static double mu
-		(ComplexValue <Double> s, double t)
-	{ return mu (s.Re (), t); }
-
-	/**
-	 * compute cosh^2 x
-	 * @param x the integration variable value
-	 * @return the computed value
-	 */
-	public static
-		double COSH2SQ (double x)
-	{ return SQ ( Math.cosh (x) ); }
-
-	/**
-	 * compute x^2 (cheaper than POW)
-	 * @param x the value to square
-	 * @return the computed value
-	 */
-	public static double SQ (double x) { return x*x; }
+	public abstract double mu (double s, double t);
 
 	/**
 	 * compute the
@@ -53,7 +26,7 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param alpha the RE part of the parameter
 	 * @return the computed value
 	 */
-	public static double cosSigmaTmu (double t, double sigma, double alpha)
+	public double cosSigmaTmu (double t, double sigma, double alpha)
 	{ return cosSigmaT (t, sigma) * mu (alpha, t); }
 
 	/**
@@ -63,7 +36,7 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param s the parameter to the integral
 	 * @return the computed value
 	 */
-	public static double cosSigmaTmu
+	public double cosSigmaTmu
 		(double t, ComplexValue <Double> s)
 	{ return cosSigmaT (t, s) * mu (s.Re (), t); }
 
@@ -75,7 +48,7 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param alpha the RE part of the parameter
 	 * @return the computed value
 	 */
-	public static double sinSigmaTmu
+	public double sinSigmaTmu
 		(double t, double sigma, double alpha)
 	{ return sinSigmaT (t, sigma) * mu (alpha, t); }
 
@@ -86,7 +59,7 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param s the parameter to the integral
 	 * @return the computed value
 	 */
-	public static double sinSigmaTmu
+	public double sinSigmaTmu
 		(double t, ComplexValue <Double> s)
 	{ return sinSigmaT (t, s) * mu (s.Re (), t); }
 
@@ -96,7 +69,7 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param s the complex parameter to the integral
 	 * @return the full computed complex value
 	 */
-	public static ComplexValue <Double> eval
+	public ComplexValue <Double> eval
 		(double t, ComplexValue <Double> s)
 	{
 		return s.C (cosSigmaTmu (t, s), sinSigmaTmu (t, s));
@@ -106,11 +79,11 @@ public class DirichletEta extends CauchySchlomilch
 	 * evaluate integral in fully complex arithmetic
 	 * @param s complex parameter to function
 	 */
-	public DirichletEta (ComplexValue <Double> s)
+	public ComplexExponentComponents (ComplexValue <Double> s)
 	{
 		this.s = s;
 	}
-	ComplexValue <Double> s;
+	protected ComplexValue <Double> s;
 
 	/**
 	 * evaluate integrand at point t
@@ -127,11 +100,11 @@ public class DirichletEta extends CauchySchlomilch
 	 * @param alpha the real part of the parameter
 	 * @param sigma the imag part of the parameter
 	 */
-	public DirichletEta (double alpha, double sigma)
+	public ComplexExponentComponents (double alpha, double sigma)
 	{
 		this.alpha = alpha; this.sigma = sigma;
 	}
-	double alpha, sigma;
+	protected double alpha, sigma;
 
 	/**
 	 * evaluate integrand at point t
@@ -156,6 +129,6 @@ public class DirichletEta extends CauchySchlomilch
 	/**
 	 * allow as base class for static reference
 	 */
-	public DirichletEta () {}
+	public ComplexExponentComponents () {}
 
 }

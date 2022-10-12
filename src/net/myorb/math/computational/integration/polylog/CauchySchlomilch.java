@@ -1,5 +1,5 @@
 
-package net.myorb.math.computational;
+package net.myorb.math.computational.integration.polylog;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 
