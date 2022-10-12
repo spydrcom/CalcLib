@@ -4,23 +4,23 @@ package net.myorb.math.computational.integration.polylog;
 import net.myorb.math.complexnumbers.ComplexValue;
 
 /**
- * Dirichlet eta definitive integral formula
+ * cosh formula for computation of Dirichlet eta
  * @author Michael Druckman
  */
-public class DirichletEta extends ComplexExponentComponents
+public class AmdeberhanEta  extends ComplexExponentComponents
 {
 
 	/**
-	 * compute t^(s-1) / (exp(t) + 1)
-	 * @param s the real part of the exponent
+	 * compute t^s / cosh
+	 * @param s the exponent
 	 * @param t the integration variable
 	 * @return the computed value
 	 */
 	public double mu (double s, double t)
-	{ return Math.pow (t, s-1) / ( Math.exp (t) + 1 ); }
+	{ return Math.pow (t, s) / COSH2SQ (t); }
 
 	/**
-	 * compute t^s-1 / exp+1
+	 * compute t^s / cosh
 	 * @param s the complex exponent
 	 * @param t the integration variable
 	 * @return the computed value
@@ -30,10 +30,26 @@ public class DirichletEta extends ComplexExponentComponents
 	{ return mu (s.Re (), t); }
 
 	/**
+	 * compute cosh^2 x
+	 * @param x the integration variable value
+	 * @return the computed value
+	 */
+	public static
+		double COSH2SQ (double x)
+	{ return SQ ( Math.cosh (x) ); }
+
+	/**
+	 * compute x^2 (cheaper than POW)
+	 * @param x the value to square
+	 * @return the computed value
+	 */
+	public static double SQ (double x) { return x*x; }
+
+	/**
 	 * evaluate integral in fully complex arithmetic
 	 * @param s complex parameter to function
 	 */
-	public DirichletEta (ComplexValue <Double> s)
+	public AmdeberhanEta (ComplexValue <Double> s)
 	{
 		super (s);
 	}
@@ -43,7 +59,7 @@ public class DirichletEta extends ComplexExponentComponents
 	 * @param alpha the real part of the parameter
 	 * @param sigma the imag part of the parameter
 	 */
-	public DirichletEta (double alpha, double sigma)
+	public AmdeberhanEta (double alpha, double sigma)
 	{
 		super (alpha, sigma);
 	}
@@ -51,6 +67,7 @@ public class DirichletEta extends ComplexExponentComponents
 	/**
 	 * allow as base class for static reference
 	 */
-	public DirichletEta () {}
+	public AmdeberhanEta () {}
 
 }
+
