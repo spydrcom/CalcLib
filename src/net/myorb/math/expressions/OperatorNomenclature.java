@@ -347,6 +347,22 @@ public class OperatorNomenclature
 
 
 	/*
+	 * vector space operators
+	 */
+
+	public static
+		final String
+	START_OF_VECTOR_SPACE_INNER_PRODUCT = "|<",	// |< v1 | v2 >|	inner product of two vectors
+	VECTOR_SPACE_INNER_PRODUCT_DIVIDER = "|",	//						delimiter separating vectors
+	END_OF_VECTOR_SPACE_INNER_PRODUCT = ">|",	//						closing bracket delimiter
+	START_OF_INNER_PRODUCT_NORM = "|",			// |   id    |		norm of the enclosed vector			inner product
+	END_OF_INNER_PRODUCT_NORM = "|",			//						same as opening delimiter		associated norm
+	START_OF_VECTOR_SPACE_NORM = "||",			// ||  id   ||		norm of the enclosed vector			canonical norm
+	END_OF_VECTOR_SPACE_NORM = "||"				//						same as opening delimiter
+			;
+
+
+	/*
 	 * unicode character values for renders
 	 */
 
