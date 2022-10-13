@@ -17,7 +17,9 @@ public class BernoulliGamma extends ComplexExponentComponents
 	 * @return the computed value
 	 */
 	public double mu (double s, double t)
-	{ return Math.pow (t, s-1) / Math.exp (t); }
+	//{ return Math.pow (t, s-1) / Math.exp (t); }
+	// a little algebra shows equivalent formula (perhaps faster)
+	{ return Math.exp (kLnT (s-1, t) - t); }
 
 	/**
 	 * evaluate integral in fully complex arithmetic
