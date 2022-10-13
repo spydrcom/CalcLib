@@ -20,16 +20,6 @@ public class BernoulliGamma extends ComplexExponentComponents
 	{ return Math.pow (t, s-1) / Math.exp (t); }
 
 	/**
-	 * compute t^s / e^t
-	 * @param s the complex exponent
-	 * @param t the integration variable
-	 * @return the computed value
-	 */
-	public double mu
-		(ComplexValue <Double> s, double t)
-	{ return mu (s.Re (), t); }
-
-	/**
 	 * evaluate integral in fully complex arithmetic
 	 * @param s complex parameter to function
 	 */

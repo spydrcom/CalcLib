@@ -19,6 +19,16 @@ public abstract class ComplexExponentComponents extends CauchySchlomilch
 	public abstract double mu (double s, double t);
 
 	/**
+	 * compute mu on real part
+	 * @param s the complex exponent
+	 * @param t the integration variable
+	 * @return the computed value
+	 */
+	public double mu
+		(ComplexValue <Double> s, double t)
+	{ return mu (s.Re (), t); }
+
+	/**
 	 * compute the
 	 *  real part of the integrand
 	 * @param t the integration variable

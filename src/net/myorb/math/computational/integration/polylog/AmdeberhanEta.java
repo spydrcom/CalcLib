@@ -20,16 +20,6 @@ public class AmdeberhanEta  extends ComplexExponentComponents
 	{ return Math.pow (t, s) / COSH2SQ (t); }
 
 	/**
-	 * compute t^s / cosh
-	 * @param s the complex exponent
-	 * @param t the integration variable
-	 * @return the computed value
-	 */
-	public double mu
-		(ComplexValue <Double> s, double t)
-	{ return mu (s.Re (), t); }
-
-	/**
 	 * compute cosh^2 x
 	 * @param x the integration variable value
 	 * @return the computed value

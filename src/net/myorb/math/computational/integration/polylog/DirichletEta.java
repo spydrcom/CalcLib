@@ -20,16 +20,6 @@ public class DirichletEta extends ComplexExponentComponents
 	{ return Math.pow (t, s-1) / ( Math.exp (t) + 1 ); }
 
 	/**
-	 * compute t^s-1 / exp+1
-	 * @param s the complex exponent
-	 * @param t the integration variable
-	 * @return the computed value
-	 */
-	public double mu
-		(ComplexValue <Double> s, double t)
-	{ return mu (s.Re (), t); }
-
-	/**
 	 * evaluate integral in fully complex arithmetic
 	 * @param s complex parameter to function
 	 */
