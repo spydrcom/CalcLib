@@ -149,7 +149,7 @@ public class EvaluationControl<T> implements EvaluationControlI<T>
 	{
 		CommandSequence tokens =
 			new CommandSequence (TokenParser.parse (new StringBuffer (source)));
-		if (engine.dumpingRequested ()) System.out.println (tokens);
+		if (engine.dumpingRequested ()) { System.out.println (tokens); }
 		run (tokens, processWithCheck);
 	}
 	public void execute (String source) { execute (source, true); }

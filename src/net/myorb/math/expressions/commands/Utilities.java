@@ -38,6 +38,29 @@ public class Utilities<T>
 
 
 	/**
+	 * get text of token at index
+	 * @param tokens a command sequence
+	 * @param number the index of the token to get
+	 * @return the image of the indexed token
+	 */
+	public static String imageOf
+	(List<TokenParser.TokenDescriptor> tokens, int number)
+	{ return tokens.get (number).getTokenImage (); }
+
+
+	/**
+	 * get text of token at index
+	 * @param tokens a command sequence
+	 * @param number the index of the token to get
+	 * @param defaultValue value to return if number out of range
+	 * @return the image of the indexed token or the default as described
+	 */
+	public static String imageOf
+	(List<TokenParser.TokenDescriptor> tokens, int number, String defaultValue)
+	{ return number < tokens.size () ? imageOf (tokens, number) : defaultValue; }
+
+
+	/**
 	 * commands are forced to lower case to effect case independence
 	 * @param ofTokens the list of tokens forming the command
 	 * @return the first token in lower case

@@ -153,10 +153,37 @@ public class EvaluationEngine<T>
 
 
 	/**
-	 * evaluate a set of tokens
+	 * determine processing status and act on token stream as expected
 	 * @param tokens an ordered list of token comprising the expression
 	 */
 	public void process (List<TokenParser.TokenDescriptor> tokens)
+	{
+		if (evaluationBlock == null || evaluationBlock.isToBeprocessed (tokens))
+		{
+			processEnabled (tokens);
+		}
+	}
+
+
+	/**
+	 * control for blocks of commands
+	 * - support for conditional and loop blocks
+	 * @return the current block control object
+	 */
+	public EvaluationBlock<T> getEvaluationBlock () { return evaluationBlock; }
+
+	/**
+	 * @param evaluationBlock a block control object
+	 */
+	public void setEvaluationBlock (EvaluationBlock<T> evaluationBlock) { this.evaluationBlock = evaluationBlock; }
+	EvaluationBlock<T> evaluationBlock = new EvaluationBlock<> ();
+
+
+	/**
+	 * evaluate a set of tokens
+	 * @param tokens an ordered list of token comprising the expression
+	 */
+	public void processEnabled (List<TokenParser.TokenDescriptor> tokens)
 	{
 		environment.init ();
 		if (dumpingRequested ())
