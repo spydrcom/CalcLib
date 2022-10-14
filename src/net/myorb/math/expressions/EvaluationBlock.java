@@ -4,6 +4,7 @@ package net.myorb.math.expressions;
 import net.myorb.math.expressions.commands.Utilities;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.commands.EnvironmentalUtilities;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import java.util.ArrayList;
@@ -67,12 +68,23 @@ public class EvaluationBlock <T>
 	 * @param sym the symbol associated with this block
 	 * @return the value computed from the tokens
 	 */
-	int getBlockIDValue (CommandSequence tokens, String sym)
+	public int getBlockIDValue (CommandSequence tokens, String sym)
 	{
-		if (environment.getSymbolMap ().get (sym) == null) return 0;
+		if ((this.loopVariable = environment.getSymbolMap ().get (sym)) == null) return 0;
 		T t = environment.getValueManager ().toDiscrete (access.getValue (tokens));
 		return environment.getSpaceManager ().toNumber (t).intValue ();
 	}
+
+
+	/**
+	 * set block ID symbol to loop value
+	 * @param value the current loop value
+	 */
+	public void setSym (int value)
+	{
+		//TODO: set symbol table item value
+	}
+	protected Object loopVariable;
 
 
 	/**
@@ -80,7 +92,7 @@ public class EvaluationBlock <T>
 	 * @param tokens the tokens of the command line
 	 * @return the text of the first token
 	 */
-	String getBlockID (CommandSequence tokens)
+	public String getBlockID (CommandSequence tokens)
 	{
 		String sym = Utilities.imageOf (tokens, 1, null);
 		if (sym == null) throw new RuntimeException ("Block ID not found");
@@ -111,9 +123,41 @@ public class EvaluationBlock <T>
 		this.blockContents = new ArrayList <> ();
 		int value = getBlockIDValue (tokens, sym);
 		if (value == 0) { this.currently = DISABLED; }
-		else if (value > 1) { this.currently = COMPILE; }
+		else if (value > 1) { loop (sym, value); }
 	}
-	public void endLoopBlock () { resetToNormal (); }
+	public void endLoopBlock (EvaluationEngine <T> engine)
+	{ executeLoop (engine); }
+
+
+	/**
+	 * capture the parameters for a loop block
+	 * @param sym name to associate with the new loop block
+	 * @param value the repeat count taken from the start command
+	 */
+	public void loop (String sym, int value)
+	{
+		this.currently = COMPILE;
+		this.loopBlockCount = value;
+		this.loopBlockID = sym;
+	}
+	protected String loopBlockID;
+	protected int loopBlockCount;
+
+
+	/**
+	 * process iterations of the loop
+	 * @param engine the execution engine to use
+	 */
+	public void executeLoop (EvaluationEngine <T> engine)
+	{
+//		System.out.println
+//		(
+//			"Loop " + loopBlockID +
+//			" to execute " + loopBlockCount + " times"
+//		);
+		resetToNormal ();
+		loop (engine);
+	}
 
 
 	/**
@@ -140,23 +184,42 @@ public class EvaluationBlock <T>
 		switch (currently)
 		{
 
+			case NORMAL_EXECUTION:
+
+				return true;
+
 			case CONDITIONALLY_DISCARDING:
+
 				return checkFor (END_CONDITION, tokens);
 
 			case BLOCK_QUEUE_ACTIVE:
+
 				if ( ! checkFor (END_LOOP, tokens) )
 				{ this.blockContents.add (tokens); }
 				else { return true; }
 
-			case NORMAL_EXECUTION:
-				return true;
-
 			default:
+
 				break;
 
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * execute the queued commands in loop
+	 * @param engine the execution engine to use
+	 */
+	public void loop (EvaluationEngine <T> engine)
+	{
+		for (int i = this.loopBlockCount; i > 0; i++)
+		{
+			setSym (i);
+			for (int j = 0; j < this.blockContents.size (); j++)
+			{ engine.processEnabled (this.blockContents.get (j)); }
+		}
 	}
 	protected ArrayList <List<TokenParser.TokenDescriptor>> blockContents;
 
