@@ -158,7 +158,7 @@ public class EvaluationEngine<T>
 	 */
 	public void process (List<TokenParser.TokenDescriptor> tokens)
 	{
-		if (evaluationBlock == null || evaluationBlock.isToBeprocessed (tokens))
+		if (evaluationBlock == null || evaluationBlock.isToBeProcessed (tokens))
 		{
 			processEnabled (tokens);
 		}

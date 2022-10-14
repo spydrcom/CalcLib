@@ -5,6 +5,7 @@ import net.myorb.math.expressions.commands.Utilities;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.commands.EnvironmentalUtilities;
 
+import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import java.util.ArrayList;
@@ -55,11 +56,12 @@ public class EvaluationBlock <T>
 			EnvironmentalUtilities.AccessToTopOfStack access
 		)
 	{
-		this.environment = environment;
+		this.vm = environment.getValueManager ();
+		this.symbolTable = environment.getSymbolMap ();
+		this.sm = environment.getSpaceManager ();
 		this.access = access;
 	}
 	protected EnvironmentalUtilities.AccessToTopOfStack access;
-	protected Environment<T> environment;
 
 
 	/**
@@ -70,10 +72,12 @@ public class EvaluationBlock <T>
 	 */
 	public int getBlockIDValue (CommandSequence tokens, String sym)
 	{
-		if ((this.loopVariable = environment.getSymbolMap ().get (sym)) == null) return 0;
-		T t = environment.getValueManager ().toDiscrete (access.getValue (tokens));
-		return environment.getSpaceManager ().toNumber (t).intValue ();
+		if (symbolTable.get (sym) == null) return 0;
+		T t = vm.toDiscrete (access.getValue (tokens));
+		return sm.toNumber (t).intValue ();
 	}
+	protected ExpressionSpaceManager <T> sm;
+	protected ValueManager <T> vm;
 
 
 	/**
@@ -82,9 +86,12 @@ public class EvaluationBlock <T>
 	 */
 	public void setSym (int value)
 	{
-		//TODO: set symbol table item value
+		T v = sm.convertFromDouble ((double) value);
+		ValueManager.GenericValue gv = vm.newDiscreteValue (v);
+		symbolTable.add (new AssignedVariableStorage (loopBlockID, gv));
 	}
-	protected Object loopVariable;
+	protected SymbolMap symbolTable;
+
 
 
 	/**
@@ -109,6 +116,7 @@ public class EvaluationBlock <T>
 		String sym = getBlockID (tokens);
 		int value = getBlockIDValue (tokens, sym) == 0 ? 0 : 1;
 		if (value == 0) { this.currently = DISABLED; }
+		this.blockTerminator = END_CONDITION;
 	}
 	public void endConditionalBlock () { resetToNormal (); }
 
@@ -124,6 +132,7 @@ public class EvaluationBlock <T>
 		int value = getBlockIDValue (tokens, sym);
 		if (value == 0) { this.currently = DISABLED; }
 		else if (value > 1) { loop (sym, value); }
+		this.blockTerminator = END_LOOP;
 	}
 	public void endLoopBlock (EvaluationEngine <T> engine)
 	{ executeLoop (engine); }
@@ -150,11 +159,6 @@ public class EvaluationBlock <T>
 	 */
 	public void executeLoop (EvaluationEngine <T> engine)
 	{
-//		System.out.println
-//		(
-//			"Loop " + loopBlockID +
-//			" to execute " + loopBlockCount + " times"
-//		);
 		resetToNormal ();
 		loop (engine);
 	}
@@ -177,7 +181,7 @@ public class EvaluationBlock <T>
 	 * @param tokens the tokens of the command line
 	 * @return TRUE for command to be processed
 	 */
-	public boolean isToBeprocessed (List<TokenParser.TokenDescriptor> tokens)
+	public boolean isToBeProcessed (List<TokenParser.TokenDescriptor> tokens)
 	{
 		if (tokens.size () == 0) return false;
 
@@ -190,7 +194,7 @@ public class EvaluationBlock <T>
 
 			case CONDITIONALLY_DISCARDING:
 
-				return checkFor (END_CONDITION, tokens);
+				return checkFor (this.blockTerminator, tokens);
 
 			case BLOCK_QUEUE_ACTIVE:
 
@@ -206,6 +210,7 @@ public class EvaluationBlock <T>
 
 		return false;
 	}
+	protected String blockTerminator;
 
 
 	/**
@@ -214,12 +219,20 @@ public class EvaluationBlock <T>
 	 */
 	public void loop (EvaluationEngine <T> engine)
 	{
-		for (int i = this.loopBlockCount; i > 0; i++)
+		for (int i = this.loopBlockCount; i > 0; i--)
 		{
 			setSym (i);
 			for (int j = 0; j < this.blockContents.size (); j++)
-			{ engine.processEnabled (this.blockContents.get (j)); }
+			{ engine.processEnabled (copyOf (j)); }
 		}
+		this.blockContents = null;
+	}
+	List<TokenParser.TokenDescriptor> copyOf (int index)
+	{
+		List<TokenParser.TokenDescriptor> copy =
+			new ArrayList<TokenParser.TokenDescriptor>();
+		copy.addAll (this.blockContents.get (index));
+		return copy;
 	}
 	protected ArrayList <List<TokenParser.TokenDescriptor>> blockContents;
 
