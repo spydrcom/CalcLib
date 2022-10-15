@@ -1,6 +1,7 @@
 
 package net.myorb.math.matrices;
 
+import net.myorb.math.Polynomial;
 import net.myorb.math.ListOperations;
 import net.myorb.math.SpaceManager;
 
@@ -494,6 +495,49 @@ public class MatrixOperations<T> extends ListOperations<T>
 
 		return result;
 	}
+
+	/**
+	 * compute a polynomial series with a matrix as the variable
+	 * - this is special case for BuiltinPolynomialFunctions allowing matrix parameters
+	 * @param coefficients the coefficients of the polynomial
+	 * @param x the matrix to use as polynomial variable
+	 * @return the computed series
+	 */
+	public Matrix <T> sumOfSeries
+	(Polynomial.Coefficients <T> coefficients, MatrixAccess <T> x)
+	{
+		MatrixAccess <T> P = check (coefficients, x);	// maintain x^n
+		Matrix <T> ID = this.identity (x.rowCount ());	// identity for order
+		Matrix <T> sum = this.sum						// sum first 2
+			(
+				times (ID, coefficients.get (0)),		// C0*ID + C1*P
+				times (P, coefficients.get (1))
+			);
+		for (int n = 2; n < coefficients.size (); n++)	// remaining coefficients
+		{
+			P = this.product (x, P);					// next x^n
+
+			sum = this.sum
+				(
+					this.times							// Cn * x^n
+					(
+						P,
+						coefficients.get (n)
+					),
+					sum
+				);
+		}
+		return sum;
+	}
+	public MatrixAccess <T> check
+	(Polynomial.Coefficients <T> coefficients, MatrixAccess <T> x)
+	{
+		if (x.columnCount () != x.rowCount ()) throw new RuntimeException (SQUARE);
+		if (coefficients.size () < 2) throw new RuntimeException (MINIMUM);
+		return x;
+	}
+	public static final String SQUARE = "Polynomial evaluation requires square matrix",
+			MINIMUM = "Polynomial requires 2 coefficients minimum";
 
 	/**
 	 * compute product of matrix with scalar

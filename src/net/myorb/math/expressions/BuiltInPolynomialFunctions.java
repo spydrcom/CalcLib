@@ -1,7 +1,6 @@
 
 package net.myorb.math.expressions;
 
-
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
 
@@ -9,12 +8,17 @@ import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.HyperGeometricPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 
+import net.myorb.math.computational.PolynomialRoots;
+import net.myorb.math.computational.GaussQuadrature;
+import net.myorb.math.computational.Regression;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.computational.*;
+import net.myorb.math.matrices.MatrixOperations;
+import net.myorb.math.matrices.Matrix;
+import net.myorb.math.*;
 
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
-import net.myorb.math.*;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -226,6 +230,26 @@ public class BuiltInPolynomialFunctions<T>
 
 
 	/**
+	 * @param x a matrix to be used as the function variable
+	 * @param polynomialCoefficients coefficients of the polynomial
+	 * @return the function result as a Matrix
+	 */
+	public ValueManager.GenericValue eval
+	(Matrix <T> x, ValueManager.GenericValue polynomialCoefficients)
+	{
+		return valueManager.newMatrix
+		(
+			new MatrixOperations <T> (spaceManager)
+				.sumOfSeries
+				(
+					getCoefficients (polynomialCoefficients),
+					x
+				)
+		);
+	}
+
+
+	/**
 	 * apply transform to list of values
 	 * @param values the list of values to use as parameters
 	 * @param polynomialCoefficients coefficients of the polynomial
@@ -272,7 +296,11 @@ public class BuiltInPolynomialFunctions<T>
 	 */
 	public ValueManager.GenericValue eval
 	(ValueManager.GenericValue polynomialCoefficients, ValueManager.GenericValue x)
-	{ return format (eval (valueManager.toArray (x), getTransform (polynomialCoefficients))); }
+	{
+		if (valueManager.isMatrix (x))		// special case for matrix
+		{ return eval (valueManager.toMatrix (x), polynomialCoefficients); }
+		return format (eval (valueManager.toArray (x), getTransform (polynomialCoefficients)));
+	}
 
 	public ValueManager.GenericValue evalPrime
 	(ValueManager.GenericValue polynomialCoefficients, ValueManager.GenericValue x, int order)

@@ -46,7 +46,10 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 		if (parameters != null)
 		{
 			if (parameters instanceof ValueManager.ValueList)
-			{ copyParameters ((ValueManager.ValueList)parameters); }
+			{ copyParameters ( (ValueManager.ValueList) parameters ); }
+			// special treatment for matrix singleton parameter case in polynomials
+			else if (valueManager.isMatrix (parameters) ) { setParameterValue (parameters); }
+			// allow for multiple parameter parallel processing by function
 			else copyParameters (valueManager.toArray (parameters));
 		}
 
