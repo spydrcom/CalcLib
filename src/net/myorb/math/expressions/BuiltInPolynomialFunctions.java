@@ -230,6 +230,7 @@ public class BuiltInPolynomialFunctions<T>
 
 
 	/**
+	 * special case for matrix as a polynomial parameter
 	 * @param x a matrix to be used as the function variable
 	 * @param polynomialCoefficients coefficients of the polynomial
 	 * @return the function result as a Matrix
