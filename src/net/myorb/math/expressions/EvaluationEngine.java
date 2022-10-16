@@ -149,14 +149,14 @@ public class EvaluationEngine<T>
 	public void
 	supressErrorMessages ()
 	{ supressingErrorMessages = true; }
-	boolean supressingErrorMessages = false;
+	protected boolean supressingErrorMessages = false;
 
 
 	/**
 	 * determine processing status and act on token stream as expected
 	 * @param tokens an ordered list of token comprising the expression
 	 */
-	public void process (List<TokenParser.TokenDescriptor> tokens)
+	public void process (List <TokenParser.TokenDescriptor> tokens)
 	{
 		if (evaluationBlock == null || evaluationBlock.isToBeProcessed (tokens))
 		{
@@ -170,20 +170,20 @@ public class EvaluationEngine<T>
 	 * - support for conditional and loop blocks
 	 * @return the current block control object
 	 */
-	public EvaluationBlock<T> getEvaluationBlock () { return evaluationBlock; }
+	public EvaluationBlock <T> getEvaluationBlock () { return evaluationBlock; }
 
 	/**
 	 * @param evaluationBlock a block control object
 	 */
-	public void setEvaluationBlock (EvaluationBlock<T> evaluationBlock) { this.evaluationBlock = evaluationBlock; }
-	EvaluationBlock<T> evaluationBlock = new EvaluationBlock<> ();
+	public void setEvaluationBlock (EvaluationBlock <T> evaluationBlock) { this.evaluationBlock = evaluationBlock; }
+	protected EvaluationBlock <T> evaluationBlock = new EvaluationBlock <> ();
 
 
 	/**
 	 * evaluate a set of tokens
 	 * @param tokens an ordered list of token comprising the expression
 	 */
-	public void processEnabled (List<TokenParser.TokenDescriptor> tokens)
+	public void processEnabled (List <TokenParser.TokenDescriptor> tokens)
 	{
 		environment.init ();
 		if (dumpingRequested ())
