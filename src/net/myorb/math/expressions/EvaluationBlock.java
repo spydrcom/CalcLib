@@ -52,7 +52,7 @@ public class EvaluationBlock <T>
 	 */
 	public EvaluationBlock
 		(
-			Environment<T> environment,
+			Environment <T> environment,
 			EnvironmentalUtilities.AccessToTopOfStack access
 		)
 	{
@@ -86,7 +86,7 @@ public class EvaluationBlock <T>
 	 */
 	public void setSym (int value)
 	{
-		T v = sm.convertFromDouble ((double) value);
+		T v = sm.convertFromDouble ( (double) value );
 		ValueManager.GenericValue gv = vm.newDiscreteValue (v);
 		symbolTable.add (new AssignedVariableStorage (loopBlockID, gv));
 	}
@@ -170,7 +170,7 @@ public class EvaluationBlock <T>
 	 * @param tokens current line of tokens
 	 * @return TRUE for expected found
 	 */
-	public boolean checkFor (String expected, List<TokenParser.TokenDescriptor> tokens)
+	public boolean checkFor (String expected, List <TokenParser.TokenDescriptor> tokens)
 	{
 		return expected.equals (tokens.get (0).getTokenImage ());
 	}
@@ -181,7 +181,7 @@ public class EvaluationBlock <T>
 	 * @param tokens the tokens of the command line
 	 * @return TRUE for command to be processed
 	 */
-	public boolean isToBeProcessed (List<TokenParser.TokenDescriptor> tokens)
+	public boolean isToBeProcessed (List <TokenParser.TokenDescriptor> tokens)
 	{
 		if (tokens.size () == 0) return false;
 
@@ -227,14 +227,14 @@ public class EvaluationBlock <T>
 		}
 		this.blockContents = null;
 	}
-	List<TokenParser.TokenDescriptor> copyOf (int index)
+	List <TokenParser.TokenDescriptor> copyOf (int index)
 	{
 		List<TokenParser.TokenDescriptor> copy =
 			new ArrayList<TokenParser.TokenDescriptor>();
 		copy.addAll (this.blockContents.get (index));
 		return copy;
 	}
-	protected ArrayList <List<TokenParser.TokenDescriptor>> blockContents;
+	protected ArrayList < List <TokenParser.TokenDescriptor> > blockContents;
 
 
 	public static final String

@@ -1,20 +1,36 @@
 
 package net.myorb.math.expressions.evaluationstates;
 
-import net.myorb.math.*;
-import net.myorb.math.expressions.*;
-import net.myorb.math.expressions.symbols.*;
-
+// representation of expression tree
 import net.myorb.math.expressions.tree.Gardener;
 import net.myorb.math.expressions.tree.Expression;
-import net.myorb.math.expressions.commands.CommandSequence;
 
+// representation of commands and symbols
+import net.myorb.math.expressions.commands.CommandSequence;
+import net.myorb.math.expressions.symbols.AssignedVariableStorage;
+
+// representation of expression components
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.ConventionalNotations;
+import net.myorb.math.expressions.EvaluationEngine;
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.SymbolMap;
+
+// representation of low level math objects
+import net.myorb.math.MultiDimensional;
+import net.myorb.math.SpaceManager;
+import net.myorb.math.Function;
+
+// computation algorithms related to splines and integration
 import net.myorb.math.computational.integration.RealDomainIntegration;
 import net.myorb.math.computational.Spline.Operations;
 
+// data abstractions from IO library
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.data.abstractions.ErrorHandling;
 
+// JRE
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,8 +96,10 @@ public class Subroutine<T>
 	{
 		if (!useExpressionTree) return;
 		this.gardener = new Gardener<T> ();
+
 		try { gardener.completeLexicalAnalysis (tokens); }
 		catch (Exception e) { throw new RuntimeException ("Error in expression", e); }
+
 		//catch (Exception e) { e.printStackTrace (); }
 	}
 
@@ -106,7 +124,7 @@ public class Subroutine<T>
 	{
 		if (gardener == null)
 		{ throw new RuntimeException ("Function not enabled as expression tree implementation"); }
-		if (!semanticallyComplete) { gardener.completeSemanticAnalysis (symbols, spaceManager); }
+		if ( ! semanticallyComplete ) { gardener.completeSemanticAnalysis (symbols, spaceManager); }
 		gardener.profiledTransplant (functionName, parameterNames, symbols.getDescription (functionName));
 	}
 
@@ -497,6 +515,7 @@ public class Subroutine<T>
 	public static String prettyFormatFullProfile
 		(String functionName, List<String> parameters)
 	{ return formatFullProfile (functionName, parameters, true); }
+
 	public static String formatFullFormalProfile (String functionName, List<String> parameters)
 	{ return formatFullProfile (functionName, parameters, false); }
 

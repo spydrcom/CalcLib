@@ -4,6 +4,7 @@ package net.myorb.math.expressions.symbols;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.EvaluationEngine;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
@@ -43,24 +44,47 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 	 */
 	public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 	{
-		if (parameters != null)
-		{
-			if (parameters instanceof ValueManager.ValueList)
-			{ copyParameters ( (ValueManager.ValueList) parameters ); }
-			// special treatment for matrix singleton parameter case in polynomials
-			else if (valueManager.isMatrix (parameters) ) { setParameterValue (parameters); }
-			// allow for multiple parameter parallel processing by function
-			else copyParameters (valueManager.toArray (parameters));
-		}
+		if (parameters != null) establishCallFrame (parameters);
+		// determine if an expression tree has ben built for this function
+		if ( ! useExpressionTree ) return tokenStreamInterpretation (constructEngine ());
+		// the flag indicates that the pre-processing of the token stream has provided an expression tree
+		else return processExpression ();
+	}
 
-		if (useExpressionTree) return processExpression ();
 
-		if (traceFlow)
-		{ constructEngine ().processWithCatch (functionTokens); }
-		else constructEngine ().process (functionTokens);
+	/**
+	 * raw interpretation of the token stream for computation
+	 * - common stack based evaluation processing token by token
+	 * @param engine the engine to use for evaluation
+	 * @return the value found from the processing
+	 */
+	public ValueManager.GenericValue tokenStreamInterpretation
+				(EvaluationEngine <T> engine)
+	{
+		if (traceFlow) { engine.processWithCatch (functionTokens); }
+		// this debugging mechanism had been costing time so the flag eliminates it
+		// - this effect may have been reduced in other places so this may be obsolete
+		// - this should be a priority item when error handling overhaul is done
+		else { engine.process (functionTokens); } //TODO: catch overhaul
+		// interpreter uses a stack
 		return topOfStack ();
 	}
-	boolean traceFlow = false;
+	protected boolean traceFlow = false;
+
+
+	/**
+	 * build a local frame for the invocation of this call
+	 * @param parameters the values of the parameters to this call
+	 */
+	public void establishCallFrame (ValueManager.GenericValue parameters)
+	{
+		if (parameters instanceof ValueManager.ValueList)
+		{ copyParameters ( (ValueManager.ValueList) parameters ); }
+		// special treatment for matrix singleton parameter case in polynomials
+		else if (valueManager.isMatrix (parameters) ) { setParameterValue (parameters); }
+		// allow for multiple parameter parallel processing by function
+		else copyParameters (valueManager.toArray (parameters));
+	}
 
 
 	/**
