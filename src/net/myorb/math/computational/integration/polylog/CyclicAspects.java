@@ -250,17 +250,27 @@ public class CyclicAspects
 			int N
 		)
 	{
+		setFunction (f);
+		return computeCycleSyncPoints (k, N);
+	}
+	public List <Double> computeCycleSyncPoints
+		(
+			double k,
+			int N
+		)
+	{
 		List <Double> domain =
 			new ArrayList <Double> ();
-		setFunction (f);
-
-		while (N >= 0)
-		{
-			domain.add (halfCycle (-N, k));
-			N--;
-		}
-
+		computeCycleSyncPoints (k, N, domain);
 		return domain;
+	}
+	public void computeCycleSyncPoints
+		(
+			double k, int N, List <Double> points
+		)
+	{
+		for (int n = N; n >= 0; n--)
+		{ points.add ( halfCycle (-n, k) ); }
 	}
 
 
