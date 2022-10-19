@@ -253,6 +253,13 @@ public class CyclicAspects
 		setFunction (f);
 		return computeCycleSyncPoints (k, N);
 	}
+
+	/**
+	 * get list of points for a sigma value
+	 * @param k the imag part multiple of log t called sigma
+	 * @param N max multiple of PI as domain point
+	 * @return the list of points
+	 */
 	public List <Double> computeCycleSyncPoints
 		(
 			double k,
@@ -264,6 +271,13 @@ public class CyclicAspects
 		computeCycleSyncPoints (k, N, domain);
 		return domain;
 	}
+
+	/**
+	 * sync points compiled into list
+	 * @param k the imag part multiple of log t
+	 * @param N max multiple of PI as domain point
+	 * @param points the list of points being built
+	 */
 	public void computeCycleSyncPoints
 		(
 			double k, int N, List <Double> points
@@ -271,6 +285,28 @@ public class CyclicAspects
 	{
 		for (int n = N; n >= 0; n--)
 		{ points.add ( halfCycle (-n, k) ); }
+	}
+
+	/**
+	 * get list of sync points
+	 * - the number of points less than 1 is N
+	 * - the upTo limit is the upper extension high end
+	 * @param upTo the upper limit of the domain to evaluate
+	 * @param k the imaginary part multiple of log t
+	 * @param N max multiple of PI as domain point
+	 * @return the list of points
+	 */
+	public List <Double> computeCycleSyncPoints
+		(
+			double upTo,
+			double k,
+			int N
+		)
+	{
+		double last = 1.0; int n = 1;
+		List <Double> points = computeCycleSyncPoints (k, N);
+		while (last < upTo) points.add ( last = halfCycle (n++, k) );
+		return points;
 	}
 
 
@@ -345,7 +381,7 @@ public class CyclicAspects
 	public CyclicAspects ()
 	{
 		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
-		this.targetAbsoluteError = 1E-10;
+		this.setTargetError (1E-10); // setting a default
 	}
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
 
