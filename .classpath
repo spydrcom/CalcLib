@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="C:/Users/Michael/workspace/JFreeChart/lib/swtgraphics2d.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ChartProviders"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SimpleHttpd"/>
-	<classpathentry kind="lib" path="/Mpmath/bin" sourcepath="/Mpmath/src"/>
 	<classpathentry kind="lib" path="/Colt/bin" sourcepath="/Colt/src"/>
 	<classpathentry kind="lib" path="/Anaconda/bin" sourcepath="/Anaconda/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/IOLIB"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="lib" path="/Watten/bin"/>
 	<classpathentry kind="lib" path="/CalcSpline/bin"/>
 	<classpathentry kind="lib" path="/Fraculus/bin"/>
+	<classpathentry kind="lib" path="/Mpmath/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
