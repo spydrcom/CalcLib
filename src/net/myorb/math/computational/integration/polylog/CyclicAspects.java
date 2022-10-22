@@ -227,12 +227,13 @@ public class CyclicAspects
 	 * alternate form for cycles:
 	 * - multiples of PI / k as exponent
 	 * @param n multiple of PI as domain point
+	 * @param segments segments of the half cycle
 	 * @param k multiple of ln t
 	 * @return real axis point
 	 */
-	public static double halfCycle (int n, double k)
+	public static double halfCycle (int n, int segments, double k)
 	{
-		return Math.exp (n * Math.PI / k);
+		return Math.exp (n * Math.PI / (k * segments));
 	}
 
 
@@ -240,51 +241,52 @@ public class CyclicAspects
 	 * generate half-cycle sync points
 	 * @param f function being evaluated
 	 * @param k the imag part multiple of ln t
+	 * @param s the count of half cycle segment divisions
 	 * @param N max multiple of PI as domain point
 	 * @return the list of points
 	 */
 	public List <Double> computeCycleSyncPoints
 		(
-			FunctionBody f,
-			double k,
-			int N
+			FunctionBody f, double k,
+			int s, int N
 		)
 	{
 		setFunction (f);
-		return computeCycleSyncPoints (k, N);
+		return computeCycleSyncPoints (k, s, N);
 	}
 
 	/**
 	 * get list of points for a sigma value
 	 * @param k the imag part multiple of log t called sigma
+	 * @param s the count of half cycle segment divisions
 	 * @param N max multiple of PI as domain point
 	 * @return the list of points
 	 */
 	public List <Double> computeCycleSyncPoints
 		(
-			double k,
-			int N
+			double k, int s, int N
 		)
 	{
 		List <Double> domain =
 			new ArrayList <Double> ();
-		computeCycleSyncPoints (k, N, domain);
+		computeCycleSyncPoints (k, s, N, domain);
 		return domain;
 	}
 
 	/**
 	 * sync points compiled into list
 	 * @param k the imag part multiple of log t
+	 * @param s the count of half cycle segments
 	 * @param N max multiple of PI as domain point
 	 * @param points the list of points being built
 	 */
 	public void computeCycleSyncPoints
 		(
-			double k, int N, List <Double> points
+			double k, int s, int N, List <Double> points
 		)
 	{
 		for (int n = N; n >= 0; n--)
-		{ points.add ( halfCycle (-n, k) ); }
+		{ points.add ( halfCycle (-n, s, k) ); }
 	}
 
 	/**
@@ -292,20 +294,20 @@ public class CyclicAspects
 	 * - the number of points less than 1 is N
 	 * - the upTo limit is the upper extension high end
 	 * @param upTo the upper limit of the domain to evaluate
-	 * @param k the imaginary part multiple of log t
+	 * @param k the imaginary sigma part multiple of log t
+	 * @param s the section count of half cycle breaks
 	 * @param N max multiple of PI as domain point
 	 * @return the list of points
 	 */
 	public List <Double> computeCycleSyncPoints
 		(
-			double upTo,
-			double k,
-			int N
+			double upTo, double k,
+			int s, int N
 		)
 	{
 		double last = 1.0; int n = 1;
-		List <Double> points = computeCycleSyncPoints (k, N);
-		while (last < upTo) points.add ( last = halfCycle (n++, k) );
+		List <Double> points = computeCycleSyncPoints (k, s, N);
+		while (last < upTo) points.add ( last = halfCycle (n++, s, k) );
 		return points;
 	}
 
