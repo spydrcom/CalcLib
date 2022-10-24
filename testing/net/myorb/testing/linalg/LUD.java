@@ -1,7 +1,7 @@
 
 package net.myorb.testing.linalg;
 
-import net.myorb.math.linalg.LU;
+import net.myorb.math.linalg.TriangularMatrix;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.MatrixOperations;
 //import net.myorb.math.matrices.decomposition.LU;
@@ -32,7 +32,7 @@ public class LUD
 //			LU = ops.product (L, U);
 //		ops.show (LU);
 
-		LU.Decomposition <Double> lud = LU.decompose (A);
+		TriangularMatrix.Decomposition <Double> lud = TriangularMatrix.decompose (A);
 		ops.show (lud.getL ()); ops.show (lud.getU ());
 
 		Matrix <Double>

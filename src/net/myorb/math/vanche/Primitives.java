@@ -1,9 +1,7 @@
 
 package net.myorb.math.vanche;
 
-import net.myorb.math.linalg.LU;
-import net.myorb.math.matrices.Matrix;
-import net.myorb.math.matrices.Vector;
+import net.myorb.math.linalg.TriangularMatrix;
 
 import net.myorb.math.Polynomial.PowerFunction;
 import net.myorb.math.polynomial.PolynomialFamilyManager;
@@ -11,6 +9,10 @@ import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevSplineFunction;
 
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+
+import net.myorb.math.matrices.Matrix;
+import net.myorb.math.matrices.Vector;
+
 import net.myorb.math.Function;
 
 import java.util.ArrayList;
@@ -205,9 +207,9 @@ public class Primitives
 	 * @param A the Vandermonde matrix holding Chebyshev equation values
 	 * @return the decomposition representation of the VanChe matrix
 	 */
-	public static LU.Decomposition <Double> decompose (VMatrix A)
+	public static TriangularMatrix.Decomposition <Double> decompose (VMatrix A)
 	{
-		return LU.decompose (A);
+		return TriangularMatrix.decompose (A);
 	}
 
 
@@ -215,7 +217,7 @@ public class Primitives
 	 * build the VanChe matrix and perform the decomposition
 	 * @return the decomposition representation of the VanChe matrix
 	 */
-	public static LU.Decomposition <Double> getVancheLud ()
+	public static TriangularMatrix.Decomposition <Double> getVancheLud ()
 	{
 		VMatrix A;
 		construct (A = new VMatrix ());
@@ -229,9 +231,9 @@ public class Primitives
 	 * @param using the decomposition representation to use for solution
 	 * @return the vector of computed results
 	 */
-	public static SolutionVector solveFor (SampleVector samples, LU.Decomposition <Double> using)
+	public static SolutionVector solveFor (SampleVector samples, TriangularMatrix.Decomposition <Double> using)
 	{
-		return new SolutionVector (LU.solve (samples, using));
+		return new SolutionVector (TriangularMatrix.solve (samples, using));
 	}
 
 

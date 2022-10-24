@@ -1,6 +1,9 @@
 
 package net.myorb.math.linalg;
 
+import net.myorb.math.matrices.Triangular;
+import net.myorb.math.matrices.decomposition.Doolittle;
+
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.Vector;
 
@@ -10,7 +13,7 @@ import net.myorb.math.SpaceManager;
  * linear algebra solutions using triangular matrix decomposition
  * @author Michael Druckman
  */
-public class LU
+public class TriangularMatrix
 {
 
 	/**
@@ -23,7 +26,7 @@ public class LU
 	 */
 	public static <T> Vector<T> solve (Matrix<T> U, Matrix<T> L, Vector<T> points)
 	{
-		return new net.myorb.math.matrices.Triangular <T> (points.getSpaceDescription ()).luXb (L, U, points);
+		return new Triangular <T> (points.getSpaceDescription ()).luXb (L, U, points);
 	}
 
 	/**
@@ -36,7 +39,7 @@ public class LU
 	public static <T> void decompose
 	(Matrix<T> A, Matrix<T> U, Matrix<T> L)
 	{
-		new net.myorb.math.matrices.decomposition.LU <T> (A.getSpaceDescription ()).decompose (A, U, L);
+		new Doolittle <T> (A.getSpaceDescription ()).decompose (A, U, L);
 	}
 
 	/**

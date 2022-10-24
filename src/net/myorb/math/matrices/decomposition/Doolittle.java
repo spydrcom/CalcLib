@@ -9,13 +9,13 @@ import net.myorb.math.SpaceManager;
  * @param <T> data type used in Matrix objects
  * @author Michael Druckman
  */
-public class LU<T>
+public class Doolittle<T>
 {
 
 	/**
 	 * @param mgr data type manager
 	 */
-	public LU (SpaceManager<T> mgr)
+	public Doolittle (SpaceManager<T> mgr)
 	{
 		ZERO = mgr.getZero ();
 		ONE = mgr.getOne ();
