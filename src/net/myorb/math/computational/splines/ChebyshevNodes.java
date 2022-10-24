@@ -36,7 +36,7 @@ public class ChebyshevNodes
 
 	 *
 	 */ 
-	public static final double[] CHEBYSHEV_POINTS_22 = new double[]
+	public static final double[] CHEBYSHEV_POINTS = new double[]
 		{
 				-1,
 				-0.9898214418809327,  -0.9594929736144974,
@@ -51,7 +51,7 @@ public class ChebyshevNodes
 				 1
 		};
 
-	public static final double[] CHEBYSHEV_POINTS = new double[]
+	public static final double[] CHEBYSHEV_POINTS_32 = new double[]
 			{
 				-1,
 				-0.9951847266721969,  -0.9807852804032304,  -0.9569403357322088, -0.9238795325112867,

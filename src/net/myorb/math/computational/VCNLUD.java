@@ -19,6 +19,20 @@ public class VCNLUD extends VCSupport implements Solution
 {
 
 
+	public static int getOrder (Parameterization configuration)
+	{
+		return configuration.getValue ("N", 22).intValue ();
+	}
+
+
+	public VCNLUD
+		(
+			Parameterization configuration
+		)
+	{
+		this (getOrder (configuration), configuration);
+	}
+
 	public VCNLUD
 		(
 			int N,

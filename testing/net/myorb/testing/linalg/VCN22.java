@@ -4,10 +4,10 @@ package net.myorb.testing.linalg;
 import net.myorb.math.computational.Parameterization;
 import net.myorb.math.realnumbers.RealFunctionWrapper;
 
-import net.myorb.math.computational.VCN22LUD;
+import net.myorb.math.computational.VCNLUD;
 import net.myorb.math.Function;
 
-public class VCN22 extends VCN22LUD
+public class VCN22 extends VCNLUD
 {
 
 	VCN22 ()
