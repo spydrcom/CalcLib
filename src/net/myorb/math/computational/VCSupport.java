@@ -21,6 +21,32 @@ public class VCSupport
 
 
 	/**
+	 * the CHEBYSHEV POINTS as defined in approximation theory
+	 */
+
+
+	/**
+	 * establish the list of Chebyshev points given the order
+	 * @param N the order of the polynomial
+	 * @return the list of points for N
+	 */
+	public double []  computePoints (int N)
+	{
+		double [] points = new double[N+1];
+
+		// points = ARRAY [ 0 <= i <= N ]   (    f (  i * d  )    )
+
+		double d = Math.PI / N;
+		for (int i = 0; i <= N; i++)
+		{
+			points [i] = - Math.cos ( i * d );
+		}
+
+		return points;
+	}
+
+
+	/**
 	 * package the solution vector as polynomial coefficients
 	 * @param solution the solution vector
 	 * @return the coefficients list
