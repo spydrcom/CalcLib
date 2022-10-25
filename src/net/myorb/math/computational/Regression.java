@@ -25,7 +25,7 @@ import java.util.List;
  * @param <T> type of component values on which operations are to be executed
  * @author Michael Druckman
  */
-public class Regression<T> extends Statistics<T>
+public class Regression <T> extends Statistics <T>
 {
 
 
@@ -33,10 +33,10 @@ public class Regression<T> extends Statistics<T>
 	 * describe a polynomial model as a result of a regression
 	 * @param <T> type of component values on which operations are to be executed
 	 */
-	public interface Model<T> extends Polynomial.PowerFunction<T>
+	public interface Model <T> extends Polynomial.PowerFunction <T>
 	{
 		/**
-		 * full description of the coefficients including metadata for the transform
+		 * full description of the coefficients including meta-data for the transform
 		 * @param descriptor the descriptor of the array describing the function domain
 		 * @return a dimensioned value wrapped for the value manager
 		 */
@@ -102,22 +102,22 @@ public class Regression<T> extends Statistics<T>
 	 * build a library object based on type manager
 	 * @param environment central computation control environment
 	 */
-	public Regression (Environment<T> environment)
+	public Regression (Environment <T> environment)
 	{
 		super (environment.getSpaceManager ());
-		this.polynomialManager = new OrdinaryPolynomialCalculus<T> (manager);
-		this.conversion = environment.getConversionManager();
+		this.polynomialManager = new OrdinaryPolynomialCalculus <T> (manager);
+		this.conversion = environment.getConversionManager ();
 		this.environment = environment;
 	}
-	public Regression (ExpressionSpaceManager<T> manager)
+	public Regression (ExpressionSpaceManager <T> manager)
 	{
 		super (manager);
-		this.polynomialManager = new OrdinaryPolynomialCalculus<T> (manager);
-		this.conversion = new DataConversions<T>(manager);
+		this.polynomialManager = new OrdinaryPolynomialCalculus <T> (manager);
+		this.conversion = new DataConversions <T> (manager);
 	}
-	protected Polynomial<T> polynomialManager;
-	protected DataConversions<T> conversion;
-	protected Environment<T> environment;
+	protected Polynomial <T> polynomialManager;
+	protected DataConversions <T> conversion;
+	protected Environment <T> environment;
 
 
 	/**

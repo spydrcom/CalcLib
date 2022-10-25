@@ -4,9 +4,10 @@ package net.myorb.math.computational.splines;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 
-import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.data.notations.json.JsonSemantics;
 
 import net.myorb.math.computational.Spline;
@@ -25,12 +26,12 @@ public abstract class ChebyshevCoreFunctionality
 	/**
 	 * data type manager for real number domain space
 	 */
-	public static ExpressionFloatingFieldManager realManager = new ExpressionFloatingFieldManager ();
+	public static ExpressionComponentSpaceManager <Double> realManager = RealFunctionWrapper.manager;
+	public static ChebyshevPolynomialCalculus <Double> calculus = new ChebyshevPolynomialCalculus <Double> (realManager);
 
 
 	public ChebyshevCoreFunctionality ()
 	{
-		this.calculus = new ChebyshevPolynomialCalculus <Double> (realManager);
 		this.polynomial = new ChebyshevPolynomial <Double> (realManager);
 	}
 
@@ -69,7 +70,6 @@ public abstract class ChebyshevCoreFunctionality
 	{
 		return calculus.evaluatePolynomialIntegral (coefficients, lo, hi);
 	}
-	protected ChebyshevPolynomialCalculus <Double> calculus;
 
 
 	/* (non-Javadoc)

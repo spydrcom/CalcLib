@@ -117,6 +117,7 @@ public class VCNLUD extends VCSupport implements Solution
 	{
 		loadOps ();
 		String name = "VCN" + N;
+		System.out.println ("loading " + name);
 		L = dio.read (new File ("data/" + name + "L.TDF"));
 		P = dio.read (new File ("data/" + name + "P.TDF")).getCol (1);
 		U = dio.read (new File ("data/" + name + "U.TDF"));

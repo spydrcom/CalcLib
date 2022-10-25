@@ -28,21 +28,60 @@ public class VCSupport
 
 
 	/**
+	 * compute the Chebyshev points for a given order
+	 * @param points an array to be filled with points for order N
+	 * @param N the order of the polynomial to be used for approximations
+	 */
+	public static void fillPointsArray (double [] points, int N)
+	{
+		double d = Math.PI / N;
+		for (int i = 0; i <= N; i++)
+		{ points [i] = - Math.cos ( i * d ); }
+	}
+
+
+	/**
 	 * establish the list of Chebyshev points given the order
 	 * @param N the order of the polynomial
 	 * @return the list of points for N
 	 */
 	public double [] computePoints (int N)
 	{
-		double [] points = new double [ N + 1 ];
-
-		// points = ARRAY [ 0 <= i <= N ]   (    f (  i * d  )    )
-
-		double d = Math.PI / N;
-		for (int i = 0; i <= N; i++)
-		{ points [i] = - Math.cos ( i * d ); }
-
+		double [] points =
+			new double [ N + 1 ];
+		fillPointsArray (points, N);
+		if (useSymmetric) forceSymmetry (points);
 		return points;
+	}
+	static boolean useSymmetric = true;
+
+
+	/**
+	 * establish the list of symmetric Chebyshev points given the order
+	 * - the list is forced symmetric around 0 by copy of the mirrored negative value
+	 * - N should be even making array odd length so the central value is 0
+	 * @param N the order of the polynomial
+	 * @return the list of points for N
+	 */
+	public double [] computeSymmetricPoints (int N)
+	{
+		double [] symmetricPoints =
+			new double [ N + 1 ];
+		fillPointsArray (symmetricPoints, N);
+		forceSymmetry (symmetricPoints);
+		return symmetricPoints;
+	}
+
+
+	/**
+	 * @param points an array of points needing adjustment
+	 */
+	public static void forceSymmetry (double [] points)
+	{
+		int lo, hi = points.length-1;
+		for (lo = 0; lo < hi; lo++, hi--)
+		{ points [hi] = - points [lo]; }
+		if (lo == hi) points [lo] = 0;
 	}
 
 
