@@ -12,7 +12,7 @@ public class VCN22 extends VCNLUD
 
 	VCN22 ()
 	{
-		super (new Parameterization ());
+		super (new Parameterization ());	// 22 is default
 	}
 
 	static double f (double x) { return 2*Math.pow(x,3) - 3*Math.pow(x,2); }

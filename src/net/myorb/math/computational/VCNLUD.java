@@ -6,6 +6,8 @@ import net.myorb.math.linalg.Solution;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.Vector;
 
+import net.myorb.data.abstractions.DataSequence;
+
 import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.Function;
 
@@ -17,12 +19,6 @@ import java.io.File;
  */
 public class VCNLUD extends VCSupport implements Solution
 {
-
-
-	public static int getOrder (Parameterization configuration)
-	{
-		return configuration.getValue ("N", 22).intValue ();
-	}
 
 
 	public VCNLUD
@@ -44,33 +40,47 @@ public class VCNLUD extends VCSupport implements Solution
 		this.loadVC (N);
 	}
 	protected Parameterization configuration;
+
+
+	/**
+	 * @return the points for the configured order
+	 */
+	public double [] getChebyshevPoints ()
+	{
+		return this.points;
+	}
 	protected double points [];
-	
-	
+
+
 	/**
 	 * scale domain to CHEBYSHEV_POINTS
 	 * @param lo the lo end of the spline range
 	 * @param hi the hi end of the spline range
 	 * @return the domain scaled to nodes
 	 */
-	double [] chebyshevDomain (Double lo, Double hi)
+	public DataSequence <Double>
+		getSplineDomainFor (double lo, double hi)
 	{
-		double range = hi - lo;
-		double halfRange = range / 2;
-		double zeroPoint = lo + halfRange;
-	
-		double [] domain = new double [points.length];
-	
-		for (int i = 0; i < domain.length; i++)
-		{
-			domain [i] = zeroPoint + halfRange * points[i];
-		}
-	
-		return domain;
+		return getSplineDomainFor (lo, hi, points);
 	}
-	
-	
+
+
 	/**
+	 * identify values between Chebyshev points
+	 * @param lo the lo end of the spline range
+	 * @param hi the hi end of the spline range
+	 * @return points to use for comb tests
+	 */
+	public DataSequence <Double>
+		getCombDomainFor (double lo, double hi)
+	{
+		return getCombDomainFor (lo, hi, points);
+	}
+
+
+	/**
+	 * construct solution vector
+	 * - LUxb solution computed for f
 	 * @param f function for regression
 	 * @param lo the lo end of the spline range
 	 * @param hi the hi end of the spline range
@@ -81,18 +91,16 @@ public class VCNLUD extends VCSupport implements Solution
 			Function <Double> f, Double lo, Double hi
 		)
 	{
-		double[] domain = chebyshevDomain (lo, hi);
-		Vector <Double> b = new Vector <Double> (domain.length, mgr);
-	
-		int i = 1;
-		for (double x : domain)
-		{ b.set (i++, f.eval (x)); }
-	
+		DataSequence <Double> domain =
+				getSplineDomainFor (lo, hi, points);
+		Vector <Double> b = new Vector <Double> (domain.size (), mgr);
+		int i = 1; for (double x : domain) { b.set (i++, f.eval (x)); }
 		return solve (b);
 	}
 	
 	
 	/**
+	 * LUxb algorithm
 	 * @param b the vector to solve for
 	 * @return the solution vector computed
 	 */

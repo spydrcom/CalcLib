@@ -34,9 +34,9 @@ public class ChebyshevSeriesExpansion
 		this.chebyshev = new ChebyshevPolynomial <Double> (RealFunctionWrapper.manager);
 		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
 	}
-	protected ChebyshevSeriesIntegrand integrand;
-	protected ChebyshevPolynomial <Double> chebyshev;
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
+	protected ChebyshevPolynomial <Double> chebyshev;
+	protected ChebyshevSeriesIntegrand integrand;
 
 
 	/**

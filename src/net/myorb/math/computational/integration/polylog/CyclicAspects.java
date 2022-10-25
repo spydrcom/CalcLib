@@ -30,6 +30,11 @@ public class CyclicAspects
 	public interface FunctionBody extends RealFunctionWrapper.RealFunctionBodyWrapper {}
 
 
+	/*
+	 * step thru function values seeking changes in sign of derivative
+	 */
+
+
 	/**
 	 * determine derivative zero being crossed
 	 * @param positiveDerivative TRUE for positive derivative when prev computed
@@ -162,6 +167,11 @@ public class CyclicAspects
 	}
 
 
+	/*
+	 * [ sigma log t ] the common cycle parameter in polylog integrals
+	 */
+
+	
 	/**
 	 * compute k * ln(t)
 	 * @param k multiple of ln t
@@ -172,6 +182,11 @@ public class CyclicAspects
 	{
 		return CauchySchlomilch.kLnT (k, t);
 	}
+
+
+	/*
+	 * cycle steps based on works by Kaz Watten
+	 */
 
 
 	/**
@@ -221,6 +236,11 @@ public class CyclicAspects
 
 		return domain;
 	}
+
+
+	/*
+	 * half-cycles with sub-segments of PI radians
+	 */
 
 
 	/**
@@ -273,6 +293,7 @@ public class CyclicAspects
 		return domain;
 	}
 
+
 	/**
 	 * sync points compiled into list
 	 * @param k the imag part multiple of log t
@@ -288,6 +309,7 @@ public class CyclicAspects
 		for (int n = N; n >= 0; n--)
 		{ points.add ( halfCycle (-n, s, k) ); }
 	}
+
 
 	/**
 	 * get list of sync points
@@ -331,6 +353,11 @@ public class CyclicAspects
 		}
 		return result;
 	}
+
+
+	/*
+	 * polynomial calculus
+	 */
 
 
 	/**

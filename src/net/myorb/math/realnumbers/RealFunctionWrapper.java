@@ -1,8 +1,11 @@
 
 package net.myorb.math.realnumbers;
 
-import net.myorb.data.abstractions.FunctionWrapper;
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
+import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+
 import net.myorb.data.abstractions.SpaceDescription;
+import net.myorb.data.abstractions.FunctionWrapper;
 
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
@@ -56,5 +59,5 @@ public class RealFunctionWrapper extends FunctionWrapper <Double>
 		};
 	}
 
-	public static final DoubleFloatingFieldManager manager = new DoubleFloatingFieldManager ();
+	public static final ExpressionComponentSpaceManager <Double> manager = new ExpressionFloatingFieldManager ();
 }
