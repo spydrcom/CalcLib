@@ -112,6 +112,7 @@ public class VCNLUD extends VCSupport implements Solution
 	
 	/**
 	 * load VanChe matrix data
+	 * @param N order of polynomial being built
 	 */
 	public void loadVC (int N)
 	{

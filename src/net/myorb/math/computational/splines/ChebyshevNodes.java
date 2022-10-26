@@ -22,6 +22,7 @@ public class ChebyshevNodes
 
 	/**
 	 * construct objects implementing Chebyshev Polynomial functionalities
+	 * @param approx Chebyshev nodes spline configuration
 	 */
 	public ChebyshevNodes (ApproximationTheory approx)
 	{ super (); this.approx = approx; }
