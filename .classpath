@@ -20,7 +20,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Xchart"/>
 	<classpathentry kind="lib" path="/Watten/bin"/>
-	<classpathentry kind="lib" path="/CalcSpline/bin"/>
+	<classpathentry kind="lib" path="/CalcSpline/bin" sourcepath="/CalcSpline/src"/>
 	<classpathentry kind="lib" path="/Fraculus/bin"/>
 	<classpathentry kind="lib" path="/Mpmath/bin"/>
 	<classpathentry kind="output" path="bin"/>
