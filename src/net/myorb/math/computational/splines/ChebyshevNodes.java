@@ -21,6 +21,14 @@ public class ChebyshevNodes
 
 
 	/**
+	 * backward compatible parameter set
+	 */
+	public ChebyshevNodes ()
+	{
+		super ();
+	}
+
+	/**
 	 * construct objects implementing Chebyshev Polynomial functionalities
 	 * @param approx Chebyshev nodes spline configuration
 	 */

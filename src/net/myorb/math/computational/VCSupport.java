@@ -57,6 +57,18 @@ public class VCSupport
 
 
 	/**
+	 * @param points an array of points needing adjustment
+	 */
+	public static void forceSymmetry (double [] points)
+	{
+		int lo, hi = points.length-1;
+		for (lo = 0; lo < hi; lo++, hi--)
+		{ points [hi] = - points [lo]; }
+		if (lo == hi) points [lo] = 0;
+	}
+
+
+	/**
 	 * establish the list of symmetric Chebyshev points given the order
 	 * - the list is forced symmetric around 0 by copy of the mirrored negative value
 	 * - N should be even making array odd length so the central value is 0
@@ -70,18 +82,6 @@ public class VCSupport
 		fillPointsArray (symmetricPoints, N);
 		forceSymmetry (symmetricPoints);
 		return symmetricPoints;
-	}
-
-
-	/**
-	 * @param points an array of points needing adjustment
-	 */
-	public static void forceSymmetry (double [] points)
-	{
-		int lo, hi = points.length-1;
-		for (lo = 0; lo < hi; lo++, hi--)
-		{ points [hi] = - points [lo]; }
-		if (lo == hi) points [lo] = 0;
 	}
 
 

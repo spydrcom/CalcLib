@@ -201,6 +201,7 @@ public class SplineTool <T>
 		{
 			String path = JsonSemantics.getStringOrNull
 				(profile.getMemberCalled ("Interpreter"));
+			if (path == null) return new ChebyshevNodes ();
 			SplineMechanisms mechanisms = (SplineMechanisms)
 				Class.forName (path).newInstance ();
 			return mechanisms;
