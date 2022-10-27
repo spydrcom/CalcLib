@@ -8,15 +8,14 @@ import net.myorb.math.complexnumbers.ComplexValue;
  * formulas for relationships between polylog functions
  * @author Michael Druckman
  */
-public class PolylogRatioFormulas
+public class PolylogRatioFormulas extends ComplexSpaceCore
 {
 
 
 	/**
 	 * formulas are implemented intended for complex numbers 
 	 */
-	public static class CORE extends ComplexSpaceCore {}
-	public static final ComplexValue<Double> ONE = CORE.manager.getOne ();
+	public static final ComplexValue <Double> ONE = manager.getOne ();
 
 
 	/**
@@ -24,14 +23,14 @@ public class PolylogRatioFormulas
 	 * @param s function parameter
 	 * @return 2^(1-s)
 	 */
-	public static ComplexValue<Double> mu (ComplexValue<Double> s)
+	public static ComplexValue <Double> mu (ComplexValue <Double> s)
 	{
-		return CORE.cplxLib.power
+		return cplxLib.power
 			(
-				CORE.manager.newScalar (2),
-				CORE.manager.add
+				manager.newScalar (2),
+				manager.add
 				(
-					ONE, CORE.manager.negate (s)
+					ONE, manager.negate (s)
 				)
 			);
 	}
@@ -42,9 +41,9 @@ public class PolylogRatioFormulas
 	 * @param s function parameter
 	 * @return 1 - mu(s)
 	 */
-	public static ComplexValue<Double> oneMinusMu (ComplexValue<Double> s)
+	public static ComplexValue <Double> oneMinusMu (ComplexValue <Double> s)
 	{
-		return CORE.manager.add (ONE, CORE.manager.negate (mu (s)));
+		return manager.add (ONE, manager.negate (mu (s)));
 	}
 
 
@@ -56,7 +55,7 @@ public class PolylogRatioFormulas
 	public static ComplexValue<Double> etaFromZeta
 		(ComplexValue<Double> s, ComplexValue<Double> zetaValue)
 	{
-		return CORE.manager.multiply (zetaValue, oneMinusMu (s));
+		return manager.multiply (zetaValue, oneMinusMu (s));
 	}
 
 
@@ -68,7 +67,7 @@ public class PolylogRatioFormulas
 	public static ComplexValue<Double> zetaFromEta
 		(ComplexValue<Double> s, ComplexValue<Double> etaValue)
 	{
-		return CORE.manager.multiply (etaValue, CORE.manager.invert (oneMinusMu (s)));
+		return manager.multiply (etaValue, manager.invert (oneMinusMu (s)));
 	}
 
 
@@ -79,7 +78,7 @@ public class PolylogRatioFormulas
 	 */
 	public static ComplexValue<Double> gammaSplusOne (ComplexValue<Double> s)
 	{
-		return CORE.cplxLib.gamma (CORE.manager.add (ONE, s));				// uses Lanczos in cplxlib
+		return cplxLib.gamma (manager.add (ONE, s));							// uses Lanczos in cplxlib
 	}
 
 
@@ -89,7 +88,7 @@ public class PolylogRatioFormulas
 	 */
 	public static ComplexValue<Double> muGamma (ComplexValue<Double> s)
 	{
-		return CORE.manager.multiply (mu (s), gammaSplusOne (s));
+		return manager.multiply (mu (s), gammaSplusOne (s));
 	}
 
 
@@ -101,7 +100,7 @@ public class PolylogRatioFormulas
 	public static ComplexValue<Double> etaFromAmdeberhan
 		(ComplexValue<Double> s, ComplexValue<Double> integralValue)
 	{
-		return CORE.manager.multiply (integralValue, CORE.manager.invert (muGamma (s)));
+		return manager.multiply (integralValue, manager.invert (muGamma (s)));
 	}
 
 
@@ -114,8 +113,8 @@ public class PolylogRatioFormulas
 	{
 		ComplexValue<Double> mug = muGamma (s);
 		ComplexValue<Double> oneMinusMu = oneMinusMu (s);
-		ComplexValue<Double> mugs = CORE.manager.multiply (mug, oneMinusMu);
-		return CORE.manager.invert (mugs);
+		ComplexValue<Double> mugs = manager.multiply (mug, oneMinusMu);
+		return manager.invert (mugs);
 	}
 
 
@@ -127,7 +126,7 @@ public class PolylogRatioFormulas
 	public static ComplexValue<Double> muProduct
 	(ComplexValue<Double> integral, ComplexValue<Double> s)
 	{
-		return CORE.manager.multiply (integral, mugsi (s));
+		return manager.multiply (integral, mugsi (s));
 	}
 
 
