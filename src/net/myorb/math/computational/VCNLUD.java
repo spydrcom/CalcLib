@@ -11,6 +11,8 @@ import net.myorb.data.abstractions.DataSequence;
 import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.Function;
 
+import java.util.HashMap;
+
 import java.io.File;
 
 /**
@@ -106,10 +108,10 @@ public class VCNLUD extends VCSupport implements Solution
 	 */
 	public GeneratingFunctions.Coefficients<Double> solve (Vector<Double> b)
 	{
-		return bundle (tri.luXb (L, U, b, P));
+		return bundle (configuredSolution.solve (b));
 	}
-	
-	
+
+
 	/**
 	 * load VanChe matrix data
 	 * @param N order of polynomial being built
@@ -117,14 +119,45 @@ public class VCNLUD extends VCSupport implements Solution
 	public void loadVC (int N)
 	{
 		loadOps ();
+
+		// solution data
 		String name = "VCN" + N;
-		System.out.println ("loading " + name);
-		L = dio.read (new File ("data/" + name + "L.TDF"));
-		P = dio.read (new File ("data/" + name + "P.TDF")).getCol (1);
-		U = dio.read (new File ("data/" + name + "U.TDF"));
+		this.configuredSolution = loaded.get (name);
+		if (this.configuredSolution != null) return;
+
+		//		load and cache solution data
+		//  (forced to single load by hash cache)
+
+		loaded.put
+		(
+			name,
+			this.configuredSolution = new SolutionData
+			( name )
+		);
 	}
-	protected Matrix <Double> L = null, U = null;
-	protected Vector <Double> P = null;
+	protected SolutionData configuredSolution;
+
+
+	/**
+	 * force single load of each solution set required
+	 */
+	private static class SolutionData
+	{
+		SolutionData (String name)
+		{		
+			// System.out.println ("loading " + name);
+			L = dio.read (new File ("data/" + name + "L.TDF"));
+			P = dio.read (new File ("data/" + name + "P.TDF")).getCol (1);
+			U = dio.read (new File ("data/" + name + "U.TDF"));
+		}
+		public Vector <Double> solve (Vector <Double> b)
+		{
+			return tri.luXb (L, U, b, P);
+		}
+		public Matrix <Double> L = null, U = null;
+		public Vector <Double> P = null;
+	}
+	static HashMap < String, SolutionData > loaded = new HashMap <> ();
 
 
 }
