@@ -17,6 +17,7 @@ public class Eta extends Amdeberhan
 
 	public void changeGamma ()
 	{
+//		PolylogRatioFormulas.cplxLib.setGammaFunction (new PiOverZ ());
 		PolylogRatioFormulas.cplxLib.setGammaFunction (new Gamma ());
 	}
 
@@ -36,3 +37,14 @@ public class Eta extends Amdeberhan
 
 }
 
+class PiOverZ extends Pi
+{
+	public ComplexValue<Double> eval (ComplexValue<Double> z)
+	{
+		return PolylogRatioFormulas.manager.multiply
+		(
+			PolylogRatioFormulas.manager.invert (z),
+			evaluateGaussPiIntegralAt (z)
+		);
+	}
+}
