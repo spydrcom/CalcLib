@@ -377,9 +377,10 @@ public class ComplexLibrary<T> extends Arithmetic<T>
 		gammaFunctionImplementation = new GammaLanczos<T> (this);
 	}
 	public void initializeGamma (int precision)
-	{ initializeGamma (); gammaFunctionImplementation.setPrecision (precision); }
+	{ initializeGamma (); ((GammaLanczos<T>) gammaFunctionImplementation).setPrecision (precision); }
+	public void setGammaFunction (Function <ComplexValue<T>> f) { this.gammaFunctionImplementation = f; }
 	public Function <ComplexValue<T>> getGammaFunction () { return gammaFunctionImplementation; }
-	protected GammaLanczos<T> gammaFunctionImplementation = null;
+	protected Function <ComplexValue<T>> gammaFunctionImplementation = null;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.ExtendedPowerLibrary#GAMMA(java.lang.Object)

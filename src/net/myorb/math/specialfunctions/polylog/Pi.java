@@ -1,5 +1,5 @@
 
-package net.myorb.math.specialfunctions;
+package net.myorb.math.specialfunctions.polylog;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.complexnumbers.CommonFunctionBase;
