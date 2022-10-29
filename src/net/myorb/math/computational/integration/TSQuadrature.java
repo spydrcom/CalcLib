@@ -12,6 +12,7 @@ public class TSQuadrature extends CommonQuadrature
 		implements Quadrature.Integral
 {
 
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.Quadrature.Integral#eval(double, double, double)
 	 */
@@ -23,6 +24,7 @@ public class TSQuadrature extends CommonQuadrature
 	}
 	protected double targetAbsoluteError;
 
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.Quadrature.Integral#getErrorEstimate()
 	 */
@@ -30,6 +32,7 @@ public class TSQuadrature extends CommonQuadrature
 	{
 		return stats.errorEstimate;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.integration.Quadrature.Integral#getEvaluationCount()
@@ -39,6 +42,7 @@ public class TSQuadrature extends CommonQuadrature
 		return stats.numFunctionEvaluations;
 	}
 	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
+
 
 	public TSQuadrature
 		(
@@ -51,4 +55,6 @@ public class TSQuadrature extends CommonQuadrature
 		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
 	}
 
+
 }
+

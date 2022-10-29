@@ -1,8 +1,8 @@
 
 package net.myorb.math.computational.integration;
 
-import net.myorb.math.computational.integration.Configuration;
 import net.myorb.math.computational.Parameterization;
+import net.myorb.math.computational.integration.Configuration;
 
 import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
@@ -48,7 +48,7 @@ public class Quadrature
 	/**
 	 * the access to numerical integration of an integrand (function)
 	 */
-	public interface Integral
+	public interface Integral extends IntegralMetadata
 	{
 		/**
 		 * @param x the domain point at which to perform integration
@@ -57,16 +57,6 @@ public class Quadrature
 		 * @return the resulting computation
 		 */
 		public double eval (double x, double lo, double hi);
-
-		/**
-		 * @return an estimation of the error in the analysis
-		 */
-		public double getErrorEstimate ();
-
-		/**
-		 * @return the count of function evaluations used
-		 */
-		public int getEvaluationCount ();
 	}
 
 	/**

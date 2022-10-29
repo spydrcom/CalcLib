@@ -5,7 +5,7 @@ import net.myorb.math.computational.integration.polylog.*;
 
 import java.util.List;
 
-public class ComputedCycles extends CyclicAspects
+public class ComputedCycles extends CyclicQuadrature
 {
 
 

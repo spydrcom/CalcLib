@@ -1,7 +1,6 @@
 
 package net.myorb.math.complexnumbers;
 
-import net.myorb.math.computational.integration.polylog.CyclicAspects;
 import net.myorb.math.expressions.symbols.ImportedFunctionWrapper;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
@@ -17,7 +16,7 @@ import java.util.Map;
  * common base for complex functions
  * @author Michael Druckman
  */
-public abstract class CommonFunctionBase extends CyclicAspects
+public abstract class CommonFunctionBase
 	implements Environment.AccessAcceptance < ComplexValue <Double> >,
 		Function < ComplexValue <Double> >, Configurable
 {
@@ -38,18 +37,15 @@ public abstract class CommonFunctionBase extends CyclicAspects
 	 */
 	public abstract ComplexValue<Double> eval (ComplexValue<Double> z);
 
-	public SpaceDescription<ComplexValue<Double>> getSpaceDescription()
-	{
-		return ComplexSpaceCore.manager;
-	}
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
+	 */
+	public SpaceDescription<ComplexValue<Double>> getSpaceDescription () { return ComplexSpaceCore.manager; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.Function#getSpaceManager()
 	 */
-	public SpaceManager<ComplexValue<Double>> getSpaceManager()
-	{
-		return ComplexSpaceCore.manager;
-	}
+	public SpaceManager<ComplexValue<Double>> getSpaceManager () { return ComplexSpaceCore.manager; }
 
 
 	/*

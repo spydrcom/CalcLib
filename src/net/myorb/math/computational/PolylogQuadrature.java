@@ -2,7 +2,7 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.computational.integration.polylog.ComplexExponentComponents;
-import net.myorb.math.computational.integration.polylog.CyclicAspects;
+import net.myorb.math.computational.integration.polylog.CyclicQuadrature;
 
 import net.myorb.math.complexnumbers.ComplexFoundation.Complex;
 import net.myorb.math.complexnumbers.ComplexValue;
@@ -14,7 +14,7 @@ import java.util.Map;
  * core functions for polylog integrals
  * @author Michael Druckman
  */
-public class PolylogQuadrature extends CyclicAspects
+public class PolylogQuadrature extends CyclicQuadrature
 {
 
 

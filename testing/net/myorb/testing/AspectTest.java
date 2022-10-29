@@ -8,7 +8,7 @@ import java.util.List;
 public class AspectTest extends DirichletEta
 {
 
-	static CyclicAspects aspects = new CyclicAspects ();
+	static CyclicQuadrature aspects = new CyclicQuadrature ();
 
 	static void compute
 	(CyclicAspects.FunctionBody f, double sigma)

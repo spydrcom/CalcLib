@@ -1,9 +1,6 @@
 
 package net.myorb.math.computational.integration.polylog;
 
-import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
-import net.myorb.math.computational.TanhSinhQuadratureTables;
-
 import net.myorb.math.realnumbers.RealFunctionWrapper;
 import net.myorb.math.Function;
 
@@ -28,6 +25,16 @@ public class CyclicAspects
 	 * simple description of a function
 	 */
 	public interface FunctionBody extends RealFunctionWrapper.RealFunctionBodyWrapper {}
+
+
+	/*
+	 * function representing the integrand
+	 */
+
+	public void setFunction (FunctionBody f)
+	{ setFunction (new RealFunctionWrapper (f).toCommonFunction ()); }
+	public void setFunction (Function <Double> f) { this.f = f; }
+	protected Function <Double> f;
 
 
 	/*
@@ -332,100 +339,6 @@ public class CyclicAspects
 		while (last < upTo) points.add ( last = halfCycle (n++, s, k) );
 		return points;
 	}
-
-
-	/**
-	 * compute function integral
-	 * @param lo the low end of an integration range
-	 * @param hi the high end of an integration range
-	 * @return the calculated integral
-	 */
-	public double eval (double lo, double hi)
-	{
-		double result =
-			TanhSinhQuadratureAlgorithms.Integrate
-				(f, lo, hi, targetAbsoluteError, stats);
-		if (TRC)
-		{
-			System.out.println (lo + ".." + hi);
-			System.out.println ("\t : " + stats);
-			System.out.println ("\t I=" + result);
-		}
-		return result;
-	}
-
-
-	/*
-	 * polynomial calculus
-	 */
-
-
-	/**
-	 * compute series of integrals over domain points
-	 * @param points the list of domain points to establish the series
-	 * @return the calculated integral
-	 */
-	public double integralOver (List <Double> points)
-	{
-		aggregateError = 0; evaluations = 0;
-		double h, result = 0, l = points.get (0);
-		for (int i = 1; i < points.size (); i++)
-		{
-			result += eval (l, h = points.get (i));
-			evaluations += stats.numFunctionEvaluations;
-			aggregateError += stats.errorEstimate;
-
-			if (TRC)
-			{
-				System.out.println ("\t AGG=" + result);
-				System.out.println ();
-			}
-
-			l = h;
-		}
-		return result;
-	}
-
-
-	public double getAggregateError () { return aggregateError; }
-	public int getEvaluationCount () { return evaluations; }
-	// the aggregate error and count of evaluations
-	protected double aggregateError;
-	protected int evaluations;
-
-
-	/*
-	 * function representing the integrand
-	 */
-
-	public void setFunction (FunctionBody f)
-	{ setFunction (new RealFunctionWrapper (f).toCommonFunction ()); }
-	public void setFunction (Function <Double> f) { this.f = f; }
-	protected Function <Double> f;
-
-
-	/**
-	 * initialize quadrature structures
-	 */
-	public CyclicAspects ()
-	{
-		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
-		this.setTargetError (1E-10); // setting a default
-	}
-	protected TanhSinhQuadratureTables.ErrorEvaluation stats;
-
-
-	/**
-	 * identify a target error value.
-	 * - the smaller the target the more work done
-	 * - too small and the algorithm falls apart and results go crazy
-	 * @param to use this value for target error
-	 */
-	public void setTargetError (double to)
-	{
-		this.targetAbsoluteError = to;
-	}
-	protected double targetAbsoluteError;
 
 
 }

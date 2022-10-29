@@ -19,6 +19,10 @@ public abstract class GammaAlgotithms <T>
 	 */
 	public abstract int minimumReal ();
 
+	/**
+	 * @return restriction of maximum real value of parameter
+	 */
+	public abstract int maximumReal ();
 
 	/**
 	 * @param z the parameter that meets the restriction
@@ -56,7 +60,8 @@ public abstract class GammaAlgotithms <T>
 	 */
 	public ComplexValue <T> gamma (ComplexValue <T> z)
 	{
-		T r = z.Re ();
+		T r = z.Re (), max;
+		
 		if (tmgr.lessThan (r, ZERO))
 		{
 			return reflection (z);
@@ -64,6 +69,10 @@ public abstract class GammaAlgotithms <T>
 		else if (tmgr.lessThan (r, restriction))
 		{
 			return recurrence (z);
+		}
+		else if (tmgr.lessThan (max = tmgr.newScalar (this.maximumReal ()), r))
+		{
+			return reverseRecurrence (z, max);
 		}
 		else return restrictedGamma (z);
 	}
@@ -101,6 +110,26 @@ public abstract class GammaAlgotithms <T>
 			restrictedGamma (cmgr.add (z, this.minimum)),
 			cmgr.invert (risingFactorial (z))
 		);
+	}
+
+
+	/**
+	 * Gamma recurrence formula
+	 *  GAMMA(z+n) = GAMMA(z) * ( z * (z+1) * ... * (z+n-1) )
+	 * @param z the parameter to GAMMA being sought
+	 * @param max largest real part allowed
+	 * @return GAMMA(z)
+	 */
+	public ComplexValue <T> reverseRecurrence (ComplexValue <T> z, T max)
+	{
+		ComplexValue <T> zpn = z,
+			product = cmgr.getOne (), none = cmgr.newScalar (-1);
+		while (tmgr.lessThan (max, zpn.Re ()))
+		{
+			zpn = cmgr.add (zpn, none);
+			product = cmgr.multiply (product, zpn);
+		}
+		return cmgr.multiply (restrictedGamma (zpn), product);
 	}
 
 
