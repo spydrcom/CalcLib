@@ -1,7 +1,7 @@
 
 package net.myorb.math.computational;
 
-import net.myorb.math.computational.integration.DefiniteIntegral;
+import net.myorb.math.computational.integration.QuadratureFunctionality;
 
 import net.myorb.math.computational.integration.polylog.ComplexExponentComponents;
 import net.myorb.math.computational.integration.polylog.CyclicQuadrature;
@@ -22,25 +22,12 @@ public class PolylogQuadrature extends CyclicQuadrature
 
 
 	/**
-	 * exported functionality from a Spline Quadrature Implementation
-	 */
-	public interface SplineQuadratureMethod
-	{
-		/**
-		 * get access to a Spline Quadrature Implementation
-		 * @param parameters name-value pairs that establish configuration
-		 * @return an implementation of the Definite Integral interface
-		 */
-		DefiniteIntegral getQuadratureImplementation (Map <String, Object> parameters);
-	}
-
-	/**
 	 * add a Quadrature Method to available options
 	 * @param method the method to be added
 	 */
 	public static void addQuadratureMethod
-	(SplineQuadratureMethod method) { quadratureMethods.put (method.toString (), method); }
-	static Map <String, SplineQuadratureMethod> quadratureMethods = new HashMap <> ();
+	(QuadratureFunctionality method) { quadratureMethods.put (method.toString (), method); }
+	static Map <String, QuadratureFunctionality> quadratureMethods = new HashMap <> ();
 
 
 	/*
@@ -81,7 +68,7 @@ public class PolylogQuadrature extends CyclicQuadrature
 		Object methodName = parameters.get ("method");
 		if (methodName != null) establish (quadratureMethods.get (methodName), parameters);
 	}
-	public void establish (SplineQuadratureMethod method, Map <String, Object> parameters)
+	public void establish (QuadratureFunctionality method, Map <String, Object> parameters)
 	{
 		if (method == null)
 		{ throw new RuntimeException ("Unrecognized quadrature method"); }
