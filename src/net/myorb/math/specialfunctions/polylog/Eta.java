@@ -17,6 +17,7 @@ public class Eta extends Amdeberhan
 
 	public void changeGamma ()
 	{
+		// default is Lanczos if no change is made
 //		PolylogRatioFormulas.cplxLib.setGammaFunction (new PiOverZ ());
 		PolylogRatioFormulas.cplxLib.setGammaFunction (new Gamma ());
 	}

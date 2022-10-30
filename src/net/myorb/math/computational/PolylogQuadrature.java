@@ -1,6 +1,8 @@
 
 package net.myorb.math.computational;
 
+import net.myorb.math.computational.integration.DefiniteIntegral;
+
 import net.myorb.math.computational.integration.polylog.ComplexExponentComponents;
 import net.myorb.math.computational.integration.polylog.CyclicQuadrature;
 
@@ -8,6 +10,7 @@ import net.myorb.math.complexnumbers.ComplexFoundation.Complex;
 import net.myorb.math.complexnumbers.ComplexValue;
 
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,24 +21,71 @@ public class PolylogQuadrature extends CyclicQuadrature
 {
 
 
-	protected int
-	multiplier = 10000,
-	halfCycleSegments = 4,
-	domainPoints = 1600,
-	infinity = 50;
+	/**
+	 * exported functionality from a Spline Quadrature Implementation
+	 */
+	public interface SplineQuadratureMethod
+	{
+		/**
+		 * get access to a Spline Quadrature Implementation
+		 * @param parameters name-value pairs that establish configuration
+		 * @return an implementation of the Definite Integral interface
+		 */
+		DefiniteIntegral getQuadratureImplementation (Map <String, Object> parameters);
+	}
 
+	/**
+	 * add a Quadrature Method to available options
+	 * @param method the method to be added
+	 */
+	public static void addQuadratureMethod
+	(SplineQuadratureMethod method) { quadratureMethods.put (method.toString (), method); }
+	static Map <String, SplineQuadratureMethod> quadratureMethods = new HashMap <> ();
+
+
+	/*
+	 * configuration parameters
+	 *  for the cyclic aspects algorithms
+	 */
+	protected int
+	multiplier = 10000,			// a scaling factor to increase cycle amplitude
+	halfCycleSegments = 4,		// a divisor for the portion of a cycle to target for integration
+	domainPoints = 1600,		// the number of half-cycles to evaluate in the range 0..1
+	infinity = 50;				// a value for the upper bound of the definite integral
+
+
+	/**
+	 * @param parameters name-value pairs that establish configuration
+	 */
 	public void addConfiguration (Map <String, Object> parameters)
 	{
 		this.multiplier = configure ("multiplier", multiplier, parameters);
 		this.halfCycleSegments = configure ("segments", halfCycleSegments, parameters);
 		this.domainPoints = configure ("points", domainPoints, parameters);
 		this.infinity = configure ("infinity", infinity, parameters);
+		this.configureQuadratureMethod (parameters);
 	}
 	int configure (String name, int defaultValue, Map <String, Object> parameters)
 	{
 		Object parameter = parameters.get (name);
 		if (parameter == null) return defaultValue;
 		return Integer.parseInt (parameter.toString ());
+	}
+
+
+	/**
+	 * @param parameters name-value pairs that establish segment quadrature configuration
+	 */
+	public void configureQuadratureMethod (Map <String, Object> parameters)
+	{
+		Object methodName = parameters.get ("method");
+		if (methodName != null) establish (quadratureMethods.get (methodName), parameters);
+	}
+	public void establish (SplineQuadratureMethod method, Map <String, Object> parameters)
+	{
+		if (method == null)
+		{ throw new RuntimeException ("Unrecognized quadrature method"); }
+		this.setIntegrationAlgorithm (method.getQuadratureImplementation (parameters));
 	}
 
 
