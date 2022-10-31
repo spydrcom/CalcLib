@@ -37,9 +37,9 @@ public class VCNLUD extends VCSupport implements Solution
 			Parameterization configuration
 		)
 	{
-		this.configuration = configuration;
-		this.points = this.computePoints (N);
 		this.loadVC (N);
+		this.points = this.configuredSolution.computedPoints;
+		this.configuration = configuration;
 	}
 	protected Parameterization configuration;
 
@@ -114,6 +114,10 @@ public class VCNLUD extends VCSupport implements Solution
 
 	/**
 	 * load VanChe matrix data
+	 * - the Chebyshev points for order N also made available
+	 * - the configuredSolution property is the output of this load
+	 * - load may be a misnomer since the SolutionData is a cache
+	 * - solution data is only loaded once per use of N value
 	 * @param N order of polynomial being built
 	 */
 	public void loadVC (int N)
@@ -132,10 +136,10 @@ public class VCNLUD extends VCSupport implements Solution
 		(
 			name,
 			this.configuredSolution = new SolutionData
-			( name )
+			( name, this.computePoints (N) )
 		);
 	}
-	protected SolutionData configuredSolution;
+	protected SolutionData configuredSolution = null;
 
 
 	/**
@@ -143,20 +147,35 @@ public class VCNLUD extends VCSupport implements Solution
 	 */
 	private static class SolutionData
 	{
-		SolutionData (String name)
+
+		SolutionData (String name, double computedPoints [])
 		{		
 			// System.out.println ("loading " + name);
 			L = dio.read (new File ("data/" + name + "L.TDF"));
 			P = dio.read (new File ("data/" + name + "P.TDF")).getCol (1);
 			U = dio.read (new File ("data/" + name + "U.TDF"));
+
+			// points correlate with N as does the LUD
+			this.computedPoints = computedPoints;
 		}
+		public double computedPoints [];
+
+		/**
+		 * @param b the vector to solve for
+		 * @return the coefficients calculated
+		 */
 		public Vector <Double> solve (Vector <Double> b)
 		{
 			return tri.luXb (L, U, b, P);
 		}
 		public Matrix <Double> L = null, U = null;
 		public Vector <Double> P = null;
+
 	}
+
+	/**
+	 * a hash of solutions mapped from the VCN name assigned
+	 */
 	static HashMap < String, SolutionData > loaded = new HashMap <> ();
 
 
