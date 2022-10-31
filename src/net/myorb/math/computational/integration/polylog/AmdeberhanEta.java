@@ -17,7 +17,7 @@ public class AmdeberhanEta  extends ComplexExponentComponents
 	 * @return the computed value
 	 */
 	public double mu (double s, double t)
-	{ return Math.pow (t, s) / COSH2SQ (t); }
+	{ return Math.pow (t, s) / COSH2 (t); }
 
 	/**
 	 * compute cosh^2 x
@@ -25,7 +25,7 @@ public class AmdeberhanEta  extends ComplexExponentComponents
 	 * @return the computed value
 	 */
 	public static
-		double COSH2SQ (double x)
+		double COSH2 (double x)
 	{ return SQ ( Math.cosh (x) ); }
 
 	/**

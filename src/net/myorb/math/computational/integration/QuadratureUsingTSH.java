@@ -1,7 +1,5 @@
 
-package net.myorb.math.computational.integration.polylog;
-
-import net.myorb.math.computational.integration.DefiniteIntegral;
+package net.myorb.math.computational.integration;
 
 import net.myorb.math.computational.TanhSinhQuadratureAlgorithms;
 import net.myorb.math.computational.TanhSinhQuadratureTables;
@@ -12,7 +10,7 @@ import net.myorb.math.Function;
  * Polylog Quadrature to be performed using TSH
  * @author Michael Druckman
  */
-public class PolylogQuadratureUsingTSH implements DefiniteIntegral
+public class QuadratureUsingTSH implements DefiniteIntegral
 {
 
 
@@ -55,7 +53,7 @@ public class PolylogQuadratureUsingTSH implements DefiniteIntegral
 	protected double targetAbsoluteError;
 
 
-	public PolylogQuadratureUsingTSH ()
+	public QuadratureUsingTSH ()
 	{
 		this.stats = new TanhSinhQuadratureTables.ErrorEvaluation ();
 		this.targetAbsoluteError = 1E-4;

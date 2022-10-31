@@ -38,8 +38,15 @@ public class Eta extends Amdeberhan
 
 }
 
+/**
+ * alternative formula for GAMMA function
+ * - extending the PI function with evaluation being PI(z)/z
+ */
 class PiOverZ extends Pi
 {
+	/* (non-Javadoc)
+	 * @see net.myorb.math.specialfunctions.polylog.Pi#eval(net.myorb.math.complexnumbers.ComplexValue)
+	 */
 	public ComplexValue<Double> eval (ComplexValue<Double> z)
 	{
 		return PolylogRatioFormulas.manager.multiply

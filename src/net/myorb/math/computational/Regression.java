@@ -10,11 +10,12 @@ import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
-
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
 import net.myorb.data.abstractions.Function;
+
 import net.myorb.math.*;
 
 import java.io.PrintStream;

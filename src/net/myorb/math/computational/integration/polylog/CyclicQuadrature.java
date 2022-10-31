@@ -2,6 +2,7 @@
 package net.myorb.math.computational.integration.polylog;
 
 import net.myorb.math.computational.integration.DefiniteIntegral;
+import net.myorb.math.computational.integration.QuadratureUsingTSH;
 
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class CyclicQuadrature extends CyclicAspects
 	 */
 	public CyclicQuadrature ()
 	{
-		this.integrationAlgorithm = new PolylogQuadratureUsingTSH ();
+		this.integrationAlgorithm = new QuadratureUsingTSH ();
 		this.integrationAlgorithm.setTargetError (1E-10);
 	}
 
