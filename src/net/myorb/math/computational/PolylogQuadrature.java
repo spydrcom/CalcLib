@@ -38,6 +38,7 @@ public class PolylogQuadrature extends CyclicQuadrature
 	multiplier = 10000,			// a scaling factor to increase cycle amplitude
 	halfCycleSegments = 4,		// a divisor for the portion of a cycle to target for integration
 	domainPoints = 1600,		// the number of half-cycles to evaluate in the range 0..1
+	minimumPoint = 100,			// the power factor for the smallest sync point allowed
 	infinity = 50;				// a value for the upper bound of the definite integral
 
 
@@ -47,9 +48,11 @@ public class PolylogQuadrature extends CyclicQuadrature
 	public void addConfiguration (Map <String, Object> parameters)
 	{
 		this.multiplier = configure ("multiplier", multiplier, parameters);
+		this.minimumPoint = configure ("minimum", minimumPoint, parameters);
 		this.halfCycleSegments = configure ("segments", halfCycleSegments, parameters);
 		this.domainPoints = configure ("points", domainPoints, parameters);
 		this.infinity = configure ("infinity", infinity, parameters);
+		this.setMinimumPoint (Math.pow (10.0, -minimumPoint));
 		this.configureQuadratureMethod (parameters);
 	}
 	int configure (String name, int defaultValue, Map <String, Object> parameters)

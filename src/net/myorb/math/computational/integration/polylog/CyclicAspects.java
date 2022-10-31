@@ -314,8 +314,20 @@ public class CyclicAspects
 		)
 	{
 		for (int n = N; n >= 0; n--)
-		{ points.add ( halfCycle (-n, s, k) ); }
+		{
+			Double point = halfCycle (-n, s, k);
+			if (point.isNaN () || point < minPoint) continue;
+			points.add ( point );
+		}
 	}
+
+
+	/**
+	 * @param value the smallest allowed point value
+	 */
+	public void setMinimumPoint
+	(double value) { this.minPoint = value; }
+	protected double minPoint = 1E-100;
 
 
 	/**
