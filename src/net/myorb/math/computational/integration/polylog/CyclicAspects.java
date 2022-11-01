@@ -327,7 +327,7 @@ public class CyclicAspects
 	 */
 	public void setMinimumPoint
 	(double value) { this.minPoint = value; }
-	protected double minPoint = 1E-100;
+	protected double minPoint = 1E-80;
 
 
 	/**
@@ -347,9 +347,25 @@ public class CyclicAspects
 		)
 	{
 		double last = 1.0; int n = 1;
+		if (k == 0) return trivial (upTo);
 		List <Double> points = computeCycleSyncPoints (k, s, N);
-		while (last < upTo) points.add ( last = halfCycle (n++, s, k) );
+		while (last < upTo) points.add ( last = Math.min (upTo, halfCycle (n++, s, k) ) );
 		return points;
+	}
+
+
+	/**
+	 * trivial domain for sigma=0
+	 * @param upTo the approximation of infinity
+	 * @return the list of points
+	 */
+	public List <Double> trivial (double upTo)
+	{
+		List <Double> domain =
+			new ArrayList <Double> ();
+		domain.add (0.0); domain.add (1.0);
+		domain.add (upTo);
+		return domain;
 	}
 
 
