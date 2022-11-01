@@ -16,9 +16,8 @@ public class CauchySchlomilch
 	 * @param t the integration variable
 	 * @return the computed product
 	 */
-	public static double
-		kLnT (double k, double t)
-	{ return k * Math.log (t); }
+	public static double kLnT (double k, double t)
+	{ if (k == 0) return 0; return k * Math.log (t); }
 
 	/**
 	 * compute the
