@@ -110,6 +110,21 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 
+	/**
+	 * simple static integer factorial
+	 * - double returned to extend range of result
+	 * @param n the value to use as parameter
+	 * @return n!
+	 */
+	public static double F (double n)
+	{
+		double res = n;
+		if (n < 2) return 1;
+		for (int f = (int) n - 1; f > 1; f--) res *= f;
+		return res;
+	}
+
+
 	/*
 	 * Pochhammer
 	 */
