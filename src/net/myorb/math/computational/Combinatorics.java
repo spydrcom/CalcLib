@@ -200,7 +200,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/**
-	 * stirlingNumbers second kind { n / k }
+	 * Stirling Numbers second kind { n / k }
 	 * @param n the upper number of the set
 	 * @param k the lower number of the set
 	 * @return S ( n, k )
@@ -221,6 +221,65 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 
 		return number / F;
+	}
+
+
+	/**
+	 * Euler Numbers { n / m }
+	 * @param n the upper number of the set
+	 * @param m the lower number of the set
+	 * @return E ( n, m )
+	 */
+	public static double eulerNumbers (int n, int m)
+	{
+		if (m > n) return 0;
+
+		double S = 1;
+		// SUM [k=0:m+1] (-1)^k * BC(n+1/k) * (m + 1 - k)^n
+		double number = 0;
+
+		for (int k = 0; k <= m+1; k++, S = -S)
+		{
+			number += S * Math.pow (m + 1 - k, n) *
+				binomialCoefficient (n+1, k);
+		}
+
+		return number;
+	}
+
+
+	/**
+	 * compute Euler polynomial coefficients of specified order
+	 * @param n the order of the polynomial
+	 * @return the array of coefficients
+	 */
+	public static double [] eulerCoefficients (int n)
+	{
+		double [] c = new double [n+1];
+		for (int m = 0; m <= n; m++) c [m] = eulerNumbers (n, m);
+		return c;
+	}
+
+
+	/**
+	 * evaluate Euler polynomial of specified order
+	 * @param n the order of the polynomial
+	 * @param t the polynomial variable
+	 * @return the computed value
+	 */
+	public T eulerPolynomial (int n, T t)
+	{
+		T sum = manager.getZero (), P = manager.getOne ();
+		// An (t) = SUM [m=0:n] ( A(n,m) * t^m )
+		for (int m = 0; m <= n; m++)
+		{
+			T c = manager.newScalar
+				( (int) eulerNumbers (n, m) );
+			T term = manager.multiply (P, c);
+			sum = manager.add (sum, term);
+			P = manager.multiply (P, t);
+		}
+		return sum;
 	}
 
 

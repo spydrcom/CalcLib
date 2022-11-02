@@ -201,6 +201,14 @@ public class MathMarkupNodes implements NodeFormatting
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatStirlingNumbers(java.lang.String, java.lang.String)
+	 */
+	public String formatStirlingNumbers (String over, String under)
+	{
+		return "<mo mathsize='3'>&#x27E8;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='3'>&#x27E9;</mo>";
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatPochhammerRising(java.lang.String, java.lang.String)
 	 */
 	public String formatPochhammerRising (String value, String count)

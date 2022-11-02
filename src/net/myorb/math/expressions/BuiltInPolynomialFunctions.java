@@ -8,6 +8,7 @@ import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 import net.myorb.math.polynomial.families.HyperGeometricPolynomial;
 import net.myorb.math.polynomial.families.chebyshev.ChebyshevPolynomialCalculus;
 
+import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.computational.PolynomialRoots;
 import net.myorb.math.computational.GaussQuadrature;
 import net.myorb.math.computational.Regression;
@@ -306,6 +307,23 @@ public class BuiltInPolynomialFunctions<T>
 	public ValueManager.GenericValue evalPrime
 	(ValueManager.GenericValue polynomialCoefficients, ValueManager.GenericValue x, int order)
 	{ return format (eval (valueManager.toArray (x), getDerivativeTransform (polynomialCoefficients, order))); }
+
+
+	/**
+	 * evaluate an Euler polynomial
+	 * @param order the order of polynomial to build
+	 * @param x the value of the polynomial parameter
+	 * @return the computed value
+	 */
+	public ValueManager.GenericValue eulerEval
+	(ValueManager.GenericValue order, ValueManager.GenericValue x)
+	{
+		double [] euler = Combinatorics.eulerCoefficients
+			(spaceManager.convertToInteger (valueManager.toDiscrete (order)));
+		Polynomial.Coefficients <T> coefficients = new Polynomial.Coefficients <T> ();
+		for (double c : euler) coefficients.add (spaceManager.convertFromDouble (c));
+		return format (eval (valueManager.toArray (x), poly.getPolynomialFunction (coefficients)));
+	}
 
 
 	/**

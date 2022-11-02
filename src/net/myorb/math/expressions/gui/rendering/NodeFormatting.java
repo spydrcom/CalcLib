@@ -147,6 +147,14 @@ public interface NodeFormatting
 	String formatBinomialCoefficient (String over, String under);
 
 	/**
+	 * format Stirling Numbers
+	 * @param over count of items in set
+	 * @param under taken a number at a time
+	 * @return the formatted node text
+	 */
+	String formatStirlingNumbers (String over, String under);
+
+	/**
 	 * format a Pochhammer Rising
 	 * @param value source being manipulated
 	 * @param count number of factors rising

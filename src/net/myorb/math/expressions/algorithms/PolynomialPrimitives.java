@@ -96,6 +96,23 @@ public class PolynomialPrimitives<T> extends VectorPrimitives<T>
 
 
 	/**
+	 * implement operator - #*^
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getEulerEvalAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{ return poly.eulerEval (left, right); }
+		};
+	}
+
+
+	/**
 	 * implement operator - @*^
 	 * @param symbol the symbol associated with this object
 	 * @param precedence the associated precedence
