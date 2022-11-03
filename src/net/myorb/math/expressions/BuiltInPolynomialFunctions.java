@@ -321,7 +321,7 @@ public class BuiltInPolynomialFunctions<T>
 		double [] euler = Combinatorics.eulerCoefficients
 			(spaceManager.convertToInteger (valueManager.toDiscrete (order)));
 		Polynomial.Coefficients <T> coefficients = new Polynomial.Coefficients <T> ();
-		for (double c : euler) coefficients.add (spaceManager.convertFromDouble (c));
+		for (double c : euler) { coefficients.add (spaceManager.convertFromDouble (c)); }
 		return format (eval (valueManager.toArray (x), poly.getPolynomialFunction (coefficients)));
 	}
 

@@ -3,10 +3,10 @@ package net.myorb.math.computational.integration.polylog;
 
 import net.myorb.math.computational.Combinatorics;
 
-import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
-
 import net.myorb.math.complexnumbers.ComplexSpaceCore;
 import net.myorb.math.complexnumbers.ComplexValue;
+
+import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
 
 import net.myorb.data.abstractions.FunctionWrapper;
 import net.myorb.data.abstractions.Function;
@@ -94,8 +94,8 @@ public class JonquierePolylog
 	}
 
 	/**
-	 * @param z
-	 * @param z the parameter to the polynomial
+	 * @param z the parameter to the function
+	 * @param polyValue the calculated value of the polynomial factor
 	 * @param power the exponent of the function
 	 * @return poly / (1 - z)^power
 	 */

@@ -199,6 +199,11 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 
+	/*
+	 * Stirling, Euler, ...
+	 */
+
+
 	/**
 	 * Stirling Numbers second kind { n / k }
 	 * @param n the upper number of the set
