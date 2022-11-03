@@ -90,6 +90,7 @@ public class ExponentialIntegral
 	 */
 	public static double li (double x)
 	{
+		if (x == 0) return 0.0;
 		return Ei (Math.log (x));
 	}
 
@@ -101,6 +102,17 @@ public class ExponentialIntegral
 	{
 		return Math.exp (t) / t;
 	}
+
+	/**
+	 * Eulerian Li function
+	 * @param x parameter value
+	 * @return li(x) - li(2)
+	 */
+	public static double Li (double x)
+	{
+		return li (x) - li2;
+	}
+	public static double li2 = 1.045163780117492784;
 
 }
 
