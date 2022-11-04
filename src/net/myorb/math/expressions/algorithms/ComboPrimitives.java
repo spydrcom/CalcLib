@@ -116,6 +116,34 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 
 
 	/**
+	 * implement operator - Bells Triangle
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getBTAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
+				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
+				T result = spaceManager.convertFromDouble (Combinatorics.bellTriangle (n, k));
+				return valueManager.newDiscreteValue (result);
+			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				return using.formatStirlingNumbers (firstOperand, secondOperand);
+			}
+		};
+	}
+
+
+	/**
 	 * implement operator - Euler Numbers
 	 * @param symbol the symbol associated with this object
 	 * @param precedence the precedence of the operation

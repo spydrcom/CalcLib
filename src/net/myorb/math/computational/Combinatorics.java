@@ -125,6 +125,18 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 
+	/**
+	 * derangement number (subfactorial !n)
+	 * @param n the value to use as parameter
+	 * @return floor ( 0.5 + n! / e )
+	 */
+	public static double subfactorial (double n)
+	{
+		if (n == 0) return 1;
+		return Math.floor ( 0.5 + F (n) / Math.E );
+	}
+
+
 	/*
 	 * Pochhammer
 	 */
@@ -200,8 +212,36 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/*
-	 * Stirling, Euler, ...
+	 * Lobb, Catalan, Stirling, Euler, ...
 	 */
+
+
+	/**
+	 * compute Lobb numbers
+	 * @param m the upper number of the set
+	 * @param n the lower number of the set
+	 * @return the computed Lobb number
+	 */
+	public static double lobbNumbers (int m, int n)
+	{
+		int n2 = 2 * n, mn = m + n;
+
+		double difference =
+			binomialCoefficient (n2, mn) -
+			binomialCoefficient (n2, mn+1);
+		return difference;
+	}
+
+
+	/**
+	 * compute Catalan numbers
+	 * @param n the index of the series
+	 * @return the Nth Catalan number
+	 */
+	public static double catalanNumbers (int n)
+	{
+		return binomialCoefficient (2*n, n) / (n + 1);
+	}
 
 
 	/**
@@ -212,7 +252,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public static double stirlingNumbers1 (int n, int k)
 	{
-		//  s(n+1,k)=n*s(n,k)+s(n,k-1)
+		//  s (n + 1, k) = n * s (n, k) + s (n, k - 1)
 		if (n == 0 && k == 0) return 1; if (n == 0 || k == 0) return 0;
 		return (n-1) * stirlingNumbers1 (n-1, k) + stirlingNumbers1 (n-1, k-1);
 	}
@@ -236,11 +276,86 @@ public class Combinatorics<T>  extends Tolerances<T>
 		{
 			number += S * Math.pow (k - i, n) *
 				binomialCoefficient (k, i);
-			F *= i;
+			F *= i; // compiled factorial
 		}
 
 		return number / F;
 	}
+
+
+	/**
+	 * sequence of Bell numbers
+	 * @param n the index into the sequence
+	 * @return Nth Bell number
+	 */
+	public static double bellNumbers (int n)
+	{
+		double sum = 0;
+		// !! Bn(n) = SIGMA [ 0 <= k <= n ] ( n $$$ k )
+		for (int k = 0; k <= n; k++)
+		{
+			sum += stirlingNumbers2 (n, k);
+		}
+		return sum;
+	}
+
+
+	/**
+	 * compute entries of the triangle
+	 * @param i row number to identify entry
+	 * @param j column number to identify entry
+	 * @return computed entry
+	 */
+	public static double bellTriangle (int i, int j)
+	{
+		if (j > i) return 0; else if (j == 0)
+		{ if (i == 0) return 1; return bellTriangle (i-1, i-1); }
+		else return bellTriangle (i, j-1) + bellTriangle (i-1, j-1);
+	}
+
+
+	/*
+	 * 
+	 * HGF:  2F1 ( 1 - n, -n ; 2 ; k )
+	 * 
+	 * 	k = 1 => Narayana Numbers
+	 * 	k = 2 => Shroder Numbers
+	 * 
+	 */
+
+
+	/**
+	 * compute Narayana numbers
+	 * @param n the upper number of the set
+	 * @param k the lower number of the set
+	 * @return the computed Narayana number
+	 */
+	public static double narayanaNumbers (int n, int k)
+	{
+		double product =
+			binomialCoefficient (n, k) *
+			binomialCoefficient (n, k-1);
+		return product / n;
+	}
+
+
+	/**
+	 * compute Shroder numbers
+	 * @param n the index of the series
+	 * @return the computed Shroder number
+	 */
+	public static double shroderNumbers (int n)
+	{
+		double sum = 0;
+		for (int i = 1; i <= n; i++)
+		{ sum += narayanaNumbers (n, i) * Math.pow (2, i-1); }
+		return sum;
+	}
+
+
+	/*
+	 * Euler numbers, coefficients, and polynomials
+	 */
 
 
 	/**

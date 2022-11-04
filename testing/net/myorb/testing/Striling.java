@@ -1,6 +1,8 @@
 
 package net.myorb.testing;
 
+import net.myorb.math.computational.Combinatorics;
+
 public class Striling
 {
 
@@ -13,11 +15,26 @@ public class Striling
 		return (n-1) * s(n-1,k) + s(n-1,k-1);
 	}
 
+	public static double bell (int i, int j)
+	{
+		if (j > i) return 0; else if (j == 0)
+		{ if (i == 0) return 1; return bell (i-1, i-1); }
+		else return bell (i, j-1) + bell (i-1, j-1);
+	}
+
 	public static void main (String[] args)
 	{
 		for (int n = 0; n < 10; n++)
+		{
+			System.out.println (Combinatorics.subfactorial (n));
+		}
+	}
+
+	public static void mainy (String[] args)
+	{
+		for (int n = 0; n < 10; n++)
 			for (int k = 0; k < 10; k++)
-				System.out.println ("n="+n + " k="+k + " : " + (s(n,k)));
+				System.out.println ("n="+n + " k="+k + " : " + (Combinatorics.lobbNumbers(k,n)));
 	}
 
 	static double F (double n)
