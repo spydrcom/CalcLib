@@ -145,7 +145,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/*
-	 * binomial coefficients
+	 * binomial coefficients (Pascal Numbers)
 	 */
 
 
@@ -205,12 +205,26 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/**
+	 * Stirling Numbers first kind { n / k }
+	 * @param n the upper number of the set
+	 * @param k the lower number of the set
+	 * @return S ( n, k )
+	 */
+	public static double stirlingNumbers1 (int n, int k)
+	{
+		//  s(n+1,k)=n*s(n,k)+s(n,k-1)
+		if (n == 0 && k == 0) return 1; if (n == 0 || k == 0) return 0;
+		return (n-1) * stirlingNumbers1 (n-1, k) + stirlingNumbers1 (n-1, k-1);
+	}
+
+
+	/**
 	 * Stirling Numbers second kind { n / k }
 	 * @param n the upper number of the set
 	 * @param k the lower number of the set
 	 * @return S ( n, k )
 	 */
-	public static double stirlingNumbers (int n, int k)
+	public static double stirlingNumbers2 (int n, int k)
 	{
 		if (k > n) return 0;
 		double F = 1.0, S = -1;

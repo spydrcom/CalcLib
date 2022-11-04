@@ -4,6 +4,22 @@ package net.myorb.testing;
 public class Striling
 {
 
+	//  s(n+1,k)=-n s(n,k)+s(n,k-1)}.
+	
+	public static double s (int n, int k)
+	{
+		if (n == 0 && k == 0) return 1;
+		if (n == 0 || k == 0) return 0;
+		return (n-1) * s(n-1,k) + s(n-1,k-1);
+	}
+
+	public static void main (String[] args)
+	{
+		for (int n = 0; n < 10; n++)
+			for (int k = 0; k < 10; k++)
+				System.out.println ("n="+n + " k="+k + " : " + (s(n,k)));
+	}
+
 	static double F (double n)
 	{
 		double res = n;
@@ -56,7 +72,7 @@ public class Striling
 		return number / F;
 	}
 
-	public static void main (String[] args)
+	public static void mainx (String[] args)
 	{
 		for (int n = 0; n <= 10; n++)
 		{

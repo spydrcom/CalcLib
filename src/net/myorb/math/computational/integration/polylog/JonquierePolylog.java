@@ -182,7 +182,7 @@ public class JonquierePolylog
 	{
 		ComplexValue <Double> frac = mgr.invert (mgr.add (z, NONE));
 		ComplexValue <Double> exp = ComplexSpaceCore.cplxLib.pow (frac, k+1);
-		double SKF = Combinatorics.stirlingNumbers (n+1, k+1) * Combinatorics.F (k);
+		double SKF = Combinatorics.stirlingNumbers2 (n+1, k+1) * Combinatorics.F (k);
 		return mgr.multiply (mgr.C (SKF, 0.0), exp);
 	}
 	public static ExpressionComplexFieldManager mgr = ComplexSpaceCore.manager;

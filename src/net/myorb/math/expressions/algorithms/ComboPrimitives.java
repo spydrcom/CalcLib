@@ -74,7 +74,35 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			{
 				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
 				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
-				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers (n, k));
+				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers1 (n, k));
+				return valueManager.newDiscreteValue (result);
+			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				return using.formatStirlingNumbers (firstOperand, secondOperand);
+			}
+		};
+	}
+
+
+	/**
+	 * implement operator - Stirling Numbers (second)
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getSNSAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
+				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
+				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers2 (n, k));
 				return valueManager.newDiscreteValue (result);
 			}
 
