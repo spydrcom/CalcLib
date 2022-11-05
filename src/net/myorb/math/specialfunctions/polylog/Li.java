@@ -24,7 +24,7 @@ public class Li extends CommonFunctionBase
 
 	/**
 	 * evaluation of Bose Li integral at parameter
-	 * @param s parameter to function
+	 * @param z parameter to function
 	 * @return computed value
 	 */
 	public ComplexValue<Double> evaluateBoseLiIntegralAt (ComplexValue<Double> z)
