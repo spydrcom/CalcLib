@@ -2,8 +2,11 @@
 package net.myorb.math.expressions.gui.rendering;
 
 import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
+
 import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.GreekSymbols;
+
+import java.util.HashMap;
 
 /**
  * formatter for MathML document type
@@ -197,7 +200,7 @@ public class MathMarkupNodes implements NodeFormatting
 	 */
 	public String formatBinomialCoefficient (String over, String under)
 	{
-		return "<mo mathsize='3'>&#x27E8;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='3'>&#x27E9;</mo>";
+		return "<mo mathsize='3'>&#x0028;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='3'>&#x0029;</mo>";
 	}
 
 	/* (non-Javadoc)
@@ -205,7 +208,28 @@ public class MathMarkupNodes implements NodeFormatting
 	 */
 	public String formatStirlingNumbers (String over, String under)
 	{
-		return "<mo mathsize='3'>&#x27E8;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='3'>&#x27E9;</mo>";
+		return "<mo mathsize='5'>&#x007B;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='5'>&#x007D;</mo>";
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatBracketed(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting.Bractets)
+	 */
+	public String formatBracketed (String over, String under, Bractets bractetType)
+	{
+		return formatBracketed (over, under, OPEN.get (bractetType), CLOSE.get (bractetType));
+	}
+	public String formatBracketed (String over, String under, String open, String close)
+	{
+		return "<mo mathsize='5'>" + open + "</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='5'>" + close + "</mo>";
+	}
+	static final HashMap < Bractets, String >
+		OPEN = new HashMap <> (), CLOSE = new HashMap <> ();
+	static
+	{
+		OPEN.put (Bractets.PAREN,  "&#x00028;");	CLOSE.put (Bractets.PAREN,  "&#x00029;");
+		OPEN.put (Bractets.SQUARE, "&#x005B;");		CLOSE.put (Bractets.SQUARE, "&#x005D;");
+		OPEN.put (Bractets.CURLY,  "&#x007B;");		CLOSE.put (Bractets.CURLY,  "&#x007D;");
+		OPEN.put (Bractets.ANGLE,  "&#x27E8;");		CLOSE.put (Bractets.ANGLE,  "&#x27E9;");
 	}
 
 	/* (non-Javadoc)

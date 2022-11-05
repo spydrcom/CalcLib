@@ -53,7 +53,7 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
 			{
-				return using.formatBinomialCoefficient (firstOperand, secondOperand);
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.PAREN);
 			}
 		};
 	}
@@ -81,7 +81,7 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
 			{
-				return using.formatStirlingNumbers (firstOperand, secondOperand);
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.SQUARE);
 			}
 		};
 	}
@@ -109,7 +109,7 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
 			{
-				return using.formatStirlingNumbers (firstOperand, secondOperand);
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.CURLY);
 			}
 		};
 	}
@@ -137,7 +137,7 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
 			{
-				return using.formatStirlingNumbers (firstOperand, secondOperand);
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.ANGLE);
 			}
 		};
 	}
@@ -165,7 +165,7 @@ public class ComboPrimitives<T> extends PowerPrimitives<T>
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
 			{
-				return using.formatBinomialCoefficient (firstOperand, secondOperand);
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.ANGLE);
 			}
 		};
 	}

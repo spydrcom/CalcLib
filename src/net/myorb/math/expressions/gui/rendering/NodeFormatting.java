@@ -138,21 +138,16 @@ public interface NodeFormatting
 	 * special case notations
 	 */
 
-	/**
-	 * format a Binomial Coefficient
-	 * @param over count of items in set
-	 * @param under taken a number at a time
-	 * @return the formatted node text
-	 */
-	String formatBinomialCoefficient (String over, String under);
+	public enum Bractets { PAREN, SQUARE, ANGLE, CURLY }
 
 	/**
-	 * format Stirling Numbers
+	 * format bracketed over/under
 	 * @param over count of items in set
 	 * @param under taken a number at a time
+	 * @param bractetType
 	 * @return the formatted node text
 	 */
-	String formatStirlingNumbers (String over, String under);
+	String formatBracketed (String over, String under, Bractets bractetType);
 
 	/**
 	 * format a Pochhammer Rising
