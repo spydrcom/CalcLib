@@ -196,28 +196,20 @@ public class MathMarkupNodes implements NodeFormatting
 	 */
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatBinomialCoefficient(java.lang.String, java.lang.String)
-	 */
-	public String formatBinomialCoefficient (String over, String under)
-	{
-		return "<mo mathsize='3'>&#x0028;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='3'>&#x0029;</mo>";
-	}
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatStirlingNumbers(java.lang.String, java.lang.String)
-	 */
-	public String formatStirlingNumbers (String over, String under)
-	{
-		return "<mo mathsize='5'>&#x007B;</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='5'>&#x007D;</mo>";
-	}
-
-	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.gui.rendering.NodeFormatting#formatBracketed(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting.Bractets)
 	 */
 	public String formatBracketed (String over, String under, Bractets bractetType)
 	{
 		return formatBracketed (over, under, OPEN.get (bractetType), CLOSE.get (bractetType));
 	}
+
+	/**
+	 * @param over top part of the over-under pair
+	 * @param under bottom part of the over-under pair
+	 * @param open the opening bracket character for the pair
+	 * @param close the closing bracket character for the pair
+	 * @return the formatted text
+	 */
 	public String formatBracketed (String over, String under, String open, String close)
 	{
 		return "<mo mathsize='5'>" + open + "</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='5'>" + close + "</mo>";
