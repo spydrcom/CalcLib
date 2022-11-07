@@ -144,7 +144,7 @@ public interface NodeFormatting
 	 * format bracketed over/under
 	 * @param over count of items in set
 	 * @param under taken a number at a time
-	 * @param bractetType
+	 * @param bractetType bracket type to use in display
 	 * @return the formatted node text
 	 */
 	String formatBracketed (String over, String under, Bractets bractetType);

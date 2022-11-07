@@ -212,7 +212,7 @@ public class MathMarkupNodes implements NodeFormatting
 	 */
 	public String formatBracketed (String over, String under, String open, String close)
 	{
-		return "<mo mathsize='5'>" + open + "</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='5'>" + close + "</mo>";
+		return "<mo mathsize='10'>" + open + "</mo><mrow><munderover><mo/>" + under + over + "</munderover></mrow><mo mathsize='10'>" + close + "</mo>";
 	}
 	static final HashMap < Bractets, String >
 		OPEN = new HashMap <> (), CLOSE = new HashMap <> ();
