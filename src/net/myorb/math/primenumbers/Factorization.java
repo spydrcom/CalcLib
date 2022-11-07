@@ -82,9 +82,22 @@ public class Factorization extends SignManager
 		/**
 		 * get a list of primes
 		 * @param limit the upper bound of the range
-		 * @return list f primes
+		 * @return list of primes
 		 */
 		List<BigInteger> getPrimesUpTo (int limit);
+
+		/**
+		 * get a list of primes
+		 * @param n the count of primes requested
+		 * @return list of primes
+		 */
+		List<BigInteger> getPrimes (int n);
+
+		/**
+		 * get a list of all computed primes
+		 * @return list of primes
+		 */
+		List<BigInteger> getAllPrimes ();
 
 		/**
 		 * check for option being enabled

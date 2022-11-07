@@ -5,9 +5,10 @@ import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
+import net.myorb.math.expressions.algorithms.FactorizationFormulas;
 import net.myorb.math.expressions.evaluationstates.*;
 import net.myorb.math.expressions.symbols.*;
+
 import net.myorb.math.computational.*;
 import net.myorb.math.matrices.*;
 import net.myorb.math.*;
@@ -28,20 +29,22 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 	 * type manager used to evaluate computations
 	 * @param environment access to the evaluation environment
 	 */
-	public BuiltInArrayFunctions (Environment<T> environment)
+	public BuiltInArrayFunctions (Environment <T> environment)
 	{
 		super (environment);
-		this.vectorOperations = new VectorOperations<T> (spaceManager);
-		this.abstractions = new BuiltInArrayAbstractions<T> (environment);
-		this.conversion = new ExtendedDataConversions<T> (environment);
-		this.functions = new ArrayFunction<T> (environment);
-		this.stats = new Statistics<T>(spaceManager);
+		this.vectorOperations = new VectorOperations <T> (spaceManager);
+		this.abstractions = new BuiltInArrayAbstractions <T> (environment);
+		this.conversion = new ExtendedDataConversions <T> (environment);
+		this.formulas = new FactorizationFormulas <T> (environment);
+		this.functions = new ArrayFunction <T> (environment);
+		this.stats = new Statistics <T> (spaceManager);
 	}
-	protected BuiltInArrayAbstractions<T> abstractions = null;
-	protected ExtendedDataConversions<T> conversion = null;
+	protected BuiltInArrayAbstractions <T> abstractions = null;
+	protected ExtendedDataConversions <T> conversion = null;
 	protected VectorOperations<T> vectorOperations = null;
-	protected ArrayFunction<T> functions = null;
-	protected Statistics<T> stats = null;
+	protected FactorizationFormulas <T> formulas = null;
+	protected ArrayFunction <T> functions = null;
+	protected Statistics <T> stats = null;
 
 
 	/**
@@ -487,7 +490,7 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 			new AbstractParameterizedFunction (PRIMES_FUNCTION)
 			{
 				public ValueManager.GenericValue execute
-				(ValueManager.GenericValue parameters) { return abstractions.primes (parameters); }
+				(ValueManager.GenericValue parameters) { return formulas.primes (parameters); }
 			}, "Get an array of all primes less than parameter"
 		);
 		into.add
@@ -495,7 +498,7 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 			new AbstractParameterizedFunction (FACTORS_FUNCTION)
 			{
 				public ValueManager.GenericValue execute
-				(ValueManager.GenericValue parameters) { return abstractions.factors (parameters); }
+				(ValueManager.GenericValue parameters) { return formulas.factors (parameters); }
 			}, "Get an array of all prime factors of the parameter"
 		);
 		into.add
@@ -503,7 +506,7 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 			new AbstractParameterizedFunction (GCF_FUNCTION)
 			{
 				public ValueManager.GenericValue execute
-				(ValueManager.GenericValue parameters) { return abstractions.gcf (parameters); }
+				(ValueManager.GenericValue parameters) { return formulas.gcf (parameters); }
 			}, "Greatest common factor of two integers"
 		);
 		into.add
@@ -511,7 +514,7 @@ public class BuiltInArrayFunctions<T> extends BuiltInFunctions<T>
 			new AbstractParameterizedFunction (LCM_FUNCTION)
 			{
 				public ValueManager.GenericValue execute
-				(ValueManager.GenericValue parameters) { return abstractions.lcm (parameters); }
+				(ValueManager.GenericValue parameters) { return formulas.lcm (parameters); }
 			}, "Least common multiple of two integers"
 		);
 	}

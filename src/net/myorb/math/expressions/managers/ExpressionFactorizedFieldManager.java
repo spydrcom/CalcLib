@@ -11,6 +11,8 @@ import net.myorb.math.primenumbers.*;
 
 import net.myorb.data.abstractions.ValueDisplayProperties;
 
+import java.math.BigInteger;
+
 import java.util.List;
 
 /**
@@ -47,7 +49,7 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 	public Factorization parseValueToken (TokenParser.TokenType type, String image)
 	{
 		if (type == TokenParser.TokenType.INT)
-			return bigScalar (Long.parseLong (image));
+			return bigScalar (new BigInteger (image));
 		return convertFromDouble (Double.parseDouble (image));
 	}
 
@@ -65,7 +67,7 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 			numerator *= 10; fixedValue = numerator.longValue ();
 			multiplier = multiplier.multiplyBy (TEN);
 		}
-		return bigScalar (fixedValue).divideBy (multiplier);
+		return longScalar (fixedValue).divideBy (multiplier);
 	}
 
 	/* (non-Javadoc)

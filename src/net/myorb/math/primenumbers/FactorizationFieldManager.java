@@ -6,6 +6,8 @@ import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
 
+import java.math.BigInteger;
+
 /**
  * 
  * provide a type manager for integer values represented as prime number factorizations
@@ -40,7 +42,8 @@ public class FactorizationFieldManager implements SpaceManager<Factorization>
 	 * @see net.myorb.math.FieldManager#newScalar(int)
 	 */
 	public Factorization newScalar (int x) { return FactorizationManager.forValue (x); }
-	public Factorization bigScalar (long x) { return FactorizationManager.forValue (x); }
+	public Factorization bigScalar (BigInteger x) { return FactorizationManager.forValue (x); }
+	public Factorization longScalar (long x) { return FactorizationManager.forValue (x); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#add(java.lang.Object, java.lang.Object)

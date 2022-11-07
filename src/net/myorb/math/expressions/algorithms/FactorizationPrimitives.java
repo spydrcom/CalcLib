@@ -3,9 +3,10 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.primenumbers.Factorization;
 import net.myorb.math.primenumbers.FactorAdjustment;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
-import net.myorb.math.expressions.BuiltInArrayAbstractions;
+
 import net.myorb.math.expressions.ValueManager;
 
 /**
@@ -20,15 +21,15 @@ public class FactorizationPrimitives
 	 * object depends on data structures of the environment
 	 * @param environment the environment object holding value management objects
 	 */
-	public FactorizationPrimitives (Environment<Factorization> environment)
+	public FactorizationPrimitives (Environment <Factorization> environment)
 	{
-		this.abstractions = new BuiltInArrayAbstractions<Factorization> (environment);
+		this.abstractions = new FactorizationFormulas <Factorization> (environment);
 		this.valueManager = environment.getValueManager ();
 		this.environment = environment;
 	}
-	protected BuiltInArrayAbstractions<Factorization> abstractions = null;
-	ValueManager<Factorization> valueManager;
-	Environment<Factorization> environment;
+	protected FactorizationFormulas <Factorization> abstractions = null;
+	protected ValueManager <Factorization> valueManager;
+	protected Environment <Factorization> environment;
 
 
 	/**

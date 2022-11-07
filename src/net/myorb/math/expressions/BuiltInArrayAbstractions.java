@@ -6,16 +6,13 @@ import net.myorb.math.computational.Regression;
 import net.myorb.math.expressions.charting.RegressionCharts;
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.primenumbers.*;
 
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
 import net.myorb.math.*;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * implementation of built-in array abstractions
@@ -260,91 +257,6 @@ public class BuiltInArrayAbstractions<T> extends ArrayFunction<T>
 	public T pearson (DataSequence2D<T> data)
 	{
 		return regression.pearsonCoefficient (data);
-	}
-
-
-	/*
-	 * array operators on prime numbers
-	 */
-
-
-	/**
-	 * get array of primes
-	 * @param parameters stack constructed parameter object
-	 * @return an array of the primes
-	 */
-	public ValueManager.GenericValue primes (ValueManager.GenericValue parameters)
-	{
-		ExpressionSpaceManager<T> mgr;
-		FactorizationManager.checkImplementation ();
-		ValueManager.RawValueList<T> array = new ValueManager.RawValueList<T> ();
-		int limit = valueManager.toInt (parameters, mgr = environment.getSpaceManager ());
-		List<BigInteger> source = Factorization.getImplementation ().getPrimesUpTo (limit);
-		for (BigInteger v : source) { array.add (mgr.newScalar (v.intValue ())); }
-		return valueManager.newDimensionedValue (array);
-	}
-
-
-	/**
-	 * get factors of integer value
-	 * @param parameters stack constructed parameter object
-	 * @return an array of the factors
-	 */
-	public ValueManager.GenericValue factors (ValueManager.GenericValue parameters)
-	{
-		ExpressionSpaceManager<T> mgr;
-		int source = valueManager.toInt
-			(parameters, mgr = environment.getSpaceManager ());
-		Factorization f = FactorizationManager.forValue (source);
-		Map<BigInteger,Integer> m = f.getFactors ().getFactorMap ();
-		BigInteger[] primes = m.keySet ().toArray (new BigInteger[1]);
-		ValueManager.RawValueList<T> array = new ValueManager.RawValueList<T> ();
-		java.util.Arrays.sort (primes);
-
-		for (BigInteger prime : primes)
-		{
-			int exp = m.get (prime);
-			T p = mgr.newScalar (prime.intValue ());
-			for (int i = 1; i <= exp; i++) array.add (p);
-		}
-
-		return valueManager.newDimensionedValue (array);
-	}
-
-
-	/**
-	 * get GCF of integer values
-	 * @param parameters stack constructed parameter object
-	 * @return the computed result
-	 */
-	@SuppressWarnings("unchecked")
-	public ValueManager.GenericValue gcf (ValueManager.GenericValue parameters)
-	{
-		FactorizationManager.checkImplementation ();
-		ValueManager.DimensionedValue<T> parameterList = (ValueManager.DimensionedValue<T>)parameters;
-		int left = environment.getSpaceManager ().toNumber (parameterList.getValues ().get (0)).intValue (),
-			right = environment.getSpaceManager ().toNumber (parameterList.getValues ().get (1)).intValue ();
-		Factorization x = FactorizationManager.forValue (left), y = FactorizationManager.forValue (right);
-		T value = environment.getSpaceManager ().newScalar (Distribution.GCF (x, y).reduce ().intValue ());
-		return valueManager.newDiscreteValue (value);
-	}
-
-
-	/**
-	 * get LCM of integer values
-	 * @param parameters stack constructed parameter object
-	 * @return the computed result
-	 */
-	@SuppressWarnings("unchecked")
-	public ValueManager.GenericValue lcm (ValueManager.GenericValue parameters)
-	{
-		FactorizationManager.checkImplementation ();
-		ValueManager.DimensionedValue<T> parameterList = (ValueManager.DimensionedValue<T>)parameters;
-		int left = environment.getSpaceManager ().toNumber (parameterList.getValues ().get (0)).intValue (),
-			right = environment.getSpaceManager ().toNumber (parameterList.getValues ().get (1)).intValue ();
-		Factorization x = FactorizationManager.forValue (left), y = FactorizationManager.forValue (right);
-		T value = environment.getSpaceManager ().newScalar (Distribution.LCM (x, y).reduce ().intValue ());
-		return valueManager.newDiscreteValue (value);
 	}
 
 

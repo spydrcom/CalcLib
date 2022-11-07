@@ -274,6 +274,22 @@ public class FactorizationImplementation
 		return primes;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getPrimes(int)
+	 */
+	public List<BigInteger> getPrimes (int n)
+	{
+		return primes.subList (0, n);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getAllPrimes()
+	 */
+	public List<BigInteger> getAllPrimes ()
+	{
+		return primes;
+	}
+
 	/**
 	 * provide a name for the prime selection algorithm
 	 * @return the name of the algorithm that will be used to select prime range for evaluation
