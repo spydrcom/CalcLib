@@ -1,11 +1,11 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
-
+import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryPostfixOperator;
-//import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.primenumbers.Factorization;
 
@@ -102,6 +102,23 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 			{
 				return formulas.divRem (parameters);
+			}
+		};
+	}
+
+	/**
+	 * implement function - DIVREM /%
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getDivRemOpAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				return formulas.divRem (left, right);
 			}
 		};
 	}

@@ -41,8 +41,14 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 		@SuppressWarnings("unchecked")
 		ValueManager.DimensionedValue <Factorization>
 			parameterList = (ValueManager.DimensionedValue <Factorization>) values;
-		BigInteger [] integerValues = new BigInteger [parameterList.getValues ().size ()];
-		for (int i = 0; i < integerValues.length; i++) integerValues [i] = parameterList.getValues ().get (i).reduce ();
+		return array (parameterList.getValues ());
+	}
+	BigInteger [] array (List <Factorization> values)
+	{
+		BigInteger [] integerValues =
+				new BigInteger [values.size ()];
+		for (int i = 0; i < integerValues.length; i++)
+		{ integerValues [i] = values.get (i).reduce (); }
 		return integerValues;
 	}
 
@@ -52,12 +58,36 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 * @param formula the formula to apply
 	 * @return the computed result
 	 */
-	public ValueManager.GenericValue process (ValueManager.GenericValue values, BigOp formula)
+	public ValueManager.GenericValue process
+	(ValueManager.GenericValue values, BigOp formula)
 	{
 		BigInteger [] p = extract (values);
 		Factorization result = factoredMgr.bigScalar
 			(formula.op (p [0], p [1]));
 		return valueManager.newDiscreteValue (result);
+	}
+
+	/**
+	 * package a result for return
+	 * @param value the value for the result
+	 * @return the GenericValue representation
+	 */
+	public ValueManager.GenericValue bundle (BigInteger value)
+	{
+		Factorization result = factoredMgr.bigScalar (value);
+		return valueManager.newDiscreteValue (result);
+	}
+
+	/**
+	 * package array result for return
+	 * @param values the value for the result
+	 * @return the GenericValue representation
+	 */
+	public ValueManager.GenericValue bundle (BigInteger [] values)
+	{
+		List <Factorization> computed = new ArrayList <> ();
+		for (BigInteger v : values) computed.add (factoredMgr.bigScalar (v));
+		return valueManager.newDimensionedValue (computed);
 	}
 
 	/**
@@ -71,8 +101,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 		BigInteger product = BigInteger.ONE; int n = spaceManager.toNumber (parm).intValue ();
 		List <BigInteger> primes = Factorization.getImplementation ().getPrimesUpTo (n);
 		for (BigInteger factor : primes) product = product.multiply (factor);
-		Factorization result = factoredMgr.bigScalar (product);
-		return valueManager.newDiscreteValue (result);
+		return bundle (product);
 	}
 
 	/**
@@ -93,9 +122,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue modPow (ValueManager.GenericValue values)
 	{
 		BigInteger [] p = extract (values);
-		BigInteger exp = p [0].modPow (p [1], p [2]);
-		Factorization result = factoredMgr.bigScalar (exp);
-		return valueManager.newDiscreteValue (result);
+		return bundle (p [0].modPow (p [1], p [2]));
 	}
 
 	/**
@@ -116,11 +143,23 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue divRem (ValueManager.GenericValue values)
 	{
 		BigInteger [] p = extract (values);
-		BigInteger [] results = p [0].divideAndRemainder (p [1]);
-		List <Factorization> computed = new ArrayList <> ();
-		computed.add (factoredMgr.bigScalar (results [0]));
-		computed.add (factoredMgr.bigScalar (results [1]));
-		return valueManager.newDimensionedValue (computed);
+		return bundle (p [0].divideAndRemainder (p [1]));
+	}
+
+	/**
+	 * DIVREM function /%
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left/right and left%right
+	 */
+	public ValueManager.GenericValue divRem
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			lF = valueManager.toDiscrete (left),
+			rF = valueManager.toDiscrete (right);
+		BigInteger lI = lF.reduce (), rI = rF.reduce ();
+		return bundle (lI.divideAndRemainder (rI));
 	}
 
 	public PrimeFormulas (Environment <Factorization> environment)
