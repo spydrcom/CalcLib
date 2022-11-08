@@ -33,17 +33,18 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 
 	/**
 	 * pull values from a bundled parameter list
-	 * @param values the GenericValue holding parameters
+	 * @param parameterList the GenericValue holding parameters
 	 * @return the parameters as an array
 	 */
-	public BigInteger [] extract (ValueManager.GenericValue values)
+	public BigInteger [] extract (ValueManager.GenericValue parameterList)
 	{
-		@SuppressWarnings("unchecked")
-		ValueManager.DimensionedValue <Factorization>
-			parameterList = (ValueManager.DimensionedValue <Factorization>) values;
-		return array (parameterList.getValues ());
+		return array
+		(
+			valueManager.getDimensionedValue (parameterList)
+						.getValues ()
+		);
 	}
-	BigInteger [] array (List <Factorization> values)
+	static BigInteger [] array (List <Factorization> values)
 	{
 		BigInteger [] integerValues =
 				new BigInteger [values.size ()];
@@ -126,13 +127,29 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	}
 
 	/**
-	 * REM operator - %
+	 * REM function
 	 * @param values the parameter passed to the function (must be integers)
-	 * @return left%right
+	 * @return rem(p1,p2)
 	 */
 	public ValueManager.GenericValue rem (ValueManager.GenericValue values)
 	{
 		return process (values, (x,y) -> x.remainder (y));
+	}
+
+	/**
+	 * REM operator /%
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left%right
+	 */
+	public ValueManager.GenericValue rem
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			lF = valueManager.toDiscrete (left),
+			rF = valueManager.toDiscrete (right);
+		BigInteger lI = lF.reduce (), rI = rF.reduce ();
+		return bundle (lI.remainder (rI));
 	}
 
 	/**
@@ -160,6 +177,66 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 			rF = valueManager.toDiscrete (right);
 		BigInteger lI = lF.reduce (), rI = rF.reduce ();
 		return bundle (lI.divideAndRemainder (rI));
+	}
+
+	/**
+	 * LSH operator <<
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left%right
+	 */
+	public ValueManager.GenericValue lsh
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			lF = valueManager.toDiscrete (left),
+			rF = valueManager.toDiscrete (right);
+		BigInteger lI = lF.reduce (), rI = rF.reduce ();
+		return bundle (lI.shiftLeft (rI.intValue ()));
+	}
+
+	/**
+	 * RSH operator >>
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left%right
+	 */
+	public ValueManager.GenericValue rsh
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			lF = valueManager.toDiscrete (left),
+			rF = valueManager.toDiscrete (right);
+		BigInteger lI = lF.reduce (), rI = rF.reduce ();
+		return bundle (lI.shiftRight (rI.intValue ()));
+	}
+
+	/**
+	 * POW operator ^
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left%right
+	 */
+	public ValueManager.GenericValue pow
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			lF = valueManager.toDiscrete (left),
+			rF = valueManager.toDiscrete (right);
+		BigInteger lI = lF.reduce (), rI = rF.reduce ();
+		return bundle (lI.pow (rI.intValue ()));
+	}
+
+	/**
+	 * GCD function
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left%right
+	 */
+	public ValueManager.GenericValue gcd (ValueManager.GenericValue values)
+	{
+		BigInteger [] p = extract (values);
+		return bundle (p [0].gcd (p [1]));
 	}
 
 	public PrimeFormulas (Environment <Factorization> environment)

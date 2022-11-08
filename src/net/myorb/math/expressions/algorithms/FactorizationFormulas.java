@@ -84,13 +84,13 @@ public class FactorizationFormulas <T>
 	 * @param parameters stack constructed parameter object
 	 * @return the computed result
 	 */
-	@SuppressWarnings("unchecked")
 	public ValueManager.GenericValue gcf (ValueManager.GenericValue parameters)
 	{
 		FactorizationManager.checkImplementation ();
-		ValueManager.DimensionedValue<T> parameterList = (ValueManager.DimensionedValue<T>)parameters;
-		int left = spaceManager.toNumber (parameterList.getValues ().get (0)).intValue (),
-			right = spaceManager.toNumber (parameterList.getValues ().get (1)).intValue ();
+		List <T> parameterList = valueManager.getDimensionedValue
+				(parameters).getValues ();
+		int left = spaceManager.toNumber (parameterList.get (0)).intValue (),
+			right = spaceManager.toNumber (parameterList.get (1)).intValue ();
 		Factorization x = FactorizationManager.forValue (left), y = FactorizationManager.forValue (right);
 		T value = spaceManager.newScalar (Distribution.GCF (x, y).reduce ().intValue ());
 		return valueManager.newDiscreteValue (value);
@@ -102,13 +102,13 @@ public class FactorizationFormulas <T>
 	 * @param parameters stack constructed parameter object
 	 * @return the computed result
 	 */
-	@SuppressWarnings("unchecked")
 	public ValueManager.GenericValue lcm (ValueManager.GenericValue parameters)
 	{
 		FactorizationManager.checkImplementation ();
-		ValueManager.DimensionedValue<T> parameterList = (ValueManager.DimensionedValue<T>)parameters;
-		int left = spaceManager.toNumber (parameterList.getValues ().get (0)).intValue (),
-			right = spaceManager.toNumber (parameterList.getValues ().get (1)).intValue ();
+		List <T> parameterList = valueManager.getDimensionedValue
+				(parameters).getValues ();
+		int left = spaceManager.toNumber (parameterList.get (0)).intValue (),
+			right = spaceManager.toNumber (parameterList.get (1)).intValue ();
 		Factorization x = FactorizationManager.forValue (left), y = FactorizationManager.forValue (right);
 		T value = spaceManager.newScalar (Distribution.LCM (x, y).reduce ().intValue ());
 		return valueManager.newDiscreteValue (value);
