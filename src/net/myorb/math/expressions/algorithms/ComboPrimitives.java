@@ -2,10 +2,12 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.Combinatorics;
-import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.ValueManager;
 
 import java.util.List;

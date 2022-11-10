@@ -6,7 +6,10 @@ import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryPostfixOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
+import net.myorb.math.specialfunctions.PochhammerSymbol;
 import net.myorb.math.primenumbers.Factorization;
 
 import net.myorb.math.expressions.ValueManager;
@@ -40,6 +43,59 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
 				return formulas.primorial (parameter);
+			}
+		};
+	}
+
+	/**
+	 * implement unary operator - SUBFACTORIAL
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryPostfixOperator getDerangementsAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryPostfixOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				Factorization value = valueManager.toDiscrete (parameter);
+				Factorization computed = combinatorics.derangementsCount (value);
+				return valueManager.newDiscreteValue (computed);
+			}
+
+			public String markupForDisplay
+			(String operand, boolean fenceOperand, String operator, NodeFormatting using)
+			{
+				String parm = using.formatParenthetical (operand, fenceOperand);
+				return MathMarkupNodes.space ("5") + using.formatOperatorReference ("!") + MathMarkupNodes.space ("5") + parm;
+			}
+		};
+	}
+
+	/**
+	 * implement operator - Pochhammer raising
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getPochAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			PochhammerSymbol p = new PochhammerSymbol (spaceManager, powerLibrary);
+
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				Factorization leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
+				return valueManager.newDiscreteValue (p.eval (leftDiscrete, rightDiscrete));
+			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				return using.formatPochhammerRising (firstOperand, secondOperand);
 			}
 		};
 	}
@@ -256,6 +312,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			}
 		};
 	}
+
 	/**
 	 * implement function - CEIL
 	 * @param symbol the symbol associated with this object
@@ -271,6 +328,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			}
 		};
 	}
+
 	/**
 	 * implement function - ROUND
 	 * @param symbol the symbol associated with this object
@@ -287,4 +345,56 @@ public class PrimePrimitives extends FactorizationPrimitives
 		};
 	}
 
+	/**
+	 * implement operator - Stirling Numbers
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getSNAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				Factorization n = valueManager.toDiscrete (left), k = valueManager.toDiscrete (right);
+				Factorization result = combinatorics.stirlingNumbers1 (n, k);
+				return valueManager.newDiscreteValue (result);
+			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.SQUARE);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - Stirling Numbers (second)
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the precedence of the operation
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getSNSAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{
+				Factorization n = valueManager.toDiscrete (left), k = valueManager.toDiscrete (right);
+				Factorization result = combinatorics.stirlingNumbers2 (n, k);
+				return valueManager.newDiscreteValue (result);
+			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.CURLY);
+			}
+		};
+	}
+	
 }

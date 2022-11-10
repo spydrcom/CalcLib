@@ -27,10 +27,11 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param lib a power library for the type
 	 */
 	public Combinatorics
-		(SpaceManager<T> manager, ExtendedPowerLibrary<T> lib)
+		(SpaceManager <T> manager, ExtendedPowerLibrary <T> lib)
 	{
 		super (manager);
-		this.expressionManager = (ExpressionSpaceManager<T>)manager;
+		this.expressionManager =
+			(ExpressionSpaceManager <T>) manager;
 		this.ZERO = manager.getZero ();
 		this.TWO = manager.newScalar (2);
 		this.NEGONE = manager.newScalar (-1);
@@ -38,9 +39,9 @@ public class Combinatorics<T>  extends Tolerances<T>
 		this.ONE = manager.getOne ();
 		this.lib = lib;
 	}
-	ExpressionSpaceManager<T> expressionManager;
+	ExpressionSpaceManager <T> expressionManager;
 	T ZERO, ONE, NEGONE, TWO, HALF;
-	ExtendedPowerLibrary<T> lib;
+	ExtendedPowerLibrary <T> lib;
 
 
 	/**
@@ -137,6 +138,23 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 
+	/**
+	 * generic version of subfactorial
+	 * @param n number of derangements to consider
+	 * @return computed count
+	 */
+	public T derangementsCount (T n)
+	{
+		if (manager.lessThan (n, ONE)) return ONE;
+		if (manager.lessThan (n, TWO)) return ZERO;
+
+		// !n = (n-1) ( ! (n - 1) + ! (n - 2) ) for n > 1
+		T nm1 = manager.add (n, NEGONE), nm2 = manager.add (n, manager.newScalar (-2));
+		T nm1d = derangementsCount (nm1), nm2d = derangementsCount (nm2);
+		return manager.multiply (nm1, manager.add (nm1d, nm2d));
+	}
+	
+
 	/*
 	 * Pochhammer
 	 */
@@ -232,6 +250,15 @@ public class Combinatorics<T>  extends Tolerances<T>
 		return difference;
 	}
 
+	public T lobbNumbers (T m, T n)
+	{
+		T
+		n2 = manager.multiply (TWO, n),
+		mn = manager.add (m, n), mn1 = manager.add (mn, ONE),
+		mnbc = binomialCoefficient (n2, mn), mn1bc = binomialCoefficient (n2, mn1);
+		return manager.add (mnbc, manager.negate (mn1bc));
+	}
+
 
 	/**
 	 * compute Catalan numbers
@@ -241,6 +268,13 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public static double catalanNumbers (int n)
 	{
 		return binomialCoefficient (2*n, n) / (n + 1);
+	}
+
+	public T catalanNumbers (T n)
+	{
+		T n1 = manager.add (n, ONE),
+		n2 = manager.multiply (TWO, n), bc = binomialCoefficient (n2, n);
+		return manager.multiply (bc, manager.invert (n1));
 	}
 
 
@@ -255,6 +289,16 @@ public class Combinatorics<T>  extends Tolerances<T>
 		//  s (n + 1, k) = n * s (n, k) + s (n, k - 1)
 		if (n == 0 && k == 0) return 1; if (n == 0 || k == 0) return 0;
 		return (n-1) * stirlingNumbers1 (n-1, k) + stirlingNumbers1 (n-1, k-1);
+	}
+
+	public T stirlingNumbers1 (T n, T k)
+	{
+		if (manager.isZero (n) && manager.isZero (k)) return ONE;
+		if (manager.isZero (n) || manager.isZero (k)) return ZERO;
+		T n1 = manager.add (n, NEGONE), k1 = manager.add (k, NEGONE);
+		T sn1k = manager.multiply (n1, stirlingNumbers1 (n1, k));
+		T sn1k1 = stirlingNumbers1 (n1, k1);
+		return manager.add (sn1k, sn1k1);
 	}
 
 
@@ -280,6 +324,36 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 
 		return number / F;
+	}
+
+	public T stirlingNumbers2 (T n, T k)
+	{
+		if (manager.lessThan (n, k)) return ZERO;
+
+		int kk = manager.toNumber (k).intValue ();
+		T number = pow (k, n), F = ONE, S = NEGONE;
+
+		for (int i = 1; i <= kk; i++, S = manager.negate (S))
+		{
+			T it = manager.newScalar (i);
+			T bc = binomialCoefficient (k, it);
+			T exp = pow (manager.newScalar (kk - i), n);
+			T term = manager.multiply (S, manager.multiply (exp, bc));
+			number = manager.add (number, term);
+			F = manager.multiply (F, it);
+		}
+
+		return manager.multiply (number, manager.invert (F));
+	}
+	public T pow (T k, T n)
+	{
+		T remaining = n, result = ONE;
+		while (manager.lessThan (ZERO, remaining))
+		{
+			result = manager.multiply (result, k);
+			remaining = manager.add (remaining, NEGONE);
+		}
+		return result;
 	}
 
 

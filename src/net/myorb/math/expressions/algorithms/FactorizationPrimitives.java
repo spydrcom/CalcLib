@@ -13,7 +13,7 @@ import net.myorb.math.expressions.ValueManager;
  * implementations of algorithms for prime factorization functions
  * @author Michael Druckman
  */
-public class FactorizationPrimitives
+public class FactorizationPrimitives extends ComboPrimitives <Factorization>
 {
 
 
@@ -23,6 +23,7 @@ public class FactorizationPrimitives
 	 */
 	public FactorizationPrimitives (Environment <Factorization> environment)
 	{
+		super (environment);
 		this.abstractions = new FactorizationFormulas <Factorization> (environment);
 		this.valueManager = environment.getValueManager ();
 		this.environment = environment;

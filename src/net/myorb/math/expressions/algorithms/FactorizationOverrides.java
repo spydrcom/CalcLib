@@ -55,26 +55,26 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 
 
 	/**
-	 * aply algorithm to fraction
+	 * apply algorithm to fraction
 	 * @param parameter the value being processed
-	 * @param func the operation to apply to the value
+	 * @param formula the operation to apply to the value
 	 * @return the computed result
 	 */
 	ValueManager.GenericValue process
-	(ValueManager.GenericValue parameter, PrimeFormulas.BigOp func)
+	(ValueManager.GenericValue parameter, PrimeFormulas.BigOp formula)
 	{
 		Distribution fraction = Factorization.normalize
 			(valueManager.toDiscrete (parameter), spaceManager);
 		Distribution.normalize (fraction);
-		return process (fraction, func);
+		return process (fraction, formula);
 	}
 	ValueManager.GenericValue process
-	(Distribution fraction, PrimeFormulas.BigOp func)
+	(Distribution fraction, PrimeFormulas.BigOp formula)
 	{
 		BigInteger
 			num = fraction.getNumerator ().reduce (),
 			den = fraction.getDenominator ().reduce ();
-		return abstractions.bundle (func.op (num, den));
+		return abstractions.bundle (formula.op (num, den));
 	}
 
 
