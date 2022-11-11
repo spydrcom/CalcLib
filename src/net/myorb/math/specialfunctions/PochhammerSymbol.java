@@ -83,36 +83,36 @@ class PochhammerHighPrecision extends FactorizationPrimitives
 
 	public Factorization eval (Factorization a, Factorization n)
 	{
-		if (manager.isZero (n)) return ONE;
+		if (factoredMgr.isZero (n)) return ONE;
 
-		if (manager.isNegative (n))
+		if (factoredMgr.isNegative (n))
 		{
-			Factorization negN = manager.negate (n),
-				negA1 = manager.add (manager.negate (a), ONE),
-				evalNeg = manager.invert (eval (negA1, negN));
-			return manager.multiply (alt (negN), evalNeg);
+			Factorization negN = factoredMgr.negate (n),
+				negA1 = factoredMgr.add (factoredMgr.negate (a), ONE),
+				evalNeg = factoredMgr.invert (eval (negA1, negN));
+			return factoredMgr.multiply (alt (negN), evalNeg);
 		}
 
-		if (isInt (a) && manager.isNegative (a))
+		if (isInt (a) && factoredMgr.isNegative (a))
 		{
-			Factorization negA = manager.negate (a);
+			Factorization negA = factoredMgr.negate (a);
 
-			if (manager.lessThan (negA, n))
-			{ return manager.getZero (); }
+			if (factoredMgr.lessThan (negA, n))
+			{ return factoredMgr.getZero (); }
 
 			Factorization negAmN =
-				manager.add (negA, manager.negate (n));
+				factoredMgr.add (negA, factoredMgr.negate (n));
 			Factorization negAf = combo.factorial (negA);
 			Factorization negAmNf = combo.factorial (negAmN);
-			Factorization negAmNfI = manager.invert (negAmNf);
-			Factorization ratio = manager.multiply (negAf, negAmNfI);
+			Factorization negAmNfI = factoredMgr.invert (negAmNf);
+			Factorization ratio = factoredMgr.multiply (negAf, negAmNfI);
 
-			return manager.multiply (alt (n), ratio);
+			return factoredMgr.multiply (alt (n), ratio);
 		}
 
-		Factorization gammaAi = manager.invert (GAMMA (a));
-		Factorization gammaAN = GAMMA (manager.add (a, n));
-		return manager.multiply (gammaAN, gammaAi);
+		Factorization gammaAi = factoredMgr.invert (GAMMA (a));
+		Factorization gammaAN = GAMMA (factoredMgr.add (a, n));
+		return factoredMgr.multiply (gammaAN, gammaAi);
 	}
 
 }

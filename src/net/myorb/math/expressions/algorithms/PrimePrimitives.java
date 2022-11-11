@@ -68,7 +68,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			(String operand, boolean fenceOperand, String operator, NodeFormatting using)
 			{
 				String parm = using.formatParenthetical (operand, fenceOperand);
-				return MathMarkupNodes.space ("5") + using.formatOperatorReference ("!") + MathMarkupNodes.space ("5") + parm;
+				return MathMarkupNodes.space ("5") + using.formatOperatorReference ("!") + MathMarkupNodes.space ("2") + parm;
 			}
 		};
 	}
@@ -94,9 +94,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
-			{
-				return using.formatPochhammerRising (firstOperand, secondOperand);
-			}
+			{ return using.formatPochhammerRising (firstOperand, secondOperand); }
 		};
 	}
 
@@ -292,7 +290,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				return formulas.pow (left, right);
+				return overrides.pow (left, right);
 			}
 		};
 	}
@@ -346,6 +344,44 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
+	 * implement function - Pn
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getPNAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.Pn (parameter);
+			}
+
+			public String markupForDisplay (String operator, String parameters, NodeFormatting using)
+			{
+				return using.formatSubScript
+						(
+							using.formatIdentifierReference ("P"), using.formatIdentifierReference ("n")
+						) + parameters;
+			}
+
+			public String markupForDisplay
+				(
+					String operator, String operand,
+					boolean fenceOperand, NodeFormatting using
+				)
+			{
+				return using.formatSubScript
+					(
+						using.formatIdentifierReference ("P"), using.formatIdentifierReference ("n")
+					) + operand;
+			}
+
+		};
+	}
+
+	/**
 	 * implement operator - Stirling Numbers
 	 * @param symbol the symbol associated with this object
 	 * @param precedence the precedence of the operation
@@ -365,9 +401,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
-			{
-				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.SQUARE);
-			}
+			{ return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.SQUARE); }
 		};
 	}
 
@@ -391,9 +425,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
-			{
-				return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.CURLY);
-			}
+			{ return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.CURLY); }
 		};
 	}
 	

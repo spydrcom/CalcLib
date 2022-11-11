@@ -290,6 +290,15 @@ public class FactorizationImplementation
 		return primes;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getNthPrime(int)
+	 */
+	public BigInteger getNthPrime (int n)
+	{
+		if (n == 0) return BigInteger.ONE;
+		return primes.get (n-1);
+	}
+
 	/**
 	 * provide a name for the prime selection algorithm
 	 * @return the name of the algorithm that will be used to select prime range for evaluation

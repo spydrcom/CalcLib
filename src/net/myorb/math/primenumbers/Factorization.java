@@ -100,6 +100,13 @@ public class Factorization extends SignManager
 		List<BigInteger> getAllPrimes ();
 
 		/**
+		 * find the Nth prime
+		 * @param n index of prime of interest
+		 * @return the Nth prime
+		 */
+		BigInteger getNthPrime (int n);
+
+		/**
 		 * check for option being enabled
 		 * @param named the name of the option to check
 		 * @return TRUE is option is enabled
@@ -291,7 +298,10 @@ public class Factorization extends SignManager
 	 */
 	public Factorization pow (int n)
 	{
+		if (n == 1) return this;
 		Factorization product = this;
+		if (n == 0) return factorizationFieldManager.getOne ();
+		if (n < 0) return factorizationFieldManager.invert (pow (-n));
 		for (int i=1; i<n; i++) product = product.multiplyBy (this);
 		return product;
 	}

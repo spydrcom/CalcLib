@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ValueManager;
 
+import net.myorb.math.primenumbers.FactorizationPrimitives;
 import net.myorb.math.primenumbers.*;
 
 import java.math.BigInteger;
@@ -18,7 +19,12 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 {
 
 	public FactorizationOverrides (Environment <Factorization> environment)
-	{ super (environment); this.abstractions = new PrimeFormulas (environment); }
+	{
+		super (environment);
+		this.helpers = new FactorizationPrimitives (environment);
+		this.abstractions = new PrimeFormulas (environment);
+	}
+	protected FactorizationPrimitives helpers = null;
 	protected PrimeFormulas abstractions = null;
 
 //	protected ValueManager <Factorization> valueManager; // in super
@@ -61,7 +67,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 * @return the computed result
 	 */
 	ValueManager.GenericValue process
-	(ValueManager.GenericValue parameter, PrimeFormulas.BigOp formula)
+	(ValueManager.GenericValue parameter, FactorizationPrimitives.BigOp formula)
 	{
 		Distribution fraction = Factorization.normalize
 			(valueManager.toDiscrete (parameter), spaceManager);
@@ -69,12 +75,12 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 		return process (fraction, formula);
 	}
 	ValueManager.GenericValue process
-	(Distribution fraction, PrimeFormulas.BigOp formula)
+	(Distribution fraction, FactorizationPrimitives.BigOp formula)
 	{
 		BigInteger
 			num = fraction.getNumerator ().reduce (),
 			den = fraction.getDenominator ().reduce ();
-		return abstractions.bundle (formula.op (num, den));
+		return helpers.bundle (formula.op (num, den));
 	}
 
 
@@ -85,7 +91,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 */
 	public ValueManager.GenericValue floor (ValueManager.GenericValue parameter)
 	{
-		return process (parameter, (x,y) -> floor (x,y));
+		return helpers.process (parameter, (x,y) -> floor (x,y));
 	}
 	BigInteger floor (BigInteger num, BigInteger den)
 	{
@@ -100,7 +106,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 */
 	public ValueManager.GenericValue ceil (ValueManager.GenericValue parameter)
 	{
-		return process (parameter, (x,y) -> ceil (x,y));
+		return helpers.process (parameter, (x,y) -> ceil (x,y));
 	}
 	BigInteger ceil (BigInteger num, BigInteger den)
 	{
@@ -117,7 +123,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 */
 	public ValueManager.GenericValue round (ValueManager.GenericValue parameter)
 	{
-		return process (parameter, (x,y) -> round (x,y));
+		return helpers.process (parameter, (x,y) -> round (x,y));
 	}
 	BigInteger round (BigInteger num, BigInteger den)
 	{
@@ -126,6 +132,23 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 		BigInteger adjusted = frac [1].multiply (BigInteger.valueOf (2));
 		if (adjusted.compareTo (den) >= 0) return frac [0].add (BigInteger.ONE);
 		return frac [0];
+	}
+
+
+	/**
+	 * POW operator ^
+	 * @param left parameter left of operator
+	 * @param right parameter right of operator
+	 * @return array of left^right
+	 */
+	public ValueManager.GenericValue pow
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Factorization
+			l = valueManager.toDiscrete (left),
+			r = valueManager.toDiscrete (right);
+		if (helpers.isInt (l)) return abstractions.pow (left, right);
+		return valueManager.newDiscreteValue (helpers.pow (l, r));
 	}
 
 

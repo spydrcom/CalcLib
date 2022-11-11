@@ -17,7 +17,7 @@ import java.util.List;
  * @param <T> manager for data type
  * @author Michael Druckman
  */
-public class ComboPrimitives<T> extends PowerPrimitives<T>
+public class ComboPrimitives <T> extends PowerPrimitives <T>
 {
 
 

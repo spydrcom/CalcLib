@@ -2,7 +2,6 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.primenumbers.Factorization;
-import net.myorb.math.primenumbers.FactorAdjustment;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
@@ -22,15 +21,8 @@ public class FactorizationPrimitives extends ComboPrimitives <Factorization>
 	 * @param environment the environment object holding value management objects
 	 */
 	public FactorizationPrimitives (Environment <Factorization> environment)
-	{
-		super (environment);
-		this.abstractions = new FactorizationFormulas <Factorization> (environment);
-		this.valueManager = environment.getValueManager ();
-		this.environment = environment;
-	}
+	{ super (environment); this.abstractions = new FactorizationFormulas <Factorization> (environment); }
 	protected FactorizationFormulas <Factorization> abstractions = null;
-	protected ValueManager <Factorization> valueManager;
-	protected Environment <Factorization> environment;
 
 
 	/**
@@ -112,13 +104,9 @@ public class FactorizationPrimitives extends ComboPrimitives <Factorization>
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 			{
-				return valueManager.newDiscreteValue (fudge (environment.getValueManager ().toDiscrete (parameters)));
+				return new PrimeFormulas (environment).fudge (parameters);
 			}
 		};
-	}
-	Factorization fudge (Factorization f)
-	{
-		return new FactorAdjustment ().substituteAndAnalyze (f);
 	}
 
 

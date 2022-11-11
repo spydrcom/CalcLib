@@ -41,14 +41,34 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 	ExpressionSpaceManager <T> expressionManager;
 	T ZERO, ONE, NEGONE, TWO, HALF;
-	ExtendedPowerLibrary <T> lib;
+
+
+	/**
+	 * base to integer exponent
+	 * - exponents in real domain will be truncated
+	 * - so true formula is x^floor(n)
+	 * @param x base of computation
+	 * @param n exponent value
+	 * @return x^n
+	 */
+	public T pow (T x, T n)
+	{
+		T remaining = n, result = ONE;
+		while (manager.lessThan (ZERO, remaining))
+		{
+			result = manager.multiply (result, x);
+			remaining = manager.add (remaining, NEGONE);
+		}
+		return result;
+	}
 
 
 	/**
 	 * implement x^y
+	 * - using logarithms
 	 * @param x base of the power
 	 * @param y exponent of the power
-	 * @return x^y
+	 * @return exp(ln(x)*y) using lib operations
 	 */
 	public T toThe (T x, T y)
 	{
@@ -344,16 +364,6 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 
 		return manager.multiply (number, manager.invert (F));
-	}
-	public T pow (T k, T n)
-	{
-		T remaining = n, result = ONE;
-		while (manager.lessThan (ZERO, remaining))
-		{
-			result = manager.multiply (result, k);
-			remaining = manager.add (remaining, NEGONE);
-		}
-		return result;
 	}
 
 
