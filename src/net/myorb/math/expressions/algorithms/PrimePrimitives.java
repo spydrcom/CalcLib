@@ -3,6 +3,7 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
+import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryPostfixOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -149,6 +150,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 	/**
 	 * implement operator - Rem %
 	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
 	 * @return operation implementation object
 	 */
 	public AbstractBinaryOperator getRemOpAlgorithm (String symbol, int precedence)
@@ -182,6 +184,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 	/**
 	 * implement operator - DIVREM /%
 	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
 	 * @return operation implementation object
 	 */
 	public AbstractBinaryOperator getDivRemOpAlgorithm (String symbol, int precedence)
@@ -245,7 +248,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
-	 * implement operator - Lsh <<
+	 * implement operator - Lsh
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
 	 */
@@ -262,7 +265,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
-	 * implement operator - Rsh >>
+	 * implement operator - Rsh
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
 	 */
@@ -344,40 +347,68 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
-	 * implement function - Pn
+	 * implement function - PIF
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
 	 */
-	public AbstractParameterizedFunction getPNAlgorithm (String symbol)
+	public AbstractParameterizedFunction getPIFAlgorithm (String symbol)
 	{
 		return new AbstractParameterizedFunction (symbol)
 		{
 
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
-				return formulas.Pn (parameter);
+				return formulas.PIF (parameter);
 			}
 
 			public String markupForDisplay (String operator, String parameters, NodeFormatting using)
 			{
-				return using.formatSubScript
-						(
-							using.formatIdentifierReference ("P"), using.formatIdentifierReference ("n")
-						) + parameters;
+				return using.formatIdentifierReference ("PI") + parameters;
 			}
+		};
+	}
 
-			public String markupForDisplay
-				(
-					String operator, String operand,
-					boolean fenceOperand, NodeFormatting using
-				)
+	/**
+	 * implement operator - Pn
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getPrimeNAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
-				return using.formatSubScript
-					(
-						using.formatIdentifierReference ("P"), using.formatIdentifierReference ("n")
-					) + operand;
+				return formulas.Pn (parameter);
 			}
 
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("P_n") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - PI function
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getPIFunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.PIF (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return CommonOperatorLibrary.formatIdentifierFor ("pi", using) + using.formatParenthetical (operand);
+			}
 		};
 	}
 

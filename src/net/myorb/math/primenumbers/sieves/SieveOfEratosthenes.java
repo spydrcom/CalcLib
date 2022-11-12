@@ -44,6 +44,7 @@ public class SieveOfEratosthenes extends SievePrimitives implements SieveDriver
 		{
 			do
 			{													// search table for next prime indicated by base[value] == 0 (markNotPresent)
+				noteCount ();									// place current count into primeCounts (parallel to composites) list for use as PI function
 				if (++candidate >= tableSize) return;			// done when the count has reached end of table, candidate is value being checked
 			} while (markIsPresent (candidate));				// if no mark exists for this number then it is recognized as prime
 

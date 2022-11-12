@@ -43,6 +43,12 @@ public interface TableManager
 	 * @param primeNumber the value being marked as prime
 	 */
 	public void markPrime (int primeNumber);
+
+	/**
+	 * note the current prime count
+	 * - the value to be used as PI(n)
+	 */
+	public void noteCount ();
 	
 	/**
 	 * the size of the table of primes being constructed

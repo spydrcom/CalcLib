@@ -79,7 +79,7 @@ public class FactorizationPrimitives
 
 
 	/**
-	 * describe profile of BIG operators
+	 * describe profile of BIG operators (binary)
 	 */
 	public interface BigOp
 	{
@@ -93,10 +93,49 @@ public class FactorizationPrimitives
 	}
 
 
+	/**
+	 * describe profile of BIG operators (unary)
+	 */
+	public interface BigUnaryOp
+	{
+		/**
+		 * binary function profile
+		 * @param parameter the parameter to the operator
+		 * @return the computed result
+		 */
+		BigInteger op (BigInteger parameter);
+	}
+
+
+	/**
+	 * describe profile of BIG operators that return multiple values
+	 */
+	public interface BigArrayOp
+	{
+		/**
+		 * binary function profile
+		 * @param left the parameter left of operator
+		 * @param right the parameter right of operator
+		 * @return the computed results
+		 */
+		BigInteger [] op (BigInteger left, BigInteger right);
+	}
+
+
 	/*
 	 * decompose objects
 	 */
 
+
+	/**
+	 * Factorization reduced to integer
+	 * @param value the Factorization to be reduced
+	 * @return the reduced value
+	 */
+	public static BigInteger toInteger (Factorization value)
+	{
+		return (BigInteger) Factorization.toInteger (value);
+	}
 
 	/**
 	 * pull values from a bundled parameter list
@@ -125,7 +164,7 @@ public class FactorizationPrimitives
 		BigInteger [] integerValues =
 				new BigInteger [values.size ()];
 		for (int i = 0; i < integerValues.length; i++)
-		{ integerValues [i] = values.get (i).reduce (); }
+		{ integerValues [i] = toInteger (values.get (i)); }
 		return integerValues;
 	}
 
@@ -161,7 +200,7 @@ public class FactorizationPrimitives
 
 
 	/**
-	 * process a binary operation
+	 * process a binary function call
 	 * @param values the parameters to the operator
 	 * @param formula the formula to apply
 	 * @return the computed result
@@ -170,9 +209,81 @@ public class FactorizationPrimitives
 	(ValueManager.GenericValue values, BigOp formula)
 	{
 		BigInteger [] p = extract (values);
-		Factorization result = factoredMgr.bigScalar
-			(formula.op (p [0], p [1]));
-		return valueManager.newDiscreteValue (result);
+		return bundle (formula.op (p [0], p [1]));
+	}
+
+
+	/**
+	 * process a binary function call
+	 * @param values the parameters to the operator
+	 * @param formula the formula to apply
+	 * @return the computed results
+	 */
+	public ValueManager.GenericValue processArray
+	(ValueManager.GenericValue values, BigArrayOp formula)
+	{
+		BigInteger [] p = extract (values);
+		return bundle (formula.op (p [0], p [1]));
+	}
+
+
+	/**
+	 * process a binary operator evaluation
+	 * @param left the left side parameter to the operator
+	 * @param right the right side parameter to the operator
+	 * @param formula the formula to apply
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue process
+		(
+			ValueManager.GenericValue left,
+			ValueManager.GenericValue right,
+			BigOp formula
+		)
+	{
+		BigInteger
+			leftValue = toInteger (valueManager.toDiscrete (left)),
+			rightValue = toInteger (valueManager.toDiscrete (right));
+		return bundle (formula.op (leftValue, rightValue));
+	}
+
+
+	/**
+	 * process a unary operator evaluation
+	 * @param parameter the parameter to the operator
+	 * @param formula the formula to apply
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue processUnary
+		(
+			ValueManager.GenericValue parameter,
+			BigUnaryOp formula
+		)
+	{
+		BigInteger value =
+			toInteger (valueManager.toDiscrete (parameter));
+		return bundle (formula.op (value));
+	}
+
+
+	/**
+	 * process a binary operator evaluation
+	 * @param left the left side parameter to the operator
+	 * @param right the right side parameter to the operator
+	 * @param formula the formula to apply
+	 * @return the computed array result
+	 */
+	public ValueManager.GenericValue processArray
+		(
+			ValueManager.GenericValue left,
+			ValueManager.GenericValue right,
+			BigArrayOp formula
+		)
+	{
+		BigInteger
+			leftValue = toInteger (valueManager.toDiscrete (left)),
+			rightValue = toInteger (valueManager.toDiscrete (right));
+		return bundle (formula.op (leftValue, rightValue));
 	}
 
 
@@ -219,8 +330,8 @@ public class FactorizationPrimitives
 	(Distribution fraction, BigOp formula)
 	{
 		BigInteger
-			num = fraction.getNumerator ().reduce (),
-			den = fraction.getDenominator ().reduce ();
+			num = toInteger (fraction.getNumerator ()),
+			den = toInteger (fraction.getDenominator ());
 		return formula.op (num, den);
 	}
 
@@ -265,7 +376,7 @@ public class FactorizationPrimitives
 	 */
 	public BigInteger characteristic (Factorization x)
 	{
-		return process (x, (a,b) -> a.divide (b));
+		return process ( x, (a, b) -> a.divide (b) );
 	}
 
 
@@ -275,7 +386,7 @@ public class FactorizationPrimitives
 	 */
 	public BigInteger rem (Factorization x)
 	{
-		return process (x, (a,b) -> a.remainder (b));
+		return process ( x, (a, b) -> a.remainder (b) );
 	}
 
 
@@ -288,7 +399,7 @@ public class FactorizationPrimitives
 	{
 		Factorization value =
 			factoredMgr.multiply (x, y.pow (-1));
-		return process (value, (a,b) -> a.remainder (b));
+		return process ( value, (a, b) -> a.remainder (b) );
 	}
 
 
@@ -323,7 +434,9 @@ public class FactorizationPrimitives
 	 */
 	public Factorization pow (Factorization x, Factorization exponent)
 	{
-		return x.pow (exponent.reduce ().intValue ());
+		if (exponent == null) return ONE;
+		if (x == null) return factoredMgr.getZero ();
+		return x.pow (toInteger (exponent).intValue ());
 	}
 
 

@@ -1,12 +1,16 @@
 
 package net.myorb.math.primenumbers;
 
+import net.myorb.math.specialfunctions.ExponentialIntegral;
+
 import net.myorb.math.ComputationConfiguration;
 import net.myorb.math.primenumbers.sieves.*;
 
 import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +39,7 @@ public class FactorizationImplementation
   		Arrays.fill (base, 0, factorsToCompute-1, 0);					// fill the base array with zero values indicating no factors found
  		FACTORIZATION_COUNT = BigInteger.valueOf (factorsToCompute);	// a big integer version of the size of the table for comparison with values
 	   	selectedOptions = new OptionMapping ();
-       	primes = new ArrayList<BigInteger> ();
+	   	this.establishPrimeLists ();
 	}
 
 
@@ -44,10 +48,20 @@ public class FactorizationImplementation
 	 */
 	public final BigInteger FACTORIZATION_COUNT;
 
+
 	/**
-	 * collect a list of primes identified
+	 * tabulate identified primes and supporting data
+	 * - parallel lists for prime numbers and counts
 	 */
-	protected final List<BigInteger> primes;
+	void establishPrimeLists ()
+	{
+	   	primes = new ArrayList<BigInteger> ();
+	   	primeCounts = new ArrayList<Integer> ();
+	   	primeCounts.add (0);
+	}
+	protected List<Integer> primeCounts;
+	protected List<BigInteger> primes;
+
 
 	/**
 	 * collect pairs of base/multiplier giving an initial prime and the remainder making the value
@@ -129,6 +143,14 @@ public class FactorizationImplementation
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.TableManager#noteCount()
+	 */
+	public void noteCount ()
+	{
+		primeCounts.add (primes.size ()); 					// this provides counts of primes generated
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.TableManager#markCompositesFor(int)
 	 */
 	public void markCompositesFor (int prime)
@@ -169,15 +191,8 @@ public class FactorizationImplementation
 	 */
 	public void generatePrimes ()
 	{
-		boolean dumpBlocks = false;
 		int tableEnd = getTableSize () - 1;
-		int blockSize = 0, count = 0, prime = 1;
-		if (isSelected(DUMP_PRIME_GENERATION_BLOCK_SIZE))
-		{
-			count = blockSize = getOptionParameter (DUMP_PRIME_GENERATION_BLOCK_SIZE);
-			primeCounts = new ArrayList<Integer> ();
-			dumpBlocks = true;
-		}
+		int prime = 1;
 
 		markComposite (1, 1, 1);								// set first entry to be consistent
 
@@ -185,17 +200,12 @@ public class FactorizationImplementation
 		{
 			do													// search table for next prime indicated by base[value] == 0
 			{
-				if (dumpBlocks && --count == 0)					// prime count is dumped on option at end of each block as chosen
-				{
-					primeCounts.add (primes.size ()); 			// this dump provides counts of primes generated is each block (showing pattern)
-					count = blockSize;							// count starts at block size and decrements to zero where list size is output
-				}
+				noteCount ();					 				// this dump provides counts of primes generated is each block (showing pattern)
 				if (++prime > tableEnd) return;					// done when the count has reached end of table, prime is value being checked
 			} while (markIsPresent (prime));					// if base (mark) for this number is still zero then it is recognized as prime
 			markPrimeAndCompositesFor (prime);					// mark recognized value as prime and mark associated composites as well
 		}
 	}
-	protected List<Integer> primeCounts;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.sieves.SieveDriver#getName()
@@ -297,6 +307,27 @@ public class FactorizationImplementation
 	{
 		if (n == 0) return BigInteger.ONE;
 		return primes.get (n-1);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(int)
+	 */
+	public BigInteger piFunction (int n)
+	{
+		if (n >= primeCounts.size ())
+			return piFunctionApproximation (n);
+		return BigInteger.valueOf (this.primeCounts.get (n));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(int)
+	 */
+	public BigInteger piFunctionApproximation (int n)								// Error at n=10^9 (pi=50,847,534)
+	{
+//		common Approximation formulas being n/ln(n) and Li(n)
+//		as long as the factors table LENGTH > 10^6 the choice is obvious
+//		return BigInteger.valueOf ((long) Math.floor ((double) n / Math.log (n)));	//		2,592,592 =	5.1000%
+		return BigInteger.valueOf ((long) ExponentialIntegral.Li (n));				//			1,701 =	0.0033%
 	}
 
 	/**

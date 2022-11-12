@@ -18,18 +18,6 @@ import java.util.List;
 public class FactorizationOverrides extends AlgorithmCore <Factorization>
 {
 
-	public FactorizationOverrides (Environment <Factorization> environment)
-	{
-		super (environment);
-		this.helpers = new FactorizationPrimitives (environment);
-		this.abstractions = new PrimeFormulas (environment);
-	}
-	protected FactorizationPrimitives helpers = null;
-	protected PrimeFormulas abstractions = null;
-
-//	protected ValueManager <Factorization> valueManager; // in super
-//	protected Environment <Factorization> environment;  // in super
-//	protected ExpressionSpaceManager<T> spaceManager;  // in super
 
 	/**
 	 * get LCM of integer values
@@ -44,6 +32,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 		Factorization value = Distribution.LCM (left, right);
 		return valueManager.newDiscreteValue (value);
 	}
+
 
 	/**
 	 * get GCF of integer values
@@ -61,37 +50,13 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 
 
 	/**
-	 * apply algorithm to fraction
-	 * @param parameter the value being processed
-	 * @param formula the operation to apply to the value
-	 * @return the computed result
-	 */
-	ValueManager.GenericValue process
-	(ValueManager.GenericValue parameter, FactorizationPrimitives.BigOp formula)
-	{
-		Distribution fraction = Factorization.normalize
-			(valueManager.toDiscrete (parameter), spaceManager);
-		Distribution.normalize (fraction);
-		return process (fraction, formula);
-	}
-	ValueManager.GenericValue process
-	(Distribution fraction, FactorizationPrimitives.BigOp formula)
-	{
-		BigInteger
-			num = fraction.getNumerator ().reduce (),
-			den = fraction.getDenominator ().reduce ();
-		return helpers.bundle (formula.op (num, den));
-	}
-
-
-	/**
 	 * get floor of factored value
 	 * @param parameter stack constructed parameter object
 	 * @return the computed result
 	 */
 	public ValueManager.GenericValue floor (ValueManager.GenericValue parameter)
 	{
-		return helpers.process (parameter, (x,y) -> floor (x,y));
+		return helpers.process ( parameter, (x, y) -> floor (x, y) );
 	}
 	BigInteger floor (BigInteger num, BigInteger den)
 	{
@@ -106,7 +71,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 */
 	public ValueManager.GenericValue ceil (ValueManager.GenericValue parameter)
 	{
-		return helpers.process (parameter, (x,y) -> ceil (x,y));
+		return helpers.process ( parameter, (x, y) -> ceil (x, y) );
 	}
 	BigInteger ceil (BigInteger num, BigInteger den)
 	{
@@ -123,7 +88,7 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	 */
 	public ValueManager.GenericValue round (ValueManager.GenericValue parameter)
 	{
-		return helpers.process (parameter, (x,y) -> round (x,y));
+		return helpers.process ( parameter, (x, y) -> round (x, y) );
 	}
 	BigInteger round (BigInteger num, BigInteger den)
 	{
@@ -150,6 +115,16 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 		if (helpers.isInt (l)) return abstractions.pow (left, right);
 		return valueManager.newDiscreteValue (helpers.pow (l, r));
 	}
+
+
+	public FactorizationOverrides (Environment <Factorization> environment)
+	{
+		super (environment);
+		this.helpers = new FactorizationPrimitives (environment);
+		this.abstractions = new PrimeFormulas (environment);
+	}
+	protected FactorizationPrimitives helpers = null;
+	protected PrimeFormulas abstractions = null;
 
 
 }

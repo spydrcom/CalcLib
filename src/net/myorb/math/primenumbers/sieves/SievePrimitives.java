@@ -60,7 +60,12 @@ public class SievePrimitives implements TableManager, SieveDriver
 	 * @see net.myorb.math.primenumbers.sieves.SieveDriver#generatePrimes()
 	 */
 	public void generatePrimes () { throw new RuntimeException ("Unimplemented Sieve"); }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.TableManager#noteCount()
+	 */
+	public void noteCount () { tableManager.noteCount (); }
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.sieves.SieveDriver#getName()
 	 */

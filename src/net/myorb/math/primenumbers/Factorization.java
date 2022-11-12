@@ -4,14 +4,16 @@ package net.myorb.math.primenumbers;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.SignManager;
 
+import java.math.BigInteger;
+
 import java.util.HashMap;
 import java.util.HashSet;
+
 import java.util.Arrays;
 import java.util.List;
+
 import java.util.Set;
 import java.util.Map;
-
-import java.math.BigInteger;
 
 /**
  * 
@@ -107,6 +109,20 @@ public class Factorization extends SignManager
 		BigInteger getNthPrime (int n);
 
 		/**
+		 * number of primes below n
+		 * @param n the value to use as upper limit
+		 * @return the count of primes
+		 */
+		BigInteger piFunction (int n);
+
+		/**
+		 * compute using one of the standard methods
+		 * @param n the value to use as upper limit
+		 * @return the count of primes
+		 */
+		BigInteger piFunctionApproximation (int n);
+
+		/**
 		 * check for option being enabled
 		 * @param named the name of the option to check
 		 * @return TRUE is option is enabled
@@ -190,6 +206,18 @@ public class Factorization extends SignManager
 		}																		// prime value maps to exponent value
 		if (this.isNegative ()) result = result.negate ();						// respect negative flag
 		return result;
+	}
+
+	/**
+	 * reduce to integer
+	 * @param value a Factorization object
+	 * @return the integer value reduced from Factorization
+	 * @throws RuntimeException for values that are not integer
+	 */
+	public static Number toInteger (Factorization value) throws RuntimeException
+	{
+		if (value == null) return BigInteger.ZERO;
+		return value.reduce ();
 	}
 
 	/**

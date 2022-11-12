@@ -1,6 +1,7 @@
 
-package net.myorb.math.complexnumbers;
+package net.myorb.math.primenumbers;
 
+import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.expressions.symbols.ImportedFunctionWrapper;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
@@ -13,13 +14,16 @@ import net.myorb.math.Function;
 import java.util.Map;
 
 /**
- * common base for complex functions
+ * common base for Factorization functions
  * @author Michael Druckman
  */
 public abstract class CommonFunctionBase
-	implements Environment.AccessAcceptance < ComplexValue <Double> >,
-		Function < ComplexValue <Double> >, Configurable
+	implements Environment.AccessAcceptance < Factorization >,
+		Function < Factorization >, Configurable
 {
+
+
+	public static ExpressionFactorizedFieldManager manager = new ExpressionFactorizedFieldManager ();
 
 
 	/**
@@ -38,17 +42,17 @@ public abstract class CommonFunctionBase
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Function#eval(java.lang.Object)
 	 */
-	public abstract ComplexValue<Double> eval (ComplexValue<Double> z);
+	public abstract Factorization eval (Factorization z);
 
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.ManagedSpace#getSpaceDescription()
 	 */
-	public SpaceDescription<ComplexValue<Double>> getSpaceDescription () { return ComplexSpaceCore.manager; }
+	public SpaceDescription<Factorization> getSpaceDescription () { return manager; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.Function#getSpaceManager()
 	 */
-	public SpaceManager<ComplexValue<Double>> getSpaceManager () { return ComplexSpaceCore.manager; }
+	public SpaceManager<Factorization> getSpaceManager () { return manager; }
 
 
 	/*
@@ -58,11 +62,11 @@ public abstract class CommonFunctionBase
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
 	 */
-	public void setEnvironment (Environment <ComplexValue<Double>> environment)
+	public void setEnvironment (Environment <Factorization> environment)
 	{
 		environment.getSymbolMap ().add
 		(
-			new ImportedFunctionWrapper <ComplexValue<Double>>
+			new ImportedFunctionWrapper <Factorization>
 			(named, "z", this)
 		);
 	}

@@ -10,7 +10,6 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ValueManager;
 
 import java.math.BigInteger;
-import java.util.*;
 
 /**
  * implementation of operations specific to prime numbers
@@ -24,9 +23,11 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 		super (environment);
 		this.factoredMgr  = (ExpressionFactorizedFieldManager) spaceManager;
 		this.helpers = new FactorizationPrimitives (environment);
+		this.core = Factorization.getImplementation ();
 	}
 	protected ExpressionFactorizedFieldManager factoredMgr;
 	protected FactorizationPrimitives helpers;
+	protected Factorization.Underlying core;
 
 	/**
 	 * compute primorial of parameter - #
@@ -35,10 +36,9 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue primorial (ValueManager.GenericValue value)
 	{
-		Factorization parm = valueManager.toDiscrete (value);
-		BigInteger product = BigInteger.ONE; int n = spaceManager.toNumber (parm).intValue ();
-		List <BigInteger> primes = Factorization.getImplementation ().getPrimesUpTo (n);
-		for (BigInteger factor : primes) product = product.multiply (factor);
+		BigInteger product = BigInteger.ONE;
+		int n = Factorization.toInteger (valueManager.toDiscrete (value)).intValue ();
+		for (BigInteger factor : core.getPrimesUpTo (n)) product = product.multiply (factor);
 		return helpers.bundle (product);
 	}
 
@@ -49,7 +49,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue mod (ValueManager.GenericValue values)
 	{
-		return helpers.process (values, (x,y) -> x.mod (y));
+		return helpers.process ( values, (x, y) -> x.mod (y) );
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue rem (ValueManager.GenericValue values)
 	{
-		return helpers.process (values, (x,y) -> x.remainder (y));
+		return helpers.process (values, (x, y) -> x.remainder (y));
 	}
 
 	/**
@@ -82,11 +82,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue rem
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			lF = valueManager.toDiscrete (left),
-			rF = valueManager.toDiscrete (right);
-		BigInteger lI = lF.reduce (), rI = rF.reduce ();
-		return helpers.bundle (lI.remainder (rI));
+		return helpers.process ( left, right, (x, y) -> x.remainder (y) );
 	}
 
 	/**
@@ -96,8 +92,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue divRem (ValueManager.GenericValue values)
 	{
-		BigInteger [] p = helpers.extract (values);
-		return helpers.bundle (p [0].divideAndRemainder (p [1]));
+		return helpers.processArray ( values, (x, y) -> x.divideAndRemainder (y) );
 	}
 
 	/**
@@ -109,15 +104,11 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue divRem
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			lF = valueManager.toDiscrete (left),
-			rF = valueManager.toDiscrete (right);
-		BigInteger lI = lF.reduce (), rI = rF.reduce ();
-		return helpers.bundle (lI.divideAndRemainder (rI));
+		return helpers.processArray ( left, right, (x, y) -> x.divideAndRemainder (y) );
 	}
 
 	/**
-	 * LSH operator <<
+	 * LSH operator
 	 * @param left parameter left of operator
 	 * @param right parameter right of operator
 	 * @return array of left%right
@@ -125,15 +116,11 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue lsh
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			lF = valueManager.toDiscrete (left),
-			rF = valueManager.toDiscrete (right);
-		BigInteger lI = lF.reduce (), rI = rF.reduce ();
-		return helpers.bundle (lI.shiftLeft (rI.intValue ()));
+		return helpers.process ( left, right, (x, y) -> x.shiftLeft (y.intValue ()) );
 	}
 
 	/**
-	 * RSH operator >>
+	 * RSH operator
 	 * @param left parameter left of operator
 	 * @param right parameter right of operator
 	 * @return array of left%right
@@ -141,11 +128,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue rsh
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			lF = valueManager.toDiscrete (left),
-			rF = valueManager.toDiscrete (right);
-		BigInteger lI = lF.reduce (), rI = rF.reduce ();
-		return helpers.bundle (lI.shiftRight (rI.intValue ()));
+		return helpers.process ( left, right, (x, y) -> x.shiftRight (y.intValue ()) );
 	}
 
 	/**
@@ -157,23 +140,17 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	public ValueManager.GenericValue pow
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			lF = valueManager.toDiscrete (left),
-			rF = valueManager.toDiscrete (right);
-		BigInteger lI = lF.reduce (), rI = rF.reduce ();
-		return helpers.bundle (lI.pow (rI.intValue ()));
+		return helpers.process ( left, right, (x, y) -> x.pow (y.intValue ()) );
 	}
 
 	/**
 	 * GCD function
-	 * @param left parameter left of operator
-	 * @param right parameter right of operator
+	 * @param values parameters for the operator
 	 * @return array of left%right
 	 */
 	public ValueManager.GenericValue gcd (ValueManager.GenericValue values)
 	{
-		BigInteger [] p = helpers.extract (values);
-		return helpers.bundle (p [0].gcd (p [1]));
+		return helpers.process ( values, (x, y) -> x.gcd (y) );
 	}
 
 	/**
@@ -189,21 +166,23 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	}
 
 	/**
+	 * compute PI function
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue PIF (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary ( parameter, (x) -> core.piFunction (x.intValue ()) );
+	}
+
+	/**
 	 * compute Nth prime number
 	 * @param parameter the parameter from the request
-	 * @return the computed results
+	 * @return the computed result
 	 */
 	public ValueManager.GenericValue Pn (ValueManager.GenericValue parameter)
 	{
-		BigInteger result = BigInteger.ONE;
-		Factorization n = valueManager.toDiscrete (parameter);
-		if (n != null)
-		{
-			result =
-				Factorization.getImplementation ()
-					.getNthPrime (n.reduce ().intValue ());
-		}
-		return helpers.bundle (result);
+		return helpers.processUnary ( parameter, (x) -> core.getNthPrime (x.intValue ()) );
 	}
 
 }
