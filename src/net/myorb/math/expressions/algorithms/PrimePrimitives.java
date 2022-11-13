@@ -295,6 +295,13 @@ public class PrimePrimitives extends FactorizationPrimitives
 			{
 				return overrides.pow (left, right);
 			}
+
+			public String markupForDisplay
+			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
+			{
+				String base = using.formatParenthetical (firstOperand, lfence);
+				return using.formatSuperScript (base, secondOperand);
+			}
 		};
 	}
 
