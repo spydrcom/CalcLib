@@ -49,6 +49,13 @@ public class PrimePrimitives extends FactorizationPrimitives
 			{
 				return functions.processUnary ( parameter, (x) -> functions.primorial (x) );
 			}
+
+			public String markupForDisplay
+			(String operand, boolean fenceOperand, String operator, NodeFormatting using)
+			{
+				String parm = using.formatParenthetical (operand, fenceOperand);
+				return parm + using.formatOperatorReference ("#");
+			}
 		};
 	}
 

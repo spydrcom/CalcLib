@@ -16,12 +16,12 @@
 	<classpathentry kind="lib" path="/Colt/bin" sourcepath="/Colt/src"/>
 	<classpathentry kind="lib" path="/Anaconda/bin" sourcepath="/Anaconda/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/IOLIB"/>
-	<classpathentry kind="lib" path="lib/jmtex-0224.zip" sourcepath="/JMTeX/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SITSTAT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Xchart"/>
 	<classpathentry kind="lib" path="/Watten/bin"/>
 	<classpathentry kind="lib" path="/CalcSpline/bin" sourcepath="/CalcSpline/src"/>
 	<classpathentry kind="lib" path="/Fraculus/bin"/>
 	<classpathentry kind="lib" path="/Mpmath/bin"/>
+	<classpathentry kind="lib" path="lib/jmtex-221114.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
