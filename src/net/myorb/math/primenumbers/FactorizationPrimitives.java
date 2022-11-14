@@ -30,6 +30,11 @@ public class FactorizationPrimitives
 	protected ValueManager <Factorization> valueManager;
 
 
+	/*
+	 * description of operations on BigInteger
+	 */
+
+
 	/**
 	 * describe profile of BIG operators (binary)
 	 */
@@ -43,6 +48,40 @@ public class FactorizationPrimitives
 		 */
 		BigInteger op (BigInteger left, BigInteger right);
 	}
+
+
+	/**
+	 * describe profile of BIG operators (unary)
+	 */
+	public interface BigUnaryOp
+	{
+		/**
+		 * unary function profile
+		 * @param parameter the parameter to the operator
+		 * @return the computed result
+		 */
+		BigInteger op (BigInteger parameter);
+	}
+
+
+	/**
+	 * describe profile of BIG operators that return multiple values
+	 */
+	public interface BigArrayOp
+	{
+		/**
+		 * binary function profile
+		 * @param left the parameter left of operator
+		 * @param right the parameter right of operator
+		 * @return the computed results
+		 */
+		BigInteger [] op (BigInteger left, BigInteger right);
+	}
+
+
+	/*
+	 * description of operations on Factorization
+	 */
 
 
 	/**
@@ -61,19 +100,6 @@ public class FactorizationPrimitives
 
 
 	/**
-	 * describe profile of BIG operators (unary)
-	 */
-	public interface BigUnaryOp
-	{
-		/**
-		 * unary function profile
-		 * @param parameter the parameter to the operator
-		 * @return the computed result
-		 */
-		BigInteger op (BigInteger parameter);
-	}
-
-	/**
 	 * describe profile of Factored operators (unary)
 	 */
 	public interface UnaryFactoredOp
@@ -84,21 +110,6 @@ public class FactorizationPrimitives
 		 * @return the computed result
 		 */
 		Factorization op (Factorization parameter);
-	}
-
-
-	/**
-	 * describe profile of BIG operators that return multiple values
-	 */
-	public interface BigArrayOp
-	{
-		/**
-		 * binary function profile
-		 * @param left the parameter left of operator
-		 * @param right the parameter right of operator
-		 * @return the computed results
-		 */
-		BigInteger [] op (BigInteger left, BigInteger right);
 	}
 
 
@@ -204,6 +215,24 @@ public class FactorizationPrimitives
 
 
 	/**
+	 * process a binary function evaluation
+	 * @param parameters the parameters to the operator
+	 * @param formula the formula to apply
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue processFactoredBinary
+		(
+			ValueManager.GenericValue parameters,
+			BinaryFactoredOp formula
+		)
+	{
+		List <Factorization> p =
+			valueManager.getDimensionedValue (parameters).getValues ();
+		return bundle (formula.op (p.get (0), p.get (1)));
+	}
+
+
+	/**
 	 * process a binary operator evaluation
 	 * @param left the left side parameter to the operator
 	 * @param right the right side parameter to the operator
@@ -220,8 +249,7 @@ public class FactorizationPrimitives
 		Factorization
 			leftValue = valueManager.toDiscrete (left),
 			rightValue = valueManager.toDiscrete (right);
-		return valueManager.newDiscreteValue
-			(formula.op (leftValue, rightValue));
+		return bundle (formula.op (leftValue, rightValue));
 	}
 
 
@@ -255,8 +283,9 @@ public class FactorizationPrimitives
 			UnaryFactoredOp formula
 		)
 	{
-		Factorization value = valueManager.toDiscrete (parameter);
-		return valueManager.newDiscreteValue (formula.op (value));
+		Factorization value =
+			valueManager.toDiscrete (parameter);
+		return bundle (formula.op (value));
 	}
 
 
@@ -336,17 +365,6 @@ public class FactorizationPrimitives
 
 
 	/**
-	 * package a result for return
-	 * @param value the value for the result
-	 * @return the GenericValue representation
-	 */
-	public ValueManager.GenericValue bundle (BigInteger value)
-	{
-		Factorization result = factoredMgr.bigScalar (value);
-		return valueManager.newDiscreteValue (result);
-	}
-
-	/**
 	 * package array result for return
 	 * @param values the value for the result
 	 * @return the GenericValue representation
@@ -356,6 +374,26 @@ public class FactorizationPrimitives
 		List <Factorization> computed = new ArrayList <> ();
 		for (BigInteger v : values) computed.add (factoredMgr.bigScalar (v));
 		return valueManager.newDimensionedValue (computed);
+	}
+
+	/**
+	 * package a result for return
+	 * @param value the value for the result
+	 * @return the GenericValue representation
+	 */
+	public ValueManager.GenericValue bundle (Factorization value)
+	{
+		return valueManager.newDiscreteValue (value);
+	}
+
+	/**
+	 * package a result for return
+	 * @param value the value for the result
+	 * @return the GenericValue representation
+	 */
+	public ValueManager.GenericValue bundle (BigInteger value)
+	{
+		return bundle (factoredMgr.bigScalar (value));
 	}
 
 

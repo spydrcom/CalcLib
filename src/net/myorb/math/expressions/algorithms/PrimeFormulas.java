@@ -52,15 +52,9 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	}
 
 
-	/**
-	 * compute primorial of parameter - #
-	 * @param value the parameter passed to the function (must be integer)
-	 * @return calculated primorial
+	/*
+	 * helper for function based on operations implemented with BigInteger
 	 */
-	public ValueManager.GenericValue primorial (ValueManager.GenericValue value)
-	{
-		return helpers.processUnary ( value, (x) -> functions.primorial (x) );
-	}
 
 
 	/**

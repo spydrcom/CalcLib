@@ -1,15 +1,15 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.primenumbers.Distribution;
+
+import net.myorb.math.primenumbers.FactorizationSpecificFunctions;
+import net.myorb.math.primenumbers.FactorizationPrimitives;
+import net.myorb.math.primenumbers.Factorization;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ValueManager;
 
-import net.myorb.math.primenumbers.FactorizationPrimitives;
-import net.myorb.math.primenumbers.*;
-
-import java.math.BigInteger;
-
-import java.util.List;
 
 /**
  * implementations of algorithms specific to factored values
@@ -19,85 +19,16 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 {
 
 
-	/**
-	 * get LCM of integer values
-	 * @param parameters stack constructed parameter object
-	 * @return the computed result
-	 */
-	public ValueManager.GenericValue lcm (ValueManager.GenericValue parameters)
+	public FactorizationOverrides (Environment <Factorization> environment)
 	{
-		List <Factorization> parameterList =
-			valueManager.getDimensionedValue (parameters).getValues ();
-		Factorization left = parameterList.get (0), right = parameterList.get (1);
-		Factorization value = Distribution.LCM (left, right);
-		return valueManager.newDiscreteValue (value);
+		super (environment);
+		this.abstractions = new PrimeFormulas (environment);
+		this.functions = new FactorizationSpecificFunctions (environment);
+		this.helpers = this.functions;
 	}
-
-
-	/**
-	 * get GCF of integer values
-	 * @param parameters stack constructed parameter object
-	 * @return the computed result
-	 */
-	public ValueManager.GenericValue gcf (ValueManager.GenericValue parameters)
-	{
-		List <Factorization> parameterList =
-			valueManager.getDimensionedValue (parameters).getValues ();
-		Factorization left = parameterList.get (0), right = parameterList.get (1);
-		Factorization value = Distribution.GCF (left, right);
-		return valueManager.newDiscreteValue (value);
-	}
-
-
-	/**
-	 * get floor of factored value
-	 * @param parameter stack constructed parameter object
-	 * @return the computed result
-	 */
-	public ValueManager.GenericValue floor (ValueManager.GenericValue parameter)
-	{
-		return helpers.process ( parameter, (x, y) -> floor (x, y) );
-	}
-	BigInteger floor (BigInteger num, BigInteger den)
-	{
-		return num.divideAndRemainder (den) [0];
-	}
-
-
-	/**
-	 * get ceiling of factored value
-	 * @param parameter stack constructed parameter object
-	 * @return the computed result
-	 */
-	public ValueManager.GenericValue ceil (ValueManager.GenericValue parameter)
-	{
-		return helpers.process ( parameter, (x, y) -> ceil (x, y) );
-	}
-	BigInteger ceil (BigInteger num, BigInteger den)
-	{
-		BigInteger [] frac = num.divideAndRemainder (den);
-		if (frac [1].compareTo (BigInteger.ZERO) == 0) return frac [0];
-		return frac [0].add (BigInteger.ONE);
-	}
-
-
-	/**
-	 * get rounded result of factored value
-	 * @param parameter stack constructed parameter object
-	 * @return the computed result
-	 */
-	public ValueManager.GenericValue round (ValueManager.GenericValue parameter)
-	{
-		return helpers.process ( parameter, (x, y) -> round (x, y) );
-	}
-	BigInteger round (BigInteger num, BigInteger den)
-	{
-		BigInteger [] frac = num.divideAndRemainder (den);
-		if (frac [1].compareTo (BigInteger.ZERO) == 0) return frac [0];
-		BigInteger adjusted = frac [1].multiply (BigInteger.valueOf (2));
-		if (adjusted.compareTo (den) >= 0) return frac [0].add (BigInteger.ONE);
-		return frac [0];
-	}
+	protected FactorizationSpecificFunctions functions = null;
+	protected FactorizationPrimitives helpers = null;
+	protected PrimeFormulas abstractions = null;
 
 
 	/**
@@ -113,16 +44,59 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	}
 
 
-	public FactorizationOverrides (Environment <Factorization> environment)
+	/**
+	 * get LCM of integer values
+	 * @param parameters stack constructed parameter object
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue lcm (ValueManager.GenericValue parameters)
 	{
-		super (environment);
-		this.abstractions = new PrimeFormulas (environment);
-		this.functions = new FactorizationSpecificFunctions (environment);
-		this.helpers = this.functions;
+		return helpers.processFactoredBinary ( parameters, (x, y) -> Distribution.LCM (x, y) );
 	}
-	protected FactorizationSpecificFunctions functions = null;
-	protected FactorizationPrimitives helpers = null;
-	protected PrimeFormulas abstractions = null;
+
+
+	/**
+	 * get GCF of integer values
+	 * @param parameters stack constructed parameter object
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue gcf (ValueManager.GenericValue parameters)
+	{
+		return helpers.processFactoredBinary ( parameters, (x, y) -> Distribution.GCF (x, y) );
+	}
+
+
+	/**
+	 * get floor of factored value
+	 * @param parameters stack constructed parameter objects
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue floor (ValueManager.GenericValue parameters)
+	{
+		return helpers.process ( parameters, (x, y) -> functions.floor (x, y) );
+	}
+
+
+	/**
+	 * get ceiling of factored value
+	 * @param parameters stack constructed parameter objects
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue ceil (ValueManager.GenericValue parameters)
+	{
+		return helpers.process ( parameters, (x, y) -> functions.ceil (x, y) );
+	}
+
+
+	/**
+	 * get rounded result of factored value
+	 * @param parameters stack constructed parameter objects
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue round (ValueManager.GenericValue parameters)
+	{
+		return helpers.process ( parameters, (x, y) -> functions.round (x, y) );
+	}
 
 
 }

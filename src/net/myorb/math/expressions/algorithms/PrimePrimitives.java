@@ -10,7 +10,9 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
+import net.myorb.math.primenumbers.FactorizationSpecificFunctions;
 import net.myorb.math.specialfunctions.PochhammerSymbol;
+import net.myorb.math.primenumbers.FactorAdjustment;
 import net.myorb.math.primenumbers.Factorization;
 
 import net.myorb.math.expressions.ValueManager;
@@ -25,9 +27,11 @@ public class PrimePrimitives extends FactorizationPrimitives
 	public PrimePrimitives (Environment <Factorization> environment)
 	{
 		super (environment);
+		this.functions = new FactorizationSpecificFunctions (environment);
 		this.overrides = new FactorizationOverrides (environment);
 		this.formulas = new PrimeFormulas (environment);
 	}
+	protected FactorizationSpecificFunctions functions = null;
 	protected FactorizationOverrides overrides = null;
 	protected PrimeFormulas formulas = null;
 
@@ -43,7 +47,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
 			{
-				return formulas.primorial (parameter);
+				return functions.processUnary ( parameter, (x) -> functions.primorial (x) );
 			}
 		};
 	}
@@ -59,7 +63,9 @@ public class PrimePrimitives extends FactorizationPrimitives
 		return new AbstractUnaryPostfixOperator (symbol, precedence)
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
-			{ return formulas.compute ( parameter, (x) -> combinatorics.derangementsCount (x) ); }
+			{
+				return formulas.compute (parameter, functions.derangementsCount ());
+			}
 
 			public String markupForDisplay
 			(String operand, boolean fenceOperand, String operator, NodeFormatting using)
@@ -425,11 +431,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				return formulas.compute
-				(
-					left, right,
-					(l, r) -> combinatorics.stirlingNumbers1 (l, r)
-				);
+				return functions.processFactoredBinary (left, right, functions.stirling1 ());
 			}
 
 			public String markupForDisplay
@@ -451,11 +453,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				return formulas.compute
-				(
-					left, right,
-					(l, r) -> combinatorics.stirlingNumbers2 (l, r)
-				);
+				return functions.processFactoredBinary (left, right, functions.stirling2 ());
 			}
 
 			public String markupForDisplay
@@ -463,5 +461,15 @@ public class PrimePrimitives extends FactorizationPrimitives
 			{ return using.formatBracketed  (firstOperand, secondOperand, NodeFormatting.Bractets.CURLY); }
 		};
 	}
-	
+
+	/**
+	 * apply factor adjustment algorithms
+	 * @param parameter the parameter from the request
+	 * @return the computed results
+	 */
+	public ValueManager.GenericValue fudge (ValueManager.GenericValue parameter)
+	{
+		return functions.processFactoredUnary ( parameter, (x) -> new FactorAdjustment ().substituteAndAnalyze (x) );
+	}
+
 }

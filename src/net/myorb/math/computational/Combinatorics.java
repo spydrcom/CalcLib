@@ -256,6 +256,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 	/*
 	 * Lobb, Catalan, Stirling, Euler, ...
+	 * - series named for famous mathematicians
+	 * - most based on Pascal's triangle
 	 */
 
 
@@ -583,8 +585,23 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 
+	/*
+	 * Bernoulli optimized pseudocode
+	 * taken from Wikipedia.org pages found at
+	 * https://en.wikipedia.org/wiki/Bernoulli_number
+	 * 
+	  for m from 0 by 1 to n do
+	    A[m] = 1/(m+1)
+	    for j from m by -1 to 1 do
+	      A[j-1] = j×(A[j-1] - A[j])
+	  return A[0] (which is Bn)	
+	 * 
+	 */
+
+
 	/**
 	 * optimized version of Bernoulli algorithm
+	 * - generic translation of pseudocode above
 	 * @param n the ordinal of the number in the sequence
 	 * @return B(n) [second kind]
 	 */
@@ -610,22 +627,9 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public T secondKindBernoulli (int n) { return optimizedBernoulli (n); }
 
 
-	/*
-	 * Bernoulli optimized pseudocode
-	 * taken from Wikipedia.org pages found at
-	 * https://en.wikipedia.org/wiki/Bernoulli_number
-	 * 
-	  for m from 0 by 1 to n do
-	    A[m] = 1/(m+1)
-	    for j from m by -1 to 1 do
-	      A[j-1] = j×(A[j-1] - A[j])
-	  return A[0] (which is Bn)	
-	 * 
-	 */
-
-
 	/**
 	 * fast Bernoulli approximation (first kind)
+	 * - translation of pseudocode above using double
 	 * @param n index of the Bernoulli number
 	 * @return B(n)
 	 */
