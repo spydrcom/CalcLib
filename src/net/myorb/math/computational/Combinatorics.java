@@ -39,8 +39,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		this.ONE = manager.getOne ();
 		this.lib = lib;
 	}
-	ExpressionSpaceManager <T> expressionManager;
-	T ZERO, ONE, NEGONE, TWO, HALF;
+	protected ExpressionSpaceManager <T> expressionManager;
+	protected T ZERO, ONE, NEGONE, TWO, HALF;
 
 
 	/**
@@ -144,6 +144,11 @@ public class Combinatorics<T>  extends Tolerances<T>
 		for (int f = (int) n - 1; f > 1; f--) res *= f;
 		return res;
 	}
+
+
+	/*
+	 * Derangements Counts
+	 */
 
 
 	/**

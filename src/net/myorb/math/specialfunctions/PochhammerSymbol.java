@@ -1,7 +1,7 @@
 
 package net.myorb.math.specialfunctions;
 
-import net.myorb.math.primenumbers.FactorizationPrimitives;
+import net.myorb.math.primenumbers.FactorizationSpecificFunctions;
 import net.myorb.math.primenumbers.Factorization;
 
 import net.myorb.math.ExtendedPowerLibrary;
@@ -72,7 +72,7 @@ public class PochhammerSymbol extends Library
 /**
  * extending FactorizationPrimitives to provide the evaluation
  */
-class PochhammerHighPrecision extends FactorizationPrimitives
+class PochhammerHighPrecision extends FactorizationSpecificFunctions
 {
 
 	public PochhammerHighPrecision

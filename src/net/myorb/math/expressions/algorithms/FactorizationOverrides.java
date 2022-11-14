@@ -112,17 +112,20 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 		Factorization
 			l = valueManager.toDiscrete (left),
 			r = valueManager.toDiscrete (right);
-		if (helpers.isInt (l)) return abstractions.pow (left, right);
-		return valueManager.newDiscreteValue (helpers.pow (l, r));
-	}
+		if (functions.isInt (l)) return abstractions.pow (left, right);
+		return valueManager.newDiscreteValue (functions.pow (l, r));//helper
+	}//TODO
+	
 
 
 	public FactorizationOverrides (Environment <Factorization> environment)
 	{
 		super (environment);
-		this.helpers = new FactorizationPrimitives (environment);
 		this.abstractions = new PrimeFormulas (environment);
+		this.functions = new FactorizationSpecificFunctions (environment);
+		this.helpers = this.functions;
 	}
+	protected FactorizationSpecificFunctions functions = null;
 	protected FactorizationPrimitives helpers = null;
 	protected PrimeFormulas abstractions = null;
 

@@ -1,10 +1,10 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
-import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 import net.myorb.math.expressions.symbols.AbstractUnaryPostfixOperator;
+import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
+import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
@@ -59,11 +59,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 		return new AbstractUnaryPostfixOperator (symbol, precedence)
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
-			{
-				Factorization value = valueManager.toDiscrete (parameter);
-				Factorization computed = combinatorics.derangementsCount (value);
-				return valueManager.newDiscreteValue (computed);
-			}
+			{ return formulas.compute ( parameter, (x) -> combinatorics.derangementsCount (x) ); }
 
 			public String markupForDisplay
 			(String operand, boolean fenceOperand, String operator, NodeFormatting using)
@@ -88,10 +84,7 @@ public class PrimePrimitives extends FactorizationPrimitives
 
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
-			{
-				Factorization leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-				return valueManager.newDiscreteValue (p.eval (leftDiscrete, rightDiscrete));
-			}
+			{ return formulas.compute ( left, right, (l, r) -> p.eval (l, r) ); }
 
 			public String markupForDisplay
 			(String operator, String firstOperand, String secondOperand, boolean lfence, boolean rfence, NodeFormatting using)
@@ -432,9 +425,11 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				Factorization n = valueManager.toDiscrete (left), k = valueManager.toDiscrete (right);
-				Factorization result = combinatorics.stirlingNumbers1 (n, k);
-				return valueManager.newDiscreteValue (result);
+				return formulas.compute
+				(
+					left, right,
+					(l, r) -> combinatorics.stirlingNumbers1 (l, r)
+				);
 			}
 
 			public String markupForDisplay
@@ -456,9 +451,11 @@ public class PrimePrimitives extends FactorizationPrimitives
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
-				Factorization n = valueManager.toDiscrete (left), k = valueManager.toDiscrete (right);
-				Factorization result = combinatorics.stirlingNumbers2 (n, k);
-				return valueManager.newDiscreteValue (result);
+				return formulas.compute
+				(
+					left, right,
+					(l, r) -> combinatorics.stirlingNumbers2 (l, r)
+				);
 			}
 
 			public String markupForDisplay

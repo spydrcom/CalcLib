@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.primenumbers.Factorization;
 import net.myorb.math.primenumbers.FactorAdjustment;
 import net.myorb.math.primenumbers.FactorizationPrimitives;
+import net.myorb.math.primenumbers.FactorizationSpecificFunctions;
 
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -18,16 +19,38 @@ import java.math.BigInteger;
 public class PrimeFormulas extends FactorizationFormulas <Factorization>
 {
 
+
 	public PrimeFormulas (Environment <Factorization> environment)
 	{
 		super (environment);
 		this.factoredMgr  = (ExpressionFactorizedFieldManager) spaceManager;
-		this.helpers = new FactorizationPrimitives (environment);
-		this.core = Factorization.getImplementation ();
+		this.functions = new FactorizationSpecificFunctions (environment);
+		this.helpers = this.functions;
 	}
 	protected ExpressionFactorizedFieldManager factoredMgr;
+	protected FactorizationSpecificFunctions functions;
 	protected FactorizationPrimitives helpers;
-	protected Factorization.Underlying core;
+
+
+	/*
+	 * provide helper access to primitives layer
+	 */
+
+	public ValueManager.GenericValue compute
+	(ValueManager.GenericValue value, FactorizationPrimitives.UnaryFactoredOp formula)
+	{
+		return helpers.processFactoredUnary (value, formula);
+	}
+
+	public ValueManager.GenericValue compute
+		(
+			ValueManager.GenericValue left, ValueManager.GenericValue right,
+			FactorizationPrimitives.BinaryFactoredOp formula
+		)
+	{
+		return helpers.processFactoredBinary (left, right, formula);
+	}
+
 
 	/**
 	 * compute primorial of parameter - #
@@ -36,11 +59,9 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue primorial (ValueManager.GenericValue value)
 	{
-		BigInteger product = BigInteger.ONE;
-		int n = Factorization.toInteger (valueManager.toDiscrete (value)).intValue ();
-		for (BigInteger factor : core.getPrimesUpTo (n)) product = product.multiply (factor);
-		return helpers.bundle (product);
+		return helpers.processUnary ( value, (x) -> functions.primorial (x) );
 	}
+
 
 	/**
 	 * MOD function
@@ -160,9 +181,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue fudge (ValueManager.GenericValue parameter)
 	{
-		Factorization f = valueManager.toDiscrete (parameter);
-		Factorization result = new FactorAdjustment ().substituteAndAnalyze (f);
-		return valueManager.newDiscreteValue (result);
+		return helpers.processFactoredUnary ( parameter, (x) -> new FactorAdjustment ().substituteAndAnalyze (x) );
 	}
 
 	/**
@@ -172,7 +191,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue PIF (ValueManager.GenericValue parameter)
 	{
-		return helpers.processUnary ( parameter, (x) -> core.piFunction (x.intValue ()) );
+		return helpers.processUnary (parameter, functions.getPiOp ());
 	}
 
 	/**
@@ -182,7 +201,7 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	 */
 	public ValueManager.GenericValue Pn (ValueManager.GenericValue parameter)
 	{
-		return helpers.processUnary ( parameter, (x) -> core.getNthPrime (x.intValue ()) );
+		return helpers.processUnary (parameter, functions.getNthPrimeOp ());
 	}
 
 }

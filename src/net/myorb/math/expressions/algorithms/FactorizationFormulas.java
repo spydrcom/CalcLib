@@ -46,8 +46,8 @@ public class FactorizationFormulas <T>
 	public ValueManager.GenericValue primes (ValueManager.GenericValue parameters)
 	{
 		FactorizationManager.checkImplementation ();
-		ValueManager.RawValueList<T> array = new ValueManager.RawValueList<T> ();
 		int limit = valueManager.toInt (parameters, spaceManager);
+		ValueManager.RawValueList<T> array = new ValueManager.RawValueList<T> ();
 		List<BigInteger> source = Factorization.getImplementation ().getPrimesUpTo (limit);
 		for (BigInteger v : source) { array.add (spaceManager.newScalar (v.intValue ())); }
 		return valueManager.newDimensionedValue (array);
@@ -61,12 +61,13 @@ public class FactorizationFormulas <T>
 	 */
 	public ValueManager.GenericValue factors (ValueManager.GenericValue parameters)
 	{
-		int source = valueManager.toInt (parameters, spaceManager);
-		Factorization f = FactorizationManager.forValue (source);
+		BigInteger[] primes;
+		Factorization f = FactorizationManager.forValue
+			(valueManager.toInt (parameters, spaceManager));
 		Map<BigInteger,Integer> m = f.getFactors ().getFactorMap ();
-		BigInteger[] primes = m.keySet ().toArray (new BigInteger[1]);
+
 		ValueManager.RawValueList<T> array = new ValueManager.RawValueList<T> ();
-		java.util.Arrays.sort (primes);
+		java.util.Arrays.sort (primes = m.keySet ().toArray (new BigInteger[1]));
 
 		for (BigInteger prime : primes)
 		{
