@@ -109,13 +109,8 @@ public class FactorizationOverrides extends AlgorithmCore <Factorization>
 	public ValueManager.GenericValue pow
 	(ValueManager.GenericValue left, ValueManager.GenericValue right)
 	{
-		Factorization
-			l = valueManager.toDiscrete (left),
-			r = valueManager.toDiscrete (right);
-		if (functions.isInt (l)) return abstractions.pow (left, right);
-		return valueManager.newDiscreteValue (functions.pow (l, r));//helper
-	}//TODO
-	
+		return helpers.processFactoredBinary ( left, right, (l, r) -> functions.pow (l, r) );
+	}
 
 
 	public FactorizationOverrides (Environment <Factorization> environment)

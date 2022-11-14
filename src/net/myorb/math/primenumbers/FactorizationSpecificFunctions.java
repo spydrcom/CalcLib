@@ -211,7 +211,31 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 	{
 		if (exponent == null) return ONE;
 		if (x == null) return factoredMgr.getZero ();
-		return x.pow (toInteger (exponent).intValue ());
+
+		BigInteger expInt = (BigInteger) Factorization.toInteger (exponent);
+
+		if (isInt (x))
+			return factoredMgr.bigScalar
+			(
+				pow
+				(
+					(BigInteger) Factorization.toInteger (x),
+					expInt
+				)
+			);
+		return x.pow (expInt.intValue ());
+	}
+
+
+	/**
+	 * power function
+	 * @param x the value to be raised
+	 * @param exponent an integer to use as exponent
+	 * @return x^exponent
+	 */
+	public BigInteger pow (BigInteger x, BigInteger exponent)
+	{
+		return x.pow (exponent.intValue ());
 	}
 
 
