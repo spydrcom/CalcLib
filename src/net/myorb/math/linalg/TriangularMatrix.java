@@ -1,11 +1,8 @@
 
 package net.myorb.math.linalg;
 
-import net.myorb.math.matrices.Triangular;
+import net.myorb.math.matrices.*;
 import net.myorb.math.matrices.decomposition.Doolittle;
-
-import net.myorb.math.matrices.Matrix;
-import net.myorb.math.matrices.Vector;
 
 import net.myorb.math.SpaceManager;
 
@@ -46,7 +43,7 @@ public class TriangularMatrix
 	 * LU decomposition has 2 matrices for the intermediate result
 	 * @param <T> data type
 	 */
-	public static class Decomposition <T>
+	public static class Decomposition <T> implements SolutionPrimitives.Decomposition
 	{
 		/**
 		 * L and U are initialized as square Matrix objects with type T
@@ -61,6 +58,12 @@ public class TriangularMatrix
 		public Matrix<T> getL () { return L; }
 		public Matrix<T> getU () { return U; }
 		protected Matrix <T> L, U;
+
+		public String toString ()
+		{
+			print ("L", L); print ("U", U);
+			return "see system OUT";
+		}
 	}
 
 	/**
@@ -77,6 +80,18 @@ public class TriangularMatrix
 		return lud;
 	}
 
+	public static <T> void print (String name, Matrix<T> m)
+	{
+		System.out.println ();
+		System.out.println (name);
+		for (int r=1;r<=m.rowCount();r++)
+		{
+			for (int c=1;c<=m.columnCount();c++)
+				System.out.print (m.get (r, c) + "\t");
+			System.out.println ();
+		}
+	}
+
 	/**
 	 * LU solution using LUD object
 	 * @param points vector of points to be interpolated
@@ -89,4 +104,68 @@ public class TriangularMatrix
 		return solve (using.U, using.L, points);
 	}
 
+	/**
+	 * @return a Linear Algebra Solution Primitives object based on Doolittle
+	 */
+	public static <T> SolutionPrimitives <T> getSolutionPrimitives ()
+	{
+		return new TriangularPrimitives <T> ();
+	}
+
 }
+
+
+/**
+ * Solution Primitives object based on Doolittle LUD
+ * @param <T> data type of operations
+ */
+class TriangularPrimitives <T>
+	implements SolutionPrimitives <T>, SolutionPrimitives.Determinable <T>, SolutionPrimitives.Invertable <T>
+{
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#decompose(net.myorb.math.matrices.Matrix)
+	 */
+	@Override
+	public SolutionPrimitives.Decomposition
+		decompose (Matrix <T> A)
+	{
+		return TriangularMatrix.decompose (A);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#solve(net.myorb.math.linalg.SolutionPrimitives.Decomposition, net.myorb.math.linalg.SolutionPrimitives.RequestedResultVector)
+	 */
+	@Override @SuppressWarnings("unchecked")
+	public SolutionPrimitives.SolutionVector solve
+		(
+			SolutionPrimitives.Decomposition d,
+			SolutionPrimitives.RequestedResultVector b
+		)
+	{
+		SolutionPrimitives.Content <T> points = (SolutionPrimitives.Content <T>) b;
+		TriangularMatrix.Decomposition <T> decomposition = (TriangularMatrix.Decomposition <T>) d;
+		Vector <T> solution = TriangularMatrix.solve (points, decomposition);
+		return new SolutionPrimitives.Content <T> (solution);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Determinable#det(net.myorb.math.matrices.Matrix)
+	 */
+	@Override public T det (Matrix <T> source)
+	{
+		TriangularMatrix.Decomposition <T> decomposition = TriangularMatrix.decompose (source);
+		return new Triangular <T> (source.getSpaceManager ()).det (decomposition.U, decomposition.L);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Invertable#inv(net.myorb.math.matrices.Matrix)
+	 */
+	@Override public Matrix <T> inv (Matrix <T> source)
+	{
+		return new InversionSolution <T> (this).inv (source);
+	}
+	
+}
+
+

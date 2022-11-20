@@ -46,7 +46,7 @@ public class DecompositionSupport
 	 * a vector representation specifically for double values.
 	 * - this is understood to be storage for request and solution values
 	 */
-	public static class VEC extends Vector <Double>
+	public static class VEC extends SolutionPrimitives.Content <Double>
 		implements SolutionPrimitives.RequestedResultVector, SolutionPrimitives.SolutionVector
 	{
 		protected VEC (int n)
@@ -62,7 +62,7 @@ public class DecompositionSupport
 		public static VEC enclose (double [] v)
 		{
 			VEC V = new VEC (v);
-			setCells (V, v);
+			for (int i = 1; i < v.length; i++) { V.set (i, v[i]);}
 			return V;
 		}
 
@@ -168,18 +168,6 @@ public class DecompositionSupport
 
 	/**
 	 * @param access the access logic to a vector
-	 * @param cells to source contents to write into accessed object
-	 */
-	public static void copyCells
-	(VectorAccess <Double> access, Vector <Double> cells)
-	{
-		for (int i = 1; i <= cells.size (); i++)
-		{ access.set (i, cells.get (i));}
-	}
-
-
-	/**
-	 * @param access the access logic to a vector
 	 * @param cells the array to fill from vector
 	 */
 	public static void getCells (VectorAccess <Double> access, double [] cells)
@@ -194,7 +182,7 @@ public class DecompositionSupport
 	 */
 	public static void setCells (VectorAccess <Double> access, double [] cells)
 	{
-		for (int i = 1; i < cells.length; i++) { access.set (i, cells[i]);}
+		VectorOperations.copyContent (access, VEC.enclose (cells));
 	}
 
 
@@ -225,10 +213,9 @@ public class DecompositionSupport
 	(int r1, int r2, Matrix <Double> in)
 	{
 		Vector <Double>
-			r1cells = in.getRow (r1),
-			r2cells = in.getRow (r2);
-		matOPs.setRow (r1, in, r2cells);
-		matOPs.setRow (r2, in, r1cells);
+			r1cells = in.getRow (r1), r2cells = in.getRow (r2);
+		VectorOperations.copyContent (in.getRowAccess (r1), r2cells);
+		VectorOperations.copyContent (in.getRowAccess (r2), r1cells);
 	}
 
 

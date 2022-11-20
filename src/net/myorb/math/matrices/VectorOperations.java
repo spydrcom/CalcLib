@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class VectorOperations<T> extends Tolerances<T>
+public class VectorOperations <T> extends Tolerances <T>
 {
 
 	/**
@@ -47,7 +47,26 @@ public class VectorOperations<T> extends Tolerances<T>
 	{
 		set (v, 1, elements);
 	}
-	
+
+	/**
+	 * copy cells of content held in a vector to an accessed location
+	 * @param location the destination of the cells being copied
+	 * @param content the cells of content being copied
+	 */
+	public static <T> void copyContent
+		(VectorAccess <T> location, Vector <T> content)
+	{ copyContent (location, content, content.size ()); }
+
+	/**
+	 * copy content from location to an accessed location
+	 * @param location the destination of the cells being copied
+	 * @param content the source location of the cells being copied
+	 * @param items the number of cells
+	 */
+	public static <T> void copyContent
+	(VectorAccess <T> location, VectorAccess <T> content, int items)
+	{ for (int i = 1; i <= items; i++) location.set (i, content.get (i)); }
+
 	/**
 	 * construct a vector from a set of elements
 	 * @param elements the elements to be set in the vector

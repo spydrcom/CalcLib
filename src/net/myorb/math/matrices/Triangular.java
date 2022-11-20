@@ -8,11 +8,11 @@ import net.myorb.math.*;
  * @param <T> type of component values on which operations are to be executed
  * @author Michael Druckman
  */
-public class Triangular<T>
+public class Triangular <T>
 {
 
 
-	public Triangular (SpaceManager<T> mgr)
+	public Triangular (SpaceManager <T> mgr)
 	{
 		this.mgr = mgr;
 	}
@@ -212,6 +212,63 @@ public class Triangular<T>
 	 */
 	public void setResultElement (Vector<T> v, Matrix<T> t, int i)
 	{ setResultElement (v, v.get (i), t, i); }
+
+
+	/**
+	 * product of the diagonal cells
+	 * @param triangle a triangular matrix
+	 * @return determinant of triangle matrix
+	 */
+	public T det (Matrix <T> triangle)
+	{
+		T p = mgr.getOne ();
+		for (int n = 1; n <= triangle.rows; n++)
+		{ p = mgr.multiply (p, triangle.get (n, n)); }
+		// only cells on the diagonal matter when you realize
+		//  all other contributions have a zero factor
+		return p;
+	}
+
+
+	/**
+	 * for decomposition
+	 *  having no permutation matrix
+	 * @param U upper triangular matrix
+	 * @param L lower triangular matrix
+	 * @return determinant of product matrix
+	 */
+	public T det (Matrix <T> U, Matrix <T> L)
+	{
+		return mgr.multiply (det (L), det (U));
+	}
+
+
+	/**
+	 * include permutation matrix
+	 * @param U upper triangular matrix
+	 * @param L lower triangular matrix
+	 * @param p permutation matrix determinant
+	 * @return determinant of product matrix
+	 */
+	public T det (Matrix <T> U, Matrix <T> L, T p)
+	{
+		// permutation matrix det = 1 for even or -1 for odd
+		return mgr.multiply (p, det (U, L));
+	}
+
+
+	/**
+	 * relate permutation matrix to pivot
+	 * @param pivot the pivot vector from a LUD
+	 * @return the equivalent permutation matrix
+	 */
+	public Matrix <T> permutations (Vector <T> pivot)
+	{
+		//TODO: find connection between pivot vector 
+		// and the permutation matrix associated with it
+		throw new RuntimeException ("Not implemented");
+	}
+	//TODO: alternative would be direct determinant from pivot
 
 
 }

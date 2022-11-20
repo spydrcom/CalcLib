@@ -1,6 +1,7 @@
 
 package net.myorb.math.matrices.decomposition;
 
+import net.myorb.math.matrices.Triangular;
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.SpaceManager;
 
@@ -84,4 +85,26 @@ public class Doolittle<T>
 	    }
 	}
 
+
+	/**
+	 * decompose matrix to LU
+	 * - and use triangles to compute determinant
+	 * @param A the matrix to decompose
+	 * @return determinant of A
+	 */
+	public T det (Matrix <T> A)
+	{
+		int n = A.getEdgeCount ();
+
+		Matrix<T>
+			U = new Matrix<T> (n, n, mgr),
+			L = new Matrix<T> (n, n, mgr);
+		decompose (A, U, L);
+
+		// no permutation matrix in this decomposition
+		return new Triangular <T> (mgr).det (U, L);
+	}
+
+
 }
+

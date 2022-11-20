@@ -43,10 +43,7 @@ public class MatrixOperations<T> extends ListOperations<T>
 	 */
 	public void setRow (int rowNumber, MatrixAccess<T> m, VectorAccess<T> row)
 	{
-		for (int col = 1; col <= row.size (); col++)
-		{
-			m.set (rowNumber, col, row.get (col));
-		}
+		VectorOperations.copyContent (m.getRowAccess (rowNumber), row, row.size ());
 	}
 
 	/**
@@ -57,10 +54,7 @@ public class MatrixOperations<T> extends ListOperations<T>
 	 */
 	public void setCol (int colNumber, MatrixAccess<T> m, VectorAccess<T> col)
 	{
-		for (int row = 1; row <= col.size (); row++)
-		{
-			m.set (row, colNumber, col.get (row));
-		}
+		VectorOperations.copyContent (m.getColAccess (colNumber), col, col.size ());
 	}
 
 	/**
