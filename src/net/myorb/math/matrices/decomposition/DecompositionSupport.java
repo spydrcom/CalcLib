@@ -1,9 +1,10 @@
 
-package net.myorb.math.linalg;
+package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.expressions.DataIO;
 import net.myorb.math.matrices.*;
+import net.myorb.math.linalg.*;
 
 import java.util.ArrayList;
 
