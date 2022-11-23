@@ -2,11 +2,8 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
-
 import net.myorb.math.linalg.SolutionPrimitives;
-
-import net.myorb.math.matrices.Vector;
-import net.myorb.math.matrices.Matrix;
+import net.myorb.math.matrices.*;
 
 /**
  * implementation of QR decomposition on generic data types
@@ -26,7 +23,8 @@ public class GenericQRD <T> extends GenericSupport
 	 * @param x parameter to SQRT
 	 * @return computed SQRT
 	 */
-	T sqrt (T x) { return mgr.convertFromDouble (Math.sqrt (mgr.convertToDouble (x))); }
+	public T sqrt (T x)
+	{ return mgr.convertFromDouble (Math.sqrt (mgr.convertToDouble (x))); }
 	//TODO: need to introduce library for generic T
 
 
@@ -35,18 +33,81 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 	public static class QRDecomposition <T> implements SolutionPrimitives.Decomposition
 	{
-		QRDecomposition (Matrix <T> A)
+
+		public QRDecomposition (Matrix <T> A)
 		{
-			this.A = copyOf (A);
-			this.N = A.getEdgeCount ();
-			ExpressionSpaceManager <T> mgr =
-				(ExpressionSpaceManager <T>) A.getSpaceManager ();
-			this.C = new Vector <T> (N, mgr);
-			this.D = new Vector <T> (N, mgr);
+			this.A = copyOf (A); this.N = A.getEdgeCount ();
+			this.mgr = (ExpressionSpaceManager <T>) A.getSpaceManager ();
+			this.C = new Vector <T> (N, mgr); this.D = new Vector <T> (N, mgr);
 		}
-		Vector <T> C, D;
-		Matrix <T> A;
-		int N;
+
+		/**
+		 * get cell from diagonal
+		 * @param item identify (item,item)
+		 * @return cell value
+		 */
+		public T getDiag (int item) { return A.get (item, item); }
+
+		/**
+		 * compute tau from dot product
+		 * @param access vector for dot product
+		 * @param col the column of the Decomposition matrix
+		 * @return computed value of tau
+		 */
+		public T getTau (VectorAccess <T> access, int col)
+		{
+			T product = dot (access, getCol (col), col, N, mgr);
+			return mgr.multiply (product, mgr.invert (C.get (col)));
+		}
+
+		/**
+		 * @param access vector being reduced
+		 * @param starting the starting column of the Decomposition matrix
+		 */
+		public void reduceByTauProduct (VectorAccess <T> access, int starting)
+		{
+			reduceByTauProduct
+			(
+				getTau (access, starting), access, getCol (starting), starting
+			);
+		}
+
+		/**
+		 * @param tau the computed value of tau
+		 * @param access the vector being reduced
+		 * @param col the values of the Decomposition matrix column
+		 * @param starting column of the Decomposition matrix
+		 */
+		public void reduceByTauProduct
+		(T tau, VectorAccess <T> access, VectorAccess <T> col, int starting)
+		{
+			for (int i = starting; i <= N; i++)
+			{
+				reduceBy (access, i, mgr.multiply (tau, col.get (i)), mgr);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString ()
+		{
+			StringBuffer JSON = new StringBuffer ()
+				.append ("{").append ("\n  \"A\" : [");
+			for (int i = 1; i < N; i++) { JSON.append ("\n\t" + toList (getRow (i)) + ","); }
+			JSON.append ("\n\t" + toList (getRow (N))).append ("\n  ],").append ("\n  \"C\" : " + toList (C) + ",")
+				.append ("\n  \"D\" : " + toList (D)).append ("\n}");
+			return JSON.toString ();
+		}
+
+		public VectorAccess <T> getRow (int row) { return A.getRowAccess (row); }
+		public VectorAccess <T> getCol (int col) { return A.getColAccess (col); }
+
+		protected ExpressionSpaceManager <T> mgr;
+		protected Vector <T> C, D;
+		protected Matrix <T> A;
+		protected int N;
+
 	}
 
 
@@ -55,7 +116,8 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 
 	/**
-	 * @param A the matrix to be decomposed
+	 * the primitive solution interface entry point for decompose
+	 * @param A the matrix to be decomposed using QR algorithms
 	 * @return the resulting Decomposition object
 	 */
 	public QRDecomposition <T> decompose (Matrix <T> A)
@@ -66,41 +128,38 @@ public class GenericQRD <T> extends GenericSupport
 	}
 
 	/**
+	 * perform the QRDecomposition on a new matrix
 	 * @param QRD the Decomposition to be processed
 	 */
 	public void decompose (QRDecomposition <T> QRD)
 	{
-		for (int k = 1; k < QRD.N; k++)
+		int N = QRD.N;
+
+		for (int k = 1; k < N; k++)
 		{
 			int maxRowNum = maxRow (k, QRD.A);
-			T scale = QRD.A.get (maxRowNum, k);
+			T scale = QRD.getRow (maxRowNum).get (k);
 
 			T sum = mgr.getZero ();
-			for (int i = k; i <= QRD.N; i++)
+			for (int i = k; i <= N; i++)
 			{
 				T AIK = divideInto (QRD.A, i, k, scale, mgr);
 				sum = mgr.add (sum, mgr.multiply (AIK, AIK));
 			}
 
-			T sigma = SIGN ( sqrt (sum), QRD.A.get (k, k), mgr );
+			T sigma = SIGN ( sqrt (sum), QRD.getDiag (k), mgr );
 			QRD.D.set (k, mgr.negate (mgr.multiply (scale, sigma)));
 
 			T AKK = addInto (QRD.A, k, k, sigma, mgr);
 			QRD.C.set (k, mgr.multiply (sigma, AKK));
 
-			for (int j = k + 1; j <= QRD.N; j++)
+			for (int j = k + 1; j <= N; j++)
 			{
-				T dp = dot (QRD.A.getColAccess (k), QRD.A.getColAccess (j), k, QRD.N, mgr);
-				T tau = mgr.multiply (dp, mgr.invert (QRD.C.get (k)));
-
-				for (int i = k; i <= QRD.N; i++)
-				{
-					reduceBy (QRD.A, i, j, mgr.multiply (tau, QRD.A.get (i, k)), mgr);
-				}
+				QRD.reduceByTauProduct (QRD.getCol (j), k);
 			}
 		}
 
-		QRD.D.set (QRD.N, QRD.A.get (QRD.N, QRD.N));
+		QRD.D.set (N, QRD.getDiag (N));
 	}
 
 
@@ -109,6 +168,7 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 
 	/**
+	 * the primitive solution interface entry point for solve
 	 * @param D the decomposed translation matrix description
 	 * @param b the expected result vector
 	 * @return the computed solution
@@ -125,6 +185,7 @@ public class GenericQRD <T> extends GenericSupport
 	}
 
 	/**
+	 * full solution A x = b
 	 * @param D the decomposed translation matrix description
 	 * @param b the expected result vector
 	 * @return the computed solution
@@ -139,31 +200,28 @@ public class GenericQRD <T> extends GenericSupport
 		copyCells (b, x);
 
 		for (int j = 1; j < D.N; j++)
-		{
-			T dp = dot (x, D.A.getColAccess (j), j, D.N, mgr);
-			T tau = mgr.multiply (dp, mgr.invert (D.C.get (j)));
-
-			for (int i = j; i <= D.N; i++)
-			{
-				reduceBy (x, i, mgr.multiply (tau, D.A.get (i, j)), mgr);
-			}
-		}
-
+		{ D.reduceByTauProduct (x, j); }
 		rsolve (D, x);
 
 		return x;
 	}
 
+	/**
+	 * solution along the diagonal
+	 * @param D the decomposed translation matrix description
+	 * @param x the solution vector being built
+	 */
 	public void rsolve
 		(
 			QRDecomposition <T> D, SolutionPrimitives.Content <T> x
 		)
 	{
-        divideInto (x, D.N, D.D.get (D.N), mgr);
+		int N = D.N;
+        divideInto (x, N, D.D.get (N), mgr);
 
-		for (int i = D.N - 1; i >= 1; i--)
+		for (int i = N - 1; i > 0; i--)
 		{
-			T dp = dot (x, D.A.getRowAccess (i), i+1, D.N, mgr);
+			T dp = dot (x, D.getRow (i), i+1, N, mgr);
 			T dif = mgr.add (x.get (i), mgr.negate (dp));
 			x.set (i, mgr.multiply (dif, mgr.invert (D.D.get (i))));
 		}

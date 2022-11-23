@@ -2,7 +2,6 @@
 package net.myorb.math.linalg;
 
 import net.myorb.math.matrices.*;
-
 import net.myorb.math.SpaceManager;
 
 import java.util.Arrays;
@@ -64,8 +63,8 @@ public class InversionSolution <T>
 	 */
 	SolutionPrimitives.Content <T> columnResultFor (int col)
 	{
-		int [] content = new int [N];
-		Arrays.fill (content, 0); content[col-1] = 1;
+		int [] content = new int [N+1];
+		Arrays.fill (content, 0); content[col] = 1;
 		return new SolutionPrimitives.Content <T> (content, manager);
 	}
 

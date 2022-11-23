@@ -43,9 +43,9 @@ public interface SolutionPrimitives <T>
 
 		public Content (int [] cells, SpaceManager <T> manager)
 		{
-			super (cells.length, manager);
+			super (cells.length-1, manager);
 			for (int i=1; i<cells.length; i++)
-			{ set (i, manager.newScalar (cells [i-1])); }
+			{ set (i, manager.newScalar (cells [i])); }
 		}
 
 		public Content (Vector <T> source)

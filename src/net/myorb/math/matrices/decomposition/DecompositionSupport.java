@@ -66,6 +66,12 @@ public class DecompositionSupport
 			for (int i = 1; i < v.length; i++) { V.set (i, v[i]);}
 			return V;
 		}
+		public static VEC enclose (int [] v)
+		{
+			VEC V = new VEC (v.length);
+			for (int i = 0; i < v.length; i++) { V.set (i+1, (double)v[i]);}
+			return V;
+		}
 
 		/**
 		 * @param v source of values
