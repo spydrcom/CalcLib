@@ -2,6 +2,8 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.data.abstractions.SimpleStreamIO;
+
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.*;
 
@@ -10,13 +12,11 @@ import net.myorb.math.matrices.*;
  * @param <T> data type for operations
  * @author Michael Druckman
  */
-public class GenericQRD <T> extends GenericSupport
+public class GenericQRD <T> extends GenericSupport <T>
 {
 	
 
-	public GenericQRD
-	(ExpressionSpaceManager <T> mgr) { this.mgr = mgr; }
-	protected ExpressionSpaceManager <T> mgr;
+	public GenericQRD (ExpressionSpaceManager <T> mgr) { super (mgr); }
 
 
 	/**
@@ -31,8 +31,17 @@ public class GenericQRD <T> extends GenericSupport
 	/**
 	 * representation of matrix Decomposition using this QRD algorithm set
 	 */
-	public static class QRDecomposition <T> implements SolutionPrimitives.Decomposition
+	public class QRDecomposition implements SolutionPrimitives.Decomposition
 	{
+
+		public QRDecomposition
+			(
+				SimpleStreamIO.TextSource source,
+				ExpressionSpaceManager <T> mgr
+			)
+		{
+			this.mgr = mgr; load (source);
+		}
 
 		public QRDecomposition (Matrix <T> A)
 		{
@@ -92,12 +101,30 @@ public class GenericQRD <T> extends GenericSupport
 		 */
 		public String toString ()
 		{
-			StringBuffer JSON = new StringBuffer ()
-				.append ("{").append ("\n  \"A\" : [");
-			for (int i = 1; i < N; i++) { JSON.append ("\n\t" + toList (getRow (i)) + ","); }
-			JSON.append ("\n\t" + toList (getRow (N))).append ("\n  ],").append ("\n  \"C\" : " + toList (C) + ",")
-				.append ("\n  \"D\" : " + toList (D)).append ("\n}");
+			StringBuffer JSON = new StringBuffer ().append ("{");
+			addTo (JSON, "A", A).append (","); addTo (JSON, "C", C).append (",");
+			addTo (JSON, "D", D).append ("\n}");
 			return JSON.toString ();
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+		 */
+		public void store (SimpleStreamIO.TextSink to)
+		{
+			storeDecomposition (toString (), to);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+		 */
+		public void load (SimpleStreamIO.TextSource from)
+		{
+			parseDecomposedMatrix (from);
+			this.A = getMatrix ("A");
+			this.C = getVector ("C");
+			this.D = getVector ("D");
+			this.N = this.C.size ();
 		}
 
 		public VectorAccess <T> getRow (int row) { return A.getRowAccess (row); }
@@ -120,10 +147,10 @@ public class GenericQRD <T> extends GenericSupport
 	 * @param A the matrix to be decomposed using QR algorithms
 	 * @return the resulting Decomposition object
 	 */
-	public QRDecomposition <T> decompose (Matrix <T> A)
+	public QRDecomposition decompose (Matrix <T> A)
 	{
-		QRDecomposition <T> D;
-		decompose (D = new QRDecomposition <T> (A));
+		QRDecomposition D;
+		decompose (D = new QRDecomposition (A));
 		return D;
 	}
 
@@ -131,7 +158,7 @@ public class GenericQRD <T> extends GenericSupport
 	 * perform the QRDecomposition on a new matrix
 	 * @param QRD the Decomposition to be processed
 	 */
-	public void decompose (QRDecomposition <T> QRD)
+	public void decompose (QRDecomposition QRD)
 	{
 		int N = QRD.N;
 
@@ -147,7 +174,7 @@ public class GenericQRD <T> extends GenericSupport
 				sum = mgr.add (sum, mgr.multiply (AIK, AIK));
 			}
 
-			T sigma = SIGN ( sqrt (sum), QRD.getDiag (k), mgr );
+			T sigma = arithmetic.SIGN ( sqrt (sum), QRD.getDiag (k) );
 			QRD.D.set (k, mgr.negate (mgr.multiply (scale, sigma)));
 
 			T AKK = addInto (QRD.A, k, k, sigma, mgr);
@@ -175,7 +202,7 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 	public SolutionPrimitives.SolutionVector solve
 		(
-			QRDecomposition <T> D, SolutionPrimitives.RequestedResultVector b
+			QRDecomposition D, SolutionPrimitives.RequestedResultVector b
 		)
 	{
 		@SuppressWarnings("unchecked")
@@ -192,7 +219,7 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 	public SolutionPrimitives.SolutionVector solve
 		(
-			QRDecomposition <T> D, SolutionPrimitives.Content <T> b
+			QRDecomposition D, SolutionPrimitives.Content <T> b
 		)
 	{
 		SolutionPrimitives.Content <T> x =
@@ -213,7 +240,7 @@ public class GenericQRD <T> extends GenericSupport
 	 */
 	public void rsolve
 		(
-			QRDecomposition <T> D, SolutionPrimitives.Content <T> x
+			QRDecomposition D, SolutionPrimitives.Content <T> x
 		)
 	{
 		int N = D.N;
@@ -225,6 +252,22 @@ public class GenericQRD <T> extends GenericSupport
 			T dif = mgr.add (x.get (i), mgr.negate (dp));
 			x.set (i, mgr.multiply (dif, mgr.invert (D.D.get (i))));
 		}
+	}
+
+
+	/*
+	 * Decomposition transport
+	 */
+
+
+	/**
+	 * restore a stored QRDecomposition
+	 * @param source the location of the stored copy
+	 * @return the QRDecomposition
+	 */
+	public QRDecomposition restore (SimpleStreamIO.TextSource source)
+	{
+		return new QRDecomposition (source, mgr);
 	}
 
 

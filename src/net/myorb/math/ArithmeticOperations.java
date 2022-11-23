@@ -123,7 +123,7 @@ public class ArithmeticOperations<T>
 	}
 
 	/**
-	 * comute sign function of value
+	 * compute sign function of value
 	 * @param value the basis of the computation
 	 * @return -1, 0, 1 depending on sign of value
 	 */
@@ -143,6 +143,18 @@ public class ArithmeticOperations<T>
 		if (manager.isNegative (value))
 			return manager.negate (value);
 		else return value;
+	}
+
+	/**
+	 * @param x source of value
+	 * @param y source of sign
+	 * @return product of two
+	 */
+	public T SIGN (T x, T y)
+	{
+		T mag = abs (x);
+		if (manager.isNegative (y)) return manager.negate (mag);
+		else return mag;
 	}
 
 	/**

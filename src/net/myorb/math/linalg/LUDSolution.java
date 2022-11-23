@@ -1,10 +1,11 @@
 
 package net.myorb.math.linalg;
 
+import net.myorb.data.abstractions.SimpleStreamIO;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+
 import net.myorb.math.matrices.decomposition.*;
 import net.myorb.math.matrices.Matrix;
-
-import net.myorb.math.SpaceManager;
 
 /**
  * implementation of Solution Primitives using LUD
@@ -16,19 +17,25 @@ public class LUDSolution <T>
 		SolutionPrimitives <T>
 {
 
-	public LUDSolution (SpaceManager <T> mgr)
-	{
-		this.LUD = new GenericLUD <T> (mgr);
-	}
-	GenericLUD <T> LUD;
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+	 */
+	public Decomposition restore (SimpleStreamIO.TextSource from) { return LUD.restore (from); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives#decompose(net.myorb.math.matrices.Matrix)
 	 */
-	public SolutionPrimitives.Decomposition decompose (Matrix <T> A)
-	{
-		return LUD.decompose (A);
-	}
+	public SolutionPrimitives.Decomposition decompose (Matrix <T> A) { return LUD.decompose (A); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Invertable#inv(net.myorb.math.matrices.Matrix)
+	 */
+	public Matrix <T> inv (Matrix <T> source) { return LUD.inv (source); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Determinable#det(net.myorb.math.matrices.Matrix)
+	 */
+	public T det (Matrix <T> source) { return LUD.det (source); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives#solve(net.myorb.math.linalg.SolutionPrimitives.Decomposition, net.myorb.math.linalg.SolutionPrimitives.RequestedResultVector)
@@ -40,25 +47,13 @@ public class LUDSolution <T>
 		)
 	{
 		@SuppressWarnings("unchecked")
-		GenericLUD.LUDecomposition <T> LU =
-				( GenericLUD.LUDecomposition <T> ) D;
+		GenericLUD <T>.LUDecomposition LU =
+				( GenericLUD <T>.LUDecomposition ) D;
 		return LUD.solve (LU, b);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.linalg.SolutionPrimitives.Invertable#inv(net.myorb.math.matrices.Matrix)
-	 */
-	public Matrix <T> inv (Matrix <T> source)
-	{
-		return LUD.inv (source);
-	}
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.linalg.SolutionPrimitives.Determinable#det(net.myorb.math.matrices.Matrix)
-	 */
-	public T det (Matrix <T> source)
-	{
-		return LUD.det (source);
-	}
+	public LUDSolution (ExpressionSpaceManager <T> mgr)
+	{ this.LUD = new GenericLUD <T> (mgr); }
+	protected GenericLUD <T> LUD;
 
 }

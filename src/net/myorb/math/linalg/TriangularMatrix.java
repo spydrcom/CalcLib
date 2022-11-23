@@ -4,6 +4,9 @@ package net.myorb.math.linalg;
 import net.myorb.math.matrices.*;
 import net.myorb.math.matrices.decomposition.Doolittle;
 
+import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
+import net.myorb.data.abstractions.SimpleStreamIO;
+
 import net.myorb.math.SpaceManager;
 
 /**
@@ -58,6 +61,22 @@ public class TriangularMatrix
 		public Matrix<T> getL () { return L; }
 		public Matrix<T> getU () { return U; }
 		protected Matrix <T> L, U;
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+		 */
+		public void store (SimpleStreamIO.TextSink to)
+		{
+			throw new RuntimeException ("not implemented");
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+		 */
+		public void load (SimpleStreamIO.TextSource from)
+		{
+			throw new RuntimeException ("not implemented");
+		}
 
 		public String toString ()
 		{
@@ -166,6 +185,12 @@ class TriangularPrimitives <T>
 		return new InversionSolution <T> (this).inv (source);
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+	 */
+	public SolutionPrimitives.Decomposition restore (TextSource from)
+	{
+		throw new RuntimeException ("unimplemented");
+	}
+
 }
-
-

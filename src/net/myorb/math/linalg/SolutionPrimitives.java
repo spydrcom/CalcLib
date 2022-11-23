@@ -2,7 +2,7 @@
 package net.myorb.math.linalg;
 
 import net.myorb.math.matrices.*;
-
+import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -20,7 +20,26 @@ public interface SolutionPrimitives <T>
 	/**
 	 * a digestion of the mapping data
 	 */
-	public interface Decomposition {}
+	public interface Decomposition
+	{
+
+		/**
+		 * @param to a sink object where copy will save
+		 */
+		void store (SimpleStreamIO.TextSink to);
+
+		/**
+		 * @param from a source object where copy can be found
+		 */
+		void load (SimpleStreamIO.TextSource from);
+
+	}
+
+	/**
+	 * @param from a source object where copy can be found
+	 * @return a Decomposition restored from source
+	 */
+	public Decomposition restore (SimpleStreamIO.TextSource from);
 
 	/**
 	 * a description of the sought result

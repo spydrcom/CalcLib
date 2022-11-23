@@ -2,6 +2,7 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.math.expressions.DataIO;
 import net.myorb.math.matrices.*;
 import net.myorb.math.linalg.*;
@@ -161,6 +162,22 @@ public class DecompositionSupport
 		{
 			print (this);
 			if (isSingular) System.out.println ("SINGULAR MATRIX");
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+		 */
+		public void store (SimpleStreamIO.TextSink to)
+		{
+			throw new RuntimeException ("not implemented");
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+		 */
+		public void load (SimpleStreamIO.TextSource from)
+		{
+			throw new RuntimeException ("not implemented");
 		}
 
 		/**

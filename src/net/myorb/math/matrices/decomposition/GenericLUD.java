@@ -5,6 +5,7 @@ import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.*;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -12,20 +13,27 @@ import net.myorb.math.SpaceManager;
  * @param <T> data type for operations
  * @author Michael Druckman
  */
-public class GenericLUD <T> extends GenericSupport
+public class GenericLUD <T> extends GenericSupport <T>
 {
 
 
-	public GenericLUD
-	(SpaceManager <T> mgr) { this.mgr = mgr; }
-	protected SpaceManager <T> mgr;
+	public GenericLUD (ExpressionSpaceManager <T> mgr) { super (mgr); }
 
 
 	/**
 	 * representation of matrix Decomposition using this LUD algorithm set
 	 */
-	public static class LUDecomposition <T> implements SolutionPrimitives.Decomposition
+	public class LUDecomposition implements SolutionPrimitives.Decomposition
 	{
+
+		public LUDecomposition
+			(
+				SimpleStreamIO.TextSource source,
+				ExpressionSpaceManager <T> mgr
+			)
+		{
+			this.mgr = mgr; load (source);
+		}
 
 		public LUDecomposition (Matrix <T> A)
 		{
@@ -33,6 +41,7 @@ public class GenericLUD <T> extends GenericSupport
 			this.builtPermutationMatrixDescription ();
 		}
 		protected ExpressionSpaceManager <T> mgr;
+		
 
 		/**
 		 * @param A the matrix being decomposed
@@ -95,7 +104,7 @@ public class GenericLUD <T> extends GenericSupport
 
 		/**
 		 * force maximum identifiable row to next position
-		 * @param rowToPrep the next row of interest
+		 * @param rowToPrep the next row of interest to evaluate
 		 */
 		public void prepNextRow (int rowToPrep)
 		{
@@ -155,11 +164,30 @@ public class GenericLUD <T> extends GenericSupport
 		 */
 		public String toString ()
 		{
-			StringBuffer JSON = new StringBuffer ().append ("{").append ("\n  \"A\" : [");
-			for (int i = 1; i < N; i++) { JSON.append ("\n\t" + toList (A.getRowAccess (i)) + ","); }
-			JSON.append ("\n\t" + toList (A.getRowAccess (N))).append ("\n  ],").append ("\n  \"P\" : " + toList (P) + ",")
-				.append ("\n  \"pivots\" : " + pivotCount).append ("\n}");
+			StringBuffer JSON = new StringBuffer ().append ("{");
+			addTo (JSON, "A", A).append (",\n  \"P\" : ").append (toList (P)).append (",")
+				.append ("\n  \"pivots\" : ").append (pivotCount).append ("\n}");
 			return JSON.toString ();
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+		 */
+		public void store (SimpleStreamIO.TextSink to)
+		{
+			storeDecomposition (toString (), to);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+		 */
+		public void load (SimpleStreamIO.TextSource from)
+		{
+			parseDecomposedMatrix (from);
+			this.P = toArray (getIndex ("P"));
+			this.pivotCount = getValue ("pivots").intValue ();
+			this.A = getMatrix ("A");
+			this.N = P.length - 1;
 		}
 
 	}
@@ -172,7 +200,7 @@ public class GenericLUD <T> extends GenericSupport
 	/**
 	 * @param D the Decomposition to be processed
 	 */
-	public void decompose (LUDecomposition <T> D)
+	public void decompose (LUDecomposition D)
 	{
 		int N = D.N;
 
@@ -204,10 +232,10 @@ public class GenericLUD <T> extends GenericSupport
 	 * @param A the matrix to be decomposed
 	 * @return the resulting Decomposition object
 	 */
-	public LUDecomposition <T> decompose (Matrix <T> A)
+	public LUDecomposition decompose (Matrix <T> A)
 	{
-		LUDecomposition <T> D;
-		decompose (D = new LUDecomposition <T> (A));
+		LUDecomposition D;
+		decompose (D = new LUDecomposition (A));
 		return D;
 	}
 
@@ -223,7 +251,7 @@ public class GenericLUD <T> extends GenericSupport
 	 */
 	public SolutionPrimitives.SolutionVector solve
 		(
-			LUDecomposition <T> D, SolutionPrimitives.Content <T> b
+			LUDecomposition D, SolutionPrimitives.Content <T> b
 		)
 	{
 		int N = D.N;
@@ -246,7 +274,7 @@ public class GenericLUD <T> extends GenericSupport
 	 */
 	public SolutionPrimitives.SolutionVector solve
 		(
-			LUDecomposition <T> D, SolutionPrimitives.RequestedResultVector b
+			LUDecomposition D, SolutionPrimitives.RequestedResultVector b
 		)
 	{
 		@SuppressWarnings("unchecked")
@@ -264,7 +292,7 @@ public class GenericLUD <T> extends GenericSupport
 	 * @param D the decomposed matrix description
 	 * @return the computed inverse of the matrix
 	 */
-	public Matrix <T> inv (LUDecomposition <T> D)
+	public Matrix <T> inv (LUDecomposition D)
 	{
 		int N = D.N;
 		Matrix <T> IA = new Matrix <T> (N, N, mgr);
@@ -307,7 +335,7 @@ public class GenericLUD <T> extends GenericSupport
 	 * @param D the decomposed matrix description
 	 * @return determinant of the decomposed permutations matrix
 	 */
-	public T detP (LUDecomposition <T> D)
+	public T detP (LUDecomposition D)
 	{
 		return mgr.newScalar (D.detP ());
 	}
@@ -316,7 +344,7 @@ public class GenericLUD <T> extends GenericSupport
 	 * @param D the decomposed matrix description
 	 * @return the determinant of the matrix
 	 */
-	public T det (LUDecomposition <T> D)
+	public T det (LUDecomposition D)
 	{
 		T result = detP (D);
 		for (int i = 1; i <= D.N; i++)
@@ -331,6 +359,22 @@ public class GenericLUD <T> extends GenericSupport
 	public T det (Matrix <T> source)
 	{
 		return det (decompose (source));
+	}
+
+
+	/*
+	 * Decomposition transport
+	 */
+
+
+	/**
+	 * restore a stored LUDecomposition
+	 * @param source the location of the stored copy
+	 * @return the LUDecomposition
+	 */
+	public LUDecomposition restore (SimpleStreamIO.TextSource source)
+	{
+		return new LUDecomposition (source, mgr);
 	}
 
 
