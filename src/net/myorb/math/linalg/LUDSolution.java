@@ -53,7 +53,7 @@ public class LUDSolution <T>
 	}
 
 	public LUDSolution (ExpressionSpaceManager <T> mgr)
-	{ this.LUD = new GenericLUD <T> (mgr); }
+	{ this.LUD = new GenericLUD <T> (mgr); this.LUD.setSolutionClassPath (this.getClass ().getCanonicalName ()); }
 	protected GenericLUD <T> LUD;
 
 }

@@ -1,12 +1,10 @@
 
 package net.myorb.math.matrices.decomposition;
 
-import net.myorb.math.matrices.CellSequencePrimitives;
 import net.myorb.math.matrices.*;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.ArithmeticOperations;
-import net.myorb.math.SpaceManager;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.notations.json.*;
@@ -19,6 +17,7 @@ import java.util.List;
  * support for matrix operations implementing linear algebra algorithms
  * - specific to data represented in CalcLib generic structures
  * - includes JSON representation of decomposed matrix data
+ * @param <T> data type used in Matrix objects
  * @author Michael Druckman
  */
 public class GenericSupport <T> extends CellSequencePrimitives
@@ -96,6 +95,15 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
+	 * @return the class path to the controlling solution
+	 */
+	public String getSolutionClassPath ()
+	{
+		return solutionClassPath;
+	}
+
+
+	/**
 	 * @param called name of the member
 	 * @return the number read from JSON
 	 */
@@ -140,6 +148,22 @@ public class GenericSupport <T> extends CellSequencePrimitives
 		catch (Exception e) { e.printStackTrace (); }
 	}
 
+
+	/**
+	 * identify solution being described
+	 * @param buffer a string buffer being built
+	 * @return the string buffer
+	 */
+	public StringBuffer addPathTo (StringBuffer buffer)
+	{
+		String path = getSolutionClassPath ();
+		if (path != null)
+		{
+			buffer.append ("\n  \"Solution\" : \"")
+			.append (path).append ("\",");
+		}
+		return buffer;
+	}
 
 	/**
 	 * @param buffer a string buffer being built
@@ -194,18 +218,72 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
+	 * @param a the matrix being evaluated
+	 * @return vector of values giving scale (1/max) of each row
+	 */
+	public Vector <T> scaling (Matrix <T> a)
+	{
+		Vector <T> v;
+
+		int n = a.rowCount ();
+		v = new Vector <> (n, mgr);
+
+		for (int i = 1; i <= n; i++)
+		{
+			v.set (i, mgr.invert (biggestOf (i, a)));
+		}
+
+		return v;
+	}
+
+
+	/**
+	 * find largest value in row
+	 * @param row the number of the row
+	 * @param in the matrix being evaluated
+	 * @return largest value in row
+	 */
+	public T biggestOf (int row, Matrix <T> in)
+	{
+		int n = in.columnCount ();
+		T biggest = mgr.getZero (), temp;
+
+		for (int col = 1; col <= n; col++)
+		{
+			temp = arithmetic.abs (in.get (row, col));
+			if ( mgr.lessThan (biggest, temp) ) biggest = temp;
+		}
+
+		return check (biggest);
+	}
+
+
+	/**
+	 * @param value the value to check
+	 * @return the value that was checked
+	 * @throws RuntimeException for zero value indicating det==0
+	 */
+	public T check (T value) throws RuntimeException
+	{
+		if (mgr.isZero (value))
+			throw new RuntimeException ("Singular matrix");
+		else return value;
+	}
+
+
+	/**
 	 * dot product of vector segment
 	 * @param A first vector for product
 	 * @param B second vector for product
 	 * @param start starting index for segment
 	 * @param end ending index for segment
-	 * @param mgr the data type manager
 	 * @return the computed product
 	 */
-	public static <T> T dot
+	public T dot
 		(
-			VectorAccess <T> A, VectorAccess <T> B,
-			int start, int end, SpaceManager <T> mgr
+			VectorAccess <T> A,
+			VectorAccess <T> B,
+			int start, int end
 		)
 	{
 		T sum = mgr.getZero ();
@@ -213,6 +291,26 @@ public class GenericSupport <T> extends CellSequencePrimitives
 		{ sum = mgr.add (sum, mgr.multiply (A.get (k), B.get (k))); }
 		return sum;
 	}
+
+
+	/**
+	 * @param row the row of focus cell
+	 * @param col the column of focus cell
+	 * @param upTo the highest index in product
+	 * @param A the matrix being evaluated
+	 * @return cell minus rowXcol product
+	 */
+	public T reduceByProduct
+		(
+			int row, int col, int upTo,
+			Matrix <T> A
+		)
+	{
+		T product = dot
+			(A.getRowAccess (row), A.getColAccess (col), 1, upTo-1);
+		return reduceBy (A, row, col, product, mgr);
+	}
+
 
 
 	/**
@@ -236,10 +334,20 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	    	{ maxA = absA; imax = k; }
 	    }
 	
-	    if (mgr.isZero (maxA))
-	    { throw new RuntimeException ("Degenerate matrix"); }
+	    check (maxA);
 	    return imax;
 	}
+
+
+	/**
+	 * identify controlling solution class
+	 * @param path the class path to the controlling solution
+	 */
+	public void setSolutionClassPath (String path)
+	{
+		solutionClassPath = path;
+	}
+	public String solutionClassPath = null;
 
 
 	public GenericSupport (ExpressionSpaceManager <T> mgr)

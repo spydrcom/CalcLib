@@ -36,17 +36,15 @@ public class GenericQRD <T> extends GenericSupport <T>
 
 		public QRDecomposition
 			(
-				SimpleStreamIO.TextSource source,
-				ExpressionSpaceManager <T> mgr
+				SimpleStreamIO.TextSource source
 			)
 		{
-			this.mgr = mgr; load (source);
+			load (source);
 		}
 
 		public QRDecomposition (Matrix <T> A)
 		{
 			this.A = copyOf (A); this.N = A.getEdgeCount ();
-			this.mgr = (ExpressionSpaceManager <T>) A.getSpaceManager ();
 			this.C = new Vector <T> (N, mgr); this.D = new Vector <T> (N, mgr);
 		}
 
@@ -65,7 +63,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 		 */
 		public T getTau (VectorAccess <T> access, int col)
 		{
-			T product = dot (access, getCol (col), col, N, mgr);
+			T product = dot (access, getCol (col), col, N);
 			return mgr.multiply (product, mgr.invert (C.get (col)));
 		}
 
@@ -101,7 +99,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 		 */
 		public String toString ()
 		{
-			StringBuffer JSON = new StringBuffer ().append ("{");
+			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
 			addTo (JSON, "A", A).append (","); addTo (JSON, "C", C).append (",");
 			addTo (JSON, "D", D).append ("\n}");
 			return JSON.toString ();
@@ -130,7 +128,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 		public VectorAccess <T> getRow (int row) { return A.getRowAccess (row); }
 		public VectorAccess <T> getCol (int col) { return A.getColAccess (col); }
 
-		protected ExpressionSpaceManager <T> mgr;
+		//protected ExpressionSpaceManager <T> mgr;
 		protected Vector <T> C, D;
 		protected Matrix <T> A;
 		protected int N;
@@ -248,7 +246,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 
 		for (int i = N - 1; i > 0; i--)
 		{
-			T dp = dot (x, D.getRow (i), i+1, N, mgr);
+			T dp = dot (x, D.getRow (i), i+1, N);
 			T dif = mgr.add (x.get (i), mgr.negate (dp));
 			x.set (i, mgr.multiply (dif, mgr.invert (D.D.get (i))));
 		}
@@ -267,7 +265,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 	 */
 	public QRDecomposition restore (SimpleStreamIO.TextSource source)
 	{
-		return new QRDecomposition (source, mgr);
+		return new QRDecomposition (source);
 	}
 
 

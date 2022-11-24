@@ -144,5 +144,21 @@ public class CellSequencePrimitives
 	{ return addInto (A, row, col, mgr.negate (value), mgr); }
 
 
+	/*
+	 * simple value summation
+	 */
+
+	/**
+	 * @param value starting value
+	 * @param offset the difference to apply
+	 * @param mgr the data type manager
+	 * @return value-offset
+	 */
+	public static <T> T reduce (T value, T offset, SpaceManager <T> mgr)
+	{
+		return mgr.add (value, mgr.negate (offset));
+	}
+
+
 }
 

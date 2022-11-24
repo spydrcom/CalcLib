@@ -47,7 +47,7 @@ public class QRDSolution <T>
 	}
 
 	public QRDSolution (ExpressionSpaceManager <T> mgr)
-	{ this.QRD = new GenericQRD <T> (mgr); }
+	{ this.QRD = new GenericQRD <T> (mgr); this.QRD.setSolutionClassPath (this.getClass ().getCanonicalName ()); }
 	protected GenericQRD <T> QRD;
 
 }
