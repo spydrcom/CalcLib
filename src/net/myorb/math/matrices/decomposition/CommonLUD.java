@@ -30,7 +30,6 @@ public class CommonLUD <T> extends GenericSupport <T>
 
 		/**
 		 * @param A the matrix being decomposed
-		 * @param mgr the data type manager
 		 */
 		public void copySourceMatrix (Matrix <T> A)
 		{
@@ -101,7 +100,6 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 */
 
 		/**
-		 * @param D the decomposed matrix description
 		 * @return determinant of the decomposed permutations matrix
 		 */
 		public T permutationDet ()
@@ -110,7 +108,6 @@ public class CommonLUD <T> extends GenericSupport <T>
 		}
 
 		/**
-		 * @param D the decomposed matrix description
 		 * @return the determinant of the matrix
 		 */
 		public T det ()
@@ -123,9 +120,17 @@ public class CommonLUD <T> extends GenericSupport <T>
 		}
 
 		/**
+		 * compute the determinant of the permutation matrix
 		 * @return the determinant of the permutation matrix
 		 */
 		public int detP () { return pivotCount % 2 == 0 ? 1 : -1; }
+
+		/**
+		 * get cell from diagonal
+		 * @param item identify (item,item)
+		 * @return cell value
+		 */
+		public T getDiag (int item) { return A.get (item, item); }
 
 
 		/*
@@ -133,7 +138,6 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 */
 
 		/**
-		 * @param D the decomposed matrix description
 		 * @return the computed inverse of the matrix
 		 */
 		public Matrix <T> inv ()
@@ -180,13 +184,6 @@ public class CommonLUD <T> extends GenericSupport <T>
 	        	dot (A.getRowAccess (row), colVec, start, end);
 	        reduceBy (colVec, row, colVecProduct, mgr);
 		}
-
-		/**
-		 * get cell from diagonal
-		 * @param item identify (item,item)
-		 * @return cell value
-		 */
-		public T getDiag (int item) { return A.get (item, item); }
 
 
 		/*

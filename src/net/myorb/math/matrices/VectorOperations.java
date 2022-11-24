@@ -52,6 +52,7 @@ public class VectorOperations <T> extends Tolerances <T>
 	 * copy cells of content held in a vector to an accessed location
 	 * @param location the destination of the cells being copied
 	 * @param content the cells of content being copied
+	 * @param <T> data type
 	 */
 	public static <T> void copyContent
 		(VectorAccess <T> location, Vector <T> content)
@@ -62,6 +63,7 @@ public class VectorOperations <T> extends Tolerances <T>
 	 * @param location the destination of the cells being copied
 	 * @param content the source location of the cells being copied
 	 * @param items the number of cells
+	 * @param <T> data type
 	 */
 	public static <T> void copyContent
 	(VectorAccess <T> location, VectorAccess <T> content, int items)

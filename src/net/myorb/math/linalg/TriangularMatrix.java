@@ -125,6 +125,7 @@ public class TriangularMatrix
 
 	/**
 	 * @return a Linear Algebra Solution Primitives object based on Doolittle
+	 * @param <T> data type of operations
 	 */
 	public static <T> SolutionPrimitives <T> getSolutionPrimitives ()
 	{

@@ -24,6 +24,7 @@ public class CellSequencePrimitives
 	 * @param v source of content
 	 * @param toRow destination row number for content
 	 * @param of matrix holding destination row
+	 * @param <T> data type
 	 */
 	public static <T> void copyCells (Vector <T> v, int toRow, Matrix <T> of)
 	{ VectorOperations.copyContent (of.getRowAccess (toRow), v); }
@@ -33,6 +34,7 @@ public class CellSequencePrimitives
 	 * populate vector
 	 * @param v source of content
 	 * @param to destination for content
+	 * @param <T> data type
 	 */
 	public static <T> void copyCells (Vector <T> v, Vector <T> to)
 	{ VectorOperations.copyContent (to, v); }
@@ -41,6 +43,7 @@ public class CellSequencePrimitives
 	/**
 	 * @param v the vector to enumerate
 	 * @return list of text of values
+	 * @param <T> data type
 	 */
 	public static <T> List <String> toList (VectorAccess <T> v)
 	{
@@ -59,6 +62,7 @@ public class CellSequencePrimitives
 	/**
 	 * @param source the source for content
 	 * @return a copy of the source matrix
+	 * @param <T> data type
 	 */
 	public static <T> Matrix <T> copyOf (Matrix <T> source)
 	{
@@ -74,6 +78,7 @@ public class CellSequencePrimitives
 	 * @param A the matrix holding rows to exchange
 	 * @param row1 the first row number for exchange
 	 * @param row2 the second row number
+	 * @param <T> data type
 	 */
 	public static <T> void interchange (Matrix <T> A, int row1, int row2)
 	{
@@ -93,6 +98,7 @@ public class CellSequencePrimitives
 	 * @param value the value to multiply
 	 * @param mgr the data type manager
 	 * @return the computed value
+	 * @param <T> data type
 	 */
 	public static <T> T multiplyInto (VectorAccess <T> v, int element, T value, SpaceManager <T> mgr)
 	{ T cellValue;  v.set (element, cellValue = mgr.multiply (v.get (element), value)); return cellValue; }
@@ -105,6 +111,7 @@ public class CellSequencePrimitives
 	 * @param value the value to add
 	 * @param mgr the data type manager
 	 * @return the computed value
+	 * @param <T> data type
 	 */
 	public static <T> T addInto (VectorAccess <T> v, int element, T value, SpaceManager <T> mgr)
 	{ T cellValue; v.set (element, cellValue = mgr.add (v.get (element), value)); return cellValue; }
@@ -124,6 +131,7 @@ public class CellSequencePrimitives
 	 * @param value the value to multiply
 	 * @param mgr the data type manager
 	 * @return the computed value
+	 * @param <T> data type
 	 */
 	public static <T> T multiplyInto (Matrix <T> A, int row, int col, T value, SpaceManager <T> mgr)
 	{ T cellValue; A.set (row, col, cellValue = mgr.multiply (A.get (row, col), value)); return cellValue; }
@@ -137,6 +145,7 @@ public class CellSequencePrimitives
 	 * @param value the value to add
 	 * @param mgr the data type manager
 	 * @return the computed value
+	 * @param <T> data type
 	 */
 	public static <T> T addInto (Matrix <T> A, int row, int col, T value, SpaceManager <T> mgr)
 	{ T cellValue; A.set (row, col, cellValue = mgr.add (A.get (row, col), value)); return cellValue; }
@@ -153,6 +162,7 @@ public class CellSequencePrimitives
 	 * @param offset the difference to apply
 	 * @param mgr the data type manager
 	 * @return value-offset
+	 * @param <T> data type
 	 */
 	public static <T> T reduce (T value, T offset, SpaceManager <T> mgr)
 	{
