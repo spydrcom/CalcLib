@@ -3,8 +3,9 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.linalg.*;
 import net.myorb.math.matrices.*;
-
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
+import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
@@ -26,13 +27,8 @@ public class Crouts <T> extends CommonLUD <T>
 			implements SolutionPrimitives.Decomposition
 	{
 
-		public CroutsDecomposition
-			(
-				SimpleStreamIO.TextSource source
-			)
-		{
-			load (source);
-		}
+		public CroutsDecomposition (SimpleStreamIO.TextSource source) { load (source); }
+		public CroutsDecomposition (JsonSemantics.JsonValue source) { load (source); }
 
 		public CroutsDecomposition (Matrix <T> A)
 		{
@@ -140,12 +136,14 @@ public class Crouts <T> extends CommonLUD <T>
 	 * @param A the matrix to be decomposed
 	 * @return the resulting Decomposition object
 	 */
-	public CroutsDecomposition decompose (Matrix <T> A)
+	public CroutsDecomposition decomposeUsingCrouts (Matrix <T> A)
 	{
 		CroutsDecomposition D;
 		decompose (D = new CroutsDecomposition (A));
 		return D;
 	}
+	public SolutionPrimitives.Decomposition decompose (Matrix <T> A)
+	{ return decomposeUsingCrouts (A); }
 
 
 	/*
@@ -220,7 +218,7 @@ public class Crouts <T> extends CommonLUD <T>
 	 */
 	public Matrix <T> inv (Matrix <T> source)
 	{
-		return decompose (source).inv ();
+		return decomposeUsingCrouts (source).inv ();
 	}
 
 
@@ -235,7 +233,7 @@ public class Crouts <T> extends CommonLUD <T>
 	 */
 	public T det (Matrix <T> source)
 	{
-		return decompose (source).det ();
+		return decomposeUsingCrouts (source).det ();
 	}
 
 
@@ -251,6 +249,16 @@ public class Crouts <T> extends CommonLUD <T>
 	public CroutsDecomposition restore (SimpleStreamIO.TextSource source)
 	{
 		return new CroutsDecomposition (source);
+	}
+
+	/**
+	 * restore a JSON stored QRDecomposition
+	 * @param source the location of the stored copy
+	 * @return the LUDecomposition
+	 */
+	public CroutsDecomposition restore (JsonSemantics.JsonValue source)
+	{
+		return new CroutsDecomposition (source);		
 	}
 
 

@@ -1,10 +1,11 @@
 
 package net.myorb.math.matrices.decomposition;
 
-import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.*;
-
+import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
+import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
@@ -26,13 +27,8 @@ public class GenericLUD <T> extends CommonLUD <T>
 		implements SolutionPrimitives.Decomposition
 	{
 
-		public LUDecomposition
-			(
-				SimpleStreamIO.TextSource source
-			)
-		{
-			load (source);
-		}
+		public LUDecomposition (SimpleStreamIO.TextSource source) { load (source); }
+		public LUDecomposition (JsonSemantics.JsonValue source) { load (source); }
 
 		public LUDecomposition (Matrix <T> A)
 		{
@@ -199,6 +195,16 @@ public class GenericLUD <T> extends CommonLUD <T>
 	public LUDecomposition restore (SimpleStreamIO.TextSource source)
 	{
 		return new LUDecomposition (source);
+	}
+
+	/**
+	 * restore a JSON stored QRDecomposition
+	 * @param source the location of the stored copy
+	 * @return the LUDecomposition
+	 */
+	public LUDecomposition restore (JsonSemantics.JsonValue source)
+	{
+		return new LUDecomposition (source);		
 	}
 
 

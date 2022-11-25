@@ -118,8 +118,12 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 */
 	public void parseDecomposedMatrix (SimpleStreamIO.TextSource source)
 	{
-		try { this.parsedSource = JsonReader.readFrom (source); }
+		try { this.identifySource (JsonReader.readFrom (source)); }
 		catch (Exception e) { throw new RuntimeException ("Error reading source", e); }
+	}
+	public void identifySource (JsonSemantics.JsonValue source)
+	{
+		this.parsedSource = source;
 		this.parsedObject = (JsonSemantics.JsonObject) parsedSource;
 	}
 	public void dump () 
@@ -312,7 +316,6 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	}
 
 
-
 	/**
 	 * identify the biggest remaining row
 	 * @param starting the starting row and column
@@ -349,6 +352,10 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	}
 	public String solutionClassPath = null;
 
+	public void setSolutionClassPath ()
+	{
+		setSolutionClassPath (this.getClass ().getCanonicalName ());
+	}
 
 	public GenericSupport (ExpressionSpaceManager <T> mgr)
 	{ this.mgr = mgr; this.arithmetic = new ArithmeticOperations <T> (mgr); }

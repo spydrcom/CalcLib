@@ -2,6 +2,7 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
+import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.matrices.VectorAccess;
@@ -214,7 +215,14 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 */
 		public void load (SimpleStreamIO.TextSource from)
 		{
-			parseDecomposedMatrix (from);
+			parseDecomposedMatrix (from); loadFromJSON ();
+		}
+		public void load (JsonSemantics.JsonValue source)
+		{
+			identifySource (source); loadFromJSON ();
+		}
+		public void loadFromJSON ()
+		{
 			this.P = toArray (getIndex ("P"));
 			this.pivotCount = getValue ("pivots").intValue ();
 			this.A = getMatrix ("A");

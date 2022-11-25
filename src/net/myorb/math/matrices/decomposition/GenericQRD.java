@@ -3,7 +3,7 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.data.abstractions.SimpleStreamIO;
-
+import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.*;
 
@@ -34,13 +34,8 @@ public class GenericQRD <T> extends GenericSupport <T>
 	public class QRDecomposition implements SolutionPrimitives.Decomposition
 	{
 
-		public QRDecomposition
-			(
-				SimpleStreamIO.TextSource source
-			)
-		{
-			load (source);
-		}
+		public QRDecomposition (SimpleStreamIO.TextSource source) { load (source); }
+		public QRDecomposition (JsonSemantics.JsonValue source) { load (source); }
 
 		public QRDecomposition (Matrix <T> A)
 		{
@@ -118,7 +113,14 @@ public class GenericQRD <T> extends GenericSupport <T>
 		 */
 		public void load (SimpleStreamIO.TextSource from)
 		{
-			parseDecomposedMatrix (from);
+			parseDecomposedMatrix (from); loadFromJSON ();
+		}
+		public void load (JsonSemantics.JsonValue source)
+		{
+			identifySource (source); loadFromJSON ();
+		}
+		public void loadFromJSON ()
+		{
 			this.A = getMatrix ("A");
 			this.C = getVector ("C");
 			this.D = getVector ("D");
@@ -259,13 +261,23 @@ public class GenericQRD <T> extends GenericSupport <T>
 
 
 	/**
-	 * restore a stored QRDecomposition
+	 * restore a text stored QRDecomposition
 	 * @param source the location of the stored copy
 	 * @return the QRDecomposition
 	 */
 	public QRDecomposition restore (SimpleStreamIO.TextSource source)
 	{
 		return new QRDecomposition (source);
+	}
+
+	/**
+	 * restore a JSON stored QRDecomposition
+	 * @param source the location of the stored copy
+	 * @return the QRDecomposition
+	 */
+	public QRDecomposition restore (JsonSemantics.JsonValue source)
+	{
+		return new QRDecomposition (source);		
 	}
 
 

@@ -2,8 +2,10 @@
 package net.myorb.math.linalg;
 
 import net.myorb.math.matrices.*;
-import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.math.SpaceManager;
+
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
  * abstract view of working with sets of linear equations
@@ -40,6 +42,12 @@ public interface SolutionPrimitives <T>
 	 * @return a Decomposition restored from source
 	 */
 	public Decomposition restore (SimpleStreamIO.TextSource from);
+
+	/**
+	 * @param from a source object with JSON representation
+	 * @return a Decomposition restored from source
+	 */
+	public Decomposition restore (JsonSemantics.JsonValue source);
 
 	/**
 	 * a description of the sought result

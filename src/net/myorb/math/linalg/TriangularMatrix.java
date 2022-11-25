@@ -5,6 +5,7 @@ import net.myorb.math.matrices.*;
 import net.myorb.math.matrices.decomposition.Doolittle;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
+import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 import net.myorb.math.SpaceManager;
@@ -190,6 +191,14 @@ class TriangularPrimitives <T>
 	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
 	 */
 	public SolutionPrimitives.Decomposition restore (TextSource from)
+	{
+		throw new RuntimeException ("unimplemented");
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Decomposition restore (JsonSemantics.JsonValue source)
 	{
 		throw new RuntimeException ("unimplemented");
 	}
