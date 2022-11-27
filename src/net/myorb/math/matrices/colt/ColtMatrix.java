@@ -13,6 +13,7 @@ public class ColtMatrix extends DoubleMatrix2D
 	public ColtMatrix (Matrix<Double> m)
 	{
 		this.m = m;
+		this.setUp (m.rowCount (), m.columnCount ());
 	}
 	Matrix<Double> m;
 
@@ -32,7 +33,7 @@ public class ColtMatrix extends DoubleMatrix2D
 		return null;
 	}
 
-	public DoubleMatrix1D like1D(int size)
+	public DoubleMatrix1D like1D (int size)
 	{
 		return new ColtVector (new Vector<Double> (size, m.getSpaceDescription ()));
 	}
@@ -42,9 +43,17 @@ public class ColtMatrix extends DoubleMatrix2D
 		m.set (row+1, column+1, value);
 	}
 
-	protected DoubleMatrix2D viewSelectionLike(int[] rowOffsets, int[] columnOffsets)
+	protected DoubleMatrix2D viewSelectionLike (int[] rowOffsets, int[] columnOffsets)
 	{
 		return null;
+	}
+
+	public DoubleMatrix1D viewColumn (int column)
+	{
+		int n = m.rowCount ();
+		DoubleMatrix1D v = like1D (n);
+		for (int r = 1; r <= n; r++) v.set (r-1, m.get (r, column+1));
+		return v;
 	}
 
 	final static long serialVersionUID = 1l;

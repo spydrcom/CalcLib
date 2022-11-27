@@ -209,8 +209,12 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 */
 	public static List <Integer> toList (int [] items)
 	{
+		return toList (items, 1);
+	}
+	public static List <Integer> toList (int [] items, int starting)
+	{
 		List <Integer> list = new ArrayList <Integer> ();
-		for (int item = 1; item < items.length; item++)
+		for (int item = starting; item < items.length; item++)
 		{ list.add (items[item]); }
 		return list;
 	}

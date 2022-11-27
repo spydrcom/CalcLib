@@ -73,6 +73,12 @@ public class DecompositionSupport
 			for (int i = 0; i < v.length; i++) { V.set (i+1, (double)v[i]);}
 			return V;
 		}
+		public static VEC enclose (Vector <Double> v)
+		{
+			VEC V = new VEC (v.size ());
+			for (int i = 1; i < v.size (); i++) { V.set (i, v.get (i));}
+			return V;
+		}
 
 		/**
 		 * @param v source of values
@@ -125,6 +131,15 @@ public class DecompositionSupport
 			for (int r = 1; r < m.length; r++)
 			{ setCells (getRowAccess (r), m [r]); }
 		}
+		public void copyFromZeroBased (double [][] m)
+		{
+			for (int r = 0; r < m.length; r++)
+			{
+				VectorAccess <Double> row = getRowAccess (r+1);
+				for (int c = 0; c < m[0].length; c++)
+				{ row.set (c+1, m [r][c]); }
+			}
+		}
 
 		/**
 		 * @param m a 2D array with values to use as cells
@@ -134,6 +149,12 @@ public class DecompositionSupport
 		{
 			MAT M = new MAT (m);
 			M.copyFrom (m);
+			return M;
+		}
+		public static MAT encloseZeroBased (double [][] m)
+		{
+			MAT M = new MAT  (m.length, m[0].length);
+			M.copyFromZeroBased (m);
 			return M;
 		}
 

@@ -12,6 +12,7 @@ public class ColtVector extends DoubleMatrix1D
 	public ColtVector (Vector<Double> v)
 	{
 		this.v = v;
+		this.setUp (v.size ());
 	}
 	Vector<Double> v;
 
@@ -33,7 +34,7 @@ public class ColtVector extends DoubleMatrix1D
 
 	public void setQuick(int index, double value)
 	{
-		v.set (index, value);
+		v.set (index+1, value);
 	}
 
 	protected DoubleMatrix1D viewSelectionLike(int[] offsets)

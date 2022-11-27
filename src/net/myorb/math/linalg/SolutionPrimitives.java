@@ -71,7 +71,7 @@ public interface SolutionPrimitives <T>
 		public Content (int [] cells, SpaceManager <T> manager)
 		{
 			super (cells.length-1, manager);
-			for (int i=1; i<cells.length; i++)
+			for (int i = 1; i < cells.length; i++)
 			{ set (i, manager.newScalar (cells [i])); }
 		}
 
