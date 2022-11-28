@@ -76,7 +76,19 @@ public class DecompositionSupport
 		public static VEC enclose (Vector <Double> v)
 		{
 			VEC V = new VEC (v.size ());
-			for (int i = 1; i < v.size (); i++) { V.set (i, v.get (i));}
+			for (int i = 1; i <= v.size (); i++) { V.set (i, v.get (i));}
+			return V;
+		}
+		public static VEC encloseZeroBased (Vector <Double> v)
+		{
+			VEC V = new VEC (v.size ());
+			for (int i = 0; i < v.size (); i++) { V.set (i+1, v.get (i));}
+			return V;
+		}
+		public static VEC encloseZeroBased (double [] v)
+		{
+			VEC V = new VEC (v.length);
+			for (int i = 0; i < v.length; i++) { V.set (i+1, v[i]);}
 			return V;
 		}
 
