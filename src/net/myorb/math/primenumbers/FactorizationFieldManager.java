@@ -1,10 +1,12 @@
 
 package net.myorb.math.primenumbers;
 
-import net.myorb.data.abstractions.ValueDisplayProperties;
+import net.myorb.math.computational.GenericArithmetic;
 import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
+
+import net.myorb.data.abstractions.ValueDisplayProperties;
 
 import java.math.BigInteger;
 
@@ -54,7 +56,15 @@ public class FactorizationFieldManager implements SpaceManager<Factorization>
 	 * @see net.myorb.math.FieldManager#multiply(java.lang.Object, java.lang.Object)
 	 */
 	public Factorization multiply (Factorization x, Factorization y) { return isZero (x)? getZero (): x.multiplyBy (y); }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Factorization pow (Factorization x, int exponent)
+	{
+		return GenericArithmetic.pow (x, exponent, this);
+	}
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#invert(java.lang.Object)
 	 */

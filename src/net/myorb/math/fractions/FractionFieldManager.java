@@ -3,6 +3,9 @@ package net.myorb.math.fractions;
 
 import net.myorb.math.FieldStructure;
 import net.myorb.math.FieldStructureForSpace;
+
+import net.myorb.math.computational.GenericArithmetic;
+
 import net.myorb.math.SpaceManager;
 
 /**
@@ -99,6 +102,14 @@ public class FractionFieldManager<T> implements SpaceManager <Fraction<T>>
 	public Fraction<T> multiply (Fraction<T> x, Fraction<T> y)
 	{
 		return x.multiplyBy (y);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Fraction<T> pow (Fraction<T> x, int exponent)
+	{
+		return GenericArithmetic.pow (x, exponent, this);
 	}
 
 	/* (non-Javadoc)

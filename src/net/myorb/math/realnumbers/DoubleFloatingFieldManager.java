@@ -61,7 +61,12 @@ public class DoubleFloatingFieldManager implements SpaceManager<Double>
 	 * @see net.myorb.math.FieldManager#multiply(java.lang.Object, java.lang.Object)
 	 */
 	public Double multiply (Double x, Double y) { return (double)x * (double)y; }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Double pow (Double x, int exponent) { return Math.pow (x, exponent); }
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#invert(java.lang.Object)
 	 */

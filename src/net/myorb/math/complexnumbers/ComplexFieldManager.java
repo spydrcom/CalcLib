@@ -2,9 +2,11 @@
 package net.myorb.math.complexnumbers;
 
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
+import net.myorb.math.computational.GenericArithmetic;
 
 import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.FieldStructure;
+
 import net.myorb.math.SpaceManager;
 
 /**
@@ -135,6 +137,14 @@ public class ComplexFieldManager<T> implements SpaceManager <ComplexValue<T>>
 	public ComplexValue<T> multiply (ComplexValue<T> x, ComplexValue<T> y)
 	{
 		return x.times (y);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public ComplexValue<T> pow (ComplexValue<T> x, int exponent)
+	{
+		return GenericArithmetic.pow (x, exponent, this);
 	}
 
 	/* (non-Javadoc)

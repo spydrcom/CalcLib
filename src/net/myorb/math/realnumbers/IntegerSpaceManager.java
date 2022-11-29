@@ -50,7 +50,12 @@ public class IntegerSpaceManager implements SpaceManager<BigInteger>
 	 * @see net.myorb.math.FieldManager#multiply(java.lang.Object, java.lang.Object)
 	 */
 	public BigInteger multiply (BigInteger x, BigInteger y) { return x.multiply(y); }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public BigInteger pow (BigInteger x, int exponent) { return x.pow (exponent); }
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#invert(java.lang.Object)
 	 */

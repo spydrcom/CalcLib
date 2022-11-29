@@ -2,6 +2,7 @@
 package net.myorb.math.matrices;
 
 import net.myorb.math.*;
+import net.myorb.math.computational.GenericArithmetic;
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
 
 /**
@@ -114,6 +115,15 @@ public class MatrixSpaceManager<T> extends MatrixOperations<T>
 	public Matrix<T> multiply (Matrix<T> x, Matrix<T> y)
 	{
 		return product (x, y);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Matrix<T> pow (Matrix<T> x, int exponent)
+	{
+		return GenericArithmetic.pow (x, exponent, this);
 	}
 
 

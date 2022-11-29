@@ -59,7 +59,12 @@ public class FloatingFieldManager implements SpaceManager<Float>
 	 * @see net.myorb.math.FieldManager#multiply(java.lang.Object, java.lang.Object)
 	 */
 	public Float multiply (Float x, Float y) { return (float)x * (float)y; }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Float pow (Float x, int exponent) { return (float) Math.pow (x, exponent); }
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#invert(java.lang.Object)
 	 */

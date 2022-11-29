@@ -41,7 +41,12 @@ public class NaturalSpaceManager implements SpaceManager<Integer>
 	 * @see net.myorb.math.FieldManager#multiply(java.lang.Object, java.lang.Object)
 	 */
 	public Integer multiply (Integer x, Integer y) { return x * y; }
-	
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.SpaceDescription#pow(java.lang.Object, int)
+	 */
+	public Integer pow (Integer x, int exponent) { return (int) Math.pow (x, exponent); }
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.FieldManager#invert(java.lang.Object)
 	 */
