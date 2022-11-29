@@ -38,9 +38,32 @@ public class InversionSolution <T>
 
 
 	/**
+	 * choose method for computation
+	 */
+	public void computeInversion ()
+	{
+		if (using instanceof SolutionPrimitives.MatrixSolution)
+		{
+			computeIdentityInversion ();
+		} else computeColumnwiseInversion ();
+	}
+
+	/**
+	 * compute solution using identity matrix
+	 */
+	public void computeIdentityInversion ()
+	{
+		@SuppressWarnings("unchecked")
+		SolutionPrimitives.MatrixSolution <T> S = (SolutionPrimitives.MatrixSolution <T>) using;
+		Matrix <T> I = new MatrixOperations <T> (manager).identity (N);
+		this.inverted = S.solve (matD, I);
+	}
+
+	/**
 	 * compute solution column by column
 	 */
-	@SuppressWarnings("unchecked") public void computeInversion ()
+	@SuppressWarnings("unchecked")
+	public void computeColumnwiseInversion ()
 	{
 		SolutionPrimitives.Content <T> solution;
 

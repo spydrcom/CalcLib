@@ -234,6 +234,23 @@ public class MatrixOperations<T> extends ListOperations<T>
 	}
 
 	/**
+	 * diagonal matrix with square of source diagonal
+	 * @param m source matrix
+	 * @return square diag
+	 */
+	public Matrix <T> SQ (Matrix <T> m)
+	{
+		int N = m.getEdgeCount ();
+		Matrix <T> S = new Matrix <T> (N, N, manager);
+		for (int i=1; i<=N; i++)
+		{
+			T cell = m.get (i, i);
+			S.set(i, i, manager.multiply (cell, cell));
+		}
+		return S;
+	}
+
+	/**
 	 * copy lower triangular matrix
 	 * @param m the source matrix to copy from
 	 * @param offset the diagonal offset from standard center 0
@@ -464,6 +481,25 @@ public class MatrixOperations<T> extends ListOperations<T>
 		case  3:   return det3x3 (m);
 		default:   return cofactorExpansion (m);
 		}
+	}
+
+	/**
+	 * conjugate inverse of matrix
+	 * @param m the matrix to use for computation
+	 * @return the computed result
+	 */
+	public Matrix <T> pseudoInv (Matrix <T> m)
+	{
+		Matrix <T> ps = copy (m);
+		int rows = m.rows, cols = m.cols; T cell;
+		for (int i = 1; i <= Math.min (rows, cols); i++)
+		{
+			cell = ps.get (i, i);
+			if (manager.isZero (cell)) continue;
+			cell = manager.conjugate (manager.invert (cell));
+			ps.set (i, i, cell);
+		}
+		return ps;
 	}
 
 	/**

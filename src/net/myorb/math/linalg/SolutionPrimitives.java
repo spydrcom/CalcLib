@@ -123,4 +123,18 @@ public interface SolutionPrimitives <T>
 		T det (Matrix <T> source);
 	}
 
+	/**
+	 * for solutions that provide means to parallel evaluations
+	 * @param <T> data type
+	 */
+	public interface MatrixSolution <T>
+	{
+		/**
+		 * @param D the digested map to be used
+		 * @param source matrix holding column vectors to solve
+		 * @return computed solution set
+		 */
+		Matrix <T> solve (Decomposition D, Matrix <T> source);
+	}
+
 }
