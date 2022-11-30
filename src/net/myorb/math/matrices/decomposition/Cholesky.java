@@ -1,6 +1,8 @@
 
 package net.myorb.math.matrices.decomposition;
 
+import cern.colt.matrix.DoubleMatrix2D;
+
 public class Cholesky
 {
 
@@ -8,15 +10,19 @@ public class Cholesky
 	 * taken from https://en.wikipedia.org/wiki/Cholesky_decomposition
 	 */
 
-	public double[][] Banachiewicz (double[][] A)
+	public static double[][] Banachiewicz (double[][] A)
 	{
 		int N = A.length;
 		double[][] L = new double[N][N];
-		for (int i = 0; i < N; i++) {
-		    for (int j = 0; j <= i; j++) {
-		        float sum = 0;
+
+		for (int i = 0; i < N; i++)
+		{
+		    for (int j = 0; j <= i; j++)
+		    {
+
+		    	float sum = 0;
 		        for (int k = 0; k < j; k++)
-		            sum += L[i][k] * L[j][k];
+	        	{ sum += L[i][k] * L[j][k]; }
 
 		        if (i == j)
 		            L[i][j] = Math.sqrt(A[i][i] - sum);
@@ -27,29 +33,38 @@ public class Cholesky
 		return L;
 	}
 
-	public double[][] Crout (double[][] A)
+	public static double[][] Crout (double[][] A)
 	{
 		int N = A.length;
 		double[][] L = new double[N][N];
-		for (int j = 0; j < N; j++) {
+
+		for (int j = 0; j < N; j++)
+		{
 		    float sum = 0;
-		    for (int k = 0; k < j; k++) {
+
+		    for (int k = 0; k < j; k++)
+		    {
 		        sum += L[j][k] * L[j][k];
 		    }
+
 		    L[j][j] = Math.sqrt(A[j][j] - sum);
 
-		    for (int i = j + 1; i < N; i++) {
+		    for (int i = j + 1; i < N; i++)
+		    {
 		        sum = 0;
-		        for (int k = 0; k < j; k++) {
+
+		        for (int k = 0; k < j; k++)
+		        {
 		            sum += L[i][k] * L[j][k];
 		        }
+
 		        L[i][j] = (1.0 / L[j][j] * (A[i][j] - sum));
 		    }
 		}
 		return L;
 	}
 
-	public void update (double[][] L, double[] x)
+	public static void update (double[][] L, double[] x)
 	{
 	    int n = x.length;
 	    for (int k = 0; k < n; k++)
@@ -84,5 +99,54 @@ public class Cholesky
 		    end
 		end
 	 */
+
+	/**
+	 * 
+	 * Solves <tt>A*X = B</tt>; returns <tt>X</tt>.
+	 * 
+	 * @param C		decomposition matrix C
+	 * @param B		A Matrix with as many rows as <tt>A</tt> and any number of columns.
+	 * @return		<tt>X</tt> so that <tt>L*L'*X = B</tt>.
+	 * 
+	 * @exception IllegalArgumentException	if <tt>B.rows() != A.rows()</tt>.
+	 * @exception IllegalArgumentException	if <tt>!isSymmetricPositiveDefinite()</tt>.
+	 * 
+	 */
+	public static DoubleMatrix2D solve (DoubleMatrix2D C, DoubleMatrix2D B)
+	{
+		int nx = B.columns(), n = C.rows();
+		DoubleMatrix2D X = B.copy();		// Copy right hand side.
+
+		for (int c = 0; c < nx; c++)
+		{
+			// Solve L*Y = B;
+			for (int i = 0; i < n; i++)
+			{
+				double sum = B.getQuick(i, c);
+
+				for (int k = i - 1; k >= 0; k--)
+				{
+					sum -= C.getQuick(i, k) * X.getQuick(k, c);
+				}
+
+				X.setQuick(i, c, sum / C.getQuick(i, i));
+			}
+
+			// Solve L'*X = Y;
+			for (int i = n - 1; i >= 0; i--)
+			{
+				double sum = X.getQuick(i, c);
+
+				for (int k = i + 1; k < n; k++)
+				{
+					sum -= C.getQuick(k, i) * X.getQuick(k, c);
+				}
+
+				X.setQuick(i, c, sum / C.getQuick(i, i));
+			}
+		}
+
+		return X;
+	}
 
 }
