@@ -44,7 +44,7 @@ public interface SolutionPrimitives <T>
 	public Decomposition restore (SimpleStreamIO.TextSource from);
 
 	/**
-	 * @param from a source object with JSON representation
+	 * @param source a source object with JSON representation
 	 * @return a Decomposition restored from source
 	 */
 	public Decomposition restore (JsonSemantics.JsonValue source);
@@ -78,7 +78,14 @@ public interface SolutionPrimitives <T>
 		public Content (Vector <T> source)
 		{
 			super (source.size (), source.getSpaceManager ());
-			for (int i=1; i<=source.size();i++)
+			for (int i = 1; i <= source.size (); i++)
+			{ this.set (i, source.get (i)); }
+		}
+
+		public Content (VectorAccess <T> source, SpaceManager <T> manager)
+		{
+			super (source.size (), manager);
+			for (int i = 1; i <= source.size (); i++)
 			{ this.set (i, source.get (i)); }
 		}
 	}

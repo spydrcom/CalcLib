@@ -3,14 +3,21 @@ package net.myorb.math.computational;
 
 import net.myorb.math.SpaceManager;
 
+/**
+ * provide description of matrices as types for algebraic transform
+ * @author Michael Druckman
+ */
 public class GenericArithmetic
 {
 
 	/**
-	 * @param base
-	 * @param exponent
-	 * @param typeManager
-	 * @return
+	 * compute base^exponent for integer exponent values
+	 * - zero exponent returns 1 and negative exponent is 1/base^(-exponent)
+	 * @param base the generic base value for the calculation
+	 * @param exponent the exponent value for the calculation
+	 * @param typeManager manager for data type
+	 * @return the computed result
+	 * @param <T> data type
 	 */
 	public static <T> T pow
 		(
