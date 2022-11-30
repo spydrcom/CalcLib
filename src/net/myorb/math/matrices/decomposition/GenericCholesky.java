@@ -186,11 +186,21 @@ public class GenericCholesky <T> extends GenericSupport <T>
 
 	/**
 	 * perform the Cholesky on a new matrix
+	 * - A must be a symmetric and positive definite matrix
 	 * @param D the Decomposition to be processed
 	 * @param A the source matrix
 	 */
 	public void decompose (CholeskyDecomposition D, Matrix <T> A)
 	{
+		/*
+			Constructs and returns a
+			new Cholesky decomposition object
+			for a symmetric and positive definite matrix; 
+			The decomposed matrices can be retrieved via
+			instance methods of the returned 
+			decomposition object.
+		 */
+
 		for (int i = 1; i <= D.N; i++)
 		{
 		    for (int j = 1; j <= i; j++)

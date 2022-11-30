@@ -186,7 +186,7 @@ public class ImportedFunction<T> extends AbstractFunction<T>
 	{
 		List<Object> parameterSet = new ArrayList<Object>();
 
-		if (parameterType.length == 0)
+		if (parameterType == null || parameterType.length == 0)
 		{
 			return new Object[]{};
 		}

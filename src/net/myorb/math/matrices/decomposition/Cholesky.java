@@ -102,6 +102,8 @@ public class Cholesky
 
 	/**
 	 * 
+	 * soure taken from Colt library
+	 * 
 	 * Solves <tt>A*X = B</tt>; returns <tt>X</tt>.
 	 * 
 	 * @param C		decomposition matrix C
