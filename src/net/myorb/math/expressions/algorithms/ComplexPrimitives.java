@@ -3,9 +3,11 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.complexnumbers.ComplexLibrary;
-
+import net.myorb.math.complexnumbers.ColtEVDAccess;
 import net.myorb.math.complexnumbers.ComplexAlgorithmAccess;
 import net.myorb.math.complexnumbers.ComplexSupportLibrary;
+
+import net.myorb.math.matrices.Matrix;
 
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractBuiltinVariableLookup;
@@ -99,6 +101,26 @@ public class ComplexPrimitives extends AlgorithmCore<ComplexValue<Double>>
 	/*
 	 * algorithms for complex unary/binary functions (Re, Im, ...)
 	 */
+
+
+	/**
+	 * implement operator - EVD
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getEVDAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				Matrix <ComplexValue<Double>> inOut = valueManager.toMatrix (parameter);
+				Matrix <ComplexValue<Double>> result = ColtEVDAccess.getEigenVals (inOut);
+				return valueManager.newMatrix (result);
+			}
+		};
+	}
 
 
 	/**
