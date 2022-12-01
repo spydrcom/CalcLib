@@ -3,7 +3,9 @@ package net.myorb.math.expressions;
 
 import net.myorb.math.characteristics.EigenvaluesAndEigenvectors;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
+import net.myorb.math.matrices.decomposition.GenericQRD;
 
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
@@ -49,12 +51,23 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	 */
 	public ValueManager.GenericValue newMatrix (ValueManager.GenericValue values)
 	{
-		ValueManager.ValueList parameterList = (ValueManager.ValueList)values;
+		ValueManager.ValueList parameterList = (ValueManager.ValueList) values;
 		List<ValueManager.GenericValue> plistValues = parameterList.getValues ();
 		int rows = environment.intParameter (1, parameterList), cols = environment.intParameter (2, parameterList);
 		Matrix<T> m = new Matrix<T> (rows, cols, valueManager.toArray (plistValues.get (0)), spaceManager);
 		return valueManager.newMatrix (m);
 	}
+
+
+	/**
+	 * separate parameters from a value list
+	 * - functions with multiple parameters wrap them in a ValueList
+	 * @param values the generic value holding a value list
+	 * @return a java util list of the parameters
+	 */
+	public static List <ValueManager.GenericValue>
+		getParameters (ValueManager.GenericValue values)
+	{ return ( ( ValueManager.ValueList ) values ).getValues (); }
 
 
 	/*
@@ -340,6 +353,41 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 
 
 	/**
+	 * perform QR decomposition
+	 * @param values the parameters to the call
+	 * @return the decomposition of the source matrix
+	 */
+	public ValueManager.GenericValue qrd (ValueManager.GenericValue values)
+	{
+		Matrix <T> source = valueManager.toMatrix (values);
+		GenericQRD <T> QR = new GenericQRD <T> (spaceManager);
+		return valueManager.newMatrix (QR.decompose (source).asMatrix ());
+	}
+
+
+	/**
+	 * compute solution to QR problem set
+	 * @param values the parameters to the call
+	 * @return the solution computed
+	 */
+	public ValueManager.GenericValue qrsolve (ValueManager.GenericValue values)
+	{
+		List <ValueManager.GenericValue> P = getParameters (values);
+		Matrix<T> decomposedMatrix = valueManager.toMatrix (P.get (0));
+		Vector <T> request = conversion.toVector (valueManager.toArray (P.get (1)));
+		List <T> solution = qrsolve (decomposedMatrix, request).getElementsList ();
+		return valueManager.newDimensionedValue (solution);
+	}
+	Vector <T> qrsolve (Matrix<T> DM, Vector <T> request)
+	{
+		GenericQRD <T> QR = new GenericQRD <T> (spaceManager);
+		SolutionPrimitives.Content <T> C = new SolutionPrimitives.Content <T> (request);
+		@SuppressWarnings("unchecked") Vector <T> solution = (Vector <T>) QR.solve (QR.load (DM), C);
+		return solution;
+	}
+
+
+	/**
 	 * compute Von Mises dominant eigen-pair
 	 * @param values the parameters to the call
 	 * @return the eigenvector value array
@@ -381,9 +429,8 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	 */
 	public ValueManager.GenericValue augmented (ValueManager.GenericValue values)
 	{
-		ValueManager.ValueList parameterList = (ValueManager.ValueList)values;
-		List<ValueManager.GenericValue> plistValues = parameterList.getValues ();
-		ValueManager.GenericValue first = plistValues.get (0), second = plistValues.get (1), mat, vec;
+		List <ValueManager.GenericValue> P = getParameters (values);
+		ValueManager.GenericValue first = P.get (0), second = P.get (1), mat, vec;
 		if (valueManager.isMatrix (first)) { mat = first; vec = second; } else { mat = second; vec = first; }
 
 		MatrixAccess<T> aug = simEq.buildAugmentedMatrix
@@ -399,9 +446,8 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	 */
 	public ValueManager.GenericValue gaussian (ValueManager.GenericValue values)
 	{
-		ValueManager.ValueList parameterList = (ValueManager.ValueList)values;
-		List<ValueManager.GenericValue> plistValues = parameterList.getValues ();
-		ValueManager.GenericValue first = plistValues.get (0), second = plistValues.get (1), mat, vec;
+		List <ValueManager.GenericValue> P = getParameters (values);
+		ValueManager.GenericValue first = P.get (0), second = P.get (1), mat, vec;
 		if (valueManager.isMatrix (first)) { mat = first; vec = second; } else { mat = second; vec = first; }
 
 		VectorAccess<T> solution = simEq.applyGaussianElimination
@@ -417,9 +463,8 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	 */
 	public ValueManager.GenericValue solve (ValueManager.GenericValue values)
 	{
-		ValueManager.ValueList parameterList = (ValueManager.ValueList)values;
-		List<ValueManager.GenericValue> plistValues = parameterList.getValues ();
-		ValueManager.GenericValue first = plistValues.get (0), second = plistValues.get (1), mat, vec;
+		List <ValueManager.GenericValue> P = getParameters (values);
+		ValueManager.GenericValue first = P.get (0), second = P.get (1), mat, vec;
 		if (valueManager.isMatrix (first)) { mat = first; vec = second; } else { mat = second; vec = first; }
 
 		VectorAccess<T> solution = simEq.solve

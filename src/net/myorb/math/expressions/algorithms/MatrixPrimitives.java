@@ -367,6 +367,36 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 
 
 	/**
+	 * implement function - QRD
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getQRDAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.qrd (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement function - QRSOLVE
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getQRSolveAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.qrsolve (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement function - GAUSSIAN
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object

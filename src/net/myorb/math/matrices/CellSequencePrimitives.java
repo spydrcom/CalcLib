@@ -60,6 +60,7 @@ public class CellSequencePrimitives
 
 
 	/**
+	 * copy all rows
 	 * @param source the source for content
 	 * @return a copy of the source matrix
 	 * @param <T> data type
@@ -68,8 +69,20 @@ public class CellSequencePrimitives
 	{
 		int N = source.getEdgeCount ();
 		Matrix <T> M = new Matrix <T> (N, N, source.getSpaceManager ());
-		for (int i = 1; i <= N; i++) copyCells (source.getRow (i), i, M);
+		copyRows (N, source, M);
 		return M;
+	}
+
+
+	/**
+	 * copy specified rows
+	 * @param N number of rows
+	 * @param from source matrix
+	 * @param to destination
+	 */
+	public static <T> void copyRows (int N, Matrix <T> from, Matrix <T> to)
+	{
+		for (int r = N; r > 0; r--) copyCells (from.getRow (r), r, to);
 	}
 
 

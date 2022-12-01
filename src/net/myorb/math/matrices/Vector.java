@@ -44,6 +44,7 @@ public class Vector<T> extends ListOperations<T> implements VectorAccess<T>
 		this.elements = new ArrayList<T> (size);
 		this.fillAppendingWith (this.elements, discrete (0), size);
 	}
+	public List<T> getElementsList () { return elements; }
 	protected List<T> elements = null;
 
 	/**
