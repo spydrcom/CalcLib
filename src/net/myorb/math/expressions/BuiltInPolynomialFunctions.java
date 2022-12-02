@@ -12,6 +12,7 @@ import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.computational.PolynomialRoots;
 import net.myorb.math.computational.GaussQuadrature;
 import net.myorb.math.computational.Regression;
+import net.myorb.math.computational.VCSupport;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.matrices.MatrixOperations;
@@ -106,6 +107,55 @@ public class BuiltInPolynomialFunctions<T>
 		Polynomial.Coefficients<T> coefficients = getCoefficients (polynomialCoefficients);
 		Polynomial.Coefficients<T> derivativeCoefficients = poly.computeDerivativeCoefficients (coefficients);
 		return coefficientsArray (derivativeCoefficients);
+	}
+
+
+	/**
+	 * compute an array of Chebyshev points
+	 * @param numberOfPoints the count of values to be produced
+	 * @return the list of Chebyshev points
+	 */
+	public ValueManager.GenericValue enumerateChebyshevPoints
+		(ValueManager.GenericValue numberOfPoints)
+	{
+		List <T> points = new ArrayList <T> ();
+		T p = valueManager.toDiscrete (numberOfPoints);
+		enumerateChebyshevPoints (spaceManager.toNumber (p).intValue (), points);
+		return valueManager.newDimensionedValue (points);
+	}
+	public void enumerateChebyshevPoints (int N, List <T> points)
+	{
+		for (double pt : new VCSupport ().computeSymmetricPoints (N))
+		{ points.add (spaceManager.convertFromDouble (pt)); }
+	}
+
+
+	/**
+	 * compute an array of Chebyshev domain points
+	 * @param parameters the domain end-points and count of values to be produced
+	 * @return the list of Chebyshev domain points
+	 */
+	public ValueManager.GenericValue enumerateChebyshevDomainPoints
+			(ValueManager.GenericValue parameters)
+	{
+		List <T> P =
+			valueManager.toDimensionedValue
+				(parameters).getValues ();
+		T lo = P.get (0), hi = P.get (1), N = P.get (2);
+		List <T> genericList = enumerateChebyshevDomainPoints
+		(
+			spaceManager.convertToDouble (lo), spaceManager.convertToDouble (hi),
+			spaceManager.toNumber (N).intValue ()
+		);
+		return valueManager.newDimensionedValue (genericList);
+	}
+	public List <T> enumerateChebyshevDomainPoints (double lo, double hi, int N)
+	{
+		VCSupport vcs = new VCSupport ();
+		List <T> genericList = new ArrayList <T> ();
+		List <Double> pts = VCSupport.compute (lo, hi, vcs.computePoints (N));
+		conversion.convertToGeneric (pts, genericList);
+		return genericList;
 	}
 
 

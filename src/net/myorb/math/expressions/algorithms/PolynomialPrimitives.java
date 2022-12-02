@@ -289,6 +289,36 @@ public class PolynomialPrimitives<T> extends VectorPrimitives<T>
 
 
 	/**
+	 * implement operator - CHEBPTS
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getChebPointsAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return poly.enumerateChebyshevPoints (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement operator - CHEBDOM
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getChebDomainAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return poly.enumerateChebyshevDomainPoints (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement operator - INTERPOLATE
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
