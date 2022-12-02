@@ -79,6 +79,7 @@ public class CellSequencePrimitives
 	 * @param N number of rows
 	 * @param from source matrix
 	 * @param to destination
+	 * @param <T> data type
 	 */
 	public static <T> void copyRows (int N, Matrix <T> from, Matrix <T> to)
 	{
