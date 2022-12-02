@@ -29,6 +29,21 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 
 
 	/**
+	 * implement function - MATRIX
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getMatrixAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.newMatrix (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement operator - -#
 	 * @param symbol the symbol associated with this object
 	 * @param precedence the associated precedence
@@ -92,21 +107,6 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{ return mat.tensor (left, right); }
-		};
-	}
-
-
-	/**
-	 * implement function - MATRIX
-	 * @param symbol the symbol associated with this object
-	 * @return operation implementation object
-	 */
-	public AbstractParameterizedFunction getMatrixAlgorithm (String symbol)
-	{
-		return new AbstractParameterizedFunction (symbol)
-		{
-			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
-			{ return mat.newMatrix (parameters); }
 		};
 	}
 
@@ -512,6 +512,36 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 			{ return mat.LUD (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement function - LUDDET
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getDETAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.LUDDET (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement function - LUDINV
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getINVAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.LUDINV (parameters); }
 		};
 	}
 

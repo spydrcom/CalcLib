@@ -28,11 +28,39 @@ public class Matrix<T> extends ListOperations<T> implements MatrixAccess<T>
 		super (manager);
 		allocate (rows, columns);
 	}
+
+	/**
+	 * construct a new matrix with initial value
+	 * @param rows the count of rows in the the matrix
+	 * @param columns the count of columns in the the matrix
+	 * @param init the initial value to copy into each cell of matrix
+	 * @param manager the manager for the type being manipulated
+	 */
+	public Matrix (int rows, int columns, T init, SpaceManager<T> manager)
+	{
+		super (manager);
+		this.rows = rows; this.cols = columns;
+		save (init, rows*columns);
+	}
+
+	/**
+	 * construct a new matrix with initial values
+	 * @param rows the count of rows in the the matrix
+	 * @param columns the count of columns in the the matrix
+	 * @param cells the initial value of all cells of the matrix
+	 * @param manager the manager for the type being manipulated
+	 */
 	public Matrix (int rows, int columns, List<T> cells, SpaceManager<T> manager)
 	{
 		super (manager);
 		save (rows, columns, cells);
 	}
+
+	/**
+	 * allocate and zero fill
+	 * @param rows the count of rows in the the matrix
+	 * @param columns the count of columns in the the matrix
+	 */
 	public void allocate (int rows, int columns)
 	{
 		int n = rows * columns;
@@ -40,13 +68,53 @@ public class Matrix<T> extends ListOperations<T> implements MatrixAccess<T>
 		fillAppendingWith (a, discrete (0), n);
 		save (rows, columns, a);
 	}
+
+	/**
+	 * save dimensions and initialize
+	 * @param rows the count of rows in the the matrix
+	 * @param columns the count of columns in the the matrix
+	 * @param cells the initial value of all cells of the matrix
+	 */
 	public void save (int rows, int columns, List<T> cells)
 	{
-		this.cells = cells;
-		this.size = rows * columns;
-		this.rows = rows; this.cols = columns;
+		int n = rows*columns;
+		if (cells.size () == 1)
+		{ this.save (cells.get (0), n); }
+		else this.save (cells, n);
+		this.cols = columns;
+		this.rows = rows;
 	}
 	protected int rows, cols;
+
+	/**
+	 * verify size and initialize
+	 * @param cells the initial value of all cells of the matrix
+	 * @param size the expected size (rows*cols)
+	 */
+	public void save (List <T> cells, int size)
+	{
+		int initSize = cells.size ();
+		if (initSize != size)
+		{
+			if (initSize == 1)
+			{ save (cells.get (0), size); }
+			else throw new RuntimeException (INIT_ERROR);
+		}
+		this.cells = cells;
+		this.size = size;
+	}
+	public static final String INIT_ERROR = "Matrix initialization error";
+
+	/**
+	 * copy initial value to the matrix cells
+	 * @param init the initial value to copy into each cell of matrix
+	 * @param size the expected size (rows*cols)
+	 */
+	public void save (T init, int size)
+	{
+		cells = new ArrayList <T> ();
+		for (int i=1; i<=size; i++) cells.add (init);
+	}
 	protected List<T> cells;
 	protected int size;
 
