@@ -3,9 +3,11 @@ package net.myorb.math.expressions;
 
 import net.myorb.math.characteristics.EigenvaluesAndEigenvectors;
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
+
+import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.decomposition.GenericQRD;
+import net.myorb.math.matrices.decomposition.ColtLUD;
 
 import net.myorb.data.abstractions.DataSequence2D;
 import net.myorb.data.abstractions.DataSequence;
@@ -639,6 +641,26 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 		Matrix<T> L = valueManager.toMatrix (values.get (0)),
 			U = valueManager.toMatrix (values.get (1));
 		return vc31SplineEngine.luXb (L, U, pivot, solution);
+	}
+
+
+	/**
+	 * compute LU decomposition
+	 * @param parameters list of parameters from command line
+	 * @return the resulting value (pivot as array)
+	 */
+	public ValueManager.GenericValue LUD (ValueManager.GenericValue parameters)
+	{
+		List <ValueManager.GenericValue> P = getParameters (parameters);
+		Matrix<T> L = valueManager.toMatrix (P.get (1)), U = valueManager.toMatrix (P.get (2));
+		List<T> lud = decom (valueManager.toMatrix (P.get (0)), L, U);
+		return valueManager.newDimensionedValue (lud);
+	}
+	List<T> decom (Matrix<T> A, Matrix<T> L, Matrix<T> U)
+	{
+		Vector <T> pivot = new Vector <T> (L.rowCount (), spaceManager);
+		new ColtLUD ().decompose (A, L, U, pivot);
+		return pivot.getElementsList ();		
 	}
 
 

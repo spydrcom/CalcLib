@@ -502,6 +502,21 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 
 
 	/**
+	 * implement function - LUD
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getLUDAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.LUD (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement function - LUXB
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
