@@ -12,7 +12,6 @@ import cern.colt.library.Linalg;
 
 /**
  * Dolittle LU decomposition implemented by Colt library
- * @param <T> data type for operations
  * @author Michael Druckman
  */
 public class ColtLUD extends DecompositionSupport
