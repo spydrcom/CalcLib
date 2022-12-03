@@ -36,7 +36,7 @@ public class CommonLUD <T> extends GenericSupport <T>
 		{
 			this.N = A.getEdgeCount ();
 			this.A = new Matrix <T> (N, N, mgr);
-			for (int i = 1; i <= N; i++) copyCells (A.getRow (i), i, this.A);
+			copyRows (N, A, this.A);
 		}
 		protected Matrix <T> A;
 		protected int N;
