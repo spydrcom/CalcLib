@@ -1,11 +1,14 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.characteristics.EigenvaluesAndEigenvectors;
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.polynomial.families.ChebyshevPolynomial;
 
-import net.myorb.math.linalg.SolutionPrimitives;
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.algorithms.ClMathSysEQ;
+import net.myorb.math.expressions.StructureStorage;
+
 import net.myorb.math.matrices.decomposition.GenericLUD;
 import net.myorb.math.matrices.decomposition.GenericQRD;
 import net.myorb.math.matrices.decomposition.ColtLUD;
@@ -534,6 +537,77 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 		SolutionPrimitives.Content <T> C = new SolutionPrimitives.Content <T> (request);
 		@SuppressWarnings("unchecked") Vector <T> solution = (Vector <T>) QR.solve (QR.load (DM), C);
 		return solution;
+	}
+
+
+	/*
+	 * LINALG library implementations
+	 */
+
+	/**
+	 * matrix decomposition by library instance
+	 * @param parameters the parameters to the call
+	 * @return a generic wrapper holding a decomposition object
+	 */
+	public ValueManager.GenericValue decompose (ValueManager.GenericValue parameters)
+	{
+		List <ValueManager.GenericValue> P = getParameters (parameters);
+		@SuppressWarnings("unchecked") ClMathSysEQ.SolutionManager <T> solMgr =
+			(ClMathSysEQ.SolutionManager <T>) valueManager.getStructuredObject (P.get (1));
+		SolutionPrimitives <T> solution = solMgr.provideSolution ();
+
+//		@SuppressWarnings("unchecked") SolutionPrimitives <T>
+//			// the library instance reference appears as an identifier to be loaded
+//			solution = (SolutionPrimitives <T>) valueManager.getStructuredObject (P.get (1));
+
+		return valueManager.newStructure (solMgr.wrap (solution.decompose (valueManager.toMatrix (P.get (0)))));
+	}
+
+	/**
+	 * solution to a system of equations
+	 * - a matrix decomposition should be P(0)
+	 * @param parameters the parameters to the call
+	 * @return a dimensioned object holding the computed solution
+	 */
+	public ValueManager.GenericValue solveSOE (ValueManager.GenericValue parameters)
+	{
+		List <ValueManager.GenericValue> P = getParameters (parameters);
+		@SuppressWarnings("unchecked") ClMathSysEQ.SolutionProduct <T> libraryInstance =
+				(ClMathSysEQ.SolutionProduct <T>) ((StructureStorage) P.get (0)).getStructure ();
+		ValueManager.GenericValue content = P.get (1);
+
+		if (valueManager.isMatrix (content))
+		{ return solveSOE (libraryInstance, valueManager.toMatrix (content)); }
+		return solveSOE (libraryInstance, toVector (valueManager.toDimensionedValue (content)));
+	}
+	@SuppressWarnings("unchecked") ValueManager.GenericValue
+		solveSOE (ClMathSysEQ.SolutionProduct <T> libraryInstance, Matrix<T> m)
+	{
+		SolutionPrimitives <T>
+			provided = libraryInstance.provideSolution ();
+		if (provided instanceof SolutionPrimitives.MatrixSolution)
+		{
+			SolutionPrimitives.MatrixSolution <T> matSol =
+					(SolutionPrimitives.MatrixSolution <T>) provided;
+			return valueManager.newMatrix (matSol.solve (libraryInstance.getProduct (), m));
+		}
+		throw new RuntimeException ("Solution algorithm does not support full matrix request");
+	}
+	@SuppressWarnings("unchecked") ValueManager.GenericValue
+		solveSOE (ClMathSysEQ.SolutionProduct <T> libraryInstance, SolutionPrimitives.Content <T> b)
+	{
+		SolutionPrimitives.Content <T> x =
+			(SolutionPrimitives.Content<T>) libraryInstance
+				.provideSolution ().solve (libraryInstance.getProduct (), b);
+		return valueManager.newDimensionedValue (x.getElementsList ());
+	}
+	SolutionPrimitives.Content <T> toVector (ValueManager.DimensionedValue <T> dim)
+	{
+		List <T> values = dim.getValues ();
+		SolutionPrimitives.Content <T> vector =
+			new SolutionPrimitives.Content <T> (values.size (), spaceManager);
+		int i = 1; for (T v : values) vector.set (i++, v);
+		return vector;
 	}
 
 

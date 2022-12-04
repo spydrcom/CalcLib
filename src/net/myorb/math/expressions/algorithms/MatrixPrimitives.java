@@ -487,6 +487,36 @@ public class MatrixPrimitives<T> extends PolynomialPrimitives<T>
 
 
 	/**
+	 * implement function - DECOMPOSE
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getDecomposeAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.decompose (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement function - SOE
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getSOEAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return mat.solveSOE (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement function - PIVOT
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
