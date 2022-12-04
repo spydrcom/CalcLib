@@ -818,6 +818,16 @@ public class ValueManager<T>
 		return (T) s.getStructure ();
 	}
 
+	/**
+	 * generic wrapper for common object
+	 * @param value the generic wrapper object
+	 * @return the wrapped object
+	 */
+	public Object getStructuredObject (GenericValue value)
+	{
+		StructureStorage s = (StructureStorage) value;
+		return s.getStructure ();
+	}
 
 	/**
 	 * interpret the value as a value array
