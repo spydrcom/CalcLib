@@ -29,7 +29,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
+public class BuiltInMatrixFunctions <T> extends BuiltInPolynomialFunctions <T>
 {
 
 
@@ -48,19 +48,6 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	protected MatrixOperations<T> matrixOperations;
 	protected SimultaneousEquations<T> simEq;
 	protected Environment<T> environment;
-
-
-	/**
-	 * separate parameters from a value list
-	 * - functions with multiple parameters wrap them in a ValueList
-	 * @param values the generic value holding a value list
-	 * @return a java util list of the parameters
-	 */
-	public static List <ValueManager.GenericValue>
-		getParameters (ValueManager.GenericValue values)
-	{
-		return ( ( ValueManager.ValueList ) values ).getValues ();
-	}
 
 
 	/*
@@ -534,7 +521,7 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	Vector <T> qrsolve (Matrix<T> DM, Vector <T> request)
 	{
 		GenericQRD <T> QR = new GenericQRD <T> (spaceManager);
-		SolutionPrimitives.Content <T> C = new SolutionPrimitives.Content <T> (request);
+		SolutionPrimitives.Content <T> C = new SolutionPrimitives.Content <T> (request, spaceManager);
 		@SuppressWarnings("unchecked") Vector <T> solution = (Vector <T>) QR.solve (QR.load (DM), C);
 		return solution;
 	}
@@ -552,16 +539,18 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 	public ValueManager.GenericValue decompose (ValueManager.GenericValue parameters)
 	{
 		List <ValueManager.GenericValue> P = getParameters (parameters);
-		@SuppressWarnings("unchecked") ClMathSysEQ.SolutionManager <T> solMgr =
-			(ClMathSysEQ.SolutionManager <T>) valueManager.getStructuredObject (P.get (1));
-		SolutionPrimitives <T> solution = solMgr.provideSolution ();
-
-//		@SuppressWarnings("unchecked") SolutionPrimitives <T>
-//			// the library instance reference appears as an identifier to be loaded
-//			solution = (SolutionPrimitives <T>) valueManager.getStructuredObject (P.get (1));
-
-		return valueManager.newStructure (solMgr.wrap (solution.decompose (valueManager.toMatrix (P.get (0)))));
+		@SuppressWarnings("unchecked") ClMathSysEQ.SolutionManager <T> solutionManager =
+				( ClMathSysEQ.SolutionManager <T> ) valueManager.getStructuredObject (P.get (1));
+		return decompose (solutionManager, valueManager.toMatrix (P.get (0)));
 	}
+	public ValueManager.GenericValue decompose
+		(ClMathSysEQ.SolutionManager <T> solutionManager, Matrix <T> m)
+	{
+		return decompose (solutionManager, solutionManager.provideSolution (), m);
+	}
+	public ValueManager.GenericValue decompose
+	(ClMathSysEQ.SolutionManager <T> solutionManager, SolutionPrimitives <T> solution, Matrix <T> m)
+	{ return valueManager.newStructure (solutionManager.wrap (solution.decompose (m))); }
 
 	/**
 	 * solution to a system of equations
@@ -574,40 +563,42 @@ public class BuiltInMatrixFunctions<T> extends BuiltInPolynomialFunctions<T>
 		List <ValueManager.GenericValue> P = getParameters (parameters);
 		@SuppressWarnings("unchecked") ClMathSysEQ.SolutionProduct <T> libraryInstance =
 				(ClMathSysEQ.SolutionProduct <T>) ((StructureStorage) P.get (0)).getStructure ();
-		ValueManager.GenericValue content = P.get (1);
-
+		return solveSOE (libraryInstance, P.get (1));
+	}
+	ValueManager.GenericValue solveSOE
+		(ClMathSysEQ.SolutionProduct <T> libraryInstance, ValueManager.GenericValue content)
+	{
 		if (valueManager.isMatrix (content))
 		{ return solveSOE (libraryInstance, valueManager.toMatrix (content)); }
-		return solveSOE (libraryInstance, toVector (valueManager.toDimensionedValue (content)));
+		return solveSOE (libraryInstance, valueManager.toDimensionedValue (content).getValues ());
 	}
 	@SuppressWarnings("unchecked") ValueManager.GenericValue
 		solveSOE (ClMathSysEQ.SolutionProduct <T> libraryInstance, Matrix<T> m)
 	{
-		SolutionPrimitives <T>
-			provided = libraryInstance.provideSolution ();
+		SolutionPrimitives <T> provided =
+				libraryInstance.provideSolution ();
 		if (provided instanceof SolutionPrimitives.MatrixSolution)
 		{
-			SolutionPrimitives.MatrixSolution <T> matSol =
-					(SolutionPrimitives.MatrixSolution <T>) provided;
-			return valueManager.newMatrix (matSol.solve (libraryInstance.getProduct (), m));
+			SolutionPrimitives.MatrixSolution <T> matrixSolution =
+						(SolutionPrimitives.MatrixSolution <T>) provided;
+			return valueManager.newMatrix (matrixSolution.solve (libraryInstance.getProduct (), m));
 		}
 		throw new RuntimeException ("Solution algorithm does not support full matrix request");
 	}
-	@SuppressWarnings("unchecked") ValueManager.GenericValue
-		solveSOE (ClMathSysEQ.SolutionProduct <T> libraryInstance, SolutionPrimitives.Content <T> b)
+	ValueManager.GenericValue solveSOE
+		(ClMathSysEQ.SolutionProduct <T> libraryInstance, List <T> vector)
 	{
-		SolutionPrimitives.Content <T> x =
-			(SolutionPrimitives.Content<T>) libraryInstance
-				.provideSolution ().solve (libraryInstance.getProduct (), b);
-		return valueManager.newDimensionedValue (x.getElementsList ());
+		SolutionPrimitives.RequestedResultVector b =
+				SolutionPrimitives.toVector (vector, spaceManager);
+		return solveSOE ( libraryInstance, b );
 	}
-	SolutionPrimitives.Content <T> toVector (ValueManager.DimensionedValue <T> dim)
+	ValueManager.GenericValue solveSOE
+		(ClMathSysEQ.SolutionProduct <T> libraryInstance, SolutionPrimitives.RequestedResultVector b)
 	{
-		List <T> values = dim.getValues ();
-		SolutionPrimitives.Content <T> vector =
-			new SolutionPrimitives.Content <T> (values.size (), spaceManager);
-		int i = 1; for (T v : values) vector.set (i++, v);
-		return vector;
+		SolutionPrimitives.SolutionVector x =
+			libraryInstance.provideSolution ().solve (libraryInstance.getProduct (), b);
+		SolutionPrimitives.Content <T> vector = SolutionPrimitives.asVector (x);
+		return valueManager.newDimensionedValue ( vector.getElementsList () );
 	}
 
 
