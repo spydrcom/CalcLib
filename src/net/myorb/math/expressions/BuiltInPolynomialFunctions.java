@@ -31,7 +31,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class BuiltInPolynomialFunctions<T>
+public class BuiltInPolynomialFunctions <T> extends CommonBuiltInFunctions
 {
 
 

@@ -4,6 +4,7 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.VectorPlotEnabled;
+import net.myorb.math.expressions.CommonBuiltInFunctions;
 import net.myorb.math.expressions.GreekSymbols;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -23,7 +24,7 @@ import java.util.List;
  * @param <T> manager for data type
  * @author Michael Druckman
  */
-public class CommonOperatorLibrary<T>
+public class CommonOperatorLibrary <T> extends CommonBuiltInFunctions
 {
 
 	
