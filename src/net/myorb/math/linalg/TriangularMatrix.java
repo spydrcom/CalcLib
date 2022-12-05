@@ -167,7 +167,9 @@ class TriangularPrimitives <T>
 		SolutionPrimitives.Content <T> points = (SolutionPrimitives.Content <T>) b;
 		TriangularMatrix.Decomposition <T> decomposition = (TriangularMatrix.Decomposition <T>) d;
 		Vector <T> solution = TriangularMatrix.solve (points, decomposition);
-		return new SolutionPrimitives.Content <T> (solution);
+		SpaceManager<T> mgr = solution.getSpaceManager ();
+		return new SolutionPrimitives.Content <T>
+					(solution, mgr);
 	}
 
 	/* (non-Javadoc)

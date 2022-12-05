@@ -7,6 +7,8 @@ import net.myorb.math.SpaceManager;
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
+import java.util.List;
+
 /**
  * abstract view of working with sets of linear equations
  * @param <T> data type for operations
@@ -66,20 +68,12 @@ public interface SolutionPrimitives <T>
 	public static class Content <T> extends Vector <T>
 		implements RequestedResultVector, SolutionVector
 	{
-		public Content (int N, SpaceManager <T> manager) { super (N, manager); }
 
-		public Content (int [] cells, SpaceManager <T> manager)
-		{
-			super (cells.length-1, manager);
-			for (int i = 1; i < cells.length; i++)
-			{ set (i, manager.newScalar (cells [i])); }
-		}
+		public Content (int N, SpaceManager <T> manager) { super (N, manager); }
 
 		public Content (Vector <T> source)
 		{
-			super (source.size (), source.getSpaceManager ());
-			for (int i = 1; i <= source.size (); i++)
-			{ this.set (i, source.get (i)); }
+			this (source, source.getSpaceManager ());
 		}
 
 		public Content (VectorAccess <T> source, SpaceManager <T> manager)
@@ -88,6 +82,37 @@ public interface SolutionPrimitives <T>
 			for (int i = 1; i <= source.size (); i++)
 			{ this.set (i, source.get (i)); }
 		}
+
+		public Content (List <T> source, SpaceManager <T> manager)
+		{
+			super (source.size (), manager);
+			for (int i = 1; i <= source.size (); i++)
+			{ this.set (i, source.get (i-1)); }
+		}
+
+		public Content (int [] cells, SpaceManager <T> manager)
+		{
+			super (cells.length-1, manager);
+			for (int i = 1; i < cells.length; i++)
+			{ set (i, manager.newScalar (cells [i])); }
+		}
+
+	}
+
+	/**
+	 * abstract vector types as passed as Content
+	 * - this provides the necessary conversion to the Content type
+	 * @param data an object represented as an abstract vector type
+	 * @return the data treated as a Content vector
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> SolutionPrimitives.Content <T> asVector (Object data)
+	{ return ( SolutionPrimitives.Content <T> ) data; }
+
+	public static <T> SolutionPrimitives.Content <T> toVector
+		(List <T> data, SpaceManager <T> manager)
+	{
+		return new Content <T> (data, manager);
 	}
 
 	/**

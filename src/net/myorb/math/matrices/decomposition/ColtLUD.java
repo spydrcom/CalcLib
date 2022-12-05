@@ -68,7 +68,7 @@ public class ColtLUD extends DecompositionSupport
 		public Matrix <Double> solve (Matrix <Double> A)
 		{ return MAT.encloseZeroBased (Linalg.getLudSolution (A.toRawCells ())); }
 		public SolutionPrimitives.Content <Double> solve (SolutionPrimitives.Content <Double> b)
-		{ return new SolutionPrimitives.Content <Double> (tri.luXb (L, U, b, VEC.enclose (P))); }
+		{ return new SolutionPrimitives.Content <Double> (tri.luXb (L, U, b, VEC.enclose (P)), manager); }
 		public double det () { return tri.det (U, L, detP); }
 		
 		/* (non-Javadoc)
