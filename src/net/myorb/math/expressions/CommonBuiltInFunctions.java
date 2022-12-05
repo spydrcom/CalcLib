@@ -3,6 +3,10 @@ package net.myorb.math.expressions;
 
 import java.util.List;
 
+/**
+ * support for operator/function implementations
+ * @author Michael Druckman
+ */
 public class CommonBuiltInFunctions
 {
 

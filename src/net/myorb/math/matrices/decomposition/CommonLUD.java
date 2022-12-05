@@ -1,12 +1,13 @@
 
 package net.myorb.math.matrices.decomposition;
 
-import net.myorb.data.abstractions.SimpleStreamIO;
-import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.math.matrices.Matrix;
+import net.myorb.math.matrices.VectorAccess;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
-import net.myorb.math.matrices.VectorAccess;
-import net.myorb.math.matrices.Matrix;
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
  * support for linear algebra algorithms specific to LU Decomposition

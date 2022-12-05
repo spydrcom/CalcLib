@@ -104,11 +104,19 @@ public interface SolutionPrimitives <T>
 	 * - this provides the necessary conversion to the Content type
 	 * @param data an object represented as an abstract vector type
 	 * @return the data treated as a Content vector
+	 * @param <T> data type for operations
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> SolutionPrimitives.Content <T> asVector (Object data)
 	{ return ( SolutionPrimitives.Content <T> ) data; }
 
+	/**
+	 * take a list of data items to treat as a vector
+	 * @param data a list of data items to treat as a vector
+	 * @param manager the manager for the data type of the vector contents
+	 * @return the data treated as a Content vector
+	 * @param <T> data type for operations
+	 */
 	public static <T> SolutionPrimitives.Content <T> toVector
 		(List <T> data, SpaceManager <T> manager)
 	{

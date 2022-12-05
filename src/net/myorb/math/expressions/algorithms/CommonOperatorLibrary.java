@@ -7,11 +7,11 @@ import net.myorb.math.expressions.VectorPlotEnabled;
 import net.myorb.math.expressions.CommonBuiltInFunctions;
 import net.myorb.math.expressions.GreekSymbols;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.TypedRangeDescription.TypedRangeProperties;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.charting.DisplayGraphTypes.Point.Series;
 
