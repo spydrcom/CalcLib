@@ -3,7 +3,11 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.*;
 import net.myorb.math.linalg.SolutionPrimitives;
+
+import net.myorb.math.expressions.algorithms.ClMathBIF;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
 import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
@@ -28,7 +32,7 @@ public class GenericCholesky <T> extends GenericSupport <T>
 	 * representation of matrix Decomposition using this Cholesky algorithm set
 	 */
 	public class CholeskyDecomposition
-		implements SolutionPrimitives.Decomposition
+		implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
 	{
 
 		public CholeskyDecomposition (TextSource source) { load (source); }
@@ -36,9 +40,11 @@ public class GenericCholesky <T> extends GenericSupport <T>
 
 		public CholeskyDecomposition (Matrix <T> A)
 		{
+			this.vm = new ValueManager <T> ();
 			this.N = A.getEdgeCount ();
 			this.C = new Matrix <T> (N, N, mgr);
 		}
+		protected ValueManager <T> vm;
 		protected int N;
 
 		/**
@@ -163,6 +169,21 @@ public class GenericCholesky <T> extends GenericSupport <T>
 			this.C = getMatrix ("C");
 			this.N = C.getEdgeCount ();
 			this.setS ();
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
+		 */
+		public GenericValue getFieldNamed (String name)
+		{
+			Matrix <T> m;
+			switch (name.charAt (0))
+			{
+				case 'C': m = getC (); break; case 'S': m = getS (); break;
+				case 'D': m = getD (); break; case 'L': m = getL (); break;
+				default: throw new RuntimeException ("Field not recognized: " + name);
+			}
+			return vm.newMatrix (m);
 		}
 
 	}

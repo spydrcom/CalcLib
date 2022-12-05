@@ -520,6 +520,10 @@ public class Primitives<T>
 		{
 			valueStack.push (valueManager.newCapturedValue (image), null);
 		}
+		else if (type == TokenParser.TokenType.QOT)
+		{
+			valueStack.push (valueManager.newStructure (TokenParser.stripQuotes (image)));
+		}
 		else
 		{
 			valueStack.push (spaceManager.parseValueToken (type, image));

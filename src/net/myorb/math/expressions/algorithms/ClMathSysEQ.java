@@ -10,6 +10,7 @@ import net.myorb.math.expressions.symbols.LibraryObject;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.computational.integration.Configuration;
@@ -229,13 +230,32 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 	/**
 	 * associate a Decomposition with the parent solution
 	 */
-	class SolutionProduct implements ClMathSysEQ.SolutionProduct <T>
+	class SolutionProduct implements ClMathSysEQ.SolutionProduct <T>, ClMathBIF.FieldAccess
 	{
+
 		SolutionProduct (SolutionPrimitives.Decomposition D) { this.D = D; }
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
+		 */
+		public GenericValue getFieldNamed (String name) { return ClMathBIF.getField (name, D); }
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProvider#provideSolution()
+		 */
 		public SolutionPrimitives <T> provideSolution () { return solution; }
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		public String toString () { return D.toString (); }
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProduct#getProduct()
+		 */
 		public Decomposition getProduct () { return D; }
-		SolutionPrimitives.Decomposition D;
+		protected SolutionPrimitives.Decomposition D;
+
 	}
 
 }
