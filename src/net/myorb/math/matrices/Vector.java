@@ -3,6 +3,7 @@ package net.myorb.math.matrices;
 
 import net.myorb.math.ListOperations;
 import net.myorb.math.SpaceManager;
+import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import java.util.*;
 
@@ -172,5 +173,24 @@ public class Vector<T> extends ListOperations<T> implements VectorAccess<T>
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString () { return this.elements.toString (); }
+
+	/**
+	 * construct a Vector of integer values
+	 * @param content integer array to use as content
+	 * @param mgr the data type manager for the session
+	 * @return a Vector holding the supplied content
+	 * @param <T> the type of content data
+	 */
+	public static <T> Vector <T> toVector
+		( int [] content, ExpressionSpaceManager <T> mgr )
+	{
+		int size = content.length;
+		Vector<T> v = new Vector<T> (size, mgr);
+		for (int i = 1; i <= size; i++)
+		{
+			v.set (i, mgr.convertFromDouble ( (double) content[i-1] ) );
+		}
+		return v;
+	}
 
 }

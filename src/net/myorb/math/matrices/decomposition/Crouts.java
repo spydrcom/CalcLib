@@ -3,7 +3,12 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.linalg.*;
 import net.myorb.math.matrices.*;
+
+import net.myorb.math.expressions.algorithms.ClMathBIF;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
@@ -24,7 +29,7 @@ public class Crouts <T> extends CommonLUD <T>
 	 * representation of matrix Decomposition using this LUD algorithm set
 	 */
 	public class CroutsDecomposition extends DecompositionPrimitives
-			implements SolutionPrimitives.Decomposition
+			implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
 	{
 
 		public CroutsDecomposition (SimpleStreamIO.TextSource source) { load (source); }
@@ -34,8 +39,10 @@ public class Crouts <T> extends CommonLUD <T>
 		{
 			this.copySourceMatrix (A);
 			this.buildPermutationMatrixDescription ();
+			this.vm = new ValueManager <T> ();
 			this.scale = scaling (A);
 		}
+		protected ValueManager <T> vm;
 		protected Vector <T> scale;
 
 		/**
@@ -97,6 +104,20 @@ public class Crouts <T> extends CommonLUD <T>
 				mgr.multiply (A.get (row, col),
 				x.get (col)), mgr
 			);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
+		 */
+		public GenericValue getFieldNamed (String name)
+		{
+			switch (name.charAt (0))
+			{
+				case 'A': return vm.newMatrix (A);
+				case 'D': return vm.newDiscreteValue (det ());
+				case 'P': return vm.newDimensionedValue (Vector.toVector (P, mgr).getElementsList ());
+				default: throw new RuntimeException ("Field not recognized: " + name);
+			}
 		}
 
 	}

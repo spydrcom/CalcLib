@@ -2,8 +2,13 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.*;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.linalg.SolutionPrimitives;
+
+import net.myorb.math.expressions.algorithms.ClMathBIF;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
@@ -32,7 +37,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 	/**
 	 * representation of matrix Decomposition using this QRD algorithm set
 	 */
-	public class QRDecomposition implements SolutionPrimitives.Decomposition
+	public class QRDecomposition implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
 	{
 
 		public QRDecomposition (Matrix <T> A)
@@ -42,10 +47,12 @@ public class GenericQRD <T> extends GenericSupport <T>
 
 		public QRDecomposition (int N)
 		{
+			this.vm = new ValueManager <T> ();
 			this.C = new Vector <T> (N, mgr);
 			this.D = new Vector <T> (N, mgr);
 			this.N = N;
 		}
+		protected ValueManager <T> vm;
 
 		/**
 		 * get cell from diagonal
@@ -141,6 +148,20 @@ public class GenericQRD <T> extends GenericSupport <T>
 			this.C = getVector ("C");
 			this.D = getVector ("D");
 			this.N = this.C.size ();
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
+		 */
+		public GenericValue getFieldNamed (String name)
+		{
+			switch (name.charAt (0))
+			{
+				case 'A': return vm.newMatrix (A);
+				case 'C': return vm.newDimensionedValue (C.getElementsList ());
+				case 'D': return vm.newDimensionedValue (D.getElementsList ());
+				default: throw new RuntimeException ("Field not recognized: " + name);
+			}
 		}
 
 		public VectorAccess <T> getRow (int row) { return A.getRowAccess (row); }

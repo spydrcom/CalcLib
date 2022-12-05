@@ -6,6 +6,7 @@ import net.myorb.math.linalg.SolutionPrimitives;
 
 import net.myorb.math.expressions.algorithms.ClMathBIF;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager;
 
@@ -40,8 +41,8 @@ public class GenericCholesky <T> extends GenericSupport <T>
 
 		public CholeskyDecomposition (Matrix <T> A)
 		{
-			this.vm = new ValueManager <T> ();
 			this.N = A.getEdgeCount ();
+			this.vm = new ValueManager <T> ();
 			this.C = new Matrix <T> (N, N, mgr);
 		}
 		protected ValueManager <T> vm;

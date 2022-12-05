@@ -3,6 +3,7 @@ package net.myorb.math.expressions;
 
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.GeneratingFunctions;
+
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.ConstantType;
 import net.myorb.math.expressions.evaluationstates.Subroutine;

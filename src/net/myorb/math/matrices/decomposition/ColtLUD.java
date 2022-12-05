@@ -3,7 +3,12 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.*;
 import net.myorb.math.linalg.SolutionPrimitives;
+
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.ValueManager.GenericValue;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.algorithms.ClMathBIF;
 
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.abstractions.SimpleStreamIO;
@@ -30,14 +35,14 @@ public class ColtLUD extends DecompositionSupport
 		this.support.setSolutionClassPath (this.getClass ().getCanonicalName ());
 		this.tri = new Triangular <Double> (mgr);
 	}
-	GenericSupport <Double> support;
-	Triangular <Double> tri;
+	protected GenericSupport <Double> support;
+	protected Triangular <Double> tri;
 
 
 	/**
 	 * representation of matrix Decomposition using this LUD algorithm set
 	 */
-	public class LUDecomposition implements SolutionPrimitives.Decomposition
+	public class LUDecomposition implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
 	{
 
 		public LUDecomposition (SimpleStreamIO.TextSource source) { load (source); }
@@ -49,8 +54,10 @@ public class ColtLUD extends DecompositionSupport
 			this.L = MAT.encloseZeroBased (Linalg.getLudL ());
 			this.U = MAT.encloseZeroBased (Linalg.getLudU ());
 			this.P = Linalg.getLudIntP (); this.N = P.length;
+			this.vm = new ValueManager <Double> ();
 		}
-		MAT L, U; double detP; int P [],  N; 
+		protected MAT L, U; protected double detP; protected int P [],  N; 
+		protected ValueManager <Double> vm;
 
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
@@ -117,6 +124,20 @@ public class ColtLUD extends DecompositionSupport
 		public void copyPivot (Vector <Double> to)
 		{
 			for (int i=1; i<=P.length; i++) to.set (i, (double) P[i-1]);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
+		 */
+		public GenericValue getFieldNamed (String name)
+		{
+			switch (name.charAt (0))
+			{
+				case 'D': return vm.newDiscreteValue (det ());
+				case 'U': return vm.newMatrix (U); case 'L': return vm.newMatrix (L);
+				case 'P': return vm.newDimensionedValue (VEC.enclose (P).getElementsList ());
+				default: throw new RuntimeException ("Field not recognized: " + name);
+			}
 		}
 
 	}
