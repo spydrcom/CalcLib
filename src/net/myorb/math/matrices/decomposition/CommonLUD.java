@@ -193,35 +193,8 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 * Decomposition transport
 		 */
 
-//		/* (non-Javadoc)
-//		 * @see java.lang.Object#toString()
-//		 */
-//		public String toString ()
-//		{
-//			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
-//			addTo (JSON, "A", A).append (",\n  \"P\" : ").append (toList (P)).append (",")
-//				.append ("\n  \"pivots\" : ").append (pivotCount).append ("\n}");
-//			return JSON.toString ();
-//		}
-//
-//		/* (non-Javadoc)
-//		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
-//		 */
-//		public void store (SimpleStreamIO.TextSink to)
-//		{
-//			storeDecomposition (toString (), to);
-//		}
-
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
-		public String toString ()
-		{
-			return toJson ().toString ();
-		}
-
 		/**
-		 * @return JSON representation of QRDecomposition
+		 * @return JSON representation of Decomposition
 		 */
 		public JsonValue toJson ()
 		{
@@ -231,6 +204,11 @@ public class CommonLUD <T> extends GenericSupport <T>
 			addTo (representation, "A", A); addTo (representation, "P", P);
 			return representation;
 		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString () { return toJson ().toString (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
