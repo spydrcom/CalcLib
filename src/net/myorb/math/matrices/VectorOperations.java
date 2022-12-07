@@ -3,6 +3,10 @@ package net.myorb.math.matrices;
 
 import net.myorb.math.*;
 
+import net.myorb.data.abstractions.Portable;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.*;
+
 import java.util.List;
 
 /**
@@ -11,6 +15,7 @@ import java.util.List;
  * @author Michael Druckman
  */
 public class VectorOperations <T> extends Tolerances <T>
+	implements Portable.AsJson <Vector <T>>
 {
 
 	/**
@@ -263,6 +268,32 @@ public class VectorOperations <T> extends Tolerances <T>
 	public void show (VectorAccess<T> v)
 	{
 		System.out.println (toString (v));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Vector <T> from)
+	{
+		return toJson ((VectorAccess <T>) from);
+	}
+	public JsonValue toJson (VectorAccess <T> from)
+	{
+		JsonSemantics.JsonArray array = new JsonSemantics.JsonArray ();
+		for (int item = 1; item <= from.size (); item++) array.add (manager.toJson (from.get (item))); 
+		return array;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Vector <T> fromJson (JsonValue representation)
+	{
+		JsonSemantics.JsonArray elements =
+				JsonTools.toArray (representation);
+		Vector <T> v = new Vector <T> (elements.size (), manager);
+		int i = 1; for (JsonValue element : elements) v.set (i++, manager.fromJson (element)); 
+		return v;
 	}
 
 }

@@ -2,8 +2,13 @@
 package net.myorb.math.matrices;
 
 import net.myorb.math.Polynomial;
-import net.myorb.math.ListOperations;
 import net.myorb.math.SpaceManager;
+import net.myorb.math.ListOperations;
+
+import net.myorb.data.abstractions.Portable;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonTools;
 
 import java.io.PrintStream;
 
@@ -15,7 +20,8 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class MatrixOperations<T> extends ListOperations<T>
+public class MatrixOperations <T> extends ListOperations <T>
+		implements Portable.AsJson <Matrix <T>>
 {
 
 	/**
@@ -749,5 +755,41 @@ public class MatrixOperations<T> extends ListOperations<T>
 	"                                                                  ";
 	static final int MINIMUM_SPACING = 5;
 	static final boolean DUMPING = true;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Matrix <T> from)
+	{
+		JsonSemantics.JsonArray rows = new JsonSemantics.JsonArray ();
+		for (int row = 1; row <= from.rowCount (); row++)
+		{
+			rows.add (vectorOperations.toJson (from.getRowAccess (row))); 
+		}
+		return rows;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Matrix <T> fromJson (JsonValue representation)
+	{
+		int nrows;
+		JsonSemantics.JsonArray rows =
+				JsonTools.toArray (representation);
+		JsonSemantics.JsonArray row = JsonTools.toArray (rows.get (0));
+		Matrix <T> m = new Matrix <> (nrows = rows.size (), row.size (), manager);
+		
+		for (int r = 1; r <= nrows; r++)
+		{
+			VectorOperations.copyContent
+			(
+				m.getRowAccess (r),
+				vectorOperations.fromJson (rows.get (r-1))
+			);
+		}
+
+		return m;
+	}
 
 }

@@ -11,6 +11,7 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.algorithms.ClMathBIF;
 
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 import cern.colt.library.Linalg;
@@ -91,23 +92,25 @@ public class ColtSVD  extends DecompositionSupport
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		public String toString ()
+		public String toString () { return toJson ().toString (); }
+
+		/**
+		 * @return JSON representation of QRDecomposition
+		 */
+		public JsonValue toJson ()
 		{
-			StringBuffer JSON = new StringBuffer ().append ("{");
-			support.addPathTo (JSON); support.addTo (JSON, "V", V).append (","); support.addTo (JSON, "S", S).append (",");
-			support.addTo (JSON, "U", U).append (",\n  \"Norm\" : ").append (norm).append (",\n  \"2Norm\" : ").append (norm2)
-			.append (",\n  \"Rank\" : ").append (rank).append ("\n}");
-			return JSON.toString ();
+			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			support.addTo (representation, "Norm", norm); support.addTo (representation, "2Norm", norm); support.addTo (representation, "Rank", rank);
+			support.addTo (representation, "V", V); support.addTo (representation, "U", U); support.addTo (representation, "S", S);
+			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (support.solutionClassPath));
+			return representation;
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to)
-		{
-			support.storeDecomposition (toString (), to);
-		}
-	
+		public void store (SimpleStreamIO.TextSink to) { support.storeDecomposition (toJson (), to); }
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.ClMathBIF.FieldAccess#getFieldNamed(java.lang.String)
 		 */

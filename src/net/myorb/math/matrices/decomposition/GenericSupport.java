@@ -10,7 +10,6 @@ import net.myorb.data.abstractions.SimpleStreamIO;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.*;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,25 +34,8 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 * @return the vector read from JSON
 	 */
 	public Vector <T> getVector (String called)
-	{
-		Vector <T> v;
-		JsonSemantics.JsonArray a =
-			JsonTools.getArrayFrom (parsedObject, called);
-		copy (a, v = new Vector <T> (a.size (), mgr));
-		return v;
-	}
-
-
-	/**
-	 * @param a the JSON array
-	 * @param v the vector to write to
-	 */
-	public void copy (JsonSemantics.JsonValue a, VectorAccess <T> v)
-	{
-		int i = 1;
-		for (Number n : JsonTools.toNumberArray (a))
-		{ v.set (i++, mgr.convertFromDouble (n.doubleValue ())); }
-	}
+	{ return vecOps.fromJson (JsonTools.getArrayFrom (parsedObject, called)); }
+	protected VectorOperations <T> vecOps;
 
 
 	/**
@@ -61,16 +43,8 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 * @return the matrix read from JSON
 	 */
 	public Matrix <T> getMatrix (String called)
-	{
-		JsonSemantics.JsonArray rows =
-			JsonTools.getArrayFrom (parsedObject, called);
-		int cols = JsonTools.toArray (rows.get (0)).size ();
-		Matrix <T> m = new Matrix <T> (rows.size (), cols, mgr);
-
-		for (int r = 1; r <= rows.size (); r++)
-		{ copy (rows.get (r-1), m.getRowAccess (r)); }
-		return m;
-	}
+	{ return matOps.fromJson (JsonTools.getArrayFrom (parsedObject, called)); }
+	protected MatrixOperations <T> matOps;
 
 
 	/**
@@ -112,8 +86,7 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	}
 	public void identifySource (JsonSemantics.JsonValue source)
 	{
-		this.parsedSource = source;
-		this.parsedObject = (JsonSemantics.JsonObject) parsedSource;
+		this.parsedObject = (JsonSemantics.JsonObject) (this.parsedSource = source);
 	}
 	public void dump () 
 	{
@@ -130,19 +103,6 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
-	 * @param text the text describing the decomposed matrix
-	 * @param to the sink that will store the content
-	 */
-	public void storeDecomposition (String text, SimpleStreamIO.TextSink to)
-	{
-		SimpleStreamIO.TextSource source =
-			new SimpleStreamIO.TextSource (new StringReader (text));
-		try { SimpleStreamIO.processTextStream (source, to); }
-		catch (Exception e) { e.printStackTrace (); }
-	}
-
-
-	/**
 	 * @param JSON tree of JSON nodes representing decomposed matrix
 	 * @param to the sink that will store the content
 	 */
@@ -154,56 +114,6 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
-	 * identify solution being described
-	 * @param buffer a string buffer being built
-	 * @return the string buffer
-	 */
-	public StringBuffer addPathTo (StringBuffer buffer)
-	{
-		String path = getSolutionClassPath ();
-		if (path != null)
-		{
-			buffer.append ("\n  \"Solution\" : \"")
-			.append (path).append ("\",");
-		}
-		return buffer;
-	}
-
-
-	/**
-	 * @param buffer a string buffer being built
-	 * @param name the name for the member
-	 * @param v vector  to be added
-	 * @return the string buffer
-	 */
-	public StringBuffer addTo (StringBuffer buffer, String name, VectorAccess <T> v)
-	{
-		buffer.append ("\n  \"")
-			.append (name).append ("\" : ")
-			.append (toList (v));
-		return buffer;
-	}
-
-
-	/**
-	 * @param buffer a string buffer being built
-	 * @param name the name for the member
-	 * @param m matrix to be added
-	 * @return the string buffer
-	 */
-	public StringBuffer addTo (StringBuffer buffer, String name, Matrix <T> m)
-	{
-		buffer.append ("\n  \"")
-			.append (name).append ("\" : [");
-		for (int i = 1; i < m.rowCount (); i++)
-		{ buffer.append ("\n\t").append (toList (m.getRowAccess (i))).append (","); }
-		buffer.append ("\n\t").append (toList (m.getRowAccess (m.rowCount ())))
-			.append ("\n  ]");
-		return buffer;
-	}
-
-
-	/**
 	 * add matrix JSON representation to master object
 	 * @param object the JSON representation being built
 	 * @param name the name for the member
@@ -211,9 +121,7 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 */
 	public void addTo (JsonSemantics.JsonObject object, String name, Matrix <T> m)
 	{
-		JsonSemantics.JsonArray rows = new JsonSemantics.JsonArray ();
-		for (int i = 1; i <= m.rowCount (); i++) rows.add (toJson (m.getRowAccess (i)));
-		object.addMemberNamed (name, rows);
+		object.addMemberNamed (name, matOps.toJson (m));
 	}
 
 
@@ -225,7 +133,7 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	 */
 	public void addTo (JsonSemantics.JsonObject object, String name, VectorAccess <T> v)
 	{
-		object.addMemberNamed (name, toJson (v));
+		object.addMemberNamed (name, vecOps.toJson (v));
 	}
 
 
@@ -244,15 +152,14 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
-	 * describe vector with JSON
-	 * @param v vector to be described
-	 * @return the equivalent JSON array
+	 * add numeric value JSON representation to master object
+	 * @param object the JSON representation being built
+	 * @param name the name for the member
+	 * @param value number to be added
 	 */
-	public JsonSemantics.JsonArray toJson (VectorAccess <T> v)
+	public void addTo (JsonSemantics.JsonObject object, String name, Number value)
 	{
-		JsonSemantics.JsonArray array = new JsonSemantics.JsonArray ();
-		for (int i = 1; i <= v.size (); i++) array.add (mgr.toJson (v.get (i)));
-		return array;
+		object.addMemberNamed (name, new JsonSemantics.JsonNumber (value));
 	}
 
 
@@ -416,7 +323,12 @@ public class GenericSupport <T> extends CellSequencePrimitives
 	}
 
 	public GenericSupport (ExpressionSpaceManager <T> mgr)
-	{ this.mgr = mgr; this.arithmetic = new ArithmeticOperations <T> (mgr); }
+	{
+		this.arithmetic = new ArithmeticOperations <T> (mgr);
+		this.matOps = new MatrixOperations <T> (mgr);
+		this.vecOps = matOps.getVectorOperations ();
+		this.mgr = mgr;
+	}
 	protected ArithmeticOperations <T> arithmetic;
 	protected ExpressionSpaceManager <T> mgr;
 

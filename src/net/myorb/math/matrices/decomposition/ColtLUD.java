@@ -11,6 +11,7 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.algorithms.ClMathBIF;
 
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 import cern.colt.library.Linalg;
@@ -62,29 +63,29 @@ public class ColtLUD extends DecompositionSupport
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		public String toString ()
-		{
-			StringBuffer JSON = new StringBuffer ().append ("{");
-			support.addPathTo (JSON); support.addTo (JSON, "L", L).append (",");
-			return support.addTo (JSON, "U", U).append (",\n  \"P\" : ")
-				.append (GenericSupport.toList (P, 0))
-				.append ("\n}")
-			.toString ();
-		}
+		public String toString () { return toJson ().toString (); }
 
 		public Matrix <Double> solve (Matrix <Double> A)
 		{ return MAT.encloseZeroBased (Linalg.getLudSolution (A.toRawCells ())); }
 		public SolutionPrimitives.Content <Double> solve (SolutionPrimitives.Content <Double> b)
 		{ return new SolutionPrimitives.Content <Double> (tri.luXb (L, U, b, VEC.enclose (P)), manager); }
 		public double det () { return tri.det (U, L, detP); }
-		
+
+		/**
+		 * @return JSON representation of QRDecomposition
+		 */
+		public JsonValue toJson ()
+		{
+			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			support.addTo (representation, "L", L); support.addTo (representation, "U", U); support.addTo (representation, "P", P);
+			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (support.solutionClassPath));
+			return representation;
+		}
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to)
-		{
-			support.storeDecomposition (toString (), to);
-		}
+		public void store (SimpleStreamIO.TextSink to) { support.storeDecomposition (toJson (), to); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)

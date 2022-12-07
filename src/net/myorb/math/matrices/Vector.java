@@ -1,9 +1,10 @@
 
 package net.myorb.math.matrices;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
+
 import net.myorb.math.ListOperations;
 import net.myorb.math.SpaceManager;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import java.util.*;
 
@@ -12,7 +13,8 @@ import java.util.*;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class Vector<T> extends ListOperations<T> implements VectorAccess<T>
+public class Vector <T> extends ListOperations <T>
+		implements VectorAccess <T>
 {
 
 	/**
