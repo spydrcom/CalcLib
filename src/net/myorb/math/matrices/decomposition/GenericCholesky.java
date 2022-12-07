@@ -11,8 +11,9 @@ import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
-import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
+import net.myorb.data.abstractions.SimpleStreamIO;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonSemantics;
 
 /**
@@ -134,20 +135,26 @@ public class GenericCholesky <T> extends GenericSupport <T>
 			return X;
 		}
 
+		/**
+		 * @return JSON representation of QRDecomposition
+		 */
+		public JsonValue toJson ()
+		{
+			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			addTo (representation, "L", getL ()); addTo (representation, "C", C); addTo (representation, "D", getD ());
+			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
+			return representation;
+		}
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		public String toString ()
-		{
-			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
-			addTo (JSON, "C", C).append (","); addTo (JSON, "L", getL ()).append (",");
-			return addTo (JSON, "D", getD ()).append ("\n}").toString ();
-		}
+		public String toString () { return toJson ().toString (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.matrices.decomposition.CommonLUD.DecompositionPrimitives#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (TextSink to) { storeDecomposition (toString (), to); }
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.matrices.decomposition.CommonLUD.DecompositionPrimitives#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)

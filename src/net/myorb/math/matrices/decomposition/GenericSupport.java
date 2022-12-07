@@ -7,6 +7,7 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.ArithmeticOperations;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.*;
 
 import java.io.StringReader;
@@ -83,18 +84,6 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
-	 * @param numbers an array of numbers
-	 * @return a zero index based integer array
-	 */
-	public int [] toArray (Number [] numbers)
-	{
-		int ints [] = new int [numbers.length+1], i = 1;
-		for (Number n : numbers) ints [i++] = n.intValue ();
-		return ints;
-	}
-
-
-	/**
 	 * @return the class path to the controlling solution
 	 */
 	public String getSolutionClassPath ()
@@ -154,6 +143,17 @@ public class GenericSupport <T> extends CellSequencePrimitives
 
 
 	/**
+	 * @param JSON tree of JSON nodes representing decomposed matrix
+	 * @param to the sink that will store the content
+	 */
+	public void storeDecomposition (JsonValue JSON, SimpleStreamIO.TextSink to)
+	{
+		try { JsonPrettyPrinter.sinkTo (JSON, to); }
+		catch (Exception e) { throw new RuntimeException ("JSON transport error"); }
+	}
+
+
+	/**
 	 * identify solution being described
 	 * @param buffer a string buffer being built
 	 * @return the string buffer
@@ -168,6 +168,7 @@ public class GenericSupport <T> extends CellSequencePrimitives
 		}
 		return buffer;
 	}
+
 
 	/**
 	 * @param buffer a string buffer being built
@@ -199,6 +200,59 @@ public class GenericSupport <T> extends CellSequencePrimitives
 		buffer.append ("\n\t").append (toList (m.getRowAccess (m.rowCount ())))
 			.append ("\n  ]");
 		return buffer;
+	}
+
+
+	/**
+	 * add matrix JSON representation to master object
+	 * @param object the JSON representation being built
+	 * @param name the name for the member
+	 * @param m matrix to be added
+	 */
+	public void addTo (JsonSemantics.JsonObject object, String name, Matrix <T> m)
+	{
+		JsonSemantics.JsonArray rows = new JsonSemantics.JsonArray ();
+		for (int i = 1; i <= m.rowCount (); i++) rows.add (toJson (m.getRowAccess (i)));
+		object.addMemberNamed (name, rows);
+	}
+
+
+	/**
+	 * add vector JSON representation to master object
+	 * @param object the JSON representation being built
+	 * @param name the name for the member
+	 * @param v vector to be added
+	 */
+	public void addTo (JsonSemantics.JsonObject object, String name, VectorAccess <T> v)
+	{
+		object.addMemberNamed (name, toJson (v));
+	}
+
+
+	/**
+	 * add vector JSON representation to master object
+	 * @param object the JSON representation being built
+	 * @param name the name for the member
+	 * @param v vector to be added
+	 */
+	public void addTo (JsonSemantics.JsonObject object, String name, int [] v)
+	{
+		JsonSemantics.JsonArray array = new JsonSemantics.JsonArray ();
+		for (int i = 0; i < v.length; i++) array.add (new JsonSemantics.JsonNumber (v[i]));
+		object.addMemberNamed (name, array);
+	}
+
+
+	/**
+	 * describe vector with JSON
+	 * @param v vector to be described
+	 * @return the equivalent JSON array
+	 */
+	public JsonSemantics.JsonArray toJson (VectorAccess <T> v)
+	{
+		JsonSemantics.JsonArray array = new JsonSemantics.JsonArray ();
+		for (int i = 1; i <= v.size (); i++) array.add (mgr.toJson (v.get (i)));
+		return array;
 	}
 
 

@@ -7,6 +7,7 @@ import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
@@ -192,24 +193,49 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 * Decomposition transport
 		 */
 
+//		/* (non-Javadoc)
+//		 * @see java.lang.Object#toString()
+//		 */
+//		public String toString ()
+//		{
+//			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
+//			addTo (JSON, "A", A).append (",\n  \"P\" : ").append (toList (P)).append (",")
+//				.append ("\n  \"pivots\" : ").append (pivotCount).append ("\n}");
+//			return JSON.toString ();
+//		}
+//
+//		/* (non-Javadoc)
+//		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+//		 */
+//		public void store (SimpleStreamIO.TextSink to)
+//		{
+//			storeDecomposition (toString (), to);
+//		}
+
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString ()
 		{
-			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
-			addTo (JSON, "A", A).append (",\n  \"P\" : ").append (toList (P)).append (",")
-				.append ("\n  \"pivots\" : ").append (pivotCount).append ("\n}");
-			return JSON.toString ();
+			return toJson ().toString ();
+		}
+
+		/**
+		 * @return JSON representation of QRDecomposition
+		 */
+		public JsonValue toJson ()
+		{
+			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
+			representation.addMemberNamed ("pivots", new JsonSemantics.JsonNumber (pivotCount));
+			addTo (representation, "A", A); addTo (representation, "P", P);
+			return representation;
 		}
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to)
-		{
-			storeDecomposition (toString (), to);
-		}
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
@@ -230,6 +256,16 @@ public class CommonLUD <T> extends GenericSupport <T>
 			this.N = P.length - 1;
 		}
 
+		/**
+		 * @param numbers an array of numbers
+		 * @return a zero index based integer array
+		 */
+		public int [] toArray (Number [] numbers)
+		{
+			int ints [] = new int [numbers.length], i = 0;
+			for (Number n : numbers) ints [i++] = n.intValue ();
+			return ints;
+		}
 
 	}
 

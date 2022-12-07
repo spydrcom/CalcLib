@@ -10,7 +10,9 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonSemantics;
+
 import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
@@ -105,19 +107,24 @@ public class GenericQRD <T> extends GenericSupport <T>
 		 */
 		public String toString ()
 		{
-			StringBuffer JSON = new StringBuffer ().append ("{"); addPathTo (JSON);
-			addTo (JSON, "A", A).append (","); addTo (JSON, "C", C).append (",");
-			addTo (JSON, "D", D).append ("\n}");
-			return JSON.toString ();
+			return toJson ().toString ();
+		}
+
+		/**
+		 * @return JSON representation of QRDecomposition
+		 */
+		public JsonValue toJson ()
+		{
+			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			addTo (representation, "A", A); addTo (representation, "C", C); addTo (representation, "D", D);
+			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
+			return representation;
 		}
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to)
-		{
-			storeDecomposition (toString (), to);
-		}
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
 
 		/**
 		 * transport representation (store) for use in CalcTools

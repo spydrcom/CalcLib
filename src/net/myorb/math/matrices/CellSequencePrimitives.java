@@ -53,7 +53,6 @@ public class CellSequencePrimitives
 	}
 
 
-
 	/*
 	 * matrix specific
 	 */

@@ -5,8 +5,9 @@ import net.myorb.math.FieldStructure;
 import net.myorb.math.FieldStructureForSpace;
 
 import net.myorb.math.computational.GenericArithmetic;
-
 import net.myorb.math.SpaceManager;
+
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 /**
  * 
@@ -189,6 +190,22 @@ public class FractionFieldManager<T> implements SpaceManager <Fraction<T>>
 	public Fraction<T>[] getEmptyArray ()
 	{
 		return new Fraction[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Fraction<T> from)
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Fraction<T> fromJson (JsonValue representation)
+	{
+		return null;
 	}
 
 }

@@ -1,6 +1,7 @@
 
 package net.myorb.math.realnumbers;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
 
@@ -127,6 +128,22 @@ public class NaturalSpaceManager implements SpaceManager<Integer>
 	public Integer[] getEmptyArray ()
 	{
 		return new Integer[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Integer from)
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Integer fromJson (JsonValue representation)
+	{
+		return null;
 	}
 
 }

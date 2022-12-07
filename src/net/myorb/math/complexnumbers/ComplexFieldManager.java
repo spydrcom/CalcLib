@@ -7,6 +7,9 @@ import net.myorb.math.computational.GenericArithmetic;
 import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.FieldStructure;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonSemantics;
+
 import net.myorb.math.SpaceManager;
 
 /**
@@ -229,6 +232,48 @@ public class ComplexFieldManager<T> implements SpaceManager <ComplexValue<T>>
 	public ComplexValue<T>[] getEmptyArray ()
 	{
 		return new ComplexValue[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (ComplexValue<T> from)
+	{
+		if (manager.isZero (from.imagpart))
+		{
+			return manager.toJson (from.realpart);
+		}
+
+		JsonValue
+			Re = manager.toJson (from.realpart),
+			Im = manager.toJson (from.imagpart);
+		JsonSemantics.JsonObject structure = new JsonSemantics.JsonObject ();
+		structure.addMemberNamed ("Re", Re); structure.addMemberNamed ("Im", Im);
+		return structure;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public ComplexValue<T> fromJson (JsonValue representation)
+	{
+		switch (representation.getJsonValueType ())
+		{
+			case NUMERIC:
+				return this.C
+					(
+						manager.fromJson (representation),
+						manager.getZero ()
+					);
+
+			case OBJECT:
+				JsonSemantics.JsonObject structure =
+						(JsonSemantics.JsonObject) representation;
+				JsonValue Re = structure.getMember ("Re"), Im = structure.getMember ("Im");
+				return new ComplexValue<T> (manager.fromJson (Re), manager.fromJson (Im), manager);
+
+			default: throw new RuntimeException ("Invalue JSON representation for Complex value");
+		}
 	}
 
 }

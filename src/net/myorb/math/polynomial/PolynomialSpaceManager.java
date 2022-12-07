@@ -1,11 +1,14 @@
 
 package net.myorb.math.polynomial;
 
-import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
+import net.myorb.math.Polynomial;
 
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
-import net.myorb.math.Polynomial;
+
+import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
+
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 /**
  * provide description of polynomials as types for algebraic transform
@@ -583,6 +586,22 @@ public class PolynomialSpaceManager<T> extends OrdinaryPolynomialCalculus<T>
 		return new Polynomial.PowerFunction[]{};
 	}
 
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Polynomial.PowerFunction<T> from)
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Polynomial.PowerFunction<T> fromJson (JsonValue representation)
+	{
+		return null;
+	}
 
 }
 

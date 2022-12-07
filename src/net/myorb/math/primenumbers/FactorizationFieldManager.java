@@ -6,6 +6,8 @@ import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
 
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.ValueDisplayProperties;
 
 import java.math.BigInteger;
@@ -196,5 +198,55 @@ public class FactorizationFieldManager implements SpaceManager<Factorization>
 	{
 		return new Factorization[]{};
 	}
+
+	/**
+	 * normalize a Factorization as numerator and denominator
+	 * @param source the Factorization to normalize
+	 * @return the normalize fraction
+	 */
+	public Distribution toFraction (Factorization source)
+	{
+		return Distribution.normalizeCopy (source, this);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Factorization from)
+	{
+		Distribution fraction = toFraction (from);
+		JsonSemantics.JsonObject structure = new JsonSemantics.JsonObject ();
+		Factorization n = fraction.getNumerator (), d = fraction.getDenominator ();
+		structure.addMemberNamed ("Numerator", new JsonSemantics.JsonNumber (Factorization.toInteger (n)));
+		structure.addMemberNamed ("Denominator", new JsonSemantics.JsonNumber (Factorization.toInteger (d)));
+		return structure;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Factorization fromJson (JsonValue representation)
+	{
+		Factorization num, den = getOne ();
+
+		switch (representation.getJsonValueType ())
+		{
+			case NUMERIC:
+				num = toFactorization (representation);
+				break;
+
+			case OBJECT:
+				JsonSemantics.JsonObject structure =
+					(JsonSemantics.JsonObject) representation;
+				num = toFactorization (structure.getMember ("Numerator"));
+				den = toFactorization (structure.getMember ("Denominator"));
+				break;
+
+			default: throw new RuntimeException ("Invalue JSON representation for Complex value");
+		}
+
+		return multiply (num, pow (den, -1));
+	}
+	Factorization toFactorization (Object number) { return bigScalar (new BigInteger (number.toString ())); }
 
 }

@@ -2,8 +2,12 @@
 package net.myorb.math.realnumbers;
 
 import net.myorb.math.SpaceManager;
+
 import net.myorb.math.FieldStructure;
 import net.myorb.math.FieldStructureForSpace;
+
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 import net.myorb.data.abstractions.ValueDisplayProperties;
 
@@ -145,5 +149,24 @@ public class DoubleFloatingFieldManager implements SpaceManager<Double>
 	 */
 	public void resetDisplayPrecision () { displayPrecision = 0; }
 	protected int displayPrecision = 0;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Double from)
+	{
+		return new JsonSemantics.JsonNumber (from);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Double fromJson (JsonValue representation)
+	{
+		if (representation.getJsonValueType () != JsonValue.ValueTypes.NUMERIC)
+		{ throw new RuntimeException ("Invalue JSON representation for Double value"); }
+		JsonSemantics.JsonNumber n = (JsonSemantics.JsonNumber) representation;
+		return n.getNumber ().doubleValue ();
+	}
 
 }

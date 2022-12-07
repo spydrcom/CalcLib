@@ -1,6 +1,7 @@
 
 package net.myorb.math.realnumbers;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.FieldStructureForSpace;
 import net.myorb.math.SpaceManager;
@@ -145,6 +146,22 @@ public class FloatingFieldManager implements SpaceManager<Float>
 	public Float[] getEmptyArray ()
 	{
 		return new Float[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Float from)
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Float fromJson (JsonValue representation)
+	{
+		return null;
 	}
 
 }

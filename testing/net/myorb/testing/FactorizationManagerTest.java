@@ -65,6 +65,9 @@ public class FactorizationManagerTest extends FactorizationManager
 		System.out.println (ratio);
 		System.out.println (mgr.toDecimalString (Distribution.flattened (ratio)));
 		System.out.println ();
+		
+		System.out.println (mgr.toJson (Distribution.flattened (ratio)));
+		System.out.println (mgr.fromJson(mgr.toJson (Distribution.flattened (ratio))));
 	}
 
 }

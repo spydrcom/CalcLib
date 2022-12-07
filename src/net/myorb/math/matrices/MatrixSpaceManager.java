@@ -5,6 +5,8 @@ import net.myorb.math.*;
 import net.myorb.math.computational.GenericArithmetic;
 import net.myorb.math.realnumbers.DoubleFloatingFieldManager;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+
 /**
  * provide description of matrices as types for algebraic transform
  * @param <T> the types of coefficients in the polynomial terms
@@ -190,6 +192,22 @@ public class MatrixSpaceManager<T> extends MatrixOperations<T>
 	public Matrix<T>[] getEmptyArray ()
 	{
 		return new Matrix[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (Matrix<T> from)
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public Matrix<T> fromJson (JsonValue representation)
+	{
+		return null;
 	}
 
 }

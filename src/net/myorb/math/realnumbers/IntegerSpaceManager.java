@@ -4,6 +4,9 @@ package net.myorb.math.realnumbers;
 import net.myorb.math.FieldStructure;
 import net.myorb.math.SpaceManager;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonSemantics;
+
 import java.math.BigInteger;
 
 /**
@@ -136,6 +139,25 @@ public class IntegerSpaceManager implements SpaceManager<BigInteger>
 	public BigInteger[] getEmptyArray ()
 	{
 		return new BigInteger[]{};
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+	 */
+	public JsonValue toJson (BigInteger from)
+	{
+		return new JsonSemantics.JsonNumber (from);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.Portable.AsJson#fromJson(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public BigInteger fromJson (JsonValue representation)
+	{
+		if (representation.getJsonValueType () != JsonValue.ValueTypes.NUMERIC)
+		{ throw new RuntimeException ("Invalue JSON representation for Integer value"); }
+		JsonSemantics.JsonNumber n = (JsonSemantics.JsonNumber) representation;
+		return new BigInteger (n.getNumber ().toString ());
 	}
 
 }
