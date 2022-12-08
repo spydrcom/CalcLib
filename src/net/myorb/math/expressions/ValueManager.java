@@ -1,13 +1,19 @@
 
 package net.myorb.math.expressions;
 
+import net.myorb.math.matrices.Vector;
+import net.myorb.math.matrices.VectorOperations;
+import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.Matrix;
-import net.myorb.math.GeneratingFunctions;
 
+import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.ConstantType;
+
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.data.abstractions.ErrorHandling;
@@ -19,20 +25,41 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class ValueManager<T>
+public class ValueManager <T>
 {
+
+
+	/**
+	 * identify data types that offer portability
+	 * @param <T> the data type
+	 */
+	public interface PortableValue <T>
+	{
+		/**
+		 * produce a JSON tree for the value
+		 * @param manager the data type manager for discrete components
+		 * @return the JSON representation
+		 */
+		JsonValue toJson (ExpressionSpaceManager <T> manager);
+	}
 
 
 	/**
 	 * lists of values managed in the environment
 	 * @param <T> the type of data in lists
 	 */
-	public static class RawValueList<T> extends java.util.ArrayList<T>
+	public static class RawValueList <T> extends java.util.ArrayList <T>
 	{
 		public RawValueList () {}
 		public RawValueList (T value) { if (value != null) this.add (value); }
 		public RawValueList (java.util.Collection<T> values) { if (values != null) this.addAll (values); }
 
+		public Vector <T> toVector (ExpressionSpaceManager<T> manager)
+		{
+			Vector <T> v = new Vector <T> (manager);
+			v.addToList (this);
+			return v;
+		}
 		public double[] toDoubleFloatArray (ExpressionSpaceManager<T> manager)
 		{
 			double[] values = new double[this.size ()];
@@ -729,7 +756,7 @@ public class ValueManager<T>
 	 * @param index the index into the array to check
 	 * @throws RuntimeException for index out of range
 	 */
-	public void indexCheck (List<?> list, int index) throws RuntimeException
+	public void indexCheck (List <?> list, int index) throws RuntimeException
 	{
 		if (index < 0 || list.size () <= index)
 		{
@@ -800,7 +827,7 @@ public class ValueManager<T>
 	 * @param manager an expression manager that manipulates the component type
 	 * @return the value reduced to integer
 	 */
-	public int toInt (GenericValue value, ExpressionSpaceManager<T> manager)
+	public int toInt (GenericValue value, ExpressionSpaceManager  <T> manager)
 	{
 		return manager.convertToDouble (toDiscrete (value)).intValue ();
 	}
@@ -835,7 +862,7 @@ public class ValueManager<T>
 	 * @param value the value as a generic object
 	 * @return a list of values
 	 */
-	public RawValueList<T> toArray (GenericValue value)
+	public RawValueList <T> toArray (GenericValue value)
 	{
 		try
 		{
@@ -863,9 +890,9 @@ public class ValueManager<T>
 		catch (EmptyParameterList emptyList) { return new RawValueList<T> (); }
 		catch (Exception others) { throw new Expected ("Array", others); }
 	}
-	public RawValueList<T> valueListToArray (ValueList list)
+	public RawValueList <T> valueListToArray (ValueList list)
 	{
-		RawValueList<T> raw = new RawValueList<T>();
+		RawValueList<T> raw = new RawValueList <T> ();
 		for (GenericValue v : list.getValues ())
 		{
 			if (isDimensioned (v))
@@ -1025,7 +1052,7 @@ class ValueListStorage extends NamedValue
 {
 	ValueListStorage ()
 	{
-		this.values = new ValueManager.GenericValueList();
+		this.values = new ValueManager.GenericValueList ();
 	}
 
 	ValueListStorage (ValueManager.GenericValueList values)
@@ -1056,7 +1083,7 @@ class ValueListStorage extends NamedValue
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.SimpleUtilities.Container#getContents(java.lang.Class)
 	 */
-	public <T> T getContents (Class<T> c)
+	public <T> T getContents (Class <T> c)
 	{
 		return SimpleUtilities.verifyClass (values.get (0), c);
 	}
@@ -1068,8 +1095,8 @@ class ValueListStorage extends NamedValue
 /**
  * special treatment operators
  */
-class GenericManager<T> extends NamedValue
-	implements ValueManager.ManagedValue<T>
+class GenericManager <T> extends NamedValue
+		implements ValueManager.ManagedValue <T>
 {
 	protected String format (T value)
 	{
@@ -1082,7 +1109,7 @@ class GenericManager<T> extends NamedValue
 	{
 		this.formatter = formatter;
 	}
-	protected ValueManager.Formatter<T> formatter = null;
+	protected ValueManager.Formatter <T> formatter = null;
 }
 
 
@@ -1090,13 +1117,11 @@ class GenericManager<T> extends NamedValue
  * storage for individual values
  * @param <T> type on which operations are to be executed
  */
-class DiscreteValueStorage<T> extends GenericManager<T>
-	implements ValueManager.DiscreteValue<T>
+class DiscreteValueStorage <T> extends GenericManager<T>
+	implements ValueManager.DiscreteValue <T>, ValueManager.PortableValue <T>
 {
-	DiscreteValueStorage (T value)
-	{
-		this.value = value;
-	}
+
+	DiscreteValueStorage (T value) { this.value = value; }
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -1104,10 +1129,16 @@ class DiscreteValueStorage<T> extends GenericManager<T>
 	public String toString () { return format (value); }
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
+	 */
+	public JsonValue toJson (ExpressionSpaceManager <T> manager) { return manager.toJson (value); }
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.DiscreteValue#getValue()
 	 */
 	public T getValue () { return value; }
 	T value;
+
 }
 
 
@@ -1115,15 +1146,16 @@ class DiscreteValueStorage<T> extends GenericManager<T>
  * storage for arrays
  * @param <T> type on which operations are to be executed
  */
-class DimensionedValueStorage<T> extends GenericManager<T>
-	implements ValueManager.DimensionedValue<T>
+class DimensionedValueStorage <T> extends GenericManager <T>
+	implements ValueManager.DimensionedValue <T>, ValueManager.PortableValue <T>
 {
+
 	DimensionedValueStorage ()
 	{
-		this.values = new ValueManager.RawValueList<T> ();
+		this.values = new ValueManager.RawValueList <T> ();
 	}
 
-	DimensionedValueStorage (ValueManager.RawValueList<T> values)
+	DimensionedValueStorage (ValueManager.RawValueList <T> values)
 	{
 		this.values = values;
 	}
@@ -1141,10 +1173,19 @@ class DimensionedValueStorage<T> extends GenericManager<T>
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
+	 */
+	public JsonValue toJson (ExpressionSpaceManager <T> manager)
+	{
+		return new VectorOperations <> (manager).toJson (values.toVector (manager));
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.DimensionedValue#getValues()
 	 */
-	public ValueManager.RawValueList<T> getValues () { return values; }
-	ValueManager.RawValueList<T> values;
+	public ValueManager.RawValueList <T> getValues () { return values; }
+	ValueManager.RawValueList <T> values;
+
 }
 
 
@@ -1153,7 +1194,7 @@ class DimensionedValueStorage<T> extends GenericManager<T>
  * @param <T> type on which operations are to be executed
  */
 class MatrixStorage<T> extends NamedValue
-		implements ValueManager.MatrixValue<T>
+	implements ValueManager.MatrixValue <T>, ValueManager.PortableValue <T>
 {
 
 	public MatrixStorage(Matrix<T> matrix)
@@ -1167,10 +1208,19 @@ class MatrixStorage<T> extends NamedValue
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
+	 */
+	public JsonValue toJson (ExpressionSpaceManager <T> manager)
+	{
+		return new MatrixOperations <> (manager).toJson (matrix);
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.MatrixValue#getMatrix()
 	 */
 	public Matrix<T> getMatrix () { return matrix; }
 	Matrix<T> matrix;
+
 }
 
 
