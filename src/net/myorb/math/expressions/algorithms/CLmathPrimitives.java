@@ -4,7 +4,10 @@ package net.myorb.math.expressions.algorithms;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
+
+import net.myorb.math.SpaceManager;
 
 import java.util.List;
 
@@ -49,6 +52,41 @@ public abstract class CLmathPrimitives <T> extends CommonOperatorLibrary <T>
 				List <ValueManager.GenericValue> P = getParameters (parameters);
 				Object struct = valueManager.getStructuredObject (P.get (1));
 				return ClMathBIF.getField (P.get (0).toString (), struct);
+			}
+		};
+	}
+
+
+	/**
+	 * implement function - STORE
+	 * @param symbol the symbol associated with function
+	 * @return function implementation object
+	 */
+	public AbstractParameterizedFunction getStoreAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{
+				List <ValueManager.GenericValue> P = getParameters (parameters);
+				return ClMathBIF.storeValue (P.get (0), P.get (1).toString (), manager);
+			}
+		};
+	}
+
+
+	/**
+	 * implement function - LOAD
+	 * @param symbol the symbol associated with function
+	 * @return function implementation object
+	 */
+	public AbstractParameterizedFunction getLoadAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{
+				return ClMathBIF.loadValue (parameters.toString (), manager);
 			}
 		};
 	}
@@ -368,6 +406,17 @@ public abstract class CLmathPrimitives <T> extends CommonOperatorLibrary <T>
 	{ return new MultipleMarshalingWrapper (symbol, getBesFunImplementation ()); }
 	public CommonFunctionImplementation getBesFunImplementation ()
 	{ return new Missing ("Bessel Function"); }
+
+
+	protected CLmathPrimitives
+		(
+			SpaceManager <T> manager
+		)
+	{
+		this.manager = (ExpressionSpaceManager <T>) manager;
+	}
+	ExpressionSpaceManager <T> manager;
+
 
 }
 

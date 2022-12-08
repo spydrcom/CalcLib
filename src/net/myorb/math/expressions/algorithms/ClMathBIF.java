@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 
 /**
@@ -68,6 +69,45 @@ public class ClMathBIF
 			return access.getFieldNamed (fieldNamed);
 		}
 		throw new RuntimeException ("Structure does not offer field access");
+	}
+
+
+	/**
+	 * store a value in association with an ID
+	 * @param value a generic version of the value
+	 * @param identifier the associated identification
+	 * @param manager a manager for the data type of the value
+	 * @return the same value as was passed into the store request
+	 * @throws RuntimeException for value types that are not portable
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ValueManager.GenericValue storeValue
+		(ValueManager.GenericValue value, String identifier, ExpressionSpaceManager <T> manager)
+	throws RuntimeException
+	{
+		if (value instanceof ValueManager.PortableValue)
+		{
+			System.out.println (
+					( ( ValueManager.PortableValue <T> ) value ).toJson (manager)
+			);
+			return value;
+		}
+		throw new RuntimeException ("Value is not portable");
+	}
+
+
+	/**
+	 * load a stored value
+	 * @param identifier the associated identification
+	 * @param manager a manager for the data type of the value
+	 * @return the value loaded using the given identifier
+	 * @throws RuntimeException for value not found
+	 */
+	public static <T> ValueManager.GenericValue loadValue
+		(String identifier, ExpressionSpaceManager <T> manager)
+	throws RuntimeException
+	{
+		return null;
 	}
 
 

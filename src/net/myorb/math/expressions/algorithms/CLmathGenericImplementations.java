@@ -30,6 +30,7 @@ public abstract class CLmathGenericImplementations<T>
 			Environment<T> environment
 		)
 	{
+		super (manager);
 		this.manager = manager;
 		this.conversion = conversion;
 		this.environment = environment;
