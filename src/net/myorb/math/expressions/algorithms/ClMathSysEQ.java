@@ -7,15 +7,16 @@ import net.myorb.math.linalg.SolutionPrimitives.Decomposition;
 import net.myorb.math.expressions.symbols.IterationConsumer;
 import net.myorb.math.expressions.symbols.LibraryObject;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.computational.integration.Configuration;
 import net.myorb.math.computational.Parameterization;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.reflection.ObjectManagement;
 
 import java.util.Map;
@@ -230,7 +231,7 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 	/**
 	 * associate a Decomposition with the parent solution
 	 */
-	class SolutionProduct implements ClMathSysEQ.SolutionProduct <T>, ClMathBIF.FieldAccess
+	class SolutionProduct implements ClMathSysEQ.SolutionProduct <T>, ClMathBIF.FieldAccess, ValueManager.PortableValue <T>
 	{
 
 		SolutionProduct (SolutionPrimitives.Decomposition D) { this.D = D; }
@@ -255,6 +256,15 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 		 */
 		public Decomposition getProduct () { return D; }
 		protected SolutionPrimitives.Decomposition D;
+
+		/* (non-Javadoc)
+		 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
+		 */
+		@SuppressWarnings("unchecked")
+		public JsonValue toJson (ExpressionSpaceManager <T> manager)
+		{
+			return ( ( ValueManager.PortableValue <T> ) D ).toJson (mgr);
+		}
 
 	}
 

@@ -113,7 +113,7 @@ public class ClMathBIF
 		}
 		else
 		{
-			content = getJsonFor (value, type, vm);
+			content = getJsonFor (value, type, manager, vm);
 		}
 
 		JsonSemantics.JsonObject envelope = new JsonSemantics.JsonObject ();
@@ -157,14 +157,14 @@ public class ClMathBIF
 	 * process primitive elements
 	 * @param value a generic version of the value
 	 * @param type the ValueManager assessment of type
+	 * @param manager
 	 * @param vm a ValueManager object for conversions
 	 * @return the JSON representation for the value
 	 */
 	@SuppressWarnings("unchecked") static <T> JsonValue getJsonFor
 		(
-			ValueManager.GenericValue value,
-			ValueManager.DataTypes type,
-			ValueManager <T> vm
+			ValueManager.GenericValue value, ValueManager.DataTypes type,
+			ExpressionSpaceManager <T> manager, ValueManager <T> vm
 		)
 	{
 
@@ -184,9 +184,9 @@ public class ClMathBIF
 
 				Object struct = vm.getStructuredObject (value);
 
-				if (struct instanceof Portable.AsJson)
+				if (struct instanceof ValueManager.PortableValue)
 				{
-					return  ( ( Portable.AsJson <Object> ) struct ).toJson (struct);
+					return  ( ( ValueManager.PortableValue <T> ) struct ).toJson (manager);
 				}
 
 			default: throw new RuntimeException ("Unrecognized value cannot be made portable");

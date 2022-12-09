@@ -34,7 +34,7 @@ public class GenericCholesky <T> extends GenericSupport <T>
 	 * representation of matrix Decomposition using this Cholesky algorithm set
 	 */
 	public class CholeskyDecomposition
-		implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
+		implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess, ValueManager.PortableValue <T>
 	{
 
 		public CholeskyDecomposition (TextSource source) { load (source); }
@@ -135,10 +135,10 @@ public class GenericCholesky <T> extends GenericSupport <T>
 			return X;
 		}
 
-		/**
-		 * @return JSON representation of QRDecomposition
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
 		 */
-		public JsonValue toJson ()
+		public JsonValue toJson (ExpressionSpaceManager <T> manager)
 		{
 			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
 			addTo (representation, "L", getL ()); addTo (representation, "C", C); addTo (representation, "D", getD ());
@@ -149,12 +149,12 @@ public class GenericCholesky <T> extends GenericSupport <T>
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		public String toString () { return toJson ().toString (); }
+		public String toString () { return toJson (null).toString (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.matrices.decomposition.CommonLUD.DecompositionPrimitives#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (null), to); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.matrices.decomposition.CommonLUD.DecompositionPrimitives#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
