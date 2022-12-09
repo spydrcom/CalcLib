@@ -171,7 +171,7 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 
 		BigInteger expInt = (BigInteger) Factorization.toInteger (exponent);
 
-		if (isInt (x))
+		if (isInt (x) && !factoredMgr.isNegative (exponent))
 			return factoredMgr.bigScalar
 			(
 				pow

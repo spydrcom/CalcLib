@@ -86,7 +86,8 @@ public abstract class CLmathPrimitives <T> extends CommonOperatorLibrary <T>
 		{
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 			{
-				return ClMathBIF.loadValue (parameters.toString (), manager);
+				List <ValueManager.GenericValue> P = getParameters (parameters);
+				return ClMathBIF.loadValue (P.get (0).toString (), manager);
 			}
 		};
 	}

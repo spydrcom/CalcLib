@@ -9,7 +9,6 @@ import net.myorb.math.matrices.Matrix;
 import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.ConstantType;
-
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 
@@ -57,7 +56,7 @@ public class ValueManager <T>
 		public Vector <T> toVector (ExpressionSpaceManager<T> manager)
 		{
 			Vector <T> v = new Vector <T> (manager);
-			v.addToList (this);
+			v.load (this);
 			return v;
 		}
 		public double[] toDoubleFloatArray (ExpressionSpaceManager<T> manager)
@@ -777,6 +776,39 @@ public class ValueManager <T>
 
 
 	/**
+	 * does parameter represent text
+	 * @param value the value as a generic object
+	 * @return TRUE = value is text
+	 */
+	public boolean isText (GenericValue value)
+	{
+		return value instanceof TextStorage;
+	}
+
+
+	/**
+	 * does parameter represent Number
+	 * @param value the value as a generic object
+	 * @return TRUE = value is Number
+	 */
+	public boolean isNumeric (GenericValue value)
+	{
+		return value instanceof NumericStorage;
+	}
+
+
+	/**
+	 * get the Associated Number
+	 * @param value the value as a generic object
+	 * @return the number assigned to the generic form
+	 */
+	public Number getAssociatedNumber (GenericValue value)
+	{
+		return ( ( NumericStorage ) value).getValue ();
+	}
+
+
+	/**
 	 * allow structured discrete values
 	 * @param value generic wrapper holding structure
 	 * @return the wrapped structured value
@@ -986,6 +1018,29 @@ public class ValueManager <T>
 			value = list.get (0);
 		}
 		return value;
+	}
+
+
+	/**
+	 * identification of data types
+	 */
+	public enum DataTypes { DISCRETE, ARRAY, MATRIX, NUMERIC, TEXT, STRUCTURE, UNKNOWN }
+
+
+	/**
+	 * recognize type of a generic value
+	 * @param value a generic value to identify
+	 * @return a data type for the value
+	 */
+	public static DataTypes typeOf (ValueManager.GenericValue value)
+	{
+		if (value instanceof ValueManager.DiscreteValue) return DataTypes.DISCRETE;
+		if (value instanceof ValueManager.StructuredValue) return DataTypes.STRUCTURE;
+		if (value instanceof ValueManager.NamedNumericConstant) return DataTypes.NUMERIC;
+		if (value instanceof ValueManager.DimensionedValue) return DataTypes.ARRAY;
+		if (value instanceof ValueManager.MatrixValue) return DataTypes.MATRIX;
+		if (value instanceof ValueManager.TextValue) return DataTypes.TEXT;
+		return DataTypes.UNKNOWN;
 	}
 
 

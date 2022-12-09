@@ -3,6 +3,17 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.matrices.*;
+
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonPrettyPrinter;
+import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonReader;
+
+import net.myorb.data.abstractions.SimpleStreamIO;
+import net.myorb.data.abstractions.Portable;
+
+import java.io.File;
 
 /**
  * built-in functions available for CalcLib MATH library objects
@@ -72,6 +83,11 @@ public class ClMathBIF
 	}
 
 
+	/*
+	 * data persistence
+	 */
+
+
 	/**
 	 * store a value in association with an ID
 	 * @param value a generic version of the value
@@ -80,19 +96,103 @@ public class ClMathBIF
 	 * @return the same value as was passed into the store request
 	 * @throws RuntimeException for value types that are not portable
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> ValueManager.GenericValue storeValue
-		(ValueManager.GenericValue value, String identifier, ExpressionSpaceManager <T> manager)
+		(
+			ValueManager.GenericValue value, String identifier,
+			ExpressionSpaceManager <T> manager
+		)
 	throws RuntimeException
 	{
+		JsonValue content;
+		ValueManager.DataTypes type = ValueManager.typeOf (value);
+		ValueManager <T> vm = new ValueManager <> ();
+
 		if (value instanceof ValueManager.PortableValue)
 		{
-			System.out.println (
-					( ( ValueManager.PortableValue <T> ) value ).toJson (manager)
-			);
-			return value;
+			content = getJsonFor (value, manager);
 		}
-		throw new RuntimeException ("Value is not portable");
+		else
+		{
+			content = getJsonFor (value, type, vm);
+		}
+
+		JsonSemantics.JsonObject envelope = new JsonSemantics.JsonObject ();
+		envelope.addMemberNamed ("Type", new JsonSemantics.JsonString (type.toString ()));
+		envelope.addMemberNamed ("Content", content);
+
+		String path;
+		saveTo (new File (path = "data/" + identifier + ".JSON"), envelope);
+		return vm.newText ("Content saved as " + path);
+	}
+
+	/**
+	 * write content to file
+	 * @param file the file built from the identifier
+	 * @param content the JSON content
+	 */
+	public static void saveTo (File file, JsonValue content)
+	{
+		try
+		{
+			JsonPrettyPrinter.sinkTo (content, SimpleStreamIO.getFileSink (file));
+		} catch (Exception e) { throw new RuntimeException ("JSON transport error"); }
+	}
+
+	/**
+	 * use PortableValue interface for conversion
+	 * @param value a generic version of the value
+	 * @param manager a manager for the data type of the value
+	 * @return the JSON representation for the value
+	 */
+	@SuppressWarnings("unchecked") static <T> JsonValue getJsonFor
+		(
+			ValueManager.GenericValue value,
+			ExpressionSpaceManager <T> manager
+		)
+	{
+		return ( ( ValueManager.PortableValue <T> ) value ).toJson (manager);
+	}
+
+	/**
+	 * process primitive elements
+	 * @param value a generic version of the value
+	 * @param type the ValueManager assessment of type
+	 * @param vm a ValueManager object for conversions
+	 * @return the JSON representation for the value
+	 */
+	@SuppressWarnings("unchecked") static <T> JsonValue getJsonFor
+		(
+			ValueManager.GenericValue value,
+			ValueManager.DataTypes type,
+			ValueManager <T> vm
+		)
+	{
+
+		switch (ValueManager.typeOf (value))
+		{
+
+			case TEXT:
+
+				return new JsonSemantics.JsonString (value.toString ());
+
+			case NUMERIC:
+
+				Number number = vm.getAssociatedNumber (value);
+				return new JsonSemantics.JsonNumber (number);
+
+			case STRUCTURE:
+
+				Object struct = vm.getStructuredObject (value);
+
+				if (struct instanceof Portable.AsJson)
+				{
+					return  ( ( Portable.AsJson <Object> ) struct ).toJson (struct);
+				}
+
+			default: throw new RuntimeException ("Unrecognized value cannot be made portable");
+
+		}
+
 	}
 
 
@@ -104,10 +204,127 @@ public class ClMathBIF
 	 * @throws RuntimeException for value not found
 	 */
 	public static <T> ValueManager.GenericValue loadValue
-		(String identifier, ExpressionSpaceManager <T> manager)
+		(
+			String identifier,
+			ExpressionSpaceManager <T> manager
+		)
 	throws RuntimeException
 	{
-		return null;
+		JsonValue imported = loadFrom (identifier, new File ("data/" + identifier + ".JSON"));
+		return loadFromValue ( ( JsonSemantics.JsonObject ) imported, manager);
+	}
+
+	/**
+	 * read a JSON representation of a value
+	 * @param identifier the associated identification
+	 * @param file the file to be loaded from
+	 * @return the JSON tree read
+	 */
+	public static JsonValue loadFrom (String identifier, File file)
+	{
+		try
+		{
+			SimpleStreamIO.TextSource source =
+					SimpleStreamIO.getFileSource (file);
+			return JsonReader.readFrom (source);
+		}
+		catch (Exception e) { throw new RuntimeException ("Error loading " + identifier, e); }
+	}
+
+	/**
+	 * load a value based on type
+	 * @param JSON the JSON representation of a value
+	 * @param manager a manager for the data type of the value
+	 * @return the generic ValueManager wrapper for the value
+	 * @throws RuntimeException for internal errors
+	 */
+	public static <T> ValueManager.GenericValue loadFromValue
+		(
+			JsonSemantics.JsonObject JSON,
+			ExpressionSpaceManager <T> manager
+		)
+	throws RuntimeException
+	{
+		return loadFromValue
+		(
+			JSON.getMemberCalled ("Content"),
+			( ( JsonSemantics.JsonString ) JSON.getMemberCalled ("Type") ).getContent (),
+			manager, new ValueManager <> ()
+		);
+	}
+
+	/**
+	 * determine load method and execute
+	 * @param content the JSON representation of a value
+	 * @param typeName the name of the ValueManager data type
+	 * @param manager a manager for the data type of the value
+	 * @param vm a ValueManager object for conversions
+	 * @return the generic ValueManager wrapper for the value
+	 * @throws RuntimeException for internal errors
+	 */
+	public static <T> ValueManager.GenericValue loadFromValue
+		(
+			JsonValue content, String typeName,
+			ExpressionSpaceManager <T> manager,
+			ValueManager <T> vm
+		)
+	throws RuntimeException
+	{
+
+		switch (ValueManager.DataTypes.valueOf (typeName))
+		{
+
+			case ARRAY:
+
+				return vm.newDimensionedValue
+					(
+						( new VectorOperations <T> (manager) ).fromJson (content)
+						.getElementsList ()
+					);
+
+			case MATRIX:
+
+				return vm.newMatrix
+					(
+						( new MatrixOperations <T> (manager) ).fromJson (content)
+					);
+
+			case TEXT:
+
+				return vm.newText ( ( ( JsonSemantics.JsonString ) content ).getContent () );
+
+			case NUMERIC:
+
+				Number n = ( ( JsonSemantics.JsonNumber ) content ).getNumber ();
+				return vm.newDiscreteValue (manager.convertFromDouble (n.doubleValue ()));
+
+			case DISCRETE:
+
+				return vm.newDiscreteValue (manager.fromJson (content));
+
+			case STRUCTURE:
+
+				return vm.newStructure (loadStructure (content));
+
+			default: throw new RuntimeException ("Internal error");
+
+		}
+
+	}
+
+	/**
+	 * reconstruct a structure from JSON
+	 * @param content the JSON representation of the structure
+	 * @return the restored structure as a Java object
+	 */
+	@SuppressWarnings("unchecked") static Object loadStructure (JsonValue content)
+	{
+		try
+		{
+			JsonSemantics.JsonObject envelope = ( JsonSemantics.JsonObject ) content;
+			String path = ( ( JsonSemantics.JsonString ) envelope.getMemberCalled ("Loader") ).getContent ();
+			return ( ( Portable.AsJson <Object> ) Class.forName (path).newInstance () ).fromJson (content);
+		} catch (Exception e) { throw new RuntimeException ("Persisted structure load failed", e); }
 	}
 
 
