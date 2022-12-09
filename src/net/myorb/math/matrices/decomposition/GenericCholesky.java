@@ -2,6 +2,7 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.*;
+import net.myorb.math.structures.loaders.DecomposedMatrix;
 import net.myorb.math.linalg.SolutionPrimitives;
 
 import net.myorb.math.expressions.algorithms.ClMathBIF;
@@ -43,10 +44,8 @@ public class GenericCholesky <T> extends GenericSupport <T>
 		public CholeskyDecomposition (Matrix <T> A)
 		{
 			this.N = A.getEdgeCount ();
-			this.vm = new ValueManager <T> ();
 			this.C = new Matrix <T> (N, N, mgr);
 		}
-		protected ValueManager <T> vm;
 		protected int N;
 
 		/**
@@ -54,9 +53,11 @@ public class GenericCholesky <T> extends GenericSupport <T>
 		 */
 		public void setS ()
 		{
+			this.vm = new ValueManager <T> ();
 			this.S = new Matrix <T> (N, N, mgr);
 			matOP.copyDiag (0, C, S);
 		}
+		protected ValueManager <T> vm;
 		protected Matrix <T> S;
 
 		/**
@@ -142,6 +143,7 @@ public class GenericCholesky <T> extends GenericSupport <T>
 		{
 			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
 			addTo (representation, "L", getL ()); addTo (representation, "C", C); addTo (representation, "D", getD ());
+			representation.addMemberNamed ("Loader", new JsonSemantics.JsonString (DecomposedMatrix.class.getCanonicalName ()));
 			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
 			return representation;
 		}

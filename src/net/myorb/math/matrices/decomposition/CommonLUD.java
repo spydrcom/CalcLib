@@ -3,7 +3,7 @@ package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.Matrix;
 import net.myorb.math.matrices.VectorAccess;
-
+import net.myorb.math.structures.loaders.DecomposedMatrix;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
@@ -193,12 +193,13 @@ public class CommonLUD <T> extends GenericSupport <T>
 		 * Decomposition transport
 		 */
 
-		/**
-		 * @return JSON representation of Decomposition
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
 		 */
-		public JsonValue toJson ()
+		public JsonValue toJson (ExpressionSpaceManager <T> manager)
 		{
 			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
+			representation.addMemberNamed ("Loader", new JsonSemantics.JsonString (DecomposedMatrix.class.getCanonicalName ()));
 			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
 			representation.addMemberNamed ("pivots", new JsonSemantics.JsonNumber (pivotCount));
 			addTo (representation, "A", A); addTo (representation, "P", P);
@@ -208,12 +209,12 @@ public class CommonLUD <T> extends GenericSupport <T>
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
-		public String toString () { return toJson ().toString (); }
+		public String toString () { return toJson (null).toString (); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (null), to); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)

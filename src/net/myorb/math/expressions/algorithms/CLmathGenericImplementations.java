@@ -24,21 +24,21 @@ public abstract class CLmathGenericImplementations<T>
 
 	protected CLmathGenericImplementations
 		(
-			SpaceManager<T> manager,
-			SpaceConversion<T> conversion,
-			ExtendedPowerLibrary<T> library,
-			Environment<T> environment
+			SpaceManager <T> manager,
+			SpaceConversion <T> conversion,
+			ExtendedPowerLibrary <T> library,
+			Environment <T> environment
 		)
 	{
-		super (manager);
+		super (environment);
 		this.manager = manager;
 		this.conversion = conversion;
-		this.environment = environment;
 		this.library = library;
 	}
-	SpaceManager<T> manager;
-	SpaceConversion<T> conversion;
-	ExtendedPowerLibrary<T> library;
+	SpaceManager <T> manager;
+	SpaceConversion <T> conversion;
+	ExtendedPowerLibrary <T> library;
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
@@ -47,7 +47,6 @@ public abstract class CLmathGenericImplementations<T>
 	{
 		this.environment = environment;
 	}
-	Environment<T> environment;
 
 
 	/*

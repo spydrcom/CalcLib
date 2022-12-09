@@ -1,9 +1,12 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.matrices.*;
+import net.myorb.math.structures.Loader;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.matrices.*;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
@@ -11,7 +14,6 @@ import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonReader;
 
 import net.myorb.data.abstractions.SimpleStreamIO;
-import net.myorb.data.abstractions.Portable;
 
 import java.io.File;
 
@@ -95,6 +97,7 @@ public class ClMathBIF
 	 * @param manager a manager for the data type of the value
 	 * @return the same value as was passed into the store request
 	 * @throws RuntimeException for value types that are not portable
+	 * @param <T> the data type used in value
 	 */
 	public static <T> ValueManager.GenericValue storeValue
 		(
@@ -199,19 +202,19 @@ public class ClMathBIF
 	/**
 	 * load a stored value
 	 * @param identifier the associated identification
-	 * @param manager a manager for the data type of the value
+	 * @param environment the core data source for this session
 	 * @return the value loaded using the given identifier
 	 * @throws RuntimeException for value not found
+	 * @param <T> the data type used in value
 	 */
 	public static <T> ValueManager.GenericValue loadValue
 		(
-			String identifier,
-			ExpressionSpaceManager <T> manager
+			String identifier, Environment <T> environment
 		)
 	throws RuntimeException
 	{
 		JsonValue imported = loadFrom (identifier, new File ("data/" + identifier + ".JSON"));
-		return loadFromValue ( ( JsonSemantics.JsonObject ) imported, manager);
+		return loadFromValue ( ( JsonSemantics.JsonObject ) imported, environment);
 	}
 
 	/**
@@ -234,14 +237,15 @@ public class ClMathBIF
 	/**
 	 * load a value based on type
 	 * @param JSON the JSON representation of a value
-	 * @param manager a manager for the data type of the value
+	 * @param environment the core data source for this session
 	 * @return the generic ValueManager wrapper for the value
 	 * @throws RuntimeException for internal errors
+	 * @param <T> the data type used in object
 	 */
 	public static <T> ValueManager.GenericValue loadFromValue
 		(
 			JsonSemantics.JsonObject JSON,
-			ExpressionSpaceManager <T> manager
+			Environment <T> environment
 		)
 	throws RuntimeException
 	{
@@ -249,7 +253,7 @@ public class ClMathBIF
 		(
 			JSON.getMemberCalled ("Content"),
 			( ( JsonSemantics.JsonString ) JSON.getMemberCalled ("Type") ).getContent (),
-			manager, new ValueManager <> ()
+			environment.getSpaceManager (), environment, environment.getValueManager ()
 		);
 	}
 
@@ -258,14 +262,17 @@ public class ClMathBIF
 	 * @param content the JSON representation of a value
 	 * @param typeName the name of the ValueManager data type
 	 * @param manager a manager for the data type of the value
-	 * @param vm a ValueManager object for conversions
-	 * @return the generic ValueManager wrapper for the value
+	 * @param environment the core data source for this session
+	 * @param vm a ValueManager object for type conversions
+	 * @return value as generic ValueManager type wrapper
 	 * @throws RuntimeException for internal errors
+	 * @param <T> the data type used in object
 	 */
 	public static <T> ValueManager.GenericValue loadFromValue
 		(
 			JsonValue content, String typeName,
 			ExpressionSpaceManager <T> manager,
+			Environment <T> environment,
 			ValueManager <T> vm
 		)
 	throws RuntimeException
@@ -304,7 +311,7 @@ public class ClMathBIF
 
 			case STRUCTURE:
 
-				return vm.newStructure (loadStructure (content));
+				return vm.newStructure (loadStructure (content, environment));
 
 			default: throw new RuntimeException ("Internal error");
 
@@ -315,15 +322,17 @@ public class ClMathBIF
 	/**
 	 * reconstruct a structure from JSON
 	 * @param content the JSON representation of the structure
+	 * @param environment the core data source for this session
 	 * @return the restored structure as a Java object
 	 */
-	@SuppressWarnings("unchecked") static Object loadStructure (JsonValue content)
+	@SuppressWarnings("unchecked") static <T> Object loadStructure
+			(JsonValue content, Environment <T> environment)
 	{
 		try
 		{
-			JsonSemantics.JsonObject envelope = ( JsonSemantics.JsonObject ) content;
+			JsonSemantics.JsonObject envelope = (JsonSemantics.JsonObject) content;
 			String path = ( ( JsonSemantics.JsonString ) envelope.getMemberCalled ("Loader") ).getContent ();
-			return ( ( Portable.AsJson <Object> ) Class.forName (path).newInstance () ).fromJson (content);
+			return ( ( Loader.PortableValueRestoration <T, Object> ) Class.forName (path).newInstance () ).fromJson (content, environment);
 		} catch (Exception e) { throw new RuntimeException ("Persisted structure load failed", e); }
 	}
 

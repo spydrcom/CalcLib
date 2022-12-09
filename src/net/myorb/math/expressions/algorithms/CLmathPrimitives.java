@@ -2,12 +2,13 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
-
-import net.myorb.math.SpaceManager;
 
 import java.util.List;
 
@@ -87,7 +88,7 @@ public abstract class CLmathPrimitives <T> extends CommonOperatorLibrary <T>
 			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 			{
 				List <ValueManager.GenericValue> P = getParameters (parameters);
-				return ClMathBIF.loadValue (P.get (0).toString (), manager);
+				return ClMathBIF.loadValue (P.get (0).toString (), environment);
 			}
 		};
 	}
@@ -411,12 +412,14 @@ public abstract class CLmathPrimitives <T> extends CommonOperatorLibrary <T>
 
 	protected CLmathPrimitives
 		(
-			SpaceManager <T> manager
+			Environment <T> environment
 		)
 	{
-		this.manager = (ExpressionSpaceManager <T>) manager;
+		this.manager = environment.getSpaceManager ();
+		this.environment = environment;
 	}
-	ExpressionSpaceManager <T> manager;
+	protected ExpressionSpaceManager <T> manager;
+	protected Environment <T> environment;
 
 
 }

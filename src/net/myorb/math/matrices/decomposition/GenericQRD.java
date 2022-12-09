@@ -2,6 +2,7 @@
 package net.myorb.math.matrices.decomposition;
 
 import net.myorb.math.matrices.*;
+import net.myorb.math.structures.loaders.DecomposedMatrix;
 import net.myorb.math.linalg.SolutionPrimitives;
 
 import net.myorb.math.expressions.algorithms.ClMathBIF;
@@ -39,7 +40,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 	/**
 	 * representation of matrix Decomposition using this QRD algorithm set
 	 */
-	public class QRDecomposition implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess
+	public class QRDecomposition implements SolutionPrimitives.Decomposition, ClMathBIF.FieldAccess, ValueManager.PortableValue <T>
 	{
 
 		public QRDecomposition (Matrix <T> A)
@@ -107,16 +108,17 @@ public class GenericQRD <T> extends GenericSupport <T>
 		 */
 		public String toString ()
 		{
-			return toJson ().toString ();
+			return toJson (null).toString ();
 		}
 
-		/**
-		 * @return JSON representation of QRDecomposition
+		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.ValueManager.PortableValue#toJson(net.myorb.math.expressions.ExpressionSpaceManager)
 		 */
-		public JsonValue toJson ()
+		public JsonValue toJson (ExpressionSpaceManager <T> manager)
 		{
 			JsonSemantics.JsonObject representation = new JsonSemantics.JsonObject ();
 			addTo (representation, "A", A); addTo (representation, "C", C); addTo (representation, "D", D);
+			representation.addMemberNamed ("Loader", new JsonSemantics.JsonString (DecomposedMatrix.class.getCanonicalName ()));
 			representation.addMemberNamed ("Solution", new JsonSemantics.JsonString (solutionClassPath));
 			return representation;
 		}
@@ -124,7 +126,7 @@ public class GenericQRD <T> extends GenericSupport <T>
 		/* (non-Javadoc)
 		 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 		 */
-		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (), to); }
+		public void store (SimpleStreamIO.TextSink to) { storeDecomposition (toJson (null), to); }
 
 		/**
 		 * transport representation (store) for use in CalcTools

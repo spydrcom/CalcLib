@@ -99,7 +99,7 @@ public class ClMathSysEQ  <T> extends InstanciableFunctionLibrary <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getIterationConsumerDescription()
 	 */
-	public Map<String, Object> getIterationConsumerDescription ()
+	public Map <String, Object> getIterationConsumerDescription ()
 	{
 		return new Parameterization.Hash (sym, "CLASSPATH", this.getClass (), options);
 	}
@@ -114,6 +114,25 @@ public class ClMathSysEQ  <T> extends InstanciableFunctionLibrary <T>
 	}
 
 
+	/**
+	 * build a Solution Manager for restored primitives 
+	 * @param solution the solution primitives manager for the data
+	 * @param options the configuration parameter for the instance
+	 * @param environment the core data source for this session
+	 * @param name the name of the instance being constructed
+	 * @return a SolutionManager for this library type
+	 * @param <T> the data type used in solution
+	 */
+	public static <T> SolutionManager <T> getSolutionManagerFor
+		(
+			SolutionPrimitives <T> solution, Map <String, Object> options,
+			Environment <T> environment, String name
+		)
+	{
+		return new SysEQTool <> (name, Parameterization.copy (options), solution, environment);
+	}
+
+
 }
 
 
@@ -125,6 +144,19 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 		SymbolMap.Named, SymbolMap.VariableLookup
 {
 
+	public SysEQTool
+		(
+			String name, Parameterization.Hash options,
+			SolutionPrimitives <T> solution,
+			Environment <T> environment
+		)
+	{
+		this (name, options);
+		this.solution = solution;
+		this.solutionPath = solution.getClass ().getCanonicalName ();
+		this.extractEnvironment (environment);
+	}
+
 	public SysEQTool (String name, Parameterization.Hash options)
 	{
 		this.configuration = new Configuration (options);
@@ -135,23 +167,35 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 	 * provide the environment to the tool
 	 * @param environment the session control structure
 	 */
-	public void setEnvironment (Environment<T> environment)
+	public void setEnvironment (Environment <T> environment)
 	{
 		this.buildSolution
 		(
 			this.configuration.getParameter ("solution"),
 			parameterFrom (this.environment = environment)
 		);
-		System.out.println ("Solution built: " + solution.getClass ().getCanonicalName ());
-		this.vm = environment.getValueManager ();
+		// System.out.println ("Solution built: " + solution.getClass ().getCanonicalName ());
+		this.extractEnvironment (environment);
 	}
-	protected Environment<T> environment;
 
 	/**
+	 * pull manager objects from session environment
+	 * @param environment the session control structure
+	 */
+	public void extractEnvironment (Environment <T> environment)
+	{
+		this.vm = environment.getValueManager ();
+		this.mgr = environment.getSpaceManager ();
+		this.environment = environment;
+	}
+	protected Environment <T> environment;
+
+	/**
+	 * prepare parameter set for solution constructor
 	 * @param environment the session control structure
 	 * @return the space manager taken from the environment wrapped as a reflection parameter
 	 */
-	public ObjectManagement.ObjectList parameterFrom (Environment<T> environment)
+	public ObjectManagement.ObjectList parameterFrom (Environment <T> environment)
 	{
 		ObjectManagement.ObjectList
 			constructorParameters = new ObjectManagement.ObjectList ();
@@ -161,18 +205,19 @@ class SysEQTool <T> implements ClMathSysEQ.SolutionManager <T>,
 	protected ExpressionSpaceManager <T> mgr;
 
 	/**
+	 * do reflection construction for solution path
 	 * @param solutionPath class path to the solution object
 	 * @param parameter the space manager taken from the environment
 	 */
-	@SuppressWarnings("unchecked")
-	public void buildSolution
+	@SuppressWarnings("unchecked") public void buildSolution
 		(
 			String solutionPath, ObjectManagement.ObjectList parameter
 		)
 	{
 		try
 		{
-			Class<?> classDescriptor = Class.forName (this.solutionPath = solutionPath);
+			Class <?> classDescriptor =
+					Class.forName (this.solutionPath = solutionPath);
 			Object o = ObjectManagement.doConstruct (classDescriptor, parameter);
 			this.solution = (SolutionPrimitives <T>) o;
 		}
