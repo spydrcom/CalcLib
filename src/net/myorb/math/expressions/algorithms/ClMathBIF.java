@@ -160,7 +160,7 @@ public class ClMathBIF
 	 * process primitive elements
 	 * @param value a generic version of the value
 	 * @param type the ValueManager assessment of type
-	 * @param manager
+	 * @param manager a manager for the data type of the value
 	 * @param vm a ValueManager object for conversions
 	 * @return the JSON representation for the value
 	 */
