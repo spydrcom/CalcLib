@@ -24,16 +24,22 @@ public class ClMathToolInstanceFoundation <T> implements SymbolMap.Named, Symbol
 	protected Environment <T> environment;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
-	 */
-	public String
-		getName () { return name; }
-	protected String name;
-
-	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.Named#getSymbolType()
 	 */
-	public SymbolMap.SymbolType getSymbolType () { return SymbolMap.SymbolType.CONSTANT; }
+	public SymbolMap.SymbolType getSymbolType () { return symbolType; }
+	protected SymbolMap.SymbolType symbolType = SymbolMap.SymbolType.CONSTANT;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#getValue()
+	 */
+	public ValueManager.GenericValue getValue () { return vm.newStructure (this); }
+	protected ValueManager <T> vm;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.splines.SplineTool.Algorithm#getConfiguration()
+	 */
+	public Configuration getConfiguration () { return configuration; }
+	protected Configuration configuration;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#rename(java.lang.String)
@@ -41,17 +47,9 @@ public class ClMathToolInstanceFoundation <T> implements SymbolMap.Named, Symbol
 	public void rename (String to) {}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#getValue()
+	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
 	 */
-	public ValueManager.GenericValue
-		getValue () { return vm.newStructure (this); }
-	protected ValueManager <T> vm;
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.computational.splines.SplineTool.Algorithm#getConfiguration()
-	 */
-	public Configuration
-		getConfiguration () { return configuration; }
-	protected Configuration configuration;
+	public String getName () { return name; }
+	protected String name;
 
 }
