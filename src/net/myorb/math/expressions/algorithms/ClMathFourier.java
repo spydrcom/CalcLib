@@ -1,19 +1,18 @@
 
 package net.myorb.math.expressions.algorithms;
 
-import net.myorb.math.expressions.tree.RangeNodeDigest;
-import net.myorb.math.expressions.evaluationstates.Environment;
-
-import net.myorb.math.expressions.symbols.IterationConsumer;
-import net.myorb.math.expressions.symbols.LibraryObject;
-
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.symbols.IterationConsumer;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
+
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.SymbolMap;
 
 import net.myorb.math.computational.integration.FourierNucleus;
 import net.myorb.math.computational.TrapezoidIntegration;
+import net.myorb.math.computational.Parameterization;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 
@@ -24,34 +23,18 @@ import java.util.Map;
  * a manager for building Fourier Transform consumer objects 
  * @author Michael Druckman
  */
-public class ClMathFourier extends InstanciableFunctionLibrary<ComplexValue<Double>>
-	implements SymbolMap.FactoryForImports
+public class ClMathFourier
+	extends ClMathLibraryFoundation <ComplexValue<Double>>
 {
 
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
+	 * @see net.myorb.math.expressions.algorithms.ClMathLibraryFoundation#generateTool(java.lang.String)
 	 */
-	public SymbolMap.Named importSymbolFrom
-	(String named, Map<String, Object> configuration)
+	public SymbolMap.Named generateTool (String named)
 	{
-		this.sym = named;
-		this.options = configuration;
 		return new TransformAbstraction (named);
 	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)
-	 */
-	public SymbolMap.Named getInstance (String sym, LibraryObject<ComplexValue<Double>> lib)
-	{
-		this.sym = sym;
-		this.options = lib.getParameterization ();
-		return new TransformAbstraction (sym);
-	}
-	protected Map<String, Object> options;
-	protected String sym;
 
 
 	/* (non-Javadoc)
@@ -72,8 +55,8 @@ public class ClMathFourier extends InstanciableFunctionLibrary<ComplexValue<Doub
 	 */
 	public IterationConsumer buildIterationConsumer (Map<String, Object> options)
 	{
-		this.options = options;
 		this.sym = options.get ("SYMBOL").toString ();
+		this.options = Parameterization.copy (options);
 		TransformAbstraction transform = new TransformAbstraction (sym);
 		return transform.getIterationConsumer ();
 	}
