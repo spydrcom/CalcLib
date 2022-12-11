@@ -95,6 +95,9 @@ class SysEQTool <T> extends ClMathToolInstanceFoundation <T>
 {
 
 
+	public SysEQTool (String name, Parameterization.Hash options)
+	{ this.name = name; this.configuration = new Configuration (options); }
+
 	public SysEQTool
 		(
 			String name, Parameterization.Hash options,
@@ -109,41 +112,14 @@ class SysEQTool <T> extends ClMathToolInstanceFoundation <T>
 	}
 
 
-	public SysEQTool (String name, Parameterization.Hash options)
-	{
-		this.configuration = new Configuration (options);
-		this.name = name;
-	}
-
-
 	/**
 	 * provide the environment to the tool
 	 * @param environment the session control structure
 	 */
 	public void setEnvironment (Environment <T> environment)
-	{
-		this.buildSolution
-		(
-			this.configuration.getParameter ("solution"),
-			parameterFrom (this.environment = environment)
-		);
-		// System.out.println ("Solution built: " + solution.getClass ().getCanonicalName ());
-		this.extractEnvironment (environment);
-	}
-
-
-	/**
-	 * prepare parameter set for solution constructor
-	 * @param environment the session control structure
-	 * @return the space manager taken from the environment wrapped as a reflection parameter
-	 */
-	public ObjectManagement.ObjectList parameterFrom (Environment <T> environment)
-	{
-		ObjectManagement.ObjectList
-			constructorParameters = new ObjectManagement.ObjectList ();
-		constructorParameters.add (mgr = environment.getSpaceManager ());
-		return constructorParameters;
-	}
+	{ this.extractEnvironment (environment); this.configureSolution (); }
+	void configureSolution () { this.buildSolution (this.getSolutionPath ()); }
+	String getSolutionPath () { return this.configuration.getParameter ("solution"); }
 
 
 	/**
@@ -151,22 +127,10 @@ class SysEQTool <T> extends ClMathToolInstanceFoundation <T>
 	 * @param solutionPath class path to the solution object
 	 * @param parameter the space manager taken from the environment
 	 */
-	@SuppressWarnings("unchecked") public void buildSolution
-		(
-			String solutionPath, ObjectManagement.ObjectList parameter
-		)
+	public void buildSolution (String solutionPath)
 	{
-		try
-		{
-			Class <?> classDescriptor =
-					Class.forName (this.solutionPath = solutionPath);
-			Object o = ObjectManagement.doConstruct (classDescriptor, parameter);
-			this.solution = (SolutionPrimitives <T>) o;
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException ("Solution build failed", e);
-		}
+		try { generateSolution (this.solutionPath = solutionPath); }
+		catch (Exception e) { throw new RuntimeException ("Solution build failed", e); }
 	}
 	protected String solutionPath;
 
@@ -174,8 +138,9 @@ class SysEQTool <T> extends ClMathToolInstanceFoundation <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProvider#provideSolution()
 	 */
-	public SolutionPrimitives <T>
-		provideSolution () { return solution; }
+	public SolutionPrimitives <T> provideSolution () { return solution; }
+	@SuppressWarnings("unchecked") void generateSolution (String solutionPath) throws Exception
+	{ this.solution = ( SolutionPrimitives <T> ) ObjectManagement.doConstruct (solutionPath, this.mgr); }
 	protected SolutionPrimitives <T> solution;
 
 
@@ -197,14 +162,14 @@ class SysEQTool <T> extends ClMathToolInstanceFoundation <T>
 		SolutionProduct (SolutionPrimitives.Decomposition D) { setProductContent (D); }
 
 		/* (non-Javadoc)
+		 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProduct#getProduct()
+		 */
+		public Decomposition getProduct () { return (Decomposition) this.content; }
+
+		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProvider#provideSolution()
 		 */
 		public SolutionPrimitives <T> provideSolution () { return solution; }
-
-		/* (non-Javadoc)
-		 * @see net.myorb.math.expressions.algorithms.ClMathSysEQ.SolutionProduct#getProduct()
-		 */
-		public Decomposition getProduct () { return (Decomposition) content; }
 
 	}
 
