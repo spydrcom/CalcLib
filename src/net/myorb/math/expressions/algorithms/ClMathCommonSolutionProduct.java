@@ -6,6 +6,12 @@ import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
+/**
+ * manage parameterization of solution product representation.
+ * - boiler-plate for data passed in expression evaluations as structure data
+ * @param <T> data type being processed
+ * @author Michael Druckman
+ */
 public class ClMathCommonSolutionProduct <T>
 	implements ClMathBIF.FieldAccess, ValueManager.PortableValue <T>
 {

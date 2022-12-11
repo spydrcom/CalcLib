@@ -14,7 +14,6 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 public class ClMathIterative <T> extends ClMathLibraryFoundation <T>
 {
 
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.ClMathLibraryFoundation#generateTool(java.lang.String)
 	 */
@@ -24,7 +23,6 @@ public class ClMathIterative <T> extends ClMathLibraryFoundation <T>
 		tool.setEnvironment (environment);
 		return tool;
 	}
-
 
 }
 

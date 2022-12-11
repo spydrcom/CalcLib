@@ -1,10 +1,12 @@
 
 package net.myorb.math.expressions.algorithms;
 
+import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+
 import net.myorb.math.expressions.ValueManager.GenericValue;
-import net.myorb.math.expressions.tree.RangeNodeDigest;
 import net.myorb.math.expressions.ValueManager;
 
 /**
@@ -19,9 +21,9 @@ public class ClMathMultiDimensionalSplineQuad <T>
 
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.ClMathSplineQuad#getQuadAbstraction(java.lang.String)
+	 * @see net.myorb.math.expressions.algorithms.ClMathSplineQuad#generateTool(java.lang.String)
 	 */
-	protected QuadAbstraction getQuadAbstraction (String named)
+	public SymbolMap.Named generateTool (String named)
 	{
 		return new MultiDimensionalSplineQuadAbstraction (named);
 	}

@@ -15,7 +15,6 @@ import net.myorb.math.expressions.SymbolMap;
 public class ClMathToolBoilerPlate <T> extends ClMathLibraryFoundation <T>
 {
 
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.algorithms.ClMathLibraryFoundation#generateTool(java.lang.String)
 	 */
@@ -25,7 +24,6 @@ public class ClMathToolBoilerPlate <T> extends ClMathLibraryFoundation <T>
 		tool.setEnvironment (environment);
 		return tool;
 	}
-
 
 }
 

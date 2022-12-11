@@ -2,12 +2,20 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.integration.Configuration;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.SymbolMap;
-import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.evaluationstates.Environment;
 
-public class ClMathToolInstanceFoundation <T> implements SymbolMap.Named, SymbolMap.VariableLookup
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.SymbolMap;
+
+/**
+ * manage parameterization of solution product representation.
+ * - boiler-plate for data posted to symbol table supporting library instances
+ * @param <T> data type being processed
+ * @author Michael Druckman
+ */
+public class ClMathToolInstanceFoundation <T>
+	implements SymbolMap.Named, SymbolMap.VariableLookup
 {
 
 	/**
@@ -27,6 +35,7 @@ public class ClMathToolInstanceFoundation <T> implements SymbolMap.Named, Symbol
 	 * @see net.myorb.math.expressions.SymbolMap.Named#getSymbolType()
 	 */
 	public SymbolMap.SymbolType getSymbolType () { return symbolType; }
+	public void setSymbolType (SymbolMap.SymbolType symbolType) { this.symbolType = symbolType; }
 	protected SymbolMap.SymbolType symbolType = SymbolMap.SymbolType.CONSTANT;
 
 	/* (non-Javadoc)

@@ -41,8 +41,8 @@ class SplineTool <T> extends ClMathToolInstanceFoundation <T>
 
 	public SplineTool (String name, Parameterization.Hash options)
 	{
+		this.setSymbolType (SymbolMap.SymbolType.UNARY);
 		this.configuration = new Configuration (options);
-		this.symbolType = SymbolMap.SymbolType.UNARY;
 		this.name = name;
 	}
 

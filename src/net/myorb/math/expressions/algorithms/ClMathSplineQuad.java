@@ -2,16 +2,11 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.SymbolMap;
-
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
-//import net.myorb.math.expressions.symbols.AbstractVectorReduction.Range;
 import net.myorb.math.expressions.symbols.IterationConsumer;
-import net.myorb.math.expressions.symbols.LibraryObject;
-
 import net.myorb.math.expressions.tree.RangeNodeDigest;
 
 import net.myorb.math.computational.integration.RealDomainIntegration;
@@ -34,32 +29,12 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 	static final boolean TRACE = false;
 
 
-	protected QuadAbstraction getQuadAbstraction (String named)
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.algorithms.ClMathLibraryFoundation#generateTool(java.lang.String)
+	 */
+	public SymbolMap.Named generateTool (String named)
 	{
 		return new SplineQuadAbstraction (named);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.SymbolMap.FactoryForImports#importSymbolFrom(java.lang.String, java.util.Map)
-	 */
-	public SymbolMap.Named importSymbolFrom
-	(String named, Map<String, Object> configuration)
-	{
-		this.sym = named;
-		this.options = Parameterization.copy (configuration);
-		return getQuadAbstraction (named);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getInstance(java.lang.String, net.myorb.math.expressions.symbols.LibraryObject)
-	 */
-	public SymbolMap.Named getInstance (String sym, LibraryObject<T> lib)
-	{
-		this.sym = sym;
-		this.options = Parameterization.copy (lib.getParameterization ());
-		return getQuadAbstraction (sym);
 	}
 
 
@@ -71,17 +46,8 @@ public class ClMathSplineQuad<T> extends ClMathQuad<T>
 		this.options =
 			Parameterization.copy (options);
 		this.sym = options.get ("SYMBOL").toString ();
-		QuadAbstraction quad = getQuadAbstraction (sym);
+		QuadAbstraction quad = new SplineQuadAbstraction (sym);
 		return quad.getIterationConsumer ();
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.algorithms.InstanciableFunctionLibrary#getIterationConsumerDescription()
-	 */
-	public Map<String, Object> getIterationConsumerDescription ()
-	{
-		return new Parameterization.Hash (sym, "CLASSPATH", ClMathSplineQuad.class, options);
 	}
 
 
