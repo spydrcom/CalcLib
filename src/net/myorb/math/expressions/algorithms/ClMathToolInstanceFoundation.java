@@ -53,7 +53,7 @@ public class ClMathToolInstanceFoundation <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.VariableLookup#rename(java.lang.String)
 	 */
-	public void rename (String to) {}
+	public void rename (String to) { this.name = to; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
