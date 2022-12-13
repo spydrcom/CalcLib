@@ -43,7 +43,7 @@ public class PiFactorization
 		FactorizationCore.mgr.setDisplayPrecision (1200);
 		System.out.println ("PI"); System.out.println ();
 		System.out.println (APX = FactorizationCore.mgr.toDecimalString (approx));
-		System.out.println (approx);
+		System.out.println (RamanujanTest.toRatio (approx));
 		System.out.println ();
 
 		System.out.println ();

@@ -37,7 +37,8 @@ public class RamanujanTest extends Ramanujan <Factorization>
 	public static void main (String[] a)
 	{
 		FactorizationCore.init (1000*1000);
-		System.out.println (new RamanujanTest ().run (15));
+		System.out.println (toRatio (new RamanujanTest ().run (15)));
 	}
+	public static String toRatio (Factorization x) { return FactorizationCore.mgr.toPrimeFactors (x); }
 
 }
