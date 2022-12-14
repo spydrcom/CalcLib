@@ -1,21 +1,21 @@
 
-package net.myorb.testing;
+package net.myorb.testing.factors;
 
-import net.myorb.math.computational.iterative.Ramanujan;
+import net.myorb.math.computational.iterative.Taylor;
+
 import net.myorb.math.primenumbers.Factorization;
 
 /**
- * evaluation of the Ramanujan series for computation of PI
+ * evaluation of the Taylor series for computation of e
  * - this is the entry point and driver for specification of the iteration count
  * @author Michael Druckman
  */
-public class RamanujanTest extends Ramanujan <Factorization>
+public class TaylorTest extends Taylor <Factorization>
 {
 
-	RamanujanTest ()
+	TaylorTest ()
 	{
 		super (FactorizationCore.mgr);
-		this.init ();
 	}
 
 	/**
@@ -24,9 +24,9 @@ public class RamanujanTest extends Ramanujan <Factorization>
 	 */
 	public Factorization run (int iterations)
 	{
-		initializeSummation ();
+		initializeSummation (manager.getOne ());
 		for (int i=1; i<=iterations; i++)
-		{ applyIteration (); }
+		{ applyIteration (manager.getOne ()); }
 		return summation;
 	}
 
@@ -37,8 +37,9 @@ public class RamanujanTest extends Ramanujan <Factorization>
 	public static void main (String[] a)
 	{
 		FactorizationCore.init (1000*1000);
-		System.out.println (toRatio (new RamanujanTest ().run (15)));
+
+		System.out.println (FactorizationCore.toRatio
+			(new TaylorTest ().run (125)));
 	}
-	public static String toRatio (Factorization x) { return FactorizationCore.mgr.toPrimeFactors (x); }
 
 }

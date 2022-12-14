@@ -1,5 +1,5 @@
 
-package net.myorb.testing;
+package net.myorb.testing.factors;
 
 import net.myorb.math.primenumbers.Factorization;
 
@@ -13,10 +13,12 @@ import net.myorb.math.computational.iterative.NewtonRaphson;
 public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 {
 
-	NewtonRaphsonIterativeTest ()
+	NewtonRaphsonIterativeTest (int value)
 	{
 		super (FactorizationCore.mgr);
+		this.functionDescription = new int [] {-value, 0, 1};
 	}
+	protected int [] functionDescription;
 
 	/**
 	 * entry point for running the test
@@ -25,7 +27,9 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	public static void main (String[] a)
 	{
 		FactorizationCore.init (1000*1000);
-		System.out.println (new NewtonRaphsonIterativeTest ().run (10));
+
+		System.out.println (FactorizationCore.toRatio
+		(new NewtonRaphsonIterativeTest (2).run (10)));
 	}
 
 	/**
@@ -34,7 +38,7 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	 */
 	void initializeFunction ()
 	{
-		establishFunction (G.coefficients (new int [] {-2, 0, 1}));
+		establishFunction (G.coefficients (functionDescription));
 		setApproximationOfX (manager.newScalar (1));
 	}
 
@@ -63,7 +67,21 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.iterative.IterationFoundations#add(java.lang.StringBuffer)
 	 */
-	public void add (StringBuffer buffer) { buffer.append ("X^n = ").append (toString (testVal)).append ("\n"); }
+	public void add (StringBuffer buffer)
+	{ buffer.append ("X^n = ").append (toString (testVal)).append ("\n"); }
 	Factorization testVal;
+
+	/**
+	 * compute PHI with SQRT 5 
+	 * @param radical5 the computed value of SQRT 5 with adequate precision
+	 * @return the computed approximation of PHI
+	 */
+	public static Factorization computePhi (Factorization radical5)
+	{
+		Factorization HALF = FactorizationCore.mgr.invert (FactorizationCore.mgr.newScalar (2));
+		Factorization radical5plus1 = FactorizationCore.mgr.add (FactorizationCore.mgr.getOne (), radical5);
+		return FactorizationCore.mgr.multiply (HALF, radical5plus1);
+	}
+	// phi = ( 1 + sqrt 5 ) / 2
 
 }

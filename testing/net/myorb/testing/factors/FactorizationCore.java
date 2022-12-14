@@ -1,5 +1,5 @@
 
-package net.myorb.testing;
+package net.myorb.testing.factors;
 
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.primenumbers.FactorizationImplementation;
@@ -21,5 +21,7 @@ public class FactorizationCore
 	}
 	public static ExpressionFactorizedFieldManager mgr = new ExpressionFactorizedFieldManager ();
 	public static FactorizationImplementation support;
+
+	public static String toRatio (Factorization x) { return mgr.toPrimeFactors (x); }
 
 }
