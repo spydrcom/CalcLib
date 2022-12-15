@@ -14,6 +14,11 @@ import net.myorb.math.primenumbers.Factorization;
 public class FactorizationCore
 {
 
+
+	/**
+	 * initialize a table of composites for use in factorizations
+	 * @param tableSize the number of composites to compute
+	 */
 	public static void init (int tableSize)
 	{
 		Factorization.setImplementation
@@ -23,16 +28,15 @@ public class FactorizationCore
 	public static ExpressionFactorizedFieldManager mgr = new ExpressionFactorizedFieldManager ();
 	public static FactorizationImplementation support;
 
-	public static String toRatio (Factorization x) { return mgr.toPrimeFactors (x); }
-
 
 	/**
+	 * provide data describing the precision of samples
 	 * @param approx the Factorization approximation
 	 * @param REF the text of the reference value
 	 * @param tag a display name for the value
 	 * @param precision digits assumed
 	 */
-	static void display
+	public static void display
 		(Factorization approx, String REF, String tag, int precision)
 	{
 
@@ -50,6 +54,14 @@ public class FactorizationCore
 		System.out.println ();
 
 	}
+
+
+	/**
+	 * convert to fraction display
+	 * @param x the value to be displayed
+	 * @return the text of the display
+	 */
+	public static String toRatio (Factorization x) { return mgr.toPrimeFactors (x); }
 
 
 }

@@ -2,7 +2,6 @@
 package net.myorb.math.computational.iterative;
 
 import net.myorb.math.computational.Combinatorics;
-
 import net.myorb.math.SpaceManager;
 
 /**
@@ -20,6 +19,43 @@ public class Taylor <T> extends IterationFoundations <T>
 	public Taylor
 	(SpaceManager <T> manager) { this.manager = manager; }
 	protected SpaceManager <T> manager;
+
+
+	/**
+	 * run the computation using computer and initial value
+	 * @param iterations the number to be run
+	 * @param parameter function parameter
+	 * @return the computed result
+	 */
+	public T run
+		(
+			int iterations,
+			IterationTools.DerivativeComputer <T> computer,
+			T parameter
+		)
+	{
+		initializeFunction (parameter);
+		return run (iterations, computer);
+	}
+
+
+	/**
+	 * process a full bulk run of term evaluations
+	 * @param iterations number of iterations to run
+	 * @return the computed sum after specified iterations
+	 */
+	public T run
+		(
+			int iterations,
+			IterationTools.DerivativeComputer <T> computer
+		)
+	{
+		initializeSummation
+		(computer.nTHderivative (0));
+		for (int n = 1; n <= iterations; n++)
+		{ applyIteration (computer.nTHderivative (n)); }
+		return summation;
+	}
 
 
 	/**

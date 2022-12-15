@@ -19,10 +19,22 @@ public class IterationTools <T>
 	protected T ONE, Z;
 
 
+	/**
+	 * import arithmetic
+	 * @param N value of scalar
+	 * @return the scalar wrapped by the manager
+	 */
 	public T S (int N) { return manager.newScalar (N); }
+	public T oneOver (T x) { return manager.invert (x); }
 	public T productOf (T x, T y) { return manager.multiply (x, y); }
 	public T POW (T x, int y) { return manager.pow (x, y); }
 
+
+	/**
+	 * factorial of an integer
+	 * @param N the parameter to factorial
+	 * @return the factorial value wrapped as a scalar
+	 */
 	public T F (int N)
 	{
 		T product = ONE; for (int n = N; n > 1; n--)
@@ -30,33 +42,54 @@ public class IterationTools <T>
 		return product;
 	}
 
-	public T factorialProductOf (T scalar, int n)
+
+	/**
+	 * short-circuit around factorial
+	 * @param P a value check for zero otherwise a factor
+	 * @param pow the power of n to use as a factor
+	 * @param n the parameter to use with factorial
+	 * @return product of derivative and factorial
+	 */
+	public T primePow (T P, int pow, int n)
 	{
-		if (manager.isZero (scalar)) return scalar;
-		return manager.multiply (scalar, F(n));
+		if (manager.isZero (P)) return P;
+		return powTimes (productOf (P, F(n)), pow, n);
+	}
+	T powTimes (T PFn, int pow, int n)
+	{
+		if (pow == 0) return PFn;
+		return productOf (PFn, POW (S (n), pow));
 	}
 
-	public T factorialProductOf (T prime, T scalar, int n)
-	{
-		if (manager.isZero (prime)) return scalar;
-		return manager.multiply (manager.multiply (scalar, F(n)), prime);
-	}
 
+	/*
+	 * cyclic derivatives
+	 */
 
 	public static final int []
 		SIN_PRIME = new int [] {0, 1, 0, -1},
 		COS_PRIME = new int [] {1, 0, -1, 0};
-	public T sinPrime (int n) { return S ( SIN_PRIME [n % 4] ); }
-	public T cosPrime (int n) { return S ( COS_PRIME [n % 4] ); }
-	public T sinhPrime (int n) { return S ( (n%2==0)? 0: 1 ); }
-	public T coshPrime (int n) { return S ( (n%2==1)? 0: 1 ); }
+	public T sinPrime (int n) { return S ( SIN_PRIME [n % 4] ); }	// alternating sign of odd powers
+	public T cosPrime (int n) { return S ( COS_PRIME [n % 4] ); }	// alternating sign of even powers
+	public T coshPrime (int n) { return S ( (n%2==1)? 0: 1 ); }		// even powers
+	public T sinhPrime (int n) { return S ( (n%2==0)? 0: 1 ); }		// odd powers
+
+
+	// access to derivatives
+
+	/**
+	 * define the algorithm which gives the Nth derivative
+	 * @param <T> the data type manager
+	 */
+	public interface DerivativeComputer <T> { T nTHderivative (int n); }
+
+
+	// exponentials
+
+	public DerivativeComputer <T> getExpDerivativeComputer () { return (n) -> ONE; }
 
 
 	// the trigonometric functions
-
-	public interface DerivativeComputer <T> { T nTHderivative (int k); }
-
-	public DerivativeComputer <T> getExpDerivativeComputer () { return (n) -> ONE; }
 
 	public DerivativeComputer <T> getSinDerivativeComputer () { return (n) -> sinPrime (n); }
 	public DerivativeComputer <T> getCosDerivativeComputer () { return (n) -> cosPrime (n); }
@@ -64,48 +97,49 @@ public class IterationTools <T>
 	public DerivativeComputer <T> getSinhDerivativeComputer () { return (n) -> sinhPrime (n); }
 	public DerivativeComputer <T> getCoshDerivativeComputer () { return (n) -> coshPrime (n); }
 
-	public DerivativeComputer <T>
-			getAtanDerivativeComputer ()
-	{ return (n) -> factorialProductOf ( sinPrime (n), n-1 ); }
+	public DerivativeComputer <T>  getAtanDerivativeComputer  () { return (n) -> primePow ( sinPrime  (n), 0, n-1 ); }
+	public DerivativeComputer <T> getArtanhDerivativeComputer () { return (n) -> primePow ( sinhPrime (n), 0, n-1 ); }
 
-	public DerivativeComputer <T>
-			getArtanhDerivativeComputer ()
-	{ return (n) -> factorialProductOf ( sinhPrime (n), n-1 ); }
 
 	// The polylogarithms
 
-	public DerivativeComputer <T> getLi2DerivativeComputer ()
-	{ return (n) -> n==0? Z: factorialProductOf (POW (S (n), -2), n); }
+	public DerivativeComputer <T> getLi2DerivativeComputer () { return (n) -> n==0? Z: primePow (ONE, -2, n); }
+	public DerivativeComputer <T> getLi3DerivativeComputer () { return (n) -> n==0? Z: primePow (ONE, -3, n); }
 
-	public DerivativeComputer <T> getLi3DerivativeComputer ()
-	{ return (n) -> n==0? Z: factorialProductOf (POW (S (n), -3), n); }
 
 	// The Legendre chi functions 
 
-	public DerivativeComputer <T> getChi2DerivativeComputer ()
-	{ return (n) -> factorialProductOf (sinhPrime (n), POW (S (n), -2), n); }
+	public DerivativeComputer <T> getChi2DerivativeComputer () { return (n) -> primePow (sinhPrime (n), -2, n); }
+	public DerivativeComputer <T> getChi3DerivativeComputer () { return (n) -> primePow (sinhPrime (n), -3, n); }
 
-	public DerivativeComputer <T> getChi3DerivativeComputer ()
-	{ return (n) -> factorialProductOf (sinhPrime (n), POW (S (n), -3), n); }
 
 	// inverse tangent integrals
 
-	public DerivativeComputer <T> getTi2DerivativeComputer ()
-	{ return (n) -> factorialProductOf (sinPrime (n), POW (S (n), -2), n); }
+	public DerivativeComputer <T> getTi2DerivativeComputer () { return (n) -> primePow (sinPrime (n), -2, n); }
+	public DerivativeComputer <T> getTi3DerivativeComputer () { return (n) -> primePow (sinPrime (n), -3, n); }
 
-	public DerivativeComputer <T> getTi3DerivativeComputer ()
-	{ return (n) -> factorialProductOf (sinPrime (n), POW (S (n), -3), n); }
 
 	// elliptic integrals 
 
-	public DerivativeComputer <T> getKDerivativeComputer ()
-	{ return (n) -> (n%2==1)? Z: getK (n); }
+	public DerivativeComputer <T> getKDerivativeComputer () { return (n) -> (n%2==1)? Z: getK (n); }	// * pi/2
+	public DerivativeComputer <T> getEDerivativeComputer () { return (n) -> (n%2==1)? Z: getE (n); }
 
-	public DerivativeComputer <T> getEDerivativeComputer ()
-	{ return (n) -> (n%2==1)? Z: getE (n); }
 
-	T getK (int n) { return null; }
-	T getE (int n) { return null; }
+	T getE (int n)
+	{
+		return productOf ( getK (n), oneOver (S ( 1 - n )) );
+	}
+
+	T getK (int n)
+	{
+		T ratio =
+			productOf
+			(
+				POW ( F(n), 3 ),
+				POW ( F(n/2), -4 )
+			);
+		return productOf (ratio, POW ( S(16), -n ));
+	}
 
 
 }

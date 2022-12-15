@@ -7,7 +7,7 @@ import net.myorb.math.primenumbers.Factorization;
  * computations of PI and E as a test of the Factorization library
  * @author Michael Druckman
  */
-public class IterativeAlgorithmTests
+public class IterativeAlgorithmTests extends FactorizationCore
 {
 
 
@@ -29,8 +29,8 @@ public class IterativeAlgorithmTests
 	public static final int
 		DISPLAY_PRECISION = 3200,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
-		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 20,
-		ROOT_ITERATIONS = 8
+		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 10,
+		ROOT_ITERATIONS = 7
 	;
 
 
@@ -83,14 +83,14 @@ public class IterativeAlgorithmTests
 	public static void main (String[] a)
 	{
 
-		FactorizationCore.init (COMPOSITE_EVALUATION_TABLE_SIZE);
+		init (COMPOSITE_EVALUATION_TABLE_SIZE);
 
 		computePi (); computePhi (); computeE ();
 
-		FactorizationCore.display (phi, AccuracyCheck.PHI_REF, "PHI", DISPLAY_PRECISION);
-		FactorizationCore.display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2", DISPLAY_PRECISION);
-		FactorizationCore.display (taylor, AccuracyCheck.E_REF, "E", DISPLAY_PRECISION);
-		FactorizationCore.display (pi, AccuracyCheck.PI_REF, "PI", DISPLAY_PRECISION);
+		display (phi, AccuracyCheck.PHI_REF, "PHI", DISPLAY_PRECISION);
+		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2", DISPLAY_PRECISION);
+		display (taylor, AccuracyCheck.E_REF, "E", DISPLAY_PRECISION);
+		display (pi, AccuracyCheck.PI_REF, "PI", DISPLAY_PRECISION);
 
 	}
 

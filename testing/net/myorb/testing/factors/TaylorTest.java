@@ -14,37 +14,38 @@ import net.myorb.math.primenumbers.Factorization;
 public class TaylorTest extends Taylor <Factorization>
 {
 
-	TaylorTest ()
+
+	public TaylorTest ()
 	{
 		super (FactorizationCore.mgr);
 		this.IT = new IterationTools <> (manager);
 	}
-	IterationTools <Factorization> IT;
+	protected IterationTools <Factorization> IT;
+
 
 	/**
-	 * @param iterations number of iterations to run
-	 * @return the computed sum after specified iterations
+	 * run the computation of e
+	 * @param iterations the number to be run
+	 * @return the computed result
 	 */
-	public Factorization run
-		(
-			int iterations,
-			IterationTools.DerivativeComputer <Factorization> computer
-		)
-	{
-		initializeSummation
-		(computer.nTHderivative (0));
-		for (int n=1; n<=iterations; n++)
-		{ applyIteration (computer.nTHderivative (n)); }
-		return summation;
-	}
-
 	public Factorization run (int iterations)
 	{
-		IterationTools.DerivativeComputer <Factorization>
-			computer = IT.getExpDerivativeComputer ();
-		initializeFunction (manager.getOne ());
-		return run (iterations, computer);
+		return run (iterations, IT.getExpDerivativeComputer (), manager.getOne ());
 	}
+
+
+	/**
+	 * display results of test
+	 * @param iterations the number to be run
+	 * @return the computed result
+	 */
+	public Factorization computeEuler (int iterations)
+	{
+		Factorization approx = run (iterations);
+		FactorizationCore.display (approx, AccuracyCheck.E_REF, "E", 1000);
+		return approx;
+	}
+
 
 	/**
 	 * entry point for running the test
@@ -52,12 +53,13 @@ public class TaylorTest extends Taylor <Factorization>
 	 */
 	public static void main (String[] a)
 	{
+
 		FactorizationCore.init (1000*1000);
 
-		Factorization approx;
-		approx = new TaylorTest ().run (125);
-		FactorizationCore.display (approx, AccuracyCheck.E_REF, "E", 1000);
+		new TaylorTest ().computeEuler (125);
 
 	}
 
+
 }
+
