@@ -29,8 +29,8 @@ public class IterativeAlgorithmTests
 	public static final int
 		DISPLAY_PRECISION = 3200,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
-		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 30,
-		ROOT_ITERATIONS = 11
+		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 20,
+		ROOT_ITERATIONS = 8
 	;
 
 
@@ -53,6 +53,29 @@ public class IterativeAlgorithmTests
 	static Factorization sqrt_2, sqrt_5, series, taylor;
 
 
+	static void computePi ()
+	{
+		sqrt_2 = display ( () -> new NewtonRaphsonIterativeTest (2).run (ROOT_ITERATIONS) , "SQRT 2" );
+		series = display ( () -> new RamanujanTest ().run (SERIES_ITERATIONS) , "Series" );
+		pi = RamanujanTest.computePi (sqrt_2, series);
+	}
+	static Factorization pi;
+
+
+	static void computePhi ()
+	{
+		sqrt_5 = display ( () -> new NewtonRaphsonIterativeTest (5).run (ROOT_ITERATIONS) , "SQRT 5" );
+		phi = NewtonRaphsonIterativeTest.computePhi (sqrt_5);
+	}
+	static Factorization phi;
+
+
+	static void computeE ()
+	{
+		taylor = display ( () -> new TaylorTest ().run (TAYLOR_ITERATIONS) , "Taylor" );
+	}
+
+
 	/**
 	 * entry point for running the test
 	 * @param a not used
@@ -62,19 +85,12 @@ public class IterativeAlgorithmTests
 
 		FactorizationCore.init (COMPOSITE_EVALUATION_TABLE_SIZE);
 
-		sqrt_2 = display ( () -> new NewtonRaphsonIterativeTest (2).run (ROOT_ITERATIONS) , "SQRT 2" );
-		sqrt_5 = display ( () -> new NewtonRaphsonIterativeTest (5).run (ROOT_ITERATIONS) , "SQRT 5" );
-		series = display ( () -> new RamanujanTest ().run (SERIES_ITERATIONS) , "Series" );
-		taylor = display ( () -> new TaylorTest ().run (TAYLOR_ITERATIONS) , "Taylor" );
+		computePi (); computePhi (); computeE ();
 
-		Factorization pi = RamanujanTest.computePi (sqrt_2, series);
-		Factorization phi = NewtonRaphsonIterativeTest.computePhi (sqrt_5);
-		FactorizationCore.mgr.setDisplayPrecision (DISPLAY_PRECISION);
-
-		display (phi, AccuracyCheck.PHI_REF, "PHI");
-		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2");
-		display (taylor, AccuracyCheck.E_REF, "E");
-		display (pi, AccuracyCheck.PI_REF, "PI");
+		FactorizationCore.display (phi, AccuracyCheck.PHI_REF, "PHI", DISPLAY_PRECISION);
+		FactorizationCore.display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2", DISPLAY_PRECISION);
+		FactorizationCore.display (taylor, AccuracyCheck.E_REF, "E", DISPLAY_PRECISION);
+		FactorizationCore.display (pi, AccuracyCheck.PI_REF, "PI", DISPLAY_PRECISION);
 
 	}
 
@@ -85,7 +101,7 @@ public class IterativeAlgorithmTests
 	 * @return the computed value
 	 */
 	static Factorization display
-	(Computer computer, String tag)
+		(Computer computer, String tag)
 	{
 
 		Factorization value;
@@ -101,30 +117,6 @@ public class IterativeAlgorithmTests
 		System.out.println ();
 
 		return value;
-
-	}
-
-
-	/**
-	 * @param approx the Factorization approximation
-	 * @param REF the text of the reference value
-	 * @param tag a display name for the value
-	 */
-	static void display
-		(Factorization approx, String REF, String tag)
-	{
-
-		String APX;
-
-		System.out.println ();
-		System.out.println (tag); System.out.println ();
-		System.out.println (APX = FactorizationCore.mgr.toDecimalString (approx));
-		System.out.println (FactorizationCore.toRatio (approx));
-		System.out.println ();
-
-		System.out.print ("DIF AT = ");
-		System.out.println (AccuracyCheck.difAt (REF, APX));
-		System.out.println ();
 
 	}
 

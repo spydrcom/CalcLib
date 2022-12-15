@@ -2,6 +2,7 @@
 package net.myorb.testing.factors;
 
 import net.myorb.math.computational.iterative.Taylor;
+import net.myorb.math.computational.iterative.IterationTools;
 
 import net.myorb.math.primenumbers.Factorization;
 
@@ -16,18 +17,33 @@ public class TaylorTest extends Taylor <Factorization>
 	TaylorTest ()
 	{
 		super (FactorizationCore.mgr);
+		this.IT = new IterationTools <> (manager);
 	}
+	IterationTools <Factorization> IT;
 
 	/**
 	 * @param iterations number of iterations to run
 	 * @return the computed sum after specified iterations
 	 */
+	public Factorization run
+		(
+			int iterations,
+			IterationTools.DerivativeComputer <Factorization> computer
+		)
+	{
+		initializeSummation
+		(computer.nTHderivative (0));
+		for (int n=1; n<=iterations; n++)
+		{ applyIteration (computer.nTHderivative (n)); }
+		return summation;
+	}
+
 	public Factorization run (int iterations)
 	{
-		initializeSummation (manager.getOne ());
-		for (int i=1; i<=iterations; i++)
-		{ applyIteration (manager.getOne ()); }
-		return summation;
+		IterationTools.DerivativeComputer <Factorization>
+			computer = IT.getExpDerivativeComputer ();
+		initializeFunction (manager.getOne ());
+		return run (iterations, computer);
 	}
 
 	/**
@@ -38,8 +54,10 @@ public class TaylorTest extends Taylor <Factorization>
 	{
 		FactorizationCore.init (1000*1000);
 
-		System.out.println (FactorizationCore.toRatio
-			(new TaylorTest ().run (125)));
+		Factorization approx;
+		approx = new TaylorTest ().run (125);
+		FactorizationCore.display (approx, AccuracyCheck.E_REF, "E", 1000);
+
 	}
 
 }

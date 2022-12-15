@@ -22,6 +22,7 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 
 	/**
 	 * entry point for running the test
+	 * - simple version of stand-alone test sqrt(2)
 	 * @param a not used
 	 */
 	public static void main (String[] a)
@@ -78,8 +79,8 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	 */
 	public static Factorization computePhi (Factorization radical5)
 	{
-		Factorization HALF = FactorizationCore.mgr.invert (FactorizationCore.mgr.newScalar (2));
 		Factorization radical5plus1 = FactorizationCore.mgr.add (FactorizationCore.mgr.getOne (), radical5);
+		Factorization HALF = FactorizationCore.mgr.invert (FactorizationCore.mgr.newScalar (2));
 		return FactorizationCore.mgr.multiply (HALF, radical5plus1);
 	}
 	// phi = ( 1 + sqrt 5 ) / 2

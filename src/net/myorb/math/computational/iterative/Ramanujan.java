@@ -7,6 +7,7 @@ import net.myorb.math.SpaceManager;
 
 /**
  * evaluation of the Ramanujan series for computation of PI
+ * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class Ramanujan <T> extends IterationFoundations <T>

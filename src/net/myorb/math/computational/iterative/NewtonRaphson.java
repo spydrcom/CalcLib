@@ -10,6 +10,7 @@ import net.myorb.math.Polynomial;
 
 /**
  * compute a root using the Newton-Raphson method
+ * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class NewtonRaphson <T> extends IterationFoundations <T>

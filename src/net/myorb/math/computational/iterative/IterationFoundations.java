@@ -3,6 +3,7 @@ package net.myorb.math.computational.iterative;
 
 /**
  * descriptions of functions and their derivatives
+ * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class IterationFoundations <T>

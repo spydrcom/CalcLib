@@ -7,6 +7,7 @@ import net.myorb.math.SpaceManager;
 
 /**
  * approximate a function using series expansion methods of Brock Taylor
+ * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class Taylor <T> extends IterationFoundations <T>
@@ -23,14 +24,16 @@ public class Taylor <T> extends IterationFoundations <T>
 
 	/**
 	 * compute the specified term and add into the summation
-	 * @param k the value of the summation index
+	 * @param n the value of the summation index
 	 */
-	public void applyIteration (int k, T kTHderivative)
+	public void applyIteration (int n, T nTHderivative)
 	{
-		this.setX (manager.newScalar (k));
-		this.setDerivativeAtX (kTHderivative);
-		T kF = combo.factorial (manager.newScalar (k));
-		this.setDelta (manager.multiply (kTHderivative, manager.invert (kF)));
+		this.setX (manager.pow
+			(functionParameter, n));
+		this.setDerivativeAtX (nTHderivative);
+		T xNfP = manager.multiply (x, nTHderivative);
+		T nF = combo.factorial (manager.newScalar (n));
+		this.setDelta (manager.multiply (xNfP, manager.invert (nF)));
 		this.summation = manager.add (this.summation, this.getDelta ());
 	}
 	public T summation;
@@ -42,24 +45,32 @@ public class Taylor <T> extends IterationFoundations <T>
 	 */
 	public void applyIteration (T kTHderivative)
 	{
-		applyIteration ( k += 1, kTHderivative );
+		applyIteration ( n += 1, kTHderivative );
 		System.out.println (this);
 		System.out.println ();
 	}
-	int k;
+	protected int n;
 
 
 	/**
 	 * iteration index starts at zero
 	 * - summation is also initialized to zero
+	 * @param derivative0 the function derivative for term 0
 	 */
 	public void initializeSummation (T derivative0)
 	{
 		this.summation = manager.getZero ();
 		this.combo = new Combinatorics <> (manager, null);
-		applyIteration ( k = 0, derivative0 );
+		this.applyIteration ( n = 0, derivative0 );
 	}
 	protected Combinatorics <T> combo;
+
+	/**
+	 * @param functionParameter the parameter to the function evaluation
+	 */
+	public void initializeFunction (T functionParameter)
+	{ this.functionParameter = functionParameter; }
+	protected T functionParameter;
 
 
 	/*
