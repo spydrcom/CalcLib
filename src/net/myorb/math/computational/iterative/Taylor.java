@@ -101,6 +101,7 @@ public class Taylor <T> extends IterationFoundations <T>
 	}
 	protected Combinatorics <T> combo;
 
+
 	/**
 	 * @param functionParameter the parameter to the function evaluation
 	 */

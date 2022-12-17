@@ -1,6 +1,7 @@
 
 package net.myorb.math.computational.iterative;
 
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.SpaceManager;
 
 /**
@@ -8,15 +9,43 @@ import net.myorb.math.SpaceManager;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public class IterationTools <T>
+public class IterationTools <T> implements Environment.AccessAcceptance <T>
 {
 
 
 	public IterationTools
-	(SpaceManager <T> manager)
-	{ this.manager = manager; this.ONE = manager.getOne (); this.Z = manager.getZero (); }
+	(Environment <T> environment) { setEnvironment (environment); }
+	public IterationTools (SpaceManager <T> manager)
+	{ setManager (manager); }
+
+
+	/**
+	 * for applications that use AccessAcceptance
+	 * - this must be followed with a call to setEnvironment
+	 */
+	public IterationTools () {}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Environment.AccessAcceptance#setEnvironment(net.myorb.math.expressions.evaluationstates.Environment)
+	 */
+	public void setEnvironment (Environment <T> environment)
+	{
+		setManager (environment.getSpaceManager ());
+	}
+
+
+	/**
+	 * connect with data type management
+	 * @param manager the appropriate data type manager
+	 */
+	public void setManager (SpaceManager <T> manager)
+	{
+		this.manager = manager;
+		this.ONE = manager.getOne ();
+		this.Z = manager.getZero ();
+	}
 	protected SpaceManager <T> manager;
-	protected T ONE, Z;
+	public T ONE, Z;
 
 
 	/**
@@ -26,6 +55,7 @@ public class IterationTools <T>
 	 */
 	public T S (int N) { return manager.newScalar (N); }
 	public T oneOver (T x) { return manager.invert (x); }
+	public T sumOf (T x, T y) { return manager.add (x, y); }
 	public T productOf (T x, T y) { return manager.multiply (x, y); }
 	public T POW (T x, int y) { return manager.pow (x, y); }
 
@@ -37,7 +67,8 @@ public class IterationTools <T>
 	 */
 	public T F (int N)
 	{
-		T product = ONE; for (int n = N; n > 1; n--)
+		if (N < 2) return ONE;
+		T product = S(N); for (int n = N-1; n > 1; n--)
 		{ product = productOf (product, S (n)); }
 		return product;
 	}

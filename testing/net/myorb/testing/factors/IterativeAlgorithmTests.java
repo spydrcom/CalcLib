@@ -27,53 +27,57 @@ public class IterativeAlgorithmTests extends FactorizationCore
 	 *
 	 */
 	public static final int
-		DISPLAY_PRECISION = 3200,
+		DISPLAY_PRECISION = 1000,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
-		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 10,
-		ROOT_ITERATIONS = 7
+		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 10,
+		ROOT_ITERATIONS = 6
 	;
-
-
-	/**
-	 * a function that computes an approximation
-	 */
-	interface Computer
-	{
-		/**
-		 * @return the computed value
-		 */
-		Factorization compute ();
-	}
 
 
 	/**
 	 * intermediate results having computed
 	 *   the Ramanujan series and SQRT 2
 	 */
-	static Factorization sqrt_2, sqrt_5, series, taylor;
+	static Factorization sqrt_2, sqrt_5, series;
 
 
 	static void computePi ()
 	{
-		sqrt_2 = display ( () -> new NewtonRaphsonIterativeTest (2).run (ROOT_ITERATIONS) , "SQRT 2" );
-		series = display ( () -> new RamanujanTest ().run (SERIES_ITERATIONS) , "Series" );
-		pi = RamanujanTest.computePi (sqrt_2, series);
+		RamanujanTest RT = new RamanujanTest ();
+		series = display ( () -> RT.run (SERIES_ITERATIONS) , "Series" );
+		NewtonRaphsonIterativeTest NR = new NewtonRaphsonIterativeTest (2);
+		sqrt_2 = display ( () -> NR.run (ROOT_ITERATIONS) , "SQRT 2" );
+		pi = RT.computePi (sqrt_2, series);
 	}
 	static Factorization pi;
 
 
 	static void computePhi ()
 	{
-		sqrt_5 = display ( () -> new NewtonRaphsonIterativeTest (5).run (ROOT_ITERATIONS) , "SQRT 5" );
-		phi = NewtonRaphsonIterativeTest.computePhi (sqrt_5);
+		NewtonRaphsonIterativeTest NR = new NewtonRaphsonIterativeTest (5);
+		sqrt_5 = display ( () -> NR.run (ROOT_ITERATIONS) , "SQRT 5" );
+		phi = NR.computePhi (sqrt_5);
 	}
 	static Factorization phi;
 
 
-	static void computeE ()
+	static void computeAtan ()
 	{
-		taylor = display ( () -> new TaylorTest ().run (TAYLOR_ITERATIONS) , "Taylor" );
+		TaylorTest TT = new TaylorTest ();
+		NewtonRaphsonIterativeTest NR = new NewtonRaphsonIterativeTest (3);
+		Factorization sqrt_3 = display ( () -> NR.run (ROOT_ITERATIONS) , "SQRT 3" );
+		//  atan = display ( () -> TT.computeAtan (TAYLOR_ITERATIONS, TT.atan6 (sqrt_3), 6) , "ATAN" );
+		atan = display ( () -> TT.computeAtan (TAYLOR_ITERATIONS, TT.atan12 (sqrt_3), 12) , "ATAN" );
 	}
+	static Factorization atan;
+
+
+	static void computeEuler ()
+	{
+		TaylorTest TT = new TaylorTest ();
+		e = display ( () -> TT.computeEuler (TAYLOR_ITERATIONS) , "Euler" );
+	}
+	static Factorization e;
 
 
 	/**
@@ -85,38 +89,13 @@ public class IterativeAlgorithmTests extends FactorizationCore
 
 		init (COMPOSITE_EVALUATION_TABLE_SIZE);
 
-		computePi (); computePhi (); computeE ();
+		computePi (); computePhi (); computeEuler (); computeAtan ();
 
 		display (phi, AccuracyCheck.PHI_REF, "PHI", DISPLAY_PRECISION);
 		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2", DISPLAY_PRECISION);
-		display (taylor, AccuracyCheck.E_REF, "E", DISPLAY_PRECISION);
+		display (atan, AccuracyCheck.PI_REF, "ATAN", DISPLAY_PRECISION);
 		display (pi, AccuracyCheck.PI_REF, "PI", DISPLAY_PRECISION);
-
-	}
-
-
-	/**
-	 * @param computer the function evaluating the approximation
-	 * @param tag a display name for the value
-	 * @return the computed value
-	 */
-	static Factorization display
-		(Computer computer, String tag)
-	{
-
-		Factorization value;
-
-		System.out.println ();
-		System.out.println (tag);
-		System.out.println ();
-
-		value = computer.compute ();
-
-		System.out.print (tag + " = ");
-		System.out.println (value);
-		System.out.println ();
-
-		return value;
+		display (e, AccuracyCheck.E_REF, "E", DISPLAY_PRECISION);
 
 	}
 

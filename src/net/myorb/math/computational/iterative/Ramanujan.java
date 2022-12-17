@@ -1,8 +1,6 @@
 
 package net.myorb.math.computational.iterative;
 
-import net.myorb.math.computational.Combinatorics;
-
 import net.myorb.math.SpaceManager;
 
 /**
@@ -17,9 +15,9 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	// 1 / pi = ( 2 * sqrt(2) / 9801 ) * SIGMA [0 <= k <= INFINITY] ( (4*k)! * (1103 + 26390*k) / ((k!)^4 * 396 ^ (4*k)) )
 
 
-	public Ramanujan
-	(SpaceManager <T> manager) { this.manager = manager; }
-	protected SpaceManager <T> manager;
+	public Ramanujan (SpaceManager <T> manager)
+	{ this.IT = new IterationTools <T> (manager); this.init (); }
+	protected IterationTools <T> IT;
 
 
 	/**
@@ -27,13 +25,10 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	 */
 	public void init ()
 	{
-		this.combo =
-			new Combinatorics <> (manager, null);
-		K26390 = manager.newScalar (26390);
-		K1103 = manager.newScalar (1103);
-		K396 = manager.newScalar (396);
+		K26390 = IT.S (26390);
+		K1103 = IT.S (1103);
+		K396 = IT.S (396);
 	}
-	protected Combinatorics <T> combo;
 	protected T K1103, K26390, K396;
 
 
@@ -44,11 +39,11 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	 */
 	public T computeIteration (int k)
 	{
-		int k4; T kT, k4T = manager.newScalar (k4 = 4 * k);
-		T kF = combo.factorial (kT = manager.newScalar (k)), k4F = combo.factorial (k4T);
-		T N = manager.multiply (k4F, manager.add (K1103, manager.multiply (K26390, kT)));
-		T D = manager.multiply (manager.pow (kF, 4), manager.pow (K396, k4));
-		return manager.multiply (N, manager.invert (D));
+		int k4 = 4 * k;
+		T kT = IT.S (k), kF = IT.F (k), k4F = IT.F (k4);
+		T N = IT.productOf (k4F, IT.sumOf (K1103, IT.productOf (K26390, kT)));
+		T D = IT.productOf (IT.POW (kF, 4), IT.POW (K396, k4));
+		return IT.productOf (N, IT.oneOver (D));
 	}
 
 
@@ -58,10 +53,10 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	 */
 	public void applyIteration (int k)
 	{
-		this.setX (manager.newScalar (k)); this.setDelta (computeIteration (k));
-		this.summation = manager.add (this.summation, this.getDelta ());
+		this.setX (IT.S (k)); this.setDelta (computeIteration (k));
+		this.summation = IT.sumOf (this.summation, this.getDelta ());
 	}
-	public T summation;
+	protected T summation;
 
 
 	/**
@@ -73,7 +68,7 @@ public class Ramanujan <T> extends IterationFoundations <T>
 		System.out.println (this);
 		System.out.println ();
 	}
-	int k;
+	protected int k;
 
 
 	/**
@@ -82,7 +77,7 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	 */
 	public void initializeSummation ()
 	{
-		this.summation = manager.getZero ();
+		this.summation = IT.Z;
 		applyIteration ( k = 0 );
 	}
 
@@ -102,7 +97,7 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.iterative.IterationFoundations#toString(java.lang.Object)
 	 */
-	public String toString (T x) { return manager.toDecimalString (x); }
+	public String toString (T x) { return IT.manager.toDecimalString (x); }
 
 
 }

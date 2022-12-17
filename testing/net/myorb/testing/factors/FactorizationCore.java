@@ -64,4 +64,43 @@ public class FactorizationCore
 	public static String toRatio (Factorization x) { return mgr.toPrimeFactors (x); }
 
 
+	/**
+	 * a function that computes an approximation
+	 */
+	public interface Computer
+	{
+		/**
+		 * @return the computed value
+		 */
+		Factorization compute ();
+	}
+
+
+	/**
+	 * wrap computation in display tags
+	 * @param computer the function evaluating the approximation
+	 * @param tag a display name for the value
+	 * @return the computed value
+	 */
+	public static Factorization display (Computer computer, String tag)
+	{
+
+		Factorization value;
+
+		System.out.println ();
+		System.out.println (tag);
+		System.out.println ();
+
+		value = computer.compute ();
+
+		System.out.print (tag + " = ");
+		System.out.println (value);
+		System.out.println ();
+
+		return value;
+
+	}
+
+
 }
+
