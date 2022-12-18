@@ -163,5 +163,40 @@ public class AccuracyCheck
 	public static String PHI_REF = PHI.replaceAll (" ", "");
 
 
+	public static String Li2 = // 98 decimal digit reference
+		"1.6449340668 4822643647 2415166646 0251892189 4990120679 8437735558 2293700074 7040320087 3833628900 61975870"		// 98
+		;
+	//		taken from https://oeis.org/A013661/constant
+	public static String Li2_REF = Li2.replaceAll (" ", "");
+
+
+	public static String Ln2SQ = // 100 decimal digit reference
+		"0.4804530139 1820142466 7102526326 6649717305 5295159454 5586866864 1336236653 8225983447 2199948263 4439269909"	// 100
+		;
+	//		taken from https://oeis.org/A253191/constant
+	public static String Ln2SQ_REF = Ln2SQ.replaceAll (" ", "");
+
+
+	public static String Ti2 = // 100 decimal digit reference
+		"0.2658649582 7930698269 1875086397 1206876427 8382397513 8999380597 4153285743 9513027711 4054411407 0320577174"	// 100
+		;
+	//		taken from https://oeis.org/A244928/constant
+	public static String Ti2_REF = Ti2.replaceAll (" ", "");
+
+		
+	public static String K = // 100 decimal digit reference
+		"1.6857503548 1259604287 1203657799 0769895008 0089414108 9044119948 2978934337 0288234676 0406450973 9366125703"	// 100
+		;
+	//		taken from https://oeis.org/A249282/constant
+	public static String K_REF = K.replaceAll (" ", "");
+
+
+	public static String Ksqrt = // 100 decimal digit reference
+		"2.1565156474 9964323543 8674998800 3220288641 1021649282 5360364958 9165009616 4422065628 7634967875 7814459025"	// 100
+		;
+	//		taken from https://oeis.org/A249283/constant
+	public static String Ksqrt_REF = Ksqrt.replaceAll (" ", "");
+
+
 }
 

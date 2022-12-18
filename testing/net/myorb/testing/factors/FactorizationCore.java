@@ -53,6 +53,8 @@ public class FactorizationCore
 		System.out.println (AccuracyCheck.difAt (REF, APX));
 		System.out.println ();
 
+		mgr.resetDisplayPrecision ();
+
 	}
 
 
@@ -62,6 +64,20 @@ public class FactorizationCore
 	 * @return the text of the display
 	 */
 	public static String toRatio (Factorization x) { return mgr.toPrimeFactors (x); }
+
+
+	/**
+	 * format as decimal text
+	 * @param value the value to be displayed
+	 * @param precision the number of digits for the display
+	 * @return the text as formatted
+	 */
+	public static String toDecimalString (Factorization value, int precision)
+	{
+		// format results for display
+		mgr.setDisplayPrecision (precision);
+		return mgr.toDecimalString (value);
+	}
 
 
 	/**

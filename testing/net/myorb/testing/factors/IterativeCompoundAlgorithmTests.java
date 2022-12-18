@@ -14,13 +14,18 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 {
 
 
+	// choose tests to run
+	public static final boolean RUN_TRIG_TEST = false, RUN_POLYLOG_TEST = false, RUN_K_TEST = true;
+
+
 	// constants for evaluations
 //	static final int PI_FRACTION = 3, CHECK_MULTIPLE = 4, CHECK_OFFSET = -1;	// 4 * cos^2(PI/3) - 1 = 0
 //	static final int PI_FRACTION = 4, CHECK_MULTIPLE = 4, CHECK_OFFSET = -2;	// 4 * cos^2(PI/4) - 2 = 0
 	static final int PI_FRACTION = 6, CHECK_MULTIPLE = 4, CHECK_OFFSET = -3;	// 4 * cos^2(PI/6) - 3 = 0
 
 	// constants related to precision
-	static final int TRIG_SERIES_ITERATIONS = 20, DISPLAY_PRECISION = 20;
+	static final int TRIG_SERIES_ITERATIONS = 70, POLYLOG_SERIES_ITERATIONS = 200, K_SERIES_ITERATIONS = 300;
+	static final int DISPLAY_PRECISION = 20;
 
 
 	/**
@@ -30,18 +35,6 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	{
 		return IT.getCosDerivativeComputer ();
 	}
-
-
-	IterativeCompoundAlgorithmTests ()
-	{
-		init (COMPOSITE_EVALUATION_TABLE_SIZE);
-		// Taylor test prepares series run
-		taylor = new TaylorTest ();
-		// import tool kit
-		IT = taylor.IT;
-	}
-	protected IterationTools <Factorization> IT;
-	protected TaylorTest taylor;
 
 
 	/**
@@ -54,20 +47,49 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		IterativeCompoundAlgorithmTests testScripts =
 			new IterativeCompoundAlgorithmTests ();
 
-		computePi ();		// use Ramanujan to compute PI
+		testScripts.computeSqrt ();		// prepare SQRT constants
+		testScripts.computePi ();		// use Ramanujan to compute PI
 
 		// check SQRT and PI for precision of computed parameters
-		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2", DISPLAY_PRECISION);
-		display (pi, AccuracyCheck.PI_REF, "PI", DISPLAY_PRECISION);
+		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2");
+		display (pi, AccuracyCheck.PI_REF, "PI");
 
 		// use computed value of PI as parameter to trig function
-		testScripts.runTrigTest ();
+		if (RUN_TRIG_TEST) testScripts.runTrigTest ();
+
+		// use computed value of PI as test result for Li2 test
+		if (RUN_POLYLOG_TEST) testScripts.runPolylogTest ();
+
+		// use computed value of PI as test result for K test
+		if (RUN_K_TEST) testScripts.runKTest ();
 
 	}
 
 
 	/**
 	 * run the evaluation of the approximation and compute the error
+	 * - this is a Taylor series test of computation of K
+	 */
+	public void runKTest ()
+	{
+		runKTest (K_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
+		//runKTest (K_SERIES_ITERATIONS, pi, sqrt_3, AccuracyCheck.Ksqrt_REF);
+	}
+
+
+	/**
+	 * run the evaluation of the approximation and compute the error
+	 * - this is a Taylor series test of computation of Li2
+	 */
+	public void runPolylogTest ()
+	{
+		runLn2SQtest (POLYLOG_SERIES_ITERATIONS, pi);
+	}
+
+
+	/**
+	 * run the evaluation of the approximation and compute the error
+	 * - this is a Taylor series test of computation of sin(PI/n)
 	 */
 	public void runTrigTest ()
 	{
@@ -86,11 +108,8 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 				IT.S (CHECK_OFFSET)
 			);
 
-		// format results for display
-		mgr.setDisplayPrecision (DISPLAY_PRECISION);
-		String display = mgr.toDecimalString (check);
-
-		// display results
+		// format results and display
+		String display = FactorizationCore.toDecimalString (check, DISPLAY_PRECISION);
 		System.out.print ("Approximation = "); System.out.println (result);
 		System.out.print ("Error = "); System.out.println (display);
 
@@ -112,7 +131,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		// run series evaluation
 		// - select series and identify function parameter
 		// - run the requested count of iterations and return result
-		return taylor.run (iterations, getComputer (), piOverN);
+		return run (iterations, getComputer (), piOverN);
 
 	}
 

@@ -84,7 +84,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public T primePow (T P, int pow, int n)
 	{
 		if (manager.isZero (P)) return P;
-		return powTimes (productOf (P, F(n)), pow, n);
+		return powTimes (productOf (P, F (n)), pow, n);
 	}
 	T powTimes (T PFn, int pow, int n)
 	{
@@ -169,7 +169,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 				POW ( F(n), 3 ),
 				POW ( F(n/2), -4 )
 			);
-		return productOf (ratio, POW ( S(16), -n ));
+		return productOf (ratio, POW ( S(16), -n/2 ));
 	}
 
 

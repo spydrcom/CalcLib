@@ -23,7 +23,8 @@ public class Taylor <T> extends IterationFoundations <T>
 
 	/**
 	 * run the computation using computer and initial value
-	 * @param iterations the number to be run
+	 * @param iterations the number to be run in this evaluation
+	 * @param computer a DerivativeComputer for the function
 	 * @param parameter function parameter
 	 * @return the computed result
 	 */
@@ -42,6 +43,7 @@ public class Taylor <T> extends IterationFoundations <T>
 	/**
 	 * process a full bulk run of term evaluations
 	 * @param iterations number of iterations to run
+	 * @param computer a DerivativeComputer for the function
 	 * @return the computed sum after specified iterations
 	 */
 	public T run
@@ -60,7 +62,8 @@ public class Taylor <T> extends IterationFoundations <T>
 
 	/**
 	 * compute the specified term and add into the summation
-	 * @param n the value of the summation index
+	 * @param n the value of the summation index for this iteration
+	 * @param nTHderivative Nth evaluated derivative
 	 */
 	public void applyIteration (int n, T nTHderivative)
 	{
@@ -77,15 +80,27 @@ public class Taylor <T> extends IterationFoundations <T>
 
 	/**
 	 * run the next iteration in the series
-	 * @param kTHderivative the next derivative value
+	 * @param nTHderivative the next derivative value
 	 */
-	public void applyIteration (T kTHderivative)
+	public void applyIteration (T nTHderivative)
 	{
-		applyIteration ( n += 1, kTHderivative );
+		applyIteration ( n += 1, nTHderivative );
+		trace ();
+	}
+	protected int n;
+
+
+	/**
+	 * show intermediate results
+	 */
+	public void trace ()
+	{
+		if (!tracing) return;
 		System.out.println (this);
 		System.out.println ();
 	}
-	protected int n;
+	public void enableTracing () { this.tracing = true; }
+	boolean tracing = false;
 
 
 	/**

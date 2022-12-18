@@ -15,13 +15,25 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 {
 
 
-	NewtonRaphsonIterativeTest (int n)
+	NewtonRaphsonIterativeTest ()
 	{
 		super (FactorizationCore.mgr);
-		this.functionDescription = new int [] { -n, 0, 1 };			// description for [ -n + 0*x + 1*x^2 ]
 		this.IT = new IterationTools <Factorization> (manager);
 	}
+
+	NewtonRaphsonIterativeTest (int n)
+	{  this ();  establishFunction (n);  }
 	protected IterationTools <Factorization> IT;
+
+
+	/**
+	 * prepare a polynomial function description
+	 * - the root of this function will be SQRT N
+	 * @param N the constant term of the polynomial
+	 * @return this object returned for chaining
+	 */
+	public NewtonRaphsonIterativeTest establishFunction (int N)
+	{ this.functionDescription = new int [] { -N, 0, 1 }; return this; }			// description for [ -N + 0*x + 1*x^2 ]
 	protected int [] functionDescription;
 
 
