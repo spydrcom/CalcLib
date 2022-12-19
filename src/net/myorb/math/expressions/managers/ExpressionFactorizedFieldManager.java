@@ -217,5 +217,17 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 		return names;
 	}
 
+	/**
+	 * change SelectedPrecision for quick update
+	 * @param digits the precision in digit count
+	 * @return the previous value
+	 */
+	public int pushDisplayPrecision (int digits)
+	{
+		int p = this.getSelectedPrecision ();
+		this.setDisplayPrecision (digits);
+		return p;
+	}
+
 }
 
