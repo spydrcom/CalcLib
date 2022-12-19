@@ -1,6 +1,8 @@
 
 package net.myorb.testing.factors;
 
+import net.myorb.math.primenumbers.PrecisionManipulation;
+
 /**
  * evaluate precision of computed approximations
  * @author Michael Druckman
@@ -18,9 +20,10 @@ public class AccuracyCheck
 	 */
 	public static int difAt (String reference, String comparedWith) throws RuntimeException
 	{
-		int most = Math.min (comparedWith.length (), reference.length ());
-		for (int i=0; i<most;i++) { if (reference.charAt(i) != comparedWith.charAt(i)) return i; }
-		throw new RuntimeException ("Resulting accuracy greater than reference");
+		int match = PrecisionManipulation.evaluate (reference, comparedWith);
+		if ((match = PrecisionManipulation.evaluate (reference, comparedWith)) == reference.length ())
+		{ throw new RuntimeException ("Resulting accuracy greater than reference"); }
+		else return match;
 	}
 
 
