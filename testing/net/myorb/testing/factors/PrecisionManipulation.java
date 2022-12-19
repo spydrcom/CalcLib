@@ -22,19 +22,26 @@ public class PrecisionManipulation extends net.myorb.math.primenumbers.Precision
 
 		FactorizationCore.init (1_000_000);
 
-		int scale = 200; boolean trace = true;
+		int scale = 350, precision = 2000; boolean trace = true;
 
 		PrecisionManipulation pmgr = new PrecisionManipulation ();
 
 		Factorization approx = new NewtonRaphsonIterativeTest (2).run (11);
+		FactorizationCore.display (approx, AccuracyCheck.S2_REF, "SQRT", precision);
 
-		FactorizationCore.display (approx, AccuracyCheck.S2_REF, "SQRT", 2000);
+		Reduction red = pmgr.adjust (approx, scale, trace? System.out: null);
+		Factorization adjustedValue = red.getAdjustedValue ();
+		int matching = red.evaluate (precision);
+		FactorizationCore.display
+		(
+			adjustedValue,
+			AccuracyCheck.S2_REF,
+			"ADJUSTED", precision
+		);
 
-		Factorization adj = pmgr.adjust (approx, scale, trace? System.out: null);
+		System.out.println ("matching = " + matching); System.out.println ();
 
-		FactorizationCore.display (adj, AccuracyCheck.S2_REF, "ADJUSTED", 2000);
-
-		if (trace) pmgr.analyze (adj.getFactors ());
+		if (trace) pmgr.analyze (adjustedValue.getFactors ());
 
 	}
 

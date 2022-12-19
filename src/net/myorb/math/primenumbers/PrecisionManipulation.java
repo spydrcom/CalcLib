@@ -6,11 +6,48 @@ import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import java.math.BigInteger;
 
 /**
- * apply precision reduction by truncation of the ration of largest prime factors
+ * apply precision reduction
+ *  by truncation of the ratio of largest prime factors
  * @author Michael Druckman
  */
 public class PrecisionManipulation
 {
+
+
+	/**
+	 * a description of a reduction including artifacts of the process
+	 */
+	public interface Reduction
+	{
+
+		/**
+		 * @return quotient and remainder of adjustment factors
+		 */
+		BigInteger [] getDivRem ();
+
+		/**
+		 * @return the value that replaced the adjustment factors
+		 */
+		Factorization getReducedFactor ();
+
+		/**
+		 * @return numerator and denominator of adjustment factors
+		 */
+		BigInteger [] getReductionFactors ();
+
+		/**
+		 * @return the adjusted value after the reduction
+		 */
+		Factorization getAdjustedValue ();
+
+		/**
+		 * compare adjusted value with source
+		 * @param outTo maximum digits to compare
+		 * @return the number of matching digits
+		 */
+		public int evaluate (int outTo);
+
+	}
 
 
 	public PrecisionManipulation
@@ -35,24 +72,16 @@ public class PrecisionManipulation
 	 * @param trace a PrintStream to format an analysis for
 	 * @return the list of primes in the collection
 	 */
-	public BigInteger [] sortedPrimes (FactorCollection factors, java.io.PrintStream trace)
+	public BigInteger [] sortedPrimes
+		(FactorCollection factors, java.io.PrintStream trace)
 	{
 		BigInteger [] primes =
-			factors.getFactorMap ().keySet ().toArray (new BigInteger [] {});
+			factors.getPrimes ().toArray (ARRAY_MODEL);
 		java.util.Arrays.sort (primes, 0, primes.length);
-
-		if (trace != null)
-		{
-			for (BigInteger prime : primes)
-			{
-				trace.print (prime); trace.print ("\t"); 
-				trace.print (factors.getFactorMap ().get (prime)); trace.print ("\t"); 
-				trace.print (prime.bitLength ()); trace.println ();
-			}
-		}
-
+		if (trace != null) ReductionImpl.dump (factors, primes, trace);
 		return primes;
 	}
+	public static final BigInteger ARRAY_MODEL [] = new BigInteger [] {};
 
 
 	/**
@@ -60,12 +89,12 @@ public class PrecisionManipulation
 	 * @param source the Factorization to apply adjustment to
 	 * @param scale the bit size of primes that are to be adjusted
 	 * @param trace a PrintStream to format an analysis for
-	 * @return the adjusted Factorization
+	 * @return a description of the reduction
 	 */
-	public Factorization adjust (Factorization source, int scale, java.io.PrintStream trace)
+	public Reduction adjust (Factorization source, int scale, java.io.PrintStream trace)
 	{
 		FactorCollection collection = source.getFactors ();
-		Reduction reduction = new Reduction (source, mgr);
+		ReductionImpl reduction = new ReductionImpl (source, mgr);
 
 		for (BigInteger p : collection.getPrimes ())
 		{
@@ -73,9 +102,23 @@ public class PrecisionManipulation
 			{ reduction.adjust (p); }
 		}
 
-		Factorization adjusted = reduction.completedAdjustment ();
+		reduction.completeAdjustment ();
 		if (trace != null) reduction.display (trace);
-		return adjusted;
+		return reduction;
+	}
+
+
+	/**
+	 * verify value accuracy against reference
+	 * @param reference the reference to be used
+	 * @param comparedWith a string to match with reference digits
+	 * @return the position where match fails checking character by character
+	 */
+	public static int evaluate (String reference, String comparedWith)
+	{
+		int most = Math.min (comparedWith.length (), reference.length ());
+		for (int i=0; i<most;i++) { if (reference.charAt(i) != comparedWith.charAt(i)) return i; }
+		return reference.length ();
 	}
 
 
@@ -85,17 +128,24 @@ public class PrecisionManipulation
 /**
  * collect factor identified as part of the reduction
  */
-class Reduction
+class ReductionImpl implements PrecisionManipulation.Reduction
 {
 
-	public Reduction (Factorization source, ExpressionFactorizedFieldManager mgr)
+
+	public ReductionImpl
+		(
+			Factorization source,
+			ExpressionFactorizedFieldManager mgr
+		)
 	{
 		this.factors = (this.adjusted = source)
 			.getFactors ().getFactorMap ();
+		this.source = source;
 		this.mgr = mgr;
 	}
 	protected java.util.Map <BigInteger, Integer> factors;
 	protected ExpressionFactorizedFieldManager mgr;
+	protected Factorization source;
 
 
 	/**
@@ -121,7 +171,7 @@ class Reduction
 	 * - the fudge factor is the truncated ratio of these factors
 	 * @return the adjusted Factorization
 	 */
-	public Factorization completedAdjustment ()
+	public Factorization completeAdjustment ()
 	{
 		if (N.compareTo (D) > 0)
 		// numerator is the larger value
@@ -150,6 +200,58 @@ class Reduction
 		trace.print ("rem = "); trace.print (divRem [1]); trace.println ();
 		trace.print ("fudge = "); trace.print (fudgeFactor); trace.println ();
 		trace.println ();
+	}
+
+
+	/**
+	 * provide a dump of the elements of a Factorization
+	 * @param factors the collection of factors in the representation
+	 * @param primes the prime number found in the representation
+	 * @param trace the print stream to be written to
+	 */
+	public static void dump
+	(FactorCollection factors, BigInteger [] primes, java.io.PrintStream trace)
+	{
+		for (BigInteger prime : primes)
+		{
+			trace.print (prime); trace.print ("\t"); 
+			trace.print (factors.getFactorMap ().get (prime)); trace.print ("\t"); 
+			trace.print (prime.bitLength ()); trace.println ();
+		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#getDivRem()
+	 */
+	public BigInteger [] getDivRem () { return divRem; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#getReducedFactor()
+	 */
+	public Factorization getReducedFactor () { return fudgeFactor; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#getReductionFactors()
+	 */
+	public BigInteger [] getReductionFactors () { return new BigInteger [] {N, D}; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#getAdjustedValue()
+	 */
+	public Factorization getAdjustedValue () { return adjusted; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#evaluate(int)
+	 */
+	public int evaluate (int outTo)
+	{
+		int p = mgr.pushDisplayPrecision (outTo);
+		String test = mgr.toDecimalString (adjusted),
+				reference = mgr.toDecimalString (source);
+		int match = PrecisionManipulation.evaluate (reference, test);
+		mgr.setDisplayPrecision (p);
+		return match;
 	}
 
 
