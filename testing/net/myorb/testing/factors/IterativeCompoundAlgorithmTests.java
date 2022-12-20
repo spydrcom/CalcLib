@@ -15,7 +15,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 
 	// choose tests to run
-	public static final boolean RUN_TRIG_TEST = false, RUN_POLYLOG_TEST = false, RUN_K_TEST = true;
+	public static final boolean RUN_TRIG_TEST = true, RUN_POLYLOG_TEST = true, RUN_K_TEST = true;
 
 
 	// constants for evaluations
@@ -24,7 +24,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	static final int PI_FRACTION = 6, CHECK_MULTIPLE = 4, CHECK_OFFSET = -3;	// 4 * cos^2(PI/6) - 3 = 0
 
 	// constants related to precision
-	static final int TRIG_SERIES_ITERATIONS = 70, POLYLOG_SERIES_ITERATIONS = 200, K_SERIES_ITERATIONS = 300;
+	static final int TRIG_SERIES_ITERATIONS = 20, POLYLOG_SERIES_ITERATIONS = 300, K_SERIES_ITERATIONS = 300;
 	static final int DISPLAY_PRECISION = 20;
 
 
@@ -50,6 +50,10 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		testScripts.computeSqrt ();		// prepare SQRT constants
 		testScripts.computePi ();		// use Ramanujan to compute PI
 
+		System.out.println ();
+		System.out.println ("+-+-+-+-+-+-+-+-+");
+		System.out.println ();
+
 		// check SQRT and PI for precision of computed parameters
 		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2");
 		display (pi, AccuracyCheck.PI_REF, "PI");
@@ -73,7 +77,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public void runKTest ()
 	{
 		runKTest (K_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
-		//runKTest (K_SERIES_ITERATIONS, pi, sqrt_3, AccuracyCheck.Ksqrt_REF);
+		// runKTest (K_SERIES_ITERATIONS, pi, sqrt_3, AccuracyCheck.Ksqrt_REF);
 	}
 
 
@@ -94,6 +98,9 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public void runTrigTest ()
 	{
 
+		System.out.println ();
+		System.out.println ("Trig Test"); System.out.println ();
+
 		// run Taylor evaluation
 		Factorization result = run (TRIG_SERIES_ITERATIONS);
 
@@ -112,6 +119,8 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		String display = FactorizationCore.toDecimalString (check, DISPLAY_PRECISION);
 		System.out.print ("Approximation = "); System.out.println (result);
 		System.out.print ("Error = "); System.out.println (display);
+		System.out.println (); System.out.println ("===");
+		System.out.println ();
 
 	}
 
@@ -124,9 +133,13 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public Factorization run (int iterations)
 	{
 
+		Factorization littlePi =
+				FactorizationCore.mgr.getPrecisionManager ()
+				.adjust (pi, 10, System.out).getAdjustedValue ();
+
 		// choose fraction of PI for parameter
 		Factorization fraction = IT.oneOver (IT.S (PI_FRACTION));
-		Factorization piOverN = IT.productOf (fraction, pi);
+		Factorization piOverN = IT.productOf (fraction, littlePi);
 
 		// run series evaluation
 		// - select series and identify function parameter

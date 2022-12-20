@@ -32,7 +32,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 	public static final int
 		DISPLAY_PRECISION = 1000,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
-		TAYLOR_ITERATIONS = 20, SERIES_ITERATIONS = 30,
+		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 10,
 		ROOT_ITERATIONS = 7
 	;
 
@@ -41,8 +41,10 @@ public class IterativeAlgorithmTests extends TaylorTest
 	 * import display functionality
 	 */
 
-	public static void display
-	(Factorization approx, String REF, String tag)
+	public static void displayError
+	(Factorization val, int square, String tag)
+	{ FactorizationCore.displayError (val, square, tag); }
+	public static void display (Factorization approx, String REF, String tag)
 	{ FactorizationCore.display (approx, REF, tag, DISPLAY_PRECISION); }
 	public static Factorization display (Computer computer, String tag)
 	{ return FactorizationCore.display (computer, tag); }
@@ -53,6 +55,9 @@ public class IterativeAlgorithmTests extends TaylorTest
 	 */
 
 
+	/**
+	 * computation of square-roots
+	 */
 	void computeSqrt ()
 	{
 		NR = new NewtonRaphsonIterativeTest ();
@@ -60,41 +65,56 @@ public class IterativeAlgorithmTests extends TaylorTest
 		sqrt_3 = display ( () -> NR.establishFunction (3).run (ROOT_ITERATIONS) , "SQRT 3" );
 		sqrt_5 = display ( () -> NR.establishFunction (5).run (ROOT_ITERATIONS) , "SQRT 5" );
 	}
-	static Factorization sqrt_2, sqrt_3, sqrt_5;
+	static Factorization sqrt_2, sqrt_3, sqrt_5; // SQRT computed using Newton-Raphson method
 	static NewtonRaphsonIterativeTest NR;
 
 
+	/**
+	 * computation of phi
+	 */
 	static void computePhi ()
 	{
 		phi = NR.computePhi (sqrt_5);
 	}
-	static Factorization phi;
+	static Factorization phi; // phi computed from ( 1 + SQRT 5 ) / 2
 
 
+	/**
+	 * computation of e
+	 */
 	void computeEuler ()
 	{
 		e = display ( () -> computeEuler (TAYLOR_ITERATIONS) , "Euler" );
 	}
-	static Factorization e;
+	static Factorization e; // e as computed using the Taylor expansion of exp 1
 
 
+	/**
+	 * computation of pi
+	 */
 	void computePi ()
 	{
 		RamanujanTest RT = new RamanujanTest ();
 		Factorization series = display ( () -> RT.run (SERIES_ITERATIONS) , "Series" );
 		pi = RT.computePi (sqrt_2, series);
 	}
-	static Factorization pi;
+	static Factorization pi; // pi as computed using the Ramanujan series
 
 
+	/**
+	 * computation of arc-tangent
+	 */
 	void computeAtan ()
 	{
-		//atan = display ( () -> computeAtan (TAYLOR_ITERATIONS, atan6 (sqrt_3), 6) , "ATAN" );
-		atan = display ( () -> computeAtan (TAYLOR_ITERATIONS, atan12 (sqrt_3), 12) , "ATAN" );
+		atan6 = display ( () -> computeAtan (TAYLOR_ITERATIONS, tanPi6 (sqrt_3), 6) , "ATAN" );
+		atan12 = display ( () -> computeAtan (TAYLOR_ITERATIONS, tanPi12 (sqrt_3), 12) , "ATAN" );
 	}
-	static Factorization atan;
+	static Factorization atan6, atan12; // arc tan expecting pi/6 and pi/12 respectively
 
 
+	/**
+	 * computation of Inverse Tangent Integral
+	 */
 	void computeITI ()
 	{
 		ITI = display ( () -> runInvTanTest (TAYLOR_ITERATIONS, sqrt_3) , "TI2" );
@@ -102,10 +122,9 @@ public class IterativeAlgorithmTests extends TaylorTest
 	static Factorization ITI; // Inverse Tangent Integral is this Taylor expansion
 
 
-	/*
+	/**
 	 * run through the computation scripts
 	 */
-
 	void computeValues ()
 	{
 		computeSqrt (); computePi (); computePhi (); computeEuler (); computeAtan (); computeITI ();
@@ -121,13 +140,38 @@ public class IterativeAlgorithmTests extends TaylorTest
 
 		new IterativeAlgorithmTests ().computeValues ();
 
+		System.out.println ();
+		System.out.println ("+-+-+-+-+-+-+-+-+");
+		System.out.println ();
+
+		showSqrtErrors ();
+
 		display (phi, AccuracyCheck.PHI_REF, "PHI");
 		display (sqrt_2, AccuracyCheck.S2_REF, "SQRT 2");
-		display (atan, AccuracyCheck.PI_REF, "ATAN");
+		display (atan12, AccuracyCheck.PI_REF, "ATAN12");
+		display (atan6, AccuracyCheck.PI_REF, "ATAN6");
 		display (ITI, AccuracyCheck.Ti2_REF, "Ti2");
 		display (pi, AccuracyCheck.PI_REF, "PI");
 		display (e, AccuracyCheck.E_REF, "E");
 
+	}
+
+
+	/**
+	 * format table of computed errors on SQRT calculations
+	 */
+	public static void showSqrtErrors ()
+	{
+		System.out.println ();
+		System.out.println ("SQRT errors");
+		System.out.println ();
+
+		displayError (sqrt_2, 2, "SQRT 2");
+		displayError (sqrt_3, 3, "SQRT 3");
+		displayError (sqrt_5, 5, "SQRT 5");
+
+		System.out.println ("===");
+		System.out.println ();
 	}
 
 
