@@ -199,7 +199,7 @@ public class TaylorTest extends Taylor <Factorization>
 	 * @param Sqrt_3 the computed SQRT(3)
 	 * @return 2 - SQRT(3)
 	 */
-	public Factorization atan12 (Factorization Sqrt_3)
+	public Factorization tanPi12 (Factorization Sqrt_3)
 	{ return IT.sumOf (manager.negate (Sqrt_3), IT.S (2)); }
 
 	/**
@@ -207,7 +207,7 @@ public class TaylorTest extends Taylor <Factorization>
 	 * @param Sqrt_3 the computed SQRT(3)
 	 * @return 1 / SQRT(3)
 	 */
-	public Factorization atan6 (Factorization Sqrt_3)
+	public Factorization tanPi6 (Factorization Sqrt_3)
 	{ return IT.oneOver (Sqrt_3); }
 
 
