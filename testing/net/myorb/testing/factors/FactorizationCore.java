@@ -43,7 +43,7 @@ public class FactorizationCore
 		String APX;
 
 		System.out.println ();
-		mgr.setDisplayPrecision (precision);
+		int p = mgr.pushDisplayPrecision (precision);
 		System.out.println (tag); System.out.println ();
 		System.out.println (APX = mgr.toDecimalString (approx));
 		System.out.println (toRatio (approx));
@@ -51,10 +51,27 @@ public class FactorizationCore
 
 		System.out.print ("DIF AT = ");
 		System.out.println (AccuracyCheck.difAt (REF, APX));
+
+		mgr.setDisplayPrecision (p);
+		System.out.println ("===");
 		System.out.println ();
 
-		mgr.resetDisplayPrecision ();
+	}
 
+
+	/**
+	 * calculate errors of SQRT approximations
+	 * @param approx the value computed as approximation of a SQRT
+	 * @param square the correct value of the square of the approximation
+	 * @param tag a display name for context
+	 */
+	public static void displayError
+	(Factorization approx, int square, String tag)
+	{
+		Factorization approxSQ = mgr.pow (approx, 2);
+		Factorization error = mgr.add (approxSQ, mgr.negate (mgr.newScalar (square)));
+		System.out.print (tag + " error = "); System.out.println (mgr.toDecimalString (error));
+		System.out.println ();
 	}
 
 
@@ -75,8 +92,10 @@ public class FactorizationCore
 	public static String toDecimalString (Factorization value, int precision)
 	{
 		// format results for display
-		mgr.setDisplayPrecision (precision);
-		return mgr.toDecimalString (value);
+		int p = mgr.pushDisplayPrecision (precision);
+		String rep =  mgr.toDecimalString (value);
+		mgr.setDisplayPrecision (p);
+		return rep;
 	}
 
 
