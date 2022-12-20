@@ -24,7 +24,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	static final int PI_FRACTION = 6, CHECK_MULTIPLE = 4, CHECK_OFFSET = -3;	// 4 * cos^2(PI/6) - 3 = 0
 
 	// constants related to precision
-	static final int TRIG_SERIES_ITERATIONS = 20, POLYLOG_SERIES_ITERATIONS = 300, K_SERIES_ITERATIONS = 300;
+	static final int TRIG_SERIES_ITERATIONS = 30, POLYLOG_SERIES_ITERATIONS = 300, K_SERIES_ITERATIONS = 300;
 	static final int DISPLAY_PRECISION = 20;
 
 
