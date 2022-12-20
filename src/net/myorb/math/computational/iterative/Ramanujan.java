@@ -15,6 +15,9 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	// 1 / pi = ( 2 * sqrt(2) / 9801 ) * SIGMA [0 <= k <= INFINITY] ( (4*k)! * (1103 + 26390*k) / ((k!)^4 * 396 ^ (4*k)) )
 
 
+	static boolean tracing = false;
+
+
 	public Ramanujan (SpaceManager <T> manager)
 	{ this.IT = new IterationTools <T> (manager); this.init (); }
 	protected IterationTools <T> IT;
@@ -65,6 +68,7 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	public void applyIteration ()
 	{
 		applyIteration ( k += 1 );
+		if ( ! tracing ) return;
 		System.out.println (this);
 		System.out.println ();
 	}
