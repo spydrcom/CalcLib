@@ -20,7 +20,7 @@ public class AccuracyCheck
 	 */
 	public static int difAt (String reference, String comparedWith) throws RuntimeException
 	{
-		int match = PrecisionManipulation.evaluate (reference, comparedWith);
+		int match;
 		if ((match = PrecisionManipulation.evaluate (reference, comparedWith)) == reference.length ())
 		{ throw new RuntimeException ("Resulting accuracy greater than reference"); }
 		else return match;
