@@ -15,6 +15,9 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 {
 
 
+	static boolean tracing = false;
+
+
 	NewtonRaphsonIterativeTest ()
 	{
 		super (FactorizationCore.mgr);
@@ -86,6 +89,7 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	{
 		applyIteration ();
 		testVal = IT.POW (getX (), 2);
+		if ( ! tracing ) return;
 		System.out.println (this);
 		System.out.println ();
 	}
