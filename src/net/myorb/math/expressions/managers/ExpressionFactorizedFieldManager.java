@@ -229,5 +229,14 @@ public class ExpressionFactorizedFieldManager extends FactorizationFieldManager
 		return p;
 	}
 
+	/**
+	 * get access to Precision Management algorithms
+	 * @return a new PrecisionManipulation object
+	 */
+	public PrecisionManipulation getPrecisionManager ()
+	{
+		return new PrecisionManipulation (this);
+	}
+
 }
 
