@@ -60,7 +60,7 @@ public class PrecisionManipulation
 	 * @param factors the factor collection that makes a Factorization
 	 * @return the list of primes in the collection
 	 */
-	public BigInteger [] analyze (FactorCollection factors)
+	public static BigInteger [] analyze (FactorCollection factors)
 	{
 		return sortedPrimes (factors, System.out);
 	}
@@ -72,7 +72,7 @@ public class PrecisionManipulation
 	 * @param trace a PrintStream to format an analysis for
 	 * @return the list of primes in the collection
 	 */
-	public BigInteger [] sortedPrimes
+	public static BigInteger [] sortedPrimes
 		(FactorCollection factors, java.io.PrintStream trace)
 	{
 		BigInteger [] primes =
@@ -191,14 +191,29 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 
 
 	/**
-	 * display remainder and fudge factor found in this evaluation
+	 * display quotient and remainder used in this evaluation
+	 * - additional artifacts of the computations also included
+	 * - the amount of precision carried forward is shown
 	 * @param trace the print stream for the display
 	 */
 	public void display (java.io.PrintStream trace)
 	{
 		trace.println ();
+
+		// the numerator and denominator of the adjustment
+		trace.print ("N = "); trace.print (N); trace.println ();
+		trace.print ("D = "); trace.print (D); trace.println ();
+
+		// the remainder and the quotient from the division
 		trace.print ("rem = "); trace.print (divRem [1]); trace.println ();
 		trace.print ("fudge = "); trace.print (fudgeFactor); trace.println ();
+
+		int matching = evaluate (1000);
+		// the number of decimal places where the adjusted value matches the source
+		trace.print ("precision = "); trace.print (matching);
+		trace.print (" (digits matching source)");
+		trace.println ();
+
 		trace.println ();
 	}
 

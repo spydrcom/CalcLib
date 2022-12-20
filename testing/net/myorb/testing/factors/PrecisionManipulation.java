@@ -4,13 +4,18 @@ package net.myorb.testing.factors;
 import net.myorb.math.primenumbers.Factorization;
 
 /**
- * unit test for new PrecisionManipulation class of primenumbers package
+ * unit test for new PrecisionManipulation class of prime-numbers package
  * @author Michael Druckman
  */
 public class PrecisionManipulation extends net.myorb.math.primenumbers.PrecisionManipulation
 {
 
+
+	static int scale = 350, precision = 2000; static boolean trace = true;
+
+
 	PrecisionManipulation () { super (FactorizationCore.mgr); }
+
 
 	/**
 	 * entry point for running the test
@@ -22,27 +27,47 @@ public class PrecisionManipulation extends net.myorb.math.primenumbers.Precision
 
 		FactorizationCore.init (1_000_000);
 
-		int scale = 350, precision = 2000; boolean trace = true;
+		// SQRT 2 computed with Newton-Raphson ( 11 iterations )
+		// - producing 1569 digits of precision shown against reference
 
+		Factorization approx =
+			new NewtonRaphsonIterativeTest (2).run (11);
+		show (approx, "SQRT");
+
+		// prepare to run PrecisionManipulation reduction process
+
+		System.out.println ();
+		System.out.println ("Trace PrecisionManipulation processing");
+
+		// compute reduced adjustment of original approximation
 		PrecisionManipulation pmgr = new PrecisionManipulation ();
-
-		Factorization approx = new NewtonRaphsonIterativeTest (2).run (11);
-		FactorizationCore.display (approx, AccuracyCheck.S2_REF, "SQRT", precision);
-
 		Reduction red = pmgr.adjust (approx, scale, trace? System.out: null);
 		Factorization adjustedValue = red.getAdjustedValue ();
-		int matching = red.evaluate (precision);
-		FactorizationCore.display
-		(
-			adjustedValue,
-			AccuracyCheck.S2_REF,
-			"ADJUSTED", precision
-		);
-
-		System.out.println ("matching = " + matching); System.out.println ();
-
-		if (trace) pmgr.analyze (adjustedValue.getFactors ());
+		// show adjusted value statistics for comparison
+		show (adjustedValue, "ADJUSTED");
 
 	}
 
+
+	/**
+	 * show analysis of value
+	 * @param value the value to analyze
+	 * @param tag a banner to show context
+	 */
+	static void show (Factorization value, String tag)
+	{
+
+		FactorizationCore.display
+		(
+			value,
+			AccuracyCheck.S2_REF,
+			tag, precision
+		);
+
+		if (trace) analyze (value.getFactors ());
+
+	}
+
+
 }
+
