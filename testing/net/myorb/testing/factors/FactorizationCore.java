@@ -130,12 +130,26 @@ public class FactorizationCore
 
 		System.out.print (tag + " = ");
 		System.out.println (value);
-		System.out.println ();
+		timeStamp ();
 
 		return value;
 
 	}
 
+
+	/**
+	 * show elapsed time
+	 */
+	public static void timeStamp ()
+	{
+		System.out.println ();
+		System.out.println ("---");
+		long elapsed = System.currentTimeMillis () - start;
+		System.out.println (elapsed + "ms");
+		System.out.println ("---");
+	}
+	static { start = System.currentTimeMillis (); }
+	static long start;
 
 }
 
