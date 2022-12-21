@@ -29,8 +29,8 @@ public class IterativeAlgorithmTests extends TaylorTest
 	 *		  13	 185	 200	|	>3500	 1486	  379
 	 *
 	 */
-	public static final int
-		DISPLAY_PRECISION = 1000,
+	public static int
+		DISPLAY_PRECISION = 2000,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
 		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 10,
 		ROOT_ITERATIONS = 7
