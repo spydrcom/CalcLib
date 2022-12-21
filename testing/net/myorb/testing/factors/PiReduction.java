@@ -65,7 +65,8 @@ public class PiReduction extends IterativeAlgorithmTests
 	 */
 	Factorization initialPiComputation ()
 	{
-		SERIES_ITERATIONS = 10; ROOT_ITERATIONS = 6;
+//		SERIES_ITERATIONS = 10; ROOT_ITERATIONS = 6;
+		SERIES_ITERATIONS = 10; ROOT_ITERATIONS = 7;
 
 		computeSqrt ();		// prepare SQRT constants
 		computePi ();		// use Ramanujan to compute PI
@@ -90,8 +91,10 @@ public class PiReduction extends IterativeAlgorithmTests
 	Factorization additionalReduction (Factorization starting)
 	{
 		Factorization reduced;
-		BigInteger N = new BigInteger ("3").pow (82);
-		BigInteger D = new BigInteger ("5609768703045705497422081379517510785580096999255926942793420765718921200740996154762263");
+//		BigInteger N = new BigInteger ("3").pow (82);
+//		BigInteger D = new BigInteger ("5609768703045705497422081379517510785580096999255926942793420765718921200740996154762263");
+		BigInteger N = new BigInteger ("3").pow (30);
+		BigInteger D = new BigInteger ("209398994054722033714970849438305785342183766810159967372458833447829650154669019036419");
 		display (reduced = mgr.getPrecisionManager ().reduceBy (N, D, starting, null), AccuracyCheck.PI_REF, "First Additional");
 		return reduced;
 	}
@@ -105,8 +108,10 @@ public class PiReduction extends IterativeAlgorithmTests
 	Factorization anotherReduction (Factorization starting)
 	{
 		Factorization reduced;
-		BigInteger N = new BigInteger ("2").pow (37);
-		BigInteger D = new BigInteger ("272838063931303099633412151031684088182000093");
+//		BigInteger N = new BigInteger ("2").pow (37);
+//		BigInteger D = new BigInteger ("272838063931303099633412151031684088182000093");
+		BigInteger N = new BigInteger ("11").pow (10);
+		BigInteger D = new BigInteger ("156002821163174751780637283415815903140610698981876522933223212357");
 		display (reduced = mgr.getPrecisionManager ().reduceBy (N, D, starting, null), AccuracyCheck.PI_REF, "Second Additional");
 		return reduced;
 	}
