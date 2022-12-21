@@ -44,6 +44,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 	public static void displayError
 	(Factorization val, int square, String tag)
 	{ FactorizationCore.displayError (val, square, tag); }
+	public static void timeStamp () { FactorizationCore.timeStamp (); }
 	public static void display (Factorization approx, String REF, String tag)
 	{ FactorizationCore.display (approx, REF, tag, DISPLAY_PRECISION); }
 	public static Factorization display (Computer computer, String tag)
@@ -64,6 +65,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 		sqrt_2 = display ( () -> NR.establishFunction (2).run (ROOT_ITERATIONS) , "SQRT 2" );
 		sqrt_3 = display ( () -> NR.establishFunction (3).run (ROOT_ITERATIONS) , "SQRT 3" );
 		sqrt_5 = display ( () -> NR.establishFunction (5).run (ROOT_ITERATIONS) , "SQRT 5" );
+		timeStamp ();
 	}
 	static Factorization sqrt_2, sqrt_3, sqrt_5; // SQRT computed using Newton-Raphson method
 	static NewtonRaphsonIterativeTest NR;
@@ -74,7 +76,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 	 */
 	static void computePhi ()
 	{
-		phi = NR.computePhi (sqrt_5);
+		phi = display ( () -> NR.computePhi (sqrt_5) , "PHI" );
 	}
 	static Factorization phi; // phi computed from ( 1 + SQRT 5 ) / 2
 
