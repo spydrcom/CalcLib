@@ -8,7 +8,10 @@ import net.myorb.math.SpaceManager;
 
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonSemantics.JsonString;
+
 import net.myorb.data.abstractions.ValueDisplayProperties;
+import net.myorb.data.abstractions.SimpleUtilities;
 
 import java.math.BigInteger;
 
@@ -217,8 +220,8 @@ public class FactorizationFieldManager implements SpaceManager<Factorization>
 		Distribution fraction = toFraction (from);
 		JsonSemantics.JsonObject structure = new JsonSemantics.JsonObject ();
 		Factorization n = fraction.getNumerator (), d = fraction.getDenominator ();
-		structure.addMemberNamed ("Numerator", new JsonSemantics.JsonNumber (Factorization.toInteger (n)));
-		structure.addMemberNamed ("Denominator", new JsonSemantics.JsonNumber (Factorization.toInteger (d)));
+		structure.addMemberNamed ("Numerator", new JsonSemantics.JsonString (Factorization.toInteger (n).toString ()));
+		structure.addMemberNamed ("Denominator", new JsonSemantics.JsonString (Factorization.toInteger (d).toString ()));
 		return structure;
 	}
 
@@ -238,15 +241,19 @@ public class FactorizationFieldManager implements SpaceManager<Factorization>
 			case OBJECT:
 				JsonSemantics.JsonObject structure =
 					(JsonSemantics.JsonObject) representation;
-				num = toFactorization (structure.getMember ("Numerator"));
-				den = toFactorization (structure.getMember ("Denominator"));
+				num = toFactorization (structure.getMemberCalled ("Numerator"));
+				den = toFactorization (structure.getMemberCalled ("Denominator"));
 				break;
 
-			default: throw new RuntimeException ("Invalue JSON representation for Complex value");
+			default: throw new RuntimeException ("Invalid JSON representation for Factored value");
 		}
 
 		return multiply (num, pow (den, -1));
 	}
-	Factorization toFactorization (Object number) { return bigScalar (new BigInteger (number.toString ())); }
+	Factorization toFactorization (JsonValue number)
+	{
+		JsonString string = SimpleUtilities.verifyClass (number, JsonString.class);
+		return bigScalar (new BigInteger (string.getContent ()));
+	}
 
 }
