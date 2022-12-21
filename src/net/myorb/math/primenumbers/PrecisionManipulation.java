@@ -4,6 +4,7 @@ package net.myorb.math.primenumbers;
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 
 import java.math.BigInteger;
+import java.io.PrintStream;
 
 /**
  * apply precision reduction
@@ -73,7 +74,7 @@ public class PrecisionManipulation
 	 * @return the list of primes in the collection
 	 */
 	public static BigInteger [] sortedPrimes
-		(FactorCollection factors, java.io.PrintStream trace)
+		(FactorCollection factors, PrintStream trace)
 	{
 		BigInteger [] primes =
 			factors.getPrimes ().toArray (ARRAY_MODEL);
@@ -91,7 +92,7 @@ public class PrecisionManipulation
 	 * @param trace a PrintStream to format an analysis for
 	 * @return a description of the reduction
 	 */
-	public Reduction adjust (Factorization source, int scale, java.io.PrintStream trace)
+	public Reduction adjust (Factorization source, int scale, PrintStream trace)
 	{
 		FactorCollection collection = source.getFactors ();
 		ReductionImpl reduction = new ReductionImpl (source, mgr);
@@ -109,6 +110,40 @@ public class PrecisionManipulation
 
 
 	/**
+	 * identify fraction for reduction
+	 * @param N numerator of the fraction
+	 * @param D denominator of the fraction
+	 * @param fromSource the original value being reduced
+	 * @param trace a PrintStream to format an analysis for
+	 * @return the reduced value
+	 */
+	public Factorization reduceBy
+		(
+			BigInteger N, BigInteger D,
+			Factorization fromSource,
+			PrintStream trace
+		)
+	{
+		Factorization
+			Nf = mgr.bigScalar (N), Df = mgr.bigScalar (D);
+		Factorization ratio = mgr.multiply (Nf, mgr.invert (Df));
+		Factorization reduced = adjust (ratio, 1, null).getReducedFactor ();
+		Factorization updateRatio = mgr.multiply (reduced, mgr.invert (ratio));
+		if (trace != null) showRatio (ratio, reduced, updateRatio, trace);		
+		return mgr.multiply (fromSource, updateRatio);
+	}
+	void showRatio
+		(
+			Factorization ratio, Factorization reduced,
+			Factorization updateRatio, PrintStream trace
+		)
+	{
+		trace.print ("MATCH = " + evaluate (ratio, reduced));
+		trace.println (", RATIO = " + mgr.toDecimalString (updateRatio));
+	}
+
+
+	/**
 	 * verify value accuracy against reference
 	 * @param reference the reference to be used
 	 * @param comparedWith a string to match with reference digits
@@ -119,6 +154,10 @@ public class PrecisionManipulation
 		int most = Math.min (comparedWith.length (), reference.length ());
 		for (int i=0; i<most;i++) { if (reference.charAt(i) != comparedWith.charAt(i)) return i; }
 		return reference.length ();
+	}
+	public int evaluate (Factorization reference, Factorization comparedWith)
+	{
+		return evaluate (mgr.toDecimalString (reference), mgr.toDecimalString (comparedWith));
 	}
 
 
@@ -196,10 +235,9 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 	 * - the amount of precision carried forward is shown
 	 * @param trace the print stream for the display
 	 */
-	public void display (java.io.PrintStream trace)
+	public void display (PrintStream trace)
 	{
 		trace.println ();
-
 		// the numerator and denominator of the adjustment
 		trace.print ("N = "); trace.print (N); trace.println ();
 		trace.print ("D = "); trace.print (D); trace.println ();
@@ -208,12 +246,10 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 		trace.print ("rem = "); trace.print (divRem [1]); trace.println ();
 		trace.print ("fudge = "); trace.print (fudgeFactor); trace.println ();
 
-		int matching = evaluate (1000);
+		int matching = evaluate (2000);
 		// the number of decimal places where the adjusted value matches the source
 		trace.print ("precision = "); trace.print (matching);
-		trace.print (" (digits matching source)");
-		trace.println ();
-
+		trace.println (" (digits matching source)");
 		trace.println ();
 	}
 
@@ -225,7 +261,7 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 	 * @param trace the print stream to be written to
 	 */
 	public static void dump
-	(FactorCollection factors, BigInteger [] primes, java.io.PrintStream trace)
+	(FactorCollection factors, BigInteger [] primes, PrintStream trace)
 	{
 		for (BigInteger prime : primes)
 		{
