@@ -49,6 +49,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 		testScripts.computeSqrt ();		// prepare SQRT constants
 		testScripts.computePi ();		// use Ramanujan to compute PI
+		timeStamp ();
 
 		System.out.println ();
 		System.out.println ("+-+-+-+-+-+-+-+-+");
@@ -78,6 +79,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	{
 		runKTest (K_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
 		// runKTest (K_SERIES_ITERATIONS, pi, sqrt_3, AccuracyCheck.Ksqrt_REF);
+		timeStamp ();
 	}
 
 
@@ -88,6 +90,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public void runPolylogTest ()
 	{
 		runLn2SQtest (POLYLOG_SERIES_ITERATIONS, pi);
+		timeStamp ();
 	}
 
 
@@ -121,6 +124,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		System.out.print ("Error = "); System.out.println (display);
 		System.out.println (); System.out.println ("===");
 		System.out.println ();
+		timeStamp ();
 
 	}
 
@@ -132,20 +136,29 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	 */
 	public Factorization run (int iterations)
 	{
-
-		Factorization littlePi =
-				FactorizationCore.mgr.getPrecisionManager ()
-				.adjust (pi, 10, System.out).getAdjustedValue ();
-
 		// choose fraction of PI for parameter
 		Factorization fraction = IT.oneOver (IT.S (PI_FRACTION));
-		Factorization piOverN = IT.productOf (fraction, littlePi);
+		Factorization piOverN = IT.productOf (fraction, getReducedPi ());
+		timeStamp ();
 
 		// run series evaluation
 		// - select series and identify function parameter
 		// - run the requested count of iterations and return result
 		return run (iterations, getComputer (), piOverN);
+	}
 
+
+	/**
+	 * use Precision Manager to reduce precision of PI
+	 * - this reduced the computation efforts of the series evaluation
+	 * @return the reduced representation of PI
+	 */
+	Factorization getReducedPi ()
+	{
+		return FactorizationCore
+			.mgr.getPrecisionManager ()
+			.adjust (pi, 10, System.out)
+			.getAdjustedValue ();		
 	}
 
 
