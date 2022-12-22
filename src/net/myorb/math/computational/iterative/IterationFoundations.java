@@ -89,6 +89,19 @@ public class IterationFoundations <T>
 	public String toString (T x) { return x.toString (); }
 
 
+	/**
+	 * show intermediate results
+	 */
+	public void trace ()
+	{
+		if (!tracing) return;
+		System.out.println (this);
+		System.out.println ();
+	}
+	public void enableTracing () { this.tracing = true; }
+	boolean tracing = false;
+
+
 }
 
 

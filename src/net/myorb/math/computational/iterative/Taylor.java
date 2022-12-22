@@ -5,7 +5,7 @@ import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.SpaceManager;
 
 /**
- * approximate a function using series expansion methods of Brock Taylor
+ * approximate a function using series expansion methods of Brook Taylor
  * @param <T> data type being processed
  * @author Michael Druckman
  */
@@ -88,19 +88,6 @@ public class Taylor <T> extends IterationFoundations <T>
 		trace ();
 	}
 	protected int n;
-
-
-	/**
-	 * show intermediate results
-	 */
-	public void trace ()
-	{
-		if (!tracing) return;
-		System.out.println (this);
-		System.out.println ();
-	}
-	public void enableTracing () { this.tracing = true; }
-	boolean tracing = false;
 
 
 	/**
