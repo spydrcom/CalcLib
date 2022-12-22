@@ -151,6 +151,9 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	/**
 	 * use Precision Manager to reduce precision of PI
 	 * - this reduced the computation efforts of the series evaluation
+	 * - IterativeAlternativeAlgorithmTests reduces the PI representation further
+	 * - the compute time overhead is significantly altered as these tests show
+	 * - also note the change to the computation precision
 	 * @return the reduced representation of PI
 	 */
 	Factorization getReducedPi ()

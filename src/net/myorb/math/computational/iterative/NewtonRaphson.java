@@ -3,7 +3,6 @@ package net.myorb.math.computational.iterative;
 
 import net.myorb.math.GeneratingFunctions.Coefficients;
 import net.myorb.math.polynomial.OrdinaryPolynomialCalculus;
-
 import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
