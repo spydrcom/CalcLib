@@ -144,6 +144,22 @@ public class PrecisionManipulation
 
 
 	/**
+	 * truncate value
+	 * - at specified precision
+	 * @param x the value to be truncated
+	 * @param at the number of decimal places to retain
+	 * @return the truncated value
+	 */
+	public Factorization truncate (Factorization x, int at)
+	{
+		BigInteger N = BigInteger.valueOf (10).pow (at);
+		Factorization multiple = mgr.bigScalar (N), inverted = mgr.invert (multiple);
+		Factorization truncated = adjust (mgr.multiply (x, multiple), 1, null).getReducedFactor ();
+		return mgr.multiply (truncated, inverted);
+	}
+
+
+	/**
 	 * verify value accuracy against reference
 	 * @param reference the reference to be used
 	 * @param comparedWith a string to match with reference digits
@@ -246,10 +262,10 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 		trace.print ("rem = "); trace.print (divRem [1]); trace.println ();
 		trace.print ("fudge = "); trace.print (fudgeFactor); trace.println ();
 
-		int matching = evaluate (2000);
+		int matching = evaluate (300);
 		// the number of decimal places where the adjusted value matches the source
 		trace.print ("precision = "); trace.print (matching);
-		trace.println (" (digits matching source)");
+		trace.println (" (digits matching source of 300)");
 		trace.println ();
 	}
 
@@ -301,6 +317,9 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 		String test = mgr.toDecimalString (adjusted),
 				reference = mgr.toDecimalString (source);
 		int match = PrecisionManipulation.evaluate (reference, test);
+		System.out.println ("reference = " + reference);
+		System.out.println ("adjusted = " + adjusted);
+		System.out.println ("test = " + test);
 		mgr.setDisplayPrecision (p);
 		return match;
 	}
