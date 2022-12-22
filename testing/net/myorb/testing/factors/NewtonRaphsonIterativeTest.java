@@ -1,6 +1,7 @@
 
 package net.myorb.testing.factors;
 
+import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.computational.iterative.NewtonRaphson;
 
@@ -65,7 +66,11 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	 */
 	void initializeFunction ()
 	{
-		establishFunction (G.coefficients (functionDescription));
+		initializeFunction (G.coefficients (functionDescription));
+	}
+	void initializeFunction (GeneratingFunctions.Coefficients<Factorization> C)
+	{
+		establishFunction (C);
 		setApproximationOfX (IT.ONE);
 	}
 
@@ -77,6 +82,13 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	public Factorization run (int iterations)
 	{
 		initializeFunction ();
+		for (int i = 1; i <= iterations; i++) { iterate (); }
+		return getX ();
+	}
+	public Factorization run
+	(int iterations, GeneratingFunctions.Coefficients<Factorization> C)
+	{
+		initializeFunction (C);
 		for (int i = 1; i <= iterations; i++) { iterate (); }
 		return getX ();
 	}
@@ -101,6 +113,27 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	public void add (StringBuffer buffer)
 	{ buffer.append ("X^n = ").append (toString (testVal)).append ("\n"); }
 	protected Factorization testVal;
+
+
+	/**
+	 * compute sqrt approximation
+	 * @param x parameter to sqrt function
+	 * @param iterations number of iterations to use
+	 * @return the computed root value
+	 */
+	public Factorization sqrt (Factorization x, int iterations)
+	{
+		GeneratingFunctions.Coefficients <Factorization>
+			C = G.toCoefficients
+			(
+				new Factorization []
+				{
+					manager.negate (x),
+					IT.Z, IT.ONE
+				}
+			);
+		return run (iterations, C);
+	}
 
 
 	/**
