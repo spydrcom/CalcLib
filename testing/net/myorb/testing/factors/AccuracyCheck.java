@@ -200,6 +200,19 @@ public class AccuracyCheck
 	//		taken from https://oeis.org/A249283/constant
 	public static String Ksqrt_REF = Ksqrt.replaceAll (" ", "");
 
+	public static String Chi1 = // 31 decimal digit reference
+		"1.2337005501 3616982735 4311374984 5"	// 31
+		;
+	//		computed by calculator
+	public static String Chi1_REF = Chi1.replaceAll (" ", "");
+
+
+		public static String ChiPhi = // 32 decimal digit reference
+		"0.6487934179 9121742386 3510779899 36"	// 32
+		;
+	//		computed by calculator
+	public static String ChiPhi_REF = ChiPhi.replaceAll (" ", "");
+
 
 }
 

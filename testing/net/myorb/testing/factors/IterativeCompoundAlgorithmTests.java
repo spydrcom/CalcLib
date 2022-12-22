@@ -29,7 +29,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 
 	/**
-	 * @return the DerivativeComputer to use for Taylor series
+	 * @return the DerivativeComputer to use for Taylor series cosine computation
 	 */
 	IterationTools.DerivativeComputer <Factorization> getComputer ()
 	{
@@ -73,7 +73,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 	/**
 	 * run the evaluation of the approximation and compute the error
-	 * - this is a Taylor series test of computation of K
+	 * - this is a Taylor series test of computation of K elliptical integral
 	 */
 	public void runKTest ()
 	{
@@ -96,7 +96,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 	/**
 	 * run the evaluation of the approximation and compute the error
-	 * - this is a Taylor series test of computation of sin(PI/n)
+	 * - this is a Taylor series test of computation of cos(PI/n)
 	 */
 	public void runTrigTest ()
 	{
