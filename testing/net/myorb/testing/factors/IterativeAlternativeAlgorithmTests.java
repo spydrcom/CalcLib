@@ -2,10 +2,9 @@
 package net.myorb.testing.factors;
 
 import net.myorb.math.computational.iterative.IterationTools;
-import net.myorb.math.primenumbers.Factorization;
+import net.myorb.math.computational.iterative.IterationTools.DerivativeComputer;
 
-import net.myorb.data.notations.json.JsonLowLevel;
-import net.myorb.data.notations.json.*;
+import net.myorb.math.primenumbers.Factorization;
 
 /**
  * evaluation of the Taylor series for trigonometry using chosen precision of PI
@@ -29,15 +28,14 @@ public class IterativeAlternativeAlgorithmTests
 			new IterativeAlternativeAlgorithmTests ();
 		//testScripts.enableTracing ();
 
+		// required constants
 		testScripts.computeSqrt ();
 		testScripts.computePi ();
 
+		// scripted tests
 		testScripts.runTanTest ();
-
 		testScripts.runSecTest ();
-
 		testScripts.runChiTests ();
-
 		testScripts.runTrigTest ();
 
 	}
@@ -72,7 +70,8 @@ public class IterativeAlternativeAlgorithmTests
 	void runTanTest ()
 	{
 		String ref = "0.26794919243112270647255365849413";
-		compute (getPiOver (12), 30, ref, IT.getTanDerivativeComputer (), "TAN");
+		DerivativeComputer <Factorization> computer = IT.getTanDerivativeComputer ();
+		compute (getPiOver (12), TRIG_SERIES_ITERATIONS, ref, computer, "TAN");
 	}
 
 
@@ -82,7 +81,8 @@ public class IterativeAlternativeAlgorithmTests
 	void runSecTest ()
 	{
 		String ref = "1.0352761804100830493955953504962";
-		compute (getPiOver (12), 30, ref, IT.getSecDerivativeComputer (), "SEC");
+		DerivativeComputer <Factorization> computer = IT.getSecDerivativeComputer ();
+		compute (getPiOver (12), TRIG_SERIES_ITERATIONS, ref, computer, "SEC");
 	}
 
 
@@ -91,86 +91,84 @@ public class IterativeAlternativeAlgorithmTests
 	 */
 	void runChiTests ()
 	{
-		//runChiTest
-		//	(IT.ONE, 2000, AccuracyCheck.Chi1_REF, "CHI2(1)");
-		// chi2 (1)  =  PI^2/8  =  1.2337005501361698273543113749845
-
-		computePhi ();
-		Factorization chiPhi = compute
-				(
-					IT.sumOf (reduce (phi), IT.S (-1)), 80,
-					AccuracyCheck.ChiPhi_REF, IT.getChi2DerivativeComputer (),
-					"CHI2(phi-1)"
-				);
-		// chi2(PHI-1)  =  PI^2/12 - 3/4 [ln(PHI)]^2  =  0.64879341799121742386351077989936
-		runLnPhiTest (reduce (chiPhi));
+		String ref = "1.2337005501361698273543113749845";
+		DerivativeComputer <Factorization> computer = IT.getChi2DerivativeComputer ();
+		compute (IT.ONE, 200, ref, computer, "CHI2(1)");
+		runChiPhiTests (computer);
 	}
 
 
 	/**
-	 * computation of ln(PHI)
+	 * chi2 (phi-1) followed by ln(phi)
+	 * @param computer the DerivativeComputer being used for chi tests
 	 */
-	void runLnPhiTest (Factorization chi)
+	void runChiPhiTests (DerivativeComputer <Factorization> computer)
 	{
-		display
-			(
-				chi, AccuracyCheck.ChiPhi_REF,
-				"REDUCED CHI ( as factor of ln[PHI] )"
-			);
-		Factorization lnPhi = computeLnPhiTest (chi);
+		computePhi ();
+		Factorization phiMinus1 = IT.sumOf (reduce (phi), IT.S (-1));
+		Factorization chiPhi = compute (phiMinus1, 80, ChiPhi_REF, computer, "CHI2(phi-1)" );
+		runLnPhiTest (reduce (chiPhi));
+	}
+	//				chi2(PHI-1)  =  PI^2/12 - 3/4 [ln(PHI)]^2
+	public static String ChiPhi = "0.6487934179 9121742386 3510779899 36";	// 32 digits
+	public static String ChiPhi_REF = ChiPhi.replaceAll (" ", "");
+
+
+	/**
+	 * computation of ln(phi)
+	 */
+	void runLnPhiTest (Factorization chiPhi)
+	{
+		display (chiPhi, ChiPhi_REF, ChiPhiTitle);
+		Factorization lnPhi = computeLnPhiTest (chiPhi);
 		display (lnPhi, AccuracyCheck.LnPhi_REF, "ln PHI");
 		timeStamp ();
 	}
-	Factorization computeLnPhiTest (Factorization chi)
+	public static String ChiPhiTitle = "REDUCED CHI ( as factor of ln[PHI] )";
+
+
+	/**
+	 * formula for computation of LnPhi from chi2Phi
+	 * @param chiPhi the computed value of chi2 (phi)
+	 * @return the computed value of ln (phi)
+	 */
+	Factorization computeLnPhiTest (Factorization chiPhi)
 	{
 		Factorization
 			piSQ = IT.POW (getReducedPi (), 2),
 			piSQ12  = IT.productOf (IT.oneOver (IT.S (12)), piSQ),
-			lnPhi34 = IT.sumOf (piSQ12, manager.negate (chi));				// PI^2/12 - chi
+			lnPhi34 = IT.sumOf (piSQ12, manager.negate (chiPhi));			// PI^2/12 - chiPhi
 		Factorization
 			lnPhi3  = IT.productOf (reduce (lnPhi34), IT.S (4)),
-			lnPhiSQ = IT.productOf (lnPhi3, IT.oneOver (IT.S (3)));			// 4/3 * [ PI^2/12 - chi ]
+			lnPhiSQ = IT.productOf (lnPhi3, IT.oneOver (IT.S (3)));			// 4/3 * [ PI^2/12 - chiPhi ]
 		return NR.sqrt (lnPhiSQ, ROOT_ITERATIONS);
-	}
-	Factorization reduce (Factorization x)					// truncation to 25 decimal places
-	{
-		return FactorizationCore.mgr
-			.getPrecisionManager ()
-			.truncate (x, 40);	
 	}
 
 
 	/**
+	 * truncation to specified precision
+	 * @param x value to be truncated
+	 * @return truncated value
+	 */
+	Factorization reduce (Factorization x) { return FactorizationCore.reduce (x, COMPUTATION_PRECISION); }
+
+
+	/**
 	 * compute fraction of PI
+	 * - reduce precision of the value being used
 	 * @param n the fraction to be computed
 	 * @return the computed fraction
 	 */
-	Factorization getPiOver (int n)
-	{
-		Factorization Nth = IT.oneOver (IT.S (n));
-		return manager.multiply (getReducedPi (), Nth);
-	}
+	Factorization getPiOver (int n) { return FactorizationCore.getPiOver (n, COMPUTATION_PRECISION); }
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.testing.factors.IterativeCompoundAlgorithmTests#getReducedPi()
 	 */
-	Factorization getReducedPi ()
-	{
-		JsonLowLevel.JsonValue json = null;
-		try { json = readFile (); } catch (Exception e) {}
-		Factorization pi = reduce (FactorizationCore.mgr.fromJson (json));
-		System.out.println ("Reduced PI = " + pi);
-		return pi;
-	}
-	JsonLowLevel.JsonValue readFile () throws Exception
-	{
-		JsonLowLevel.JsonValue json =
-			JsonReader.readFrom ( JsonReader.getFileSource ("data/PI.json") );
-		JsonSemantics.JsonObject JO = (JsonSemantics.JsonObject) json;
-		System.out.println (json = JO.getMemberCalled ("Content"));
-		return json;
-	}
+	Factorization getReducedPi () { return FactorizationCore.getReducedPi (COMPUTATION_PRECISION); }
+	// the override reducing PI precision has dramatic effect on execution time
+	// this effect is seen running IterativeCompoundAlgorithmTests
+	// as compared to running the override version
 
 
 }
