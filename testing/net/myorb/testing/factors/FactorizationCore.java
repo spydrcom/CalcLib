@@ -7,6 +7,8 @@ import net.myorb.math.primenumbers.FactorizationImplementation;
 import net.myorb.math.primenumbers.sieves.SieveOfSundaram;
 import net.myorb.math.primenumbers.Factorization;
 
+import net.myorb.data.notations.json.*;
+
 /**
  * allocation and initialization of the prime and composite lookup tables
  * @author Michael Druckman
@@ -25,7 +27,8 @@ public class FactorizationCore
 		(support = new FactorizationImplementation (tableSize));					// version of implementation that uses table scan
 		support.initFactorizationsWithStats (new SieveOfSundaram (support));		// using non-default sieve (SieveOfSundaram)
 	}
-	public static ExpressionFactorizedFieldManager mgr = new ExpressionFactorizedFieldManager ();
+	public static ExpressionFactorizedFieldManager
+			mgr = new ExpressionFactorizedFieldManager ();
 	public static FactorizationImplementation support;
 
 
@@ -39,23 +42,26 @@ public class FactorizationCore
 	public static void display
 		(Factorization approx, String REF, String tag, int precision)
 	{
-
 		String APX;
-
 		System.out.println ();
 		int p = mgr.pushDisplayPrecision (precision);
 		System.out.println (tag); System.out.println ();
-		System.out.println (APX = mgr.toDecimalString (approx));
-		System.out.println (toRatio (approx));
-		System.out.println ();
+		System.out.println ( APX = mgr.toDecimalString ( approx ) );
+		System.out.println ( toRatio ( approx ) ); System.out.println ();
+		showDifAt ( APX, REF);  mgr.setDisplayPrecision ( p );
+		System.out.println ("==="); System.out.println ();
+	}
 
+
+	/**
+	 * display evaluation of comparison of approximation against reference
+	 * @param REF the text of the reference
+	 * @param APX the approximation
+	 */
+	public static void showDifAt (String REF, String APX)
+	{
 		System.out.print ("DIF AT = ");
 		System.out.println (AccuracyCheck.difAt (REF, APX));
-
-		mgr.setDisplayPrecision (p);
-		System.out.println ("===");
-		System.out.println ();
-
 	}
 
 
@@ -119,7 +125,6 @@ public class FactorizationCore
 	 */
 	public static Factorization display (Computer computer, String tag)
 	{
-
 		Factorization value;
 
 		System.out.println ();
@@ -133,7 +138,55 @@ public class FactorizationCore
 		timeStamp ();
 
 		return value;
+	}
 
+
+	/**
+	 * compute fraction of PI
+	 * @param n the fraction to be computed
+	 * @param withPrecision number of decimal places
+	 * @return the computed fraction
+	 */
+	public static Factorization getPiOver (int n, int withPrecision)
+	{
+		Factorization Nth = mgr.invert (mgr.newScalar (n));
+		return mgr.multiply (getReducedPi (withPrecision), Nth);
+	}
+
+
+	/**
+	 * read stored value of PI and choose precision
+	 * @param n number of decimal places of precision
+	 * @return reduced value of PI
+	 */
+	public static Factorization getReducedPi (int n)
+	{
+		JsonLowLevel.JsonValue json = null;
+		try { json = readFile (); } catch (Exception e) {}
+		Factorization pi = reduce (FactorizationCore.mgr.fromJson (json), n);
+		// System.out.println ("Reduced PI = " + pi);
+		return pi;
+	}
+	static JsonLowLevel.JsonValue readFile () throws Exception
+	{
+		JsonLowLevel.JsonValue json =
+			JsonReader.readFrom ( JsonReader.getFileSource ("data/PI.json") );
+		// JsonSemantics.JsonObject JO = (JsonSemantics.JsonObject) json;
+		// System.out.println (json = JO.getMemberCalled ("Content"));
+		return json;
+	}
+
+
+	/**
+	 * truncation to 25 decimal places
+	 * @param x the value to be truncated
+	 * @param n number of decimal places
+	 * @return truncated value
+	 */
+	public static Factorization reduce (Factorization x, int n)
+	{
+		return mgr.getPrecisionManager ()
+				.truncate (x, n);	
 	}
 
 
@@ -150,6 +203,7 @@ public class FactorizationCore
 	}
 	static { start = System.currentTimeMillis (); }
 	static long start;
+
 
 }
 
