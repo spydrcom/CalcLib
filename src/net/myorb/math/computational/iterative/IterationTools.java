@@ -152,7 +152,8 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	{
 		T cos = cosPrime (n);
 		if (manager.isZero (cos)) return Z;
-		T sec = combo.E2nDoubleSum (n);
+		T sec = combo.E2nDoubleSum (n);			// tests show this works with Factored and Double data
+//		T sec = combo.En (n);					// this works with factored data but overflows using Double
 		return manager.multiply (cos, sec);
 	}
 
