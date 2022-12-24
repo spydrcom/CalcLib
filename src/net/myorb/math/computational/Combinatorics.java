@@ -90,8 +90,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public T raisingFactorial (T x, T m)
 	{
 		T result = ONE, xPlus = x,
-			mm1 = manager.add (m, NEGONE),
-			last = manager.add (x, mm1);
+			last = manager.add (x, m);
 		while (manager.lessThan (xPlus, last))
 		{
 			result = manager.multiply (result, xPlus);
@@ -127,7 +126,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public T factorial (T x)
 	{
-		return raisingFactorial (ONE, manager.add (x, ONE));
+		return raisingFactorial (ONE, x);
 	}
 
 
@@ -212,21 +211,20 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public T binomialCoefficient (T n, T k)
 	{
-		if (manager.isZero (k)) return ONE;
-		if (manager.isNegative (k) || manager.isZero (n)) return ZERO;
-
 		T nmk = manager.add (n, manager.negate (k));
-		if (manager.isZero (nmk)) return ONE;
 
-		T n2 = manager.multiply
-			(n, manager.invert (TWO));
-		if (manager.lessThan (n2, k)) k = nmk;
+		if (manager.isNegative (k) || manager.isNegative (nmk)) return ZERO;
+		if (manager.isZero (k) || manager.isZero (nmk)) return ONE;
 
-		return manager.multiply
-			(
-				fallingFactorial (n, k),
-				manager.invert (factorial (k))
-			);
+		T kf = ONE, nf = ONE, i = ONE;
+		while ( ! manager.lessThan (n, i))
+		{
+			if ( manager.lessThan (nmk, i) ) nf = manager.multiply (nf, i);
+			if ( ! manager.lessThan (k, i) ) kf = manager.multiply (kf, i);
+			i = manager.add (i, ONE);
+		}
+
+		return manager.multiply (nf, manager.invert (kf));
 	}
 
 
@@ -239,7 +237,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public static double binomialCoefficient (int n, int k)
 	{
-		if (k < 0 || k > n) return 0;
+		if ( k < 0 || k > n ) return 0;
 		if (k == 0 || k == n) return 1;
 
 		double kf = 1, nf = 1, nmk = n - k;
@@ -447,6 +445,120 @@ public class Combinatorics<T>  extends Tolerances<T>
 	/*
 	 * Euler numbers, coefficients, and polynomials
 	 */
+
+
+	public T En (int n)
+	{
+		int S = -1; T nT = manager.newScalar (n), SN, lT;
+		T sum = manager.getZero (), term = null;
+		T RF, RF1, RF3, Q1, Q3;
+
+		Q1 = manager.invert (manager.newScalar (4));
+		Q3 = manager.multiply(manager.newScalar (3), Q1);
+
+		for (int l = 1; l <= n; l++)
+		{
+			term = manager.invert (manager.newScalar (S * (l+1)));
+			SN = stirlingNumbers2 (nT, lT = manager.newScalar (l));
+			term = manager.multiply (term, SN);
+
+			RF1 = raisingFactorial (Q1, lT);
+			RF3 = raisingFactorial (Q3, lT);
+
+			RF = manager.multiply (manager.newScalar (3), RF1);
+			RF = manager.add (manager.negate (RF3), RF);
+			term = manager.multiply (term, RF);
+
+			sum = manager.add (sum, term);
+			S *= -1;
+		}
+
+		T multiplier = manager.pow (manager.newScalar (2), 2*n-1);
+		return manager.multiply (multiplier, sum);
+	}
+
+
+	public T E2n (int n2)
+	{
+		int S = -1; T nT = manager.newScalar (n2), SN, lT;
+		T sum = manager.getZero (), term;
+		T RF;
+
+		T	Q1 = manager.invert (manager.newScalar (4)),
+			Q3 = manager.multiply(manager.newScalar (3), Q1);
+
+		for (int l = 1; l <= n2; l++)
+		{
+			term = manager.invert (manager.newScalar (S * (l+1)));
+			SN = stirlingNumbers2 (nT, lT = manager.newScalar (l));
+			term = manager.multiply (term, SN);
+
+			RF = raisingFactorial (Q3, lT);
+			term = manager.multiply (term, RF);
+
+			sum = manager.add (sum, term);
+			S *= -1;
+		}
+
+		T multiplier = manager.pow (manager.newScalar (-4), n2);
+		return manager.multiply (multiplier, sum);
+	}
+
+
+	/**
+	 * double sum computation of Euler 2n
+	 * @param twoN index into the series of numbers
+	 * @return the number given the index
+	 */
+	public T E2nDoubleSum (int twoN)
+	{
+		if (twoN == 0) return ONE;
+		T N2 = manager.newScalar (-2);
+		T sum = manager.getZero ();
+
+		for (int k = 1; k <= twoN; k++)
+		{
+			sum = manager.add
+				(
+					sum,
+
+					manager.multiply
+					(
+						innerSum (k, twoN),
+						manager.pow (N2, -k)						//		(-2) ^ (-k)
+					)
+				);
+		}
+
+		return sum;
+	}
+	T innerSum (int k, int n)
+	{
+		T sum = ZERO, term;
+
+		for ( int l = 0; l <= 2 * k; l++ )
+		{
+			term = manager.multiply
+				(
+					binomialCoefficient
+					(
+						manager.newScalar ( 2 * k ),				//		( 2 k )
+						manager.newScalar (   l   )					//		(  l  )
+					),
+					manager.pow
+					(
+						manager.newScalar ( k - l ), n				//	  ( k - l ) ^ 2n
+					)
+				);
+			sum = manager.add ( sum, alternating ( term, l ) );		//		(-1) ^ l
+		}
+
+		return sum;
+	}
+	T alternating (T term, int whenOdd)
+	{
+		return whenOdd % 2 == 1 ? manager.negate (term) : term;
+	}
 
 
 	/**
