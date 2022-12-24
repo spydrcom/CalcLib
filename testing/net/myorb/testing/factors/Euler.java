@@ -24,9 +24,9 @@ public class Euler extends IterativeCompoundAlgorithmTests
 
 		//numbersTest ();
 
-		//secantTest ();
+		secantTest ();
 
-		tanTest ();
+		//tanTest ();
 
 	}
 
@@ -75,20 +75,21 @@ public class Euler extends IterativeCompoundAlgorithmTests
 	 */
 	void runNumbers ()
 	{
-		System.out.println ("Euler");
-		for (int n = 0; n < 20; n++)
-			System.out.println 
-			(
-				manager.toDecimalString (IT.combo.E2nDoubleSum (n))
-			);
-		System.out.println ("Bernoulli");
-		for (int n = 0; n < 20; n++)
-			System.out.println 
-			(
-				manager.toDecimalString (IT.combo.firstKindBernoulli (n))
-			);
+		E2n ();
+//		B2n ();
 	}
 
+	void E2n ()
+	{
+		System.out.println ("Euler");
+		for (int n = 0; n < 20; n+=2)
+			System.out.println 
+			(
+					manager.toDecimalString (IT.combo.E2nDoubleSum (n))
+//					manager.toDecimalString (IT.combo.E2n (n))
+//					manager.toDecimalString (IT.combo.En (n))
+			);
+	}
 	/*
 	 * E2n
 	 *  0   2  4    6     8      10       12
@@ -98,8 +99,17 @@ public class Euler extends IterativeCompoundAlgorithmTests
 		177519391579539289436664789665
 	 */
 
+	void B2n ()
+	{
+		System.out.println ("Bernoulli");
+		for (int n = 0; n < 20; n++)
+			System.out.println 
+			(
+				manager.toDecimalString (IT.combo.firstKindBernoulli (n))
+			);
+	}
 	/*
-	 * E2n
+	 * B2n
 	 *  0     1    2  2      4  5     6  7      8  9    10
 	    1   1/2  1/6  0  -1/30  0  1/42  0  -1/30  0  5/66
 	 */
