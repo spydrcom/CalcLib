@@ -449,12 +449,13 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 	public T En (int n)
 	{
+		if (n == 0) return ONE;
 		int S = -1; T nT = manager.newScalar (n), SN, lT;
 		T sum = manager.getZero (), term = null;
 		T RF, RF1, RF3, Q1, Q3;
 
 		Q1 = manager.invert (manager.newScalar (4));
-		Q3 = manager.multiply(manager.newScalar (3), Q1);
+		Q3 = manager.multiply (manager.newScalar (3), Q1);
 
 		for (int l = 1; l <= n; l++)
 		{
@@ -480,12 +481,13 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 	public T E2n (int n2)
 	{
+		if (n2 == 0) return ONE;
 		int S = -1; T nT = manager.newScalar (n2), SN, lT;
 		T sum = manager.getZero (), term;
 		T RF;
 
 		T	Q1 = manager.invert (manager.newScalar (4)),
-			Q3 = manager.multiply(manager.newScalar (3), Q1);
+			Q3 = manager.multiply (manager.newScalar (3), Q1);
 
 		for (int l = 1; l <= n2; l++)
 		{
@@ -501,7 +503,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 
 		T multiplier = manager.pow (manager.newScalar (-4), n2);
-		return manager.multiply (multiplier, sum);
+		return manager.negate (manager.multiply (multiplier, sum));
 	}
 
 
