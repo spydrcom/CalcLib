@@ -1,6 +1,7 @@
 
 package net.myorb.testing.factors;
 
+import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.primenumbers.Factorization;
 
 import net.myorb.data.notations.json.JsonLowLevel;
@@ -27,16 +28,61 @@ public class IterativeAlternativeAlgorithmTests
 		IterativeAlternativeAlgorithmTests testScripts =
 			new IterativeAlternativeAlgorithmTests ();
 		//testScripts.enableTracing ();
-		
-		testScripts.enableTracing ();
 
 		testScripts.computeSqrt ();
 		testScripts.computePi ();
+
+		testScripts.runTanTest ();
+
+		testScripts.runSecTest ();
 
 		testScripts.runChiTests ();
 
 		testScripts.runTrigTest ();
 
+	}
+
+
+	/**
+	 * general computation test script
+	 * @param of the parameter to the computation
+	 * @param iterations the number of iteration to run
+	 * @param ref the text of the expected result
+	 * @param computer the derivative computer
+	 * @param tag a descriptive title
+	 * @return the computed value
+	 */
+	Factorization compute
+		(
+			Factorization of, int iterations, String ref,
+			IterationTools.DerivativeComputer <Factorization> computer,
+			String tag
+		)
+	{
+		Factorization result =
+			run (iterations, computer, of);
+		display (result, ref, tag); timeStamp ();
+		return result;
+	}
+
+
+	/**
+	 * computation of tan
+	 */
+	void runTanTest ()
+	{
+		String ref = "0.26794919243112270647255365849413";
+		compute (getPiOver (12), 30, ref, IT.getTanDerivativeComputer (), "TAN");
+	}
+
+
+	/**
+	 * computation of sec
+	 */
+	void runSecTest ()
+	{
+		String ref = "1.0352761804100830493955953504962";
+		compute (getPiOver (12), 30, ref, IT.getSecDerivativeComputer (), "SEC");
 	}
 
 
@@ -50,18 +96,14 @@ public class IterativeAlternativeAlgorithmTests
 		// chi2 (1)  =  PI^2/8  =  1.2337005501361698273543113749845
 
 		computePhi ();
-		Factorization chiPhi = 
-			runChiTest (IT.sumOf (reduce (phi), IT.S (-1)), 80, AccuracyCheck.ChiPhi_REF, "CHI2(phi-1)");
+		Factorization chiPhi = compute
+				(
+					IT.sumOf (reduce (phi), IT.S (-1)), 80,
+					AccuracyCheck.ChiPhi_REF, IT.getChi2DerivativeComputer (),
+					"CHI2(phi-1)"
+				);
 		// chi2(PHI-1)  =  PI^2/12 - 3/4 [ln(PHI)]^2  =  0.64879341799121742386351077989936
 		runLnPhiTest (reduce (chiPhi));
-	}
-	Factorization runChiTest (Factorization of, int iterations, String ref, String tag)
-	{
-		Factorization chi = run
-			(iterations, IT.getChi2DerivativeComputer (), of);
-		display (chi, ref, tag);
-		timeStamp ();
-		return chi;
 	}
 
 
@@ -94,7 +136,19 @@ public class IterativeAlternativeAlgorithmTests
 	{
 		return FactorizationCore.mgr
 			.getPrecisionManager ()
-			.truncate (x, 25);	
+			.truncate (x, 40);	
+	}
+
+
+	/**
+	 * compute fraction of PI
+	 * @param n the fraction to be computed
+	 * @return the computed fraction
+	 */
+	Factorization getPiOver (int n)
+	{
+		Factorization Nth = IT.oneOver (IT.S (n));
+		return manager.multiply (getReducedPi (), Nth);
 	}
 
 
