@@ -1,6 +1,7 @@
 
 package net.myorb.math.computational.iterative;
 
+import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.SpaceManager;
 
@@ -41,10 +42,12 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public void setManager (SpaceManager <T> manager)
 	{
 		this.manager = manager;
+		this.combo = new Combinatorics <T> (manager, null);
 		this.ONE = manager.getOne ();
 		this.Z = manager.getZero ();
 	}
 	protected SpaceManager <T> manager;
+	public Combinatorics <T> combo;
 	public T ONE, Z;
 
 
@@ -125,11 +128,33 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public DerivativeComputer <T> getSinDerivativeComputer () { return (n) -> sinPrime (n); }
 	public DerivativeComputer <T> getCosDerivativeComputer () { return (n) -> cosPrime (n); }
 
+	public DerivativeComputer <T> getTanDerivativeComputer () { return (n) -> tanPrime (n); }
+	public DerivativeComputer <T> getSecDerivativeComputer () { return (n) -> secPrime (n); }
+
 	public DerivativeComputer <T> getSinhDerivativeComputer () { return (n) -> sinhPrime (n); }
 	public DerivativeComputer <T> getCoshDerivativeComputer () { return (n) -> coshPrime (n); }
 
 	public DerivativeComputer <T>  getAtanDerivativeComputer  () { return (n) -> primePow ( sinPrime  (n), 0, n-1 ); }
 	public DerivativeComputer <T> getArtanhDerivativeComputer () { return (n) -> primePow ( sinhPrime (n), 0, n-1 ); }
+
+
+	T tanPrime (int n)
+	{
+		T sin = sinPrime (n);
+		if (manager.isZero (sin)) return Z;
+		T four = manager.newScalar (4), fourN = manager.pow (four, (n+1)/2);
+		T B2n = combo.firstKindBernoulli (n+1), twoN = manager.invert (manager.newScalar (n+1));
+		T oneMinus4n = manager.add (ONE, manager.negate (fourN)), product = manager.multiply (fourN, oneMinus4n);
+		return manager.negate (manager.multiply (manager.multiply (B2n, manager.multiply (product, twoN)), sin));
+	}
+
+	T secPrime (int n)
+	{
+		T cos = cosPrime (n);
+		if (manager.isZero (cos)) return Z;
+		T sec = combo.E2nDoubleSum (n);
+		return manager.multiply (cos, sec);
+	}
 
 
 	// The polylogarithms
