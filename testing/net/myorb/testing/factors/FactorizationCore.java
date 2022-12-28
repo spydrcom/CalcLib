@@ -171,8 +171,9 @@ public class FactorizationCore
 	{
 		JsonLowLevel.JsonValue json =
 			JsonReader.readFrom ( JsonReader.getFileSource ("data/PI.json") );
-		// JsonSemantics.JsonObject JO = (JsonSemantics.JsonObject) json;
-		// System.out.println (json = JO.getMemberCalled ("Content"));
+		JsonSemantics.JsonObject JO = (JsonSemantics.JsonObject) json;
+		json = JO.getMemberCalled ("Content");
+		// System.out.println (json);
 		return json;
 	}
 
