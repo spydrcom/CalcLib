@@ -11,6 +11,50 @@ import net.myorb.math.SpaceManager;
 public abstract class CommonSummation <T>
 {
 
+	/**
+	 * adjust intermediate results to reduce overhead
+	 * @param <T> data type being processed
+	 */
+	public interface PrecisionAdjustment <T>
+	{
+		/**
+		 * apply adjustment to an intermediate result
+		 * @param termValue the intermediate result to be adjusted
+		 * @return the adjusted intermediate result value
+		 */
+		T adjust (T termValue);
+	}
+
+	/**
+	 * identify summation termination conditions
+	 * @param <T> data type being processed
+	 */
+	public interface ShortCircuit <T>
+	{
+		/**
+		 * check intermediate result for loop ending conditions
+		 * @param termValue the intermediate result to be evaluated
+		 * @return TRUE when the summation should be completed
+		 */
+		boolean terminateSummation (T termValue);
+	}
+
+	/**
+	 * establish a precision check algorithm
+	 * @param precisionCheck the object to use
+	 */
+	public void setPrecisionCheck
+	(PrecisionAdjustment <T> precisionCheck) { this.precisionCheck = precisionCheck; }
+	PrecisionAdjustment <T> precisionCheck = null;
+
+	/**
+	 * establish a Short Circuit algorithm
+	 * @param shortCircuit the object to use
+	 */
+	public void setShortCircuit
+	(ShortCircuit <T> shortCircuit) { this.shortCircuit = shortCircuit; }
+	ShortCircuit <T> shortCircuit = null;
+
 	public CommonSummation (SpaceManager <T> manager)
 	{
 		this.manager = manager;
@@ -24,15 +68,37 @@ public abstract class CommonSummation <T>
 	 */
 	public T computeSum (int n)
 	{
+		return computeSum (1, n);
+	}
+
+	/**
+	 * compute running sum of a pair of factors
+	 * - starting point is specified rather than assumed
+	 * @param from the starting point to be used
+	 * @param to the upper limit of terms
+	 * @return the computed sum
+	 */
+	public T computeSum (int from, int to)
+	{
 		T sum = manager.getZero (), term = null;
-		for (int l = 1; l <= n; l++)
+
+		for (int l = from; l <= to; l++)
 		{
 			term = manager.multiply
 				(
-					factor1 (n, l), factor2 (n, l)
+					factor1 (to, l), factor2 (to, l)
 				);
+			if (precisionCheck != null)
+			{
+				term = precisionCheck.adjust (term);
+			}
+
+			if (shortCircuit != null)
+				if (shortCircuit.terminateSummation (term))
+					return manager.add (sum, term);
 			sum = manager.add (sum, term);
 		}
+
 		return sum;
 	}
 
