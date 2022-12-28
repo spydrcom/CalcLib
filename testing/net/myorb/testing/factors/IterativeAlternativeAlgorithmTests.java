@@ -35,6 +35,7 @@ public class IterativeAlternativeAlgorithmTests
 		// scripted tests
 		testScripts.runTanTest ();
 		testScripts.runSecTest ();
+		testScripts.runLnPhiTest ();
 		testScripts.runChiTests ();
 		testScripts.runTrigTest ();
 
@@ -83,6 +84,16 @@ public class IterativeAlternativeAlgorithmTests
 		String ref = "1.0352761804100830493955953504962";
 		DerivativeComputer <Factorization> computer = IT.getSecDerivativeComputer ();
 		compute (getPiOver (12), TRIG_SERIES_ITERATIONS, ref, computer, "SEC");
+	}
+
+
+	/**
+	 * computation of ln phi
+	 */
+	void runLnPhiTest ()
+	{
+		computePhi (); computeEuler ();
+		checkLnPhi (reduce (phi), reduce (e));
 	}
 
 
