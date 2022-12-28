@@ -100,7 +100,7 @@ public class TaylorTest extends Taylor <Factorization>
 	public void runPowerTests ()
 	{
 		// parameter for tests will be 1/4
-		Factorization P = manager.invert (manager.newScalar (4));
+		Factorization P = IT.oneOver (IT.S (4));
 		// all reference values were provided by calculator
 
 		FactorizationCore.display
@@ -136,7 +136,50 @@ public class TaylorTest extends Taylor <Factorization>
 		(
 			// ln ( 1 + 1/4 )
 			computePowerSeries (IT.getLogDerivativeComputer (), P),
-			"0.22314355131420975576629509030983", "LOG", 1000
+			"0.22314355131420975576629509030983", "LOG 1.25", 1000
+		);			
+
+		FactorizationCore.display
+		(
+			// - ln ( 1 + (-1/2) )
+			computeLn2SQ (), AccuracyCheck.Ln2SQ_REF, "LOG 2 ^ 2", 1000
+		);			
+	}
+
+	/**
+	 * compute (ln 2)^2 with the log series
+	 * @return ln(2)^2
+	 */
+	public Factorization computeLn2SQ ()
+	{
+		Factorization P = IT.oneOver (IT.S (-2));
+		Factorization lnHalf = run (2*POWER_SERIES_ITERATIONS, IT.getLogDerivativeComputer (), P);
+		return IT.POW (lnHalf, 2); // NOTE: ln(1/2)^2 == ln(2)^2 because ln(1/2) = -ln(2)
+	}
+
+	/**
+	 * direct computation of ln phi using log series
+	 * @param phi computed value of phi from sqrt 5
+	 * @param e computed value of e
+	 * @return ln phi
+	 */
+	public Factorization computeLnPhi (Factorization phi, Factorization e)
+	{
+		Factorization lnPhiOverE = run
+			(
+				POWER_SERIES_ITERATIONS+5, IT.getLogDerivativeComputer (),
+				IT.sumOf (IT.productOf (phi, IT.oneOver (e)), IT.S (-1))
+			);
+		return IT.sumOf (lnPhiOverE, IT.ONE);
+	}
+	public void checkLnPhi (Factorization phi, Factorization e)
+	{
+		FactorizationCore.display
+		(
+			// ln ( phi )
+			computeLnPhi (phi, e),
+			AccuracyCheck.LnPhi_REF,
+			"LOG PHI", 1000
 		);			
 	}
 
@@ -168,7 +211,7 @@ public class TaylorTest extends Taylor <Factorization>
 	 */
 	public Factorization runInvTanTest (int iterations, Factorization Sqrt_3)
 	{
-		Factorization p = IT.sumOf (IT.S (2), manager.negate (Sqrt_3));
+		Factorization p = IT.sumOf (IT.S (2), IT.NEG (Sqrt_3));
 		return run (iterations, IT.getTi2DerivativeComputer (), p);
 	}
 
@@ -254,7 +297,7 @@ public class TaylorTest extends Taylor <Factorization>
 	{
 		Factorization Li2Half = computeLi2 (iterations, IT.oneOver (IT.S (2)));
 		Factorization PiSQ12 = IT.productOf (IT.POW (PI, 2), IT.oneOver (IT.S (12)));
-		Factorization HalfLn2SQ = IT.sumOf (PiSQ12, manager.negate (Li2Half));
+		Factorization HalfLn2SQ = IT.sumOf (PiSQ12, IT.NEG (Li2Half));
 		Factorization Ln2SQ = IT.productOf (HalfLn2SQ, IT.S (2));
 
 		FactorizationCore.display
@@ -309,7 +352,7 @@ public class TaylorTest extends Taylor <Factorization>
 	 * @return 2 - SQRT(3)
 	 */
 	public Factorization tanPi12 (Factorization Sqrt_3)
-	{ return IT.sumOf (manager.negate (Sqrt_3), IT.S (2)); }
+	{ return IT.sumOf (IT.NEG (Sqrt_3), IT.S (2)); }
 
 	/**
 	 * compute TAN(PI/6)
