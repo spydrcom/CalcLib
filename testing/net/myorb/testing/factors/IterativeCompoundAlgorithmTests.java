@@ -15,7 +15,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 
 	// choose tests to run
-	public static final boolean RUN_TRIG_TEST = true, RUN_POLYLOG_TEST = true, RUN_K_TEST = true;
+	public static final boolean RUN_TRIG_TEST = false, RUN_HTRIG_TEST = false, RUN_POLYLOG_TEST = false, RUN_EI_TESTS = true;
 
 
 	// constants for evaluations
@@ -24,7 +24,8 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	static final int PI_FRACTION = 6, CHECK_MULTIPLE = 4, CHECK_OFFSET = -3;	// 4 * cos^2(PI/6) - 3 = 0
 
 	// constants related to precision
-	static final int TRIG_SERIES_ITERATIONS = 30, POLYLOG_SERIES_ITERATIONS = 300, K_SERIES_ITERATIONS = 300;
+	static final int TRIG_SERIES_ITERATIONS = 30, HTRIG_SERIES_ITERATIONS = 20,
+			POLYLOG_SERIES_ITERATIONS = 30, EI_SERIES_ITERATIONS = 80;
 	static final int DISPLAY_PRECISION = 20;
 
 
@@ -47,6 +48,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		IterativeCompoundAlgorithmTests testScripts =
 			new IterativeCompoundAlgorithmTests ();
 
+//		testScripts.enableTracing ();
 		testScripts.computeSqrt ();		// prepare SQRT constants
 		testScripts.computePi ();		// use Ramanujan to compute PI
 		timeStamp ();
@@ -62,24 +64,32 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		// use computed value of PI as parameter to trig function
 		if (RUN_TRIG_TEST) testScripts.runTrigTest ();
 
+		// compute SINH and COSH as test source for ARTANH
+		if (RUN_HTRIG_TEST) testScripts.runHTrigTest ();
+
 		// use computed value of PI as test result for Li2 test
 		if (RUN_POLYLOG_TEST) testScripts.runPolylogTest ();
 
-		// use computed value of PI as test result for K test
-		if (RUN_K_TEST) testScripts.runKTest ();
+		// use computed value of PI as test result for EI tests
+		if (RUN_EI_TESTS) testScripts.runEITest ();
 
 	}
 
 
 	/**
 	 * run the evaluation of the approximation and compute the error
-	 * - this is a Taylor series test of computation of K elliptical integral
+	 * - this is a Taylor series test of computation of elliptical integrals
 	 */
-	public void runKTest ()
+	public void runEITest ()
 	{
-		runKTest (K_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
-		// runKTest (K_SERIES_ITERATIONS, pi, sqrt_3, AccuracyCheck.Ksqrt_REF);
+		runKTest (EI_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
+		runKTest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_3), AccuracyCheck.Ksqrt_REF);
+		runETest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_2), AccuracyCheck.Esqrt_REF);
 		timeStamp ();
+	}
+	Factorization reduce (Factorization x)
+	{
+		return FactorizationCore.reduce (x, 20);
 	}
 
 
@@ -91,6 +101,29 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	{
 		runLn2SQtest (POLYLOG_SERIES_ITERATIONS, pi);
 		timeStamp ();
+	}
+
+
+	/**
+	 * run the evaluation of the approximation and compute the error
+	 * - this is a Taylor series test of computation of sinh, cosh, and artanh
+	 */
+	public void runHTrigTest ()
+	{
+		Factorization
+			HALF = IT.oneOver (IT.S (2)),
+			sinh = run (HTRIG_SERIES_ITERATIONS, IT.getSinhDerivativeComputer (), HALF),
+			cosh = run (HTRIG_SERIES_ITERATIONS, IT.getCoshDerivativeComputer (), HALF);
+		FactorizationCore.display ( sinh, "0.5210953054937473616224256264114", "sinh", 200 );
+		FactorizationCore.display ( cosh, "1.1276259652063807852262251614027", "cosh", 200 );
+
+		Factorization
+			tanh = manager.multiply (sinh, manager.invert (cosh)),
+			artanh = run (3*HTRIG_SERIES_ITERATIONS, IT.getArtanhDerivativeComputer (), tanh),
+			test = manager.multiply (artanh, manager.newScalar (2)),
+			error = manager.add (test, manager.newScalar (-1));
+		System.out.println ("artanh");
+		display (artanh, error);
 	}
 
 
@@ -117,14 +150,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 				),
 				IT.S (CHECK_OFFSET)
 			);
-
-		// format results and display
-		String display = FactorizationCore.toDecimalString (check, DISPLAY_PRECISION);
-		System.out.print ("Approximation = "); System.out.println (result);
-		System.out.print ("Error = "); System.out.println (display);
-		System.out.println (); System.out.println ("===");
-		System.out.println ();
-		timeStamp ();
+		display (result, check);
 
 	}
 
@@ -162,6 +188,23 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 			.mgr.getPrecisionManager ()
 			.adjust (pi, 10, System.out)
 			.getAdjustedValue ();		
+	}
+
+
+	/**
+	 * show test results
+	 * @param result the computed result of a test
+	 * @param check the normalized result to zero as a check of error
+	 */
+	void display (Factorization result, Factorization check)
+	{
+		// format results and display
+		String display = FactorizationCore.toDecimalString (check, DISPLAY_PRECISION);
+		System.out.print ("Approximation = "); System.out.println (result);
+		System.out.print ("Error = "); System.out.println (display);
+		System.out.println (); System.out.println ("===");
+		System.out.println ();
+		timeStamp ();
 	}
 
 
