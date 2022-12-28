@@ -58,9 +58,13 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	 */
 	public T S (int N) { return manager.newScalar (N); }
 	public T oneOver (T x) { return manager.invert (x); }
+	public boolean isZ (T x) { return manager.isZero (x); }
 	public T sumOf (T x, T y) { return manager.add (x, y); }
+	public T negWhenOdd (T x, int n) { return n % 2 == 1 ? x : NEG (x); }
+	public T negWhenEven (T x, int n) { return n % 2 == 0 ? x : NEG (x); }
 	public T productOf (T x, T y) { return manager.multiply (x, y); }
 	public T POW (T x, int y) { return manager.pow (x, y); }
+	public T NEG (T x) { return manager.negate (x); }
 
 
 	/**
@@ -86,7 +90,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	 */
 	public T primePow (T P, int pow, int n)
 	{
-		if (manager.isZero (P)) return P;
+		if (isZ (P)) return P;
 		return powTimes (productOf (P, F (n)), pow, n);
 	}
 	T powTimes (T PFn, int pow, int n)
@@ -120,36 +124,32 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 
 	// exponentials
 
-	public DerivativeComputer <T> getExpDerivativeComputer () { return (n) -> ONE; }
+	public DerivativeComputer <T> getExpDerivativeComputer () { return (n) -> ONE; }								// converges for all parameters
 
-	public DerivativeComputer <T> getGeometricDerivativeComputer () { return (n) -> geoPrime (n); }
-	public DerivativeComputer <T> getBinomialDerivativeComputer (T alpha) { return (n) -> binPrime (n, alpha); }
-	public DerivativeComputer <T> getInvSqrtDerivativeComputer () { return (n) -> invSqrtPrime (n); }
-	public DerivativeComputer <T> getSqrtDerivativeComputer () { return (n) -> sqrtPrime (n); }
-	public DerivativeComputer <T> getLogDerivativeComputer () { return (n) -> logPrime (n); }
+	public DerivativeComputer <T> getGeometricDerivativeComputer () { return (n) -> geoPrime (n); }					// converges for |x| < 1
+	public DerivativeComputer <T> getBinomialDerivativeComputer (T alpha) { return (n) -> binPrime (n, alpha); }	// converges for all alpha and |x| < 1
+	public DerivativeComputer <T> getInvSqrtDerivativeComputer () { return (n) -> invSqrtPrime (n); }				// converges for |x| < 1
+	public DerivativeComputer <T> getSqrtDerivativeComputer () { return (n) -> sqrtPrime (n); }						// converges for |x| < 1
+	public DerivativeComputer <T> getLogDerivativeComputer () { return (n) -> logPrime (n); }						// converges for |x| < 1
 
 
 	T geoPrime (int n)
 	{
 		// 1 / (1 - x)
-		return combo.factorial (manager.newScalar (n));
+		return combo.factorial (S (n));
 	}
 
 	T binPrime (int n, T alpha)
 	{
 		// (1 + x) ^ alpha
-		T N = manager.newScalar (n);
-		return combo.fallingFactorial (alpha, N);
+		return combo.fallingFactorial (alpha, S (n));
 	}
 
 	T invSqrtPrime (int n)
 	{
 		// (1 + x) ^ (-1/2)
-		T N1 = manager.newScalar (n);
-		T N2 = manager.newScalar (n+1);
-		T RF = combo.raisingFactorial (N2, N1);
-		T ratio = manager.multiply (RF, manager.pow (manager.newScalar (4), -n));
-		return n % 2 == 0 ? ratio : manager.negate (ratio);
+		T RF = combo.raisingFactorial (S (n + 1), S (n));
+		return negWhenEven (productOf (RF, POW (S (4), -n)), n);
 	}
 
 	T sqrtPrime (int n)
@@ -161,44 +161,43 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	T logPrime (int n)
 	{
 		// ln (1 + x)
-		if (n == 0) return Z;
-		T ratio = F (n - 1);
-		return n % 2 == 1 ? ratio : manager.negate (ratio);
+		return n == 0 ? Z : negWhenOdd (F (n - 1), n);
 	}
 
 
 	// the trigonometric functions
 
-	public DerivativeComputer <T> getSinDerivativeComputer () { return (n) -> sinPrime (n); }
-	public DerivativeComputer <T> getCosDerivativeComputer () { return (n) -> cosPrime (n); }
+	public DerivativeComputer <T> getSinDerivativeComputer () { return (n) -> sinPrime (n); }							// converges for all parameters
+	public DerivativeComputer <T> getCosDerivativeComputer () { return (n) -> cosPrime (n); }							// converges for all parameters
 
-	public DerivativeComputer <T> getTanDerivativeComputer () { return (n) -> tanPrime (n); }
-	public DerivativeComputer <T> getSecDerivativeComputer () { return (n) -> secPrime (n); }
+	public DerivativeComputer <T> getTanDerivativeComputer () { return (n) -> tanPrime (n); }							// converges for |x| < pi/2
+	public DerivativeComputer <T> getSecDerivativeComputer () { return (n) -> secPrime (n); }							// converges for |x| < pi/2
 
-	public DerivativeComputer <T> getSinhDerivativeComputer () { return (n) -> sinhPrime (n); }
-	public DerivativeComputer <T> getCoshDerivativeComputer () { return (n) -> coshPrime (n); }
+	public DerivativeComputer <T> getSinhDerivativeComputer () { return (n) -> sinhPrime (n); }							// converges for all parameters
+	public DerivativeComputer <T> getCoshDerivativeComputer () { return (n) -> coshPrime (n); }							// converges for all parameters
 
-	public DerivativeComputer <T>  getAtanDerivativeComputer  () { return (n) -> primePow ( sinPrime  (n), 0, n-1 ); }
-	public DerivativeComputer <T> getArtanhDerivativeComputer () { return (n) -> primePow ( sinhPrime (n), 0, n-1 ); }
+	public DerivativeComputer <T>  getAtanDerivativeComputer  () { return (n) -> primePow ( sinPrime  (n), 0, n-1 ); }	// converges for |x| < 1 and x != +/-i
+	public DerivativeComputer <T> getArtanhDerivativeComputer () { return (n) -> primePow ( sinhPrime (n), 0, n-1 ); }	// converges for |x| < 1
 
 
 	T tanPrime (int n)
 	{
+		int N1;
 		T sin = sinPrime (n);
-		if (manager.isZero (sin)) return Z;
-		T four = manager.newScalar (4), fourN = manager.pow (four, (n+1)/2);
-		T B2n = combo.firstKindBernoulli (n+1), twoN = manager.invert (manager.newScalar (n+1));
-		T oneMinus4n = manager.add (ONE, manager.negate (fourN)), product = manager.multiply (fourN, oneMinus4n);
-		return manager.negate (manager.multiply (manager.multiply (B2n, manager.multiply (product, twoN)), sin));
+		if (isZ (sin)) return Z;
+		T four = S (4), fourN = POW (four, (N1 = n + 1)/2);
+		T B2n = combo.firstKindBernoulli (N1), twoN = oneOver (S (N1));
+		T oneMinus4n = sumOf (ONE, NEG (fourN)), product = productOf (fourN, oneMinus4n);
+		return NEG (productOf (productOf (B2n, productOf (product, twoN)), sin));
 	}
 
 	T secPrime (int n)
 	{
 		T cos = cosPrime (n);
-		if (manager.isZero (cos)) return Z;
-		T sec = combo.E2nDoubleSum (n);			// tests show this works with Factored and Double data
+		if (isZ (cos)) return Z;
 //		T sec = combo.En (n);					// this works with factored data but overflows using Double
-		return manager.multiply (cos, sec);
+		T sec = combo.E2nDoubleSum (n);			// tests show this works with Factored and Double data
+		return productOf (cos, sec);
 	}
 
 
