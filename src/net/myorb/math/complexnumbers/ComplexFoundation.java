@@ -47,7 +47,7 @@ public class ComplexFoundation
 	 * @param k taken this number of times
 	 * @return computed n choose k
 	 */
-	protected static double choose (int n, int k) { return Combinatorics.binomialCoefficient (n, k); }
+	protected static double choose (int n, int k) { return Combinatorics.binomialCoefficientHW (n, k); }
 
 
 	/*

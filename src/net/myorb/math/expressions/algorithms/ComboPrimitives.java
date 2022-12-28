@@ -104,7 +104,7 @@ public class ComboPrimitives <T> extends PowerPrimitives <T>
 			{
 				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
 				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
-				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers2 (n, k));
+				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers2HW (n, k));
 				return valueManager.newDiscreteValue (result);
 			}
 
