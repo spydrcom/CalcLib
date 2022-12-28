@@ -128,8 +128,7 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 			(
 				new Factorization []
 				{
-					manager.negate (x),
-					IT.Z, IT.ONE
+					IT.NEG (x), IT.Z, IT.ONE
 				}
 			);
 		return run (iterations, C);
