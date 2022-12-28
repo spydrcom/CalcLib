@@ -18,13 +18,15 @@ public class TaylorTest extends Taylor <Factorization>
 	// choose tests to run
 	public static final boolean
 			RUN_EULER_TEST =  true,
+			RUN_POWER_TESTS =  true,
 			RUN_POLYLOG_TEST = false
 	;
 
 
 	static final int							// iteration counts for tests
 			EULER_SERIES_ITERATIONS = 50,		//		converges about 1 digit per iteration
-			POLYLOG_SERIES_ITERATIONS = 500		//		very slow convergence, only 2 digits for 500 iterations
+			POLYLOG_SERIES_ITERATIONS = 500,	//		very slow convergence, only 2 digits for 500 iterations
+			POWER_SERIES_ITERATIONS = 40		//		all convergence quickly and give good precision
 	;
 
 
@@ -49,20 +51,17 @@ public class TaylorTest extends Taylor <Factorization>
 
 		if (RUN_EULER_TEST)
 		{
-			FactorizationCore.display
-			(
-				TT.computeEuler (EULER_SERIES_ITERATIONS),
-				AccuracyCheck.E_REF, "E", 1000
-			);			
+			TT.runEulerTest ();
+		}
+
+		if (RUN_POWER_TESTS)
+		{
+			TT.runPowerTests ();
 		}
 
 		if (RUN_POLYLOG_TEST)
 		{
-			FactorizationCore.display
-			(
-				TT.computeLi2 (POLYLOG_SERIES_ITERATIONS, TT.IT.ONE),
-				AccuracyCheck.Li2_REF, "Li2", 1000
-			);
+			TT.runPolylogTest ();
 		}
 
 	}
@@ -80,6 +79,80 @@ public class TaylorTest extends Taylor <Factorization>
 	public Factorization computeEuler (int iterations)
 	{
 		return run (iterations, IT.getExpDerivativeComputer (), IT.ONE);
+	}
+	void runEulerTest ()
+	{
+		FactorizationCore.display
+		(
+			computeEuler (EULER_SERIES_ITERATIONS),
+			AccuracyCheck.E_REF, "E", 1000
+		);			
+	}
+
+
+	/*
+	 * Power series
+	 */
+
+	/**
+	 * run the full series of tests
+	 */
+	public void runPowerTests ()
+	{
+		// parameter for tests will be 1/4
+		Factorization P = manager.invert (manager.newScalar (4));
+		// all reference values were provided by calculator
+
+		FactorizationCore.display
+		(
+			// ( 1 + 1/4 ) ^ (1/2)
+			computePowerSeries (IT.getSqrtDerivativeComputer (), P),
+			"1.1180339887498948482045868343656", "SQRT", 1000
+		);			
+
+		FactorizationCore.display
+		(
+			// ( 1 + 1/4 ) ^ (-1/2)
+			computePowerSeries (IT.getInvSqrtDerivativeComputer (), P),
+			"0.89442719099991587856366946749251", "INV SQRT", 1000
+		);			
+
+		FactorizationCore.display
+		(
+			// 1 / ( 1 - 1/4 ) = 4/3
+			computePowerSeries (IT.getGeometricDerivativeComputer (), P),
+			"1.3333333333333333333333333333333", "GEO", 1000
+		);			
+
+		FactorizationCore.display
+		(
+			// computer takes exponent as parameter
+			// so this test is ( 1 + 1/4 ) ^ ( 1 / 4 )
+			computePowerSeries (IT.getBinomialDerivativeComputer (P), P),
+			"1.0573712634405641195350370000286", "BIN", 1000
+		);			
+
+		FactorizationCore.display
+		(
+			// ln ( 1 + 1/4 )
+			computePowerSeries (IT.getLogDerivativeComputer (), P),
+			"0.22314355131420975576629509030983", "LOG", 1000
+		);			
+	}
+
+	/**
+	 * run calculations of test
+	 * @param computer calculation engine for test
+	 * @param P the parameter value for test
+	 * @return the computed result
+	 */
+	public Factorization computePowerSeries
+		(
+			IterationTools.DerivativeComputer <Factorization> computer,
+			Factorization P
+		)
+	{
+		return run (POWER_SERIES_ITERATIONS, computer, P);
 	}
 
 
@@ -118,24 +191,52 @@ public class TaylorTest extends Taylor <Factorization>
 			String ref
 		)
 	{
+		runEITest ( iterations, IT.getKDerivativeComputer (), PI, numerator, ref, "K" );
+	}
+
+	/**
+	 * E elliptic integral
+	 * @param iterations the number to be run
+	 * @param PI value of PI to use in calculation
+	 * @param S2 value of sqrt2 to use in calculation
+	 * @param ref text of the reference
+	 */
+	public void runETest
+		(
+			int iterations,
+			Factorization PI, Factorization S2,
+			String ref
+		)
+	{
+		runEITest ( iterations, IT.getEDerivativeComputer (), PI, S2, ref, "E" );
+	}
+
+	/**
+	 * general form of EI tests
+	 * @param iterations the number to be run
+	 * @param computer a derivative computer for test
+	 * @param PI value of PI to use in calculation of result
+	 * @param numerator double the parameter value to function call
+	 * @param ref text of the verification reference
+	 * @param tag a display tag for the test
+	 */
+	public void runEITest
+		(
+			int iterations,
+			IterationTools.DerivativeComputer <Factorization> computer,
+			Factorization PI, Factorization numerator,
+			String ref, String tag
+		)
+	{
 		Factorization HALF = IT.oneOver (IT.S (2));
 		Factorization HN = IT.productOf (HALF, numerator);
 
 		Factorization result = IT.productOf
 			(
-				run
-				(
-					iterations,
-					IT.getKDerivativeComputer (),
-					HN
-				),
-				IT.productOf (HALF, PI)
+				run ( iterations, computer, HN ),
+				IT.productOf ( HALF, PI )
 			);
-
-		FactorizationCore.display
-		(
-			result, ref, "K", 1000
-		);
+		FactorizationCore.display ( result, ref, tag, 1000 );
 	}
 
 
@@ -172,6 +273,14 @@ public class TaylorTest extends Taylor <Factorization>
 	public Factorization computeLi2 (int iterations, Factorization parameter)
 	{
 		return run (iterations, IT.getLi2DerivativeComputer (), parameter);
+	}
+	void runPolylogTest ()
+	{
+		FactorizationCore.display
+		(
+			computeLi2 (POLYLOG_SERIES_ITERATIONS, IT.ONE),
+			AccuracyCheck.Li2_REF, "Li2", 1000
+		);
 	}
 
 
