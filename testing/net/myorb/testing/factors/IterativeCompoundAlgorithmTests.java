@@ -15,7 +15,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 
 	// choose tests to run
-	public static final boolean RUN_TRIG_TEST = false, RUN_HTRIG_TEST = false, RUN_POLYLOG_TEST = false, RUN_EI_TESTS = true;
+	public static final boolean RUN_TRIG_TEST = false, RUN_HTRIG_TEST = true, RUN_POLYLOG_TEST = true, RUN_EI_TESTS = false;
 
 
 	// constants for evaluations
@@ -25,7 +25,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 	// constants related to precision
 	static final int TRIG_SERIES_ITERATIONS = 30, HTRIG_SERIES_ITERATIONS = 20,
-			POLYLOG_SERIES_ITERATIONS = 30, EI_SERIES_ITERATIONS = 80;
+			POLYLOG_SERIES_ITERATIONS = 60, EI_SERIES_ITERATIONS = 80;
 	static final int DISPLAY_PRECISION = 20;
 
 
@@ -71,7 +71,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 		if (RUN_POLYLOG_TEST) testScripts.runPolylogTest ();
 
 		// use computed value of PI as test result for EI tests
-		if (RUN_EI_TESTS) testScripts.runEITest ();
+		if (RUN_EI_TESTS) testScripts.runEITests ();
 
 	}
 
@@ -80,7 +80,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	 * run the evaluation of the approximation and compute the error
 	 * - this is a Taylor series test of computation of elliptical integrals
 	 */
-	public void runEITest ()
+	public void runEITests ()
 	{
 		runKTest (EI_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
 		runKTest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_3), AccuracyCheck.Ksqrt_REF);
@@ -111,19 +111,20 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public void runHTrigTest ()
 	{
 		Factorization
-			HALF = IT.oneOver (IT.S (2)),
+			TWO = IT.S (2), HALF = IT.oneOver (TWO),
 			sinh = run (HTRIG_SERIES_ITERATIONS, IT.getSinhDerivativeComputer (), HALF),
 			cosh = run (HTRIG_SERIES_ITERATIONS, IT.getCoshDerivativeComputer (), HALF);
 		FactorizationCore.display ( sinh, "0.5210953054937473616224256264114", "sinh", 200 );
 		FactorizationCore.display ( cosh, "1.1276259652063807852262251614027", "cosh", 200 );
+		timeStamp ();
 
 		Factorization
-			tanh = manager.multiply (sinh, manager.invert (cosh)),
+			tanh = IT.productOf (sinh, IT.oneOver (cosh)),
 			artanh = run (3*HTRIG_SERIES_ITERATIONS, IT.getArtanhDerivativeComputer (), tanh),
-			test = manager.multiply (artanh, manager.newScalar (2)),
-			error = manager.add (test, manager.newScalar (-1));
+			test = IT.productOf (artanh, TWO), error = IT.sumOf (test, IT.S (-1));
 		System.out.println ("artanh");
 		display (artanh, error);
+		timeStamp ();
 	}
 
 
