@@ -607,34 +607,24 @@ public class Combinatorics<T>  extends Tolerances<T>
 	class EulerSummation extends CommonSummation <T>
 	{
 
-		EulerSummation (SpaceManager <T> manager) { super (manager); }
+		EulerSummation (SpaceManager <T> manager)
+		{ super (manager); this.inner = new InnerSummation (manager); }
 
-		public T factor1 (int n, int k) { return manager.pow (N2, -k); }		//		(-2) ^ (-k)
-		public T factor2 (int n, int k) { return innerSum (k, n); }
+		public T factor2 (int n, int k) { return inner.set (n).computeSum (0, 2*k); }
+		public T factor1 (int n, int k) { return manager.pow (N2, -k); }						//	   (-2) ^ (-k)
+
 		protected T N2 = manager.newScalar (-2);
+		protected InnerSummation inner;
 
-		T innerSum (int k, int n)
+		class InnerSummation extends CommonSummation <T>
 		{
-			T sum = ZERO, term;
+			public T factor2 (int n, int k)														//		(-1) ^ l
+			{ return alternating (manager.pow (manager.newScalar ( n/2 - k ), N ), k ); }		//	  ( k - l ) ^ 2n
+			public T factor1 (int n, int k) { return binomialCoefficient (n, k); }				//		2*k ## l
 
-			for ( int l = 0; l <= 2 * k; l++ )
-			{
-				term = manager.multiply
-					(
-						binomialCoefficient
-						(
-							manager.newScalar ( 2 * k ),						//		( 2 k )
-							manager.newScalar (   l   )							//		(  l  )
-						),
-						manager.pow
-						(
-							manager.newScalar ( k - l ), n						//	  ( k - l ) ^ 2n
-						)
-					);
-				sum = manager.add ( sum, alternating ( term, l ) );				//		(-1) ^ l
-			}
-
-			return sum;
+			InnerSummation (SpaceManager <T> manager) { super (manager); }
+			InnerSummation set (int N) { this.N = N; return this; }
+			protected int N;
 		}
 
 	}
