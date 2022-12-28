@@ -122,6 +122,50 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 
 	public DerivativeComputer <T> getExpDerivativeComputer () { return (n) -> ONE; }
 
+	public DerivativeComputer <T> getGeometricDerivativeComputer () { return (n) -> geoPrime (n); }
+	public DerivativeComputer <T> getBinomialDerivativeComputer (T alpha) { return (n) -> binPrime (n, alpha); }
+	public DerivativeComputer <T> getInvSqrtDerivativeComputer () { return (n) -> invSqrtPrime (n); }
+	public DerivativeComputer <T> getSqrtDerivativeComputer () { return (n) -> sqrtPrime (n); }
+	public DerivativeComputer <T> getLogDerivativeComputer () { return (n) -> logPrime (n); }
+
+
+	T geoPrime (int n)
+	{
+		// 1 / (1 - x)
+		return combo.factorial (manager.newScalar (n));
+	}
+
+	T binPrime (int n, T alpha)
+	{
+		// (1 + x) ^ alpha
+		T N = manager.newScalar (n);
+		return combo.fallingFactorial (alpha, N);
+	}
+
+	T invSqrtPrime (int n)
+	{
+		// (1 + x) ^ (-1/2)
+		T N1 = manager.newScalar (n);
+		T N2 = manager.newScalar (n+1);
+		T RF = combo.raisingFactorial (N2, N1);
+		T ratio = manager.multiply (RF, manager.pow (manager.newScalar (4), -n));
+		return n % 2 == 0 ? ratio : manager.negate (ratio);
+	}
+
+	T sqrtPrime (int n)
+	{
+		// (1 + x) ^ (1/2)
+		return productOf ( invSqrtPrime (n), oneOver (S ( 1 - 2*n )) );
+	}
+
+	T logPrime (int n)
+	{
+		// ln (1 + x)
+		if (n == 0) return Z;
+		T ratio = F (n - 1);
+		return n % 2 == 1 ? ratio : manager.negate (ratio);
+	}
+
 
 	// the trigonometric functions
 
@@ -178,16 +222,16 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 
 	// elliptic integrals 
 
-	public DerivativeComputer <T> getKDerivativeComputer () { return (n) -> (n%2==1)? Z: getK (n); }	// * pi/2
-	public DerivativeComputer <T> getEDerivativeComputer () { return (n) -> (n%2==1)? Z: getE (n); }
+	public DerivativeComputer <T> getKDerivativeComputer () { return (n) -> (n%2==1)? Z: KPrime (n); }	// * pi/2
+	public DerivativeComputer <T> getEDerivativeComputer () { return (n) -> (n%2==1)? Z: EPrime (n); }
 
 
-	T getE (int n)
+	T EPrime (int n)
 	{
-		return productOf ( getK (n), oneOver (S ( 1 - n )) );
+		return productOf ( KPrime (n), oneOver (S ( 1 - n )) );
 	}
 
-	T getK (int n)
+	T KPrime (int n)
 	{
 		T ratio =
 			productOf
