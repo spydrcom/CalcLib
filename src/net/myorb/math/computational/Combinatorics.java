@@ -231,11 +231,38 @@ public class Combinatorics<T>  extends Tolerances<T>
 	/**
 	 * binomial coefficients
 	 * - specifically for integer operands
+	 * - factorials computed in managed type
 	 * @param n the upper number of the set
 	 * @param k the lower number of the set
 	 * @return n! / ( k! * (n - k)! )
 	 */
-	public static double binomialCoefficient (int n, int k)
+	public T binomialCoefficient (int n, int k)
+	{
+		if ( k < 0 || k > n ) return ZERO;
+		if (k == 0 || k == n) return ONE;
+
+		T kf = ONE, nf = ONE; int nmk = n - k;
+
+		for (int i = 1; i <= n; i++)
+		{
+			T iT = manager.newScalar (i);
+			if (i > nmk) nf = manager.multiply (nf, iT);
+			if (i <= k) kf = manager.multiply (kf, iT);
+		}
+
+		return manager.multiply (nf, manager.invert (kf));
+	}
+
+
+	/**
+	 * binomial coefficients
+	 * - specifically for integer operands
+	 * - using hardware double float so overflow possible
+	 * @param n the upper number of the set
+	 * @param k the lower number of the set
+	 * @return n! / ( k! * (n - k)! )
+	 */
+	public static double binomialCoefficientHW (int n, int k)
 	{
 		if ( k < 0 || k > n ) return 0;
 		if (k == 0 || k == n) return 1;
@@ -270,8 +297,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		int n2 = 2 * n, mn = m + n;
 
 		double difference =
-			binomialCoefficient (n2, mn) -
-			binomialCoefficient (n2, mn+1);
+			binomialCoefficientHW (n2, mn) -
+			binomialCoefficientHW (n2, mn+1);
 		return difference;
 	}
 
@@ -292,7 +319,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public static double catalanNumbers (int n)
 	{
-		return binomialCoefficient (2*n, n) / (n + 1);
+		return binomialCoefficientHW (2*n, n) / (n + 1);
 	}
 
 	public T catalanNumbers (T n)
@@ -301,6 +328,42 @@ public class Combinatorics<T>  extends Tolerances<T>
 		n2 = manager.multiply (TWO, n), bc = binomialCoefficient (n2, n);
 		return manager.multiply (bc, manager.invert (n1));
 	}
+
+
+	/**
+	 * sequence of Bell numbers
+	 * @param n the index into the sequence
+	 * @return Nth Bell number
+	 */
+	public static double bellNumbers (int n)
+	{
+		double sum = 0;
+		// !! Bn(n) = SIGMA [ 0 <= k <= n ] ( n $$$ k )
+		for (int k = 0; k <= n; k++)
+		{
+			sum += stirlingNumbers2HW (n, k);
+		}
+		return sum;
+	}
+
+
+	/**
+	 * compute entries of the triangle
+	 * @param i row number to identify entry
+	 * @param j column number to identify entry
+	 * @return computed entry
+	 */
+	public static double bellTriangle (int i, int j)
+	{
+		if (j > i) return 0; else if (j == 0)
+		{ if (i == 0) return 1; return bellTriangle (i-1, i-1); }
+		else return bellTriangle (i, j-1) + bellTriangle (i-1, j-1);
+	}
+
+
+	/*
+	 * Stirling Numbers first and second kind
+	 */
 
 
 	/**
@@ -329,11 +392,12 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 	/**
 	 * Stirling Numbers second kind { n / k }
+	 * - this uses hardware float so overflow danger
 	 * @param n the upper number of the set
 	 * @param k the lower number of the set
 	 * @return S ( n, k )
 	 */
-	public static double stirlingNumbers2 (int n, int k)
+	public static double stirlingNumbers2HW (int n, int k)
 	{
 		if (k > n) return 0;
 		double F = 1.0, S = -1;
@@ -344,62 +408,50 @@ public class Combinatorics<T>  extends Tolerances<T>
 		for (int i = 1; i <= k; i++, S = -S)
 		{
 			number += S * Math.pow (k - i, n) *
-				binomialCoefficient (k, i);
+				binomialCoefficientHW (k, i);
 			F *= i; // compiled factorial
 		}
 
 		return number / F;
 	}
 
+	public T stirlingNumbers2 (int n, int k)
+	{
+		if (n < k) return ZERO;
+		StirlingComputer SC = new StirlingComputer (manager, n, k);
+		T sum = manager.add (SC.computeSum (k), manager.pow (manager.newScalar (k), n));
+		return manager.multiply (sum, manager.invert (SC.F));
+	}
+
+	class StirlingComputer extends CommonSummation <T>
+	{
+
+		StirlingComputer (SpaceManager <T> manager, int N, int K)
+		{ super (manager); this.K = K; this.N = N; }
+		protected int N, K;
+
+		public T factor1 (int n, int i)
+		{
+			T kmi = manager.newScalar (K - i);
+			return alternating (manager.pow (kmi, N), i);
+		}
+
+		public T factor2 (int n, int i)
+		{
+			F = manager.multiply (F, manager.newScalar (i));
+			return binomialCoefficient (K, i);
+		}
+		protected T F = ONE;
+
+	}
+
 	public T stirlingNumbers2 (T n, T k)
 	{
-		if (manager.lessThan (n, k)) return ZERO;
-
-		int kk = manager.toNumber (k).intValue ();
-		T number = pow (k, n), F = ONE, S = NEGONE;
-
-		for (int i = 1; i <= kk; i++, S = manager.negate (S))
-		{
-			T it = manager.newScalar (i);
-			T bc = binomialCoefficient (k, it);
-			T exp = pow (manager.newScalar (kk - i), n);
-			T term = manager.multiply (S, manager.multiply (exp, bc));
-			number = manager.add (number, term);
-			F = manager.multiply (F, it);
-		}
-
-		return manager.multiply (number, manager.invert (F));
-	}
-
-
-	/**
-	 * sequence of Bell numbers
-	 * @param n the index into the sequence
-	 * @return Nth Bell number
-	 */
-	public static double bellNumbers (int n)
-	{
-		double sum = 0;
-		// !! Bn(n) = SIGMA [ 0 <= k <= n ] ( n $$$ k )
-		for (int k = 0; k <= n; k++)
-		{
-			sum += stirlingNumbers2 (n, k);
-		}
-		return sum;
-	}
-
-
-	/**
-	 * compute entries of the triangle
-	 * @param i row number to identify entry
-	 * @param j column number to identify entry
-	 * @return computed entry
-	 */
-	public static double bellTriangle (int i, int j)
-	{
-		if (j > i) return 0; else if (j == 0)
-		{ if (i == 0) return 1; return bellTriangle (i-1, i-1); }
-		else return bellTriangle (i, j-1) + bellTriangle (i-1, j-1);
+		return stirlingNumbers2
+			(
+				manager.toNumber (n).intValue (),
+				manager.toNumber (k).intValue ()
+			);
 	}
 
 
@@ -422,8 +474,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public static double narayanaNumbers (int n, int k)
 	{
 		double product =
-			binomialCoefficient (n, k) *
-			binomialCoefficient (n, k-1);
+			binomialCoefficientHW (n, k) *
+			binomialCoefficientHW (n, k-1);
 		return product / n;
 	}
 
@@ -447,119 +499,144 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 
 
-	public T En (int n)
+	/**
+	 * common manager for summation of terms found in
+	 *		Stirling algorithms for Euler numbers
+	 */
+	abstract class EulerComputer extends CommonSummation <T>
 	{
-		if (n == 0) return ONE;
-		int S = -1; T nT = manager.newScalar (n), SN, lT;
-		T sum = manager.getZero (), term = null;
-		T RF, RF1, RF3, Q1, Q3;
 
-		Q1 = manager.invert (manager.newScalar (4));
-		Q3 = manager.multiply (manager.newScalar (3), Q1);
-
-		for (int l = 1; l <= n; l++)
+		EulerComputer (SpaceManager <T> manager)
 		{
-			term = manager.invert (manager.newScalar (S * (l+1)));
-			SN = stirlingNumbers2 (nT, lT = manager.newScalar (l));
-			term = manager.multiply (term, SN);
-
-			RF1 = raisingFactorial (Q1, lT);
-			RF3 = raisingFactorial (Q3, lT);
-
-			RF = manager.multiply (manager.newScalar (3), RF1);
-			RF = manager.add (manager.negate (RF3), RF);
-			term = manager.multiply (term, RF);
-
-			sum = manager.add (sum, term);
-			S *= -1;
+			super (manager);
+			Q1 = manager.invert (manager.newScalar (4));
+			Q3 = manager.multiply (manager.newScalar (3), Q1);
 		}
 
-		T multiplier = manager.pow (manager.newScalar (2), 2*n-1);
-		return manager.multiply (multiplier, sum);
+		public T factor1 (int n, int k) { return stirlingFactor (n, k); }
+		public T factor2 (int n, int k) { return computeRaisingFactorial (k); }
+		abstract T computeRaisingFactorial (int index);
+
+		/**
+		 * Stirling second kind evaluations for Euler numbers
+		 * @param n the index of the Euler number being computed
+		 * @param l the loop index being evaluated in the algorithm
+		 * @return the Stirling number needed in the computation
+		 */
+		T stirlingFactor (int n, int l)
+		{
+			T factor = manager.multiply
+				(
+					manager.invert (manager.newScalar (l + 1)),
+					stirlingNumbers2 (n, l)
+				);
+			return alternating (factor, l);
+		}
+
+		protected T Q1,  Q3;
+
 	}
 
 
+	/**
+	 * Euler number
+	 * @param n index in the series
+	 * @return the computed number
+	 */
+	public T En (int n)
+	{
+		if (n == 0) return ONE;
+		return new EnComputer (manager).computeNumber (n);
+	}
+	class EnComputer extends EulerComputer
+	{
+		T computeRaisingFactorial (int l)
+		{
+			T lT = manager.newScalar (l),
+				RF1 = raisingFactorial (Q1, lT),
+				RF3 = raisingFactorial (Q3, lT);
+			T RF = manager.multiply (manager.newScalar (3), RF1);
+			return manager.add (manager.negate (RF3), RF);
+		}
+		T computeNumber (int n)
+		{
+			T multiplier = manager.pow (manager.newScalar (2), 2*n-1);
+			return manager.multiply (multiplier, computeSum (n));
+		}
+		EnComputer (SpaceManager <T> manager) { super (manager); }
+	}
+
+
+	/**
+	 * Euler number
+	 * @param n2 index in the series
+	 * @return the computed number
+	 */
 	public T E2n (int n2)
 	{
 		if (n2 == 0) return ONE;
-		int S = -1; T nT = manager.newScalar (n2), SN, lT;
-		T sum = manager.getZero (), term;
-		T RF;
-
-		T	Q1 = manager.invert (manager.newScalar (4)),
-			Q3 = manager.multiply (manager.newScalar (3), Q1);
-
-		for (int l = 1; l <= n2; l++)
+		return new E2nComputer (manager).computeNumber (n2);
+	}
+	class E2nComputer extends EulerComputer
+	{
+		T computeRaisingFactorial (int l)
 		{
-			term = manager.invert (manager.newScalar (S * (l+1)));
-			SN = stirlingNumbers2 (nT, lT = manager.newScalar (l));
-			term = manager.multiply (term, SN);
-
-			RF = raisingFactorial (Q3, lT);
-			term = manager.multiply (term, RF);
-
-			sum = manager.add (sum, term);
-			S *= -1;
+			return raisingFactorial (Q3, manager.newScalar (l));
 		}
-
-		T multiplier = manager.pow (manager.newScalar (-4), n2);
-		return manager.negate (manager.multiply (multiplier, sum));
+		T computeNumber (int n)
+		{
+			T multiplier = manager.pow (manager.newScalar (-4), n);
+			return manager.negate (manager.multiply (multiplier, computeSum (n)));
+		}
+		E2nComputer (SpaceManager <T> manager) { super (manager); }
 	}
 
 
 	/**
 	 * double sum computation of Euler 2n
+	 * - this algorithm is less likely to overflow
+	 * - even tests using hardware float did not show the problem
 	 * @param twoN index into the series of numbers
 	 * @return the number given the index
 	 */
 	public T E2nDoubleSum (int twoN)
 	{
 		if (twoN == 0) return ONE;
-		T N2 = manager.newScalar (-2);
-		T sum = manager.getZero ();
+		return new EulerSummation (manager).computeSum (twoN);
+	}
+	class EulerSummation extends CommonSummation <T>
+	{
 
-		for (int k = 1; k <= twoN; k++)
+		EulerSummation (SpaceManager <T> manager) { super (manager); }
+
+		public T factor1 (int n, int k) { return manager.pow (N2, -k); }		//		(-2) ^ (-k)
+		public T factor2 (int n, int k) { return innerSum (k, n); }
+		protected T N2 = manager.newScalar (-2);
+
+		T innerSum (int k, int n)
 		{
-			sum = manager.add
-				(
-					sum,
+			T sum = ZERO, term;
 
-					manager.multiply
+			for ( int l = 0; l <= 2 * k; l++ )
+			{
+				term = manager.multiply
 					(
-						innerSum (k, twoN),
-						manager.pow (N2, -k)						//		(-2) ^ (-k)
-					)
-				);
+						binomialCoefficient
+						(
+							manager.newScalar ( 2 * k ),						//		( 2 k )
+							manager.newScalar (   l   )							//		(  l  )
+						),
+						manager.pow
+						(
+							manager.newScalar ( k - l ), n						//	  ( k - l ) ^ 2n
+						)
+					);
+				sum = manager.add ( sum, alternating ( term, l ) );				//		(-1) ^ l
+			}
+
+			return sum;
 		}
 
-		return sum;
-	}
-	T innerSum (int k, int n)
-	{
-		T sum = ZERO, term;
-
-		for ( int l = 0; l <= 2 * k; l++ )
-		{
-			term = manager.multiply
-				(
-					binomialCoefficient
-					(
-						manager.newScalar ( 2 * k ),				//		( 2 k )
-						manager.newScalar (   l   )					//		(  l  )
-					),
-					manager.pow
-					(
-						manager.newScalar ( k - l ), n				//	  ( k - l ) ^ 2n
-					)
-				);
-			sum = manager.add ( sum, alternating ( term, l ) );		//		(-1) ^ l
-		}
-
-		return sum;
-	}
-	T alternating (T term, int whenOdd)
-	{
-		return whenOdd % 2 == 1 ? manager.negate (term) : term;
 	}
 
 
@@ -580,7 +657,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 		for (int k = 0; k <= m+1; k++, S = -S)
 		{
 			number += S * Math.pow (m + 1 - k, n) *
-				binomialCoefficient (n+1, k);
+				binomialCoefficientHW (n+1, k);
 		}
 
 		return number;
