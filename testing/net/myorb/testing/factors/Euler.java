@@ -22,9 +22,9 @@ public class Euler extends IterativeCompoundAlgorithmTests
 	public static void main (String[] a)
 	{
 
-		//numbersTest ();
+		numbersTest ();
 
-		secantTest ();
+		//secantTest ();
 
 		//tanTest ();
 
@@ -85,9 +85,9 @@ public class Euler extends IterativeCompoundAlgorithmTests
 		for (int n = 0; n < 20; n+=2)
 			System.out.println 
 			(
-					manager.toDecimalString (IT.combo.E2nDoubleSum (n))
-//					manager.toDecimalString (IT.combo.E2n (n))
-//					manager.toDecimalString (IT.combo.En (n))
+					"E2nD  "+manager.toDecimalString (IT.combo.E2nDoubleSum (n))
+//					"E2n   "+manager.toDecimalString (IT.combo.E2n (n))
+//					"En    "+manager.toDecimalString (IT.combo.En (n))
 			);
 	}
 	/*
