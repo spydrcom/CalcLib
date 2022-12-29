@@ -1,6 +1,8 @@
 
 package net.myorb.math.computational;
 
+import net.myorb.math.computational.iterative.IterationFoundations;
+
 import net.myorb.math.SpaceManager;
 
 /**
@@ -8,52 +10,8 @@ import net.myorb.math.SpaceManager;
  * @param <T> data type being processed
  * @author Michael Druckman
  */
-public abstract class CommonSummation <T>
+public abstract class CommonSummation <T> extends IterationFoundations <T>
 {
-
-	/**
-	 * adjust intermediate results to reduce overhead
-	 * @param <T> data type being processed
-	 */
-	public interface PrecisionAdjustment <T>
-	{
-		/**
-		 * apply adjustment to an intermediate result
-		 * @param termValue the intermediate result to be adjusted
-		 * @return the adjusted intermediate result value
-		 */
-		T adjust (T termValue);
-	}
-
-	/**
-	 * identify summation termination conditions
-	 * @param <T> data type being processed
-	 */
-	public interface ShortCircuit <T>
-	{
-		/**
-		 * check intermediate result for loop ending conditions
-		 * @param termValue the intermediate result to be evaluated
-		 * @return TRUE when the summation should be completed
-		 */
-		boolean terminateSummation (T termValue);
-	}
-
-	/**
-	 * establish a precision check algorithm
-	 * @param precisionCheck the object to use
-	 */
-	public void setPrecisionCheck
-	(PrecisionAdjustment <T> precisionCheck) { this.precisionCheck = precisionCheck; }
-	PrecisionAdjustment <T> precisionCheck = null;
-
-	/**
-	 * establish a Short Circuit algorithm
-	 * @param shortCircuit the object to use
-	 */
-	public void setShortCircuit
-	(ShortCircuit <T> shortCircuit) { this.shortCircuit = shortCircuit; }
-	ShortCircuit <T> shortCircuit = null;
 
 	public CommonSummation (SpaceManager <T> manager)
 	{
