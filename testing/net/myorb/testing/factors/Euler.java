@@ -4,7 +4,6 @@ package net.myorb.testing.factors;
 import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.computational.iterative.Taylor;
-//import net.myorb.math.primenumbers.Factorization;
 
 /**
  * tests for numeric series used in Taylor tests
@@ -24,9 +23,9 @@ public class Euler extends IterativeCompoundAlgorithmTests
 
 		numbersTest ();
 
-		//secantTest ();
+//		secantTest ();
 
-		//tanTest ();
+//		tanTest ();
 
 	}
 
