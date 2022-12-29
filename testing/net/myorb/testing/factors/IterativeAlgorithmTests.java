@@ -32,7 +32,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 	public static int
 		DISPLAY_PRECISION = 2000,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
-		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 10,
+		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 30,
 		ROOT_ITERATIONS = 7, COMPUTATION_PRECISION = 25
 	;
 
@@ -140,7 +140,10 @@ public class IterativeAlgorithmTests extends TaylorTest
 	public static void main (String[] a)
 	{
 
-		new IterativeAlgorithmTests ().computeValues ();
+		IterativeAlgorithmTests test =
+				new IterativeAlgorithmTests ();
+		test.establishParameters (FactorizationCore.mgr);
+		test.computeValues ();
 
 		System.out.println ();
 		System.out.println ("+-+-+-+-+-+-+-+-+");

@@ -24,8 +24,9 @@ public class IterativeAlternativeAlgorithmTests
 	public static void main (String[] a)
 	{
 
-		IterativeAlternativeAlgorithmTests testScripts =
-			new IterativeAlternativeAlgorithmTests ();
+		IterativeAlternativeAlgorithmTests
+			testScripts = new IterativeAlternativeAlgorithmTests ();
+		testScripts.establishParameters (FactorizationCore.mgr);
 		//testScripts.enableTracing ();
 
 		// required constants

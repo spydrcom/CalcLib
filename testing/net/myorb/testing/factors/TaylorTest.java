@@ -2,6 +2,7 @@
 package net.myorb.testing.factors;
 
 import net.myorb.math.computational.iterative.Taylor;
+import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.computational.iterative.IterationTools;
 
 import net.myorb.math.primenumbers.Factorization;
@@ -19,15 +20,16 @@ public class TaylorTest extends Taylor <Factorization>
 	public static final boolean
 			RUN_EULER_TEST =  true,
 			RUN_POWER_TESTS =  true,
-			RUN_POLYLOG_TEST = false
+			RUN_POLYLOG_TEST = true
 	;
-
 
 	static final int							// iteration counts for tests
 			EULER_SERIES_ITERATIONS = 50,		//		converges about 1 digit per iteration
 			POLYLOG_SERIES_ITERATIONS = 500,	//		very slow convergence, only 2 digits for 500 iterations
 			POWER_SERIES_ITERATIONS = 40		//		all convergence quickly and give good precision
 	;
+
+	static final int MAX_PRECISION = 20;		// truncate intermediate results at specified precision
 
 
 	public TaylorTest ()
@@ -47,7 +49,9 @@ public class TaylorTest extends Taylor <Factorization>
 
 		FactorizationCore.init (1_000_000);
 
-		TaylorTest TT = new TaylorTest ();
+		TaylorTest TT =
+			new TaylorTest ().establishParameters
+				(FactorizationCore.mgr);
 
 		if (RUN_EULER_TEST)
 		{
@@ -64,6 +68,17 @@ public class TaylorTest extends Taylor <Factorization>
 			TT.runPolylogTest ();
 		}
 
+	}
+
+	TaylorTest establishParameters
+		(ExpressionFactorizedFieldManager m)
+	{
+		this.installPrecisionMonitor
+		(
+			m.getPrecisionManager (),
+			m, MAX_PRECISION
+		);
+		return this;
 	}
 
 

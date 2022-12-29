@@ -15,7 +15,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 
 	// choose tests to run
-	public static final boolean RUN_TRIG_TEST = false, RUN_HTRIG_TEST = true, RUN_POLYLOG_TEST = true, RUN_EI_TESTS = false;
+	public static final boolean RUN_TRIG_TEST = true, RUN_HTRIG_TEST = true, RUN_POLYLOG_TEST = true, RUN_EI_TESTS = true;
 
 
 	// constants for evaluations
@@ -45,8 +45,9 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	public static void main (String[] a)
 	{
 
-		IterativeCompoundAlgorithmTests testScripts =
-			new IterativeCompoundAlgorithmTests ();
+		IterativeCompoundAlgorithmTests
+				testScripts = new IterativeCompoundAlgorithmTests ();
+		testScripts.establishParameters (FactorizationCore.mgr);
 
 //		testScripts.enableTracing ();
 		testScripts.computeSqrt ();		// prepare SQRT constants
