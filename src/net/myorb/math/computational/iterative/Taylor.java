@@ -52,10 +52,17 @@ public class Taylor <T> extends IterationFoundations <T>
 			IterationTools.DerivativeComputer <T> computer
 		)
 	{
-		initializeSummation
-		(computer.nTHderivative (0));
-		for (int n = 1; n <= iterations; n++)
-		{ applyIteration (computer.nTHderivative (n)); }
+		try
+		{
+			initializeSummation
+			(computer.nTHderivative (0));
+			for (int n = 1; n <= iterations; n++)
+			{ applyIteration (computer.nTHderivative (n)); }
+		}
+		catch (ShortCircuitTermination SC)
+		{
+			System.out.println (SC.getMessage ());
+		}
 		return summation;
 	}
 
@@ -63,9 +70,12 @@ public class Taylor <T> extends IterationFoundations <T>
 	/**
 	 * compute the specified term and add into the summation
 	 * @param n the value of the summation index for this iteration
-	 * @param nTHderivative Nth evaluated derivative
+	 * @param nTHderivative Nth evaluated derivative for the algorithm
+	 * @throws ShortCircuitTermination for Short Circuit condition found
 	 */
-	public void applyIteration (int n, T nTHderivative)
+	public void applyIteration
+			(int n, T nTHderivative)
+	throws ShortCircuitTermination
 	{
 		this.setX (manager.pow
 			(functionParameter, n));
@@ -74,6 +84,7 @@ public class Taylor <T> extends IterationFoundations <T>
 		T nF = combo.factorial (manager.newScalar (n));
 		this.setDelta (manager.multiply (xNfP, manager.invert (nF)));
 		this.summation = manager.add (this.summation, this.getDelta ());
+		this.testForShortCircuit (this.getDelta (), n, manager);
 	}
 	public T summation;
 
@@ -81,8 +92,11 @@ public class Taylor <T> extends IterationFoundations <T>
 	/**
 	 * run the next iteration in the series
 	 * @param nTHderivative the next derivative value
+	 * @throws ShortCircuitTermination for Short Circuit condition found
 	 */
-	public void applyIteration (T nTHderivative)
+	public void applyIteration
+		(T nTHderivative)
+	throws ShortCircuitTermination
 	{
 		applyIteration ( n += 1, nTHderivative );
 		trace ();
@@ -94,8 +108,11 @@ public class Taylor <T> extends IterationFoundations <T>
 	 * iteration index starts at zero
 	 * - summation is also initialized to zero
 	 * @param derivative0 the function derivative for term 0
+	 * @throws ShortCircuitTermination for Short Circuit condition found
 	 */
-	public void initializeSummation (T derivative0)
+	public void initializeSummation
+			(T derivative0)
+	throws ShortCircuitTermination
 	{
 		this.summation = manager.getZero ();
 		this.combo = new Combinatorics <> (manager, null);
