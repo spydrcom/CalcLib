@@ -545,8 +545,10 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public T En (int n)
 	{
-		if (n == 0) return ONE;
-		return new EnComputer (manager).computeNumber (n);
+		return n > 0
+			? new EnComputer (manager)
+				.computeNumber (n)
+			: ONE;
 	}
 	class EnComputer extends EulerComputer
 	{
@@ -569,13 +571,15 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 	/**
 	 * Euler number
-	 * @param n2 index in the series
+	 * @param twoN index in the series
 	 * @return the computed number
 	 */
-	public T E2n (int n2)
+	public T E2n (int twoN)
 	{
-		if (n2 == 0) return ONE;
-		return new E2nComputer (manager).computeNumber (n2);
+		return twoN > 0
+			? new E2nComputer (manager)
+				.computeNumber (twoN)
+			: ONE;
 	}
 	class E2nComputer extends EulerComputer
 	{
@@ -583,10 +587,10 @@ public class Combinatorics<T>  extends Tolerances<T>
 		{
 			return raisingFactorial (Q3, manager.newScalar (l));
 		}
-		T computeNumber (int n)
+		T computeNumber (int twoN)
 		{
-			T multiplier = manager.pow (manager.newScalar (-4), n);
-			return manager.negate (manager.multiply (multiplier, computeSum (n)));
+			T multiplier = manager.pow (manager.newScalar (-4), twoN);
+			return manager.negate (manager.multiply (multiplier, computeSum (twoN)));
 		}
 		E2nComputer (SpaceManager <T> manager) { super (manager); }
 	}
@@ -601,30 +605,32 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 */
 	public T E2nDoubleSum (int twoN)
 	{
-		if (twoN == 0) return ONE;
-		return new EulerSummation (manager).computeSum (twoN);
+		return twoN > 0
+			? new EulerSummation (manager, twoN)
+				.computeSum (twoN)
+			: ONE;
 	}
 	class EulerSummation extends CommonSummation <T>
 	{
 
-		EulerSummation (SpaceManager <T> manager)
-		{ super (manager); this.inner = new InnerSummation (manager); }
+		EulerSummation (SpaceManager <T> manager, int twoN)
+		{ super (manager); this.inner = new InnerSummation (manager, twoN); }
 
-		public T factor2 (int n, int k) { return inner.set (n).computeSum (0, 2*k); }
-		public T factor1 (int n, int k) { return manager.pow (N2, -k); }						//	   (-2) ^ (-k)
+		public T factor2 (int twoN, int k) { return inner.computeSum (0, 2*k); }
+		public T factor1 (int twoN, int k) { return manager.pow (neg2, -k); }						//	   (-2) ^ (-k)
 
-		protected T N2 = manager.newScalar (-2);
+		protected T neg2 = manager.newScalar (-2);
 		protected InnerSummation inner;
 
 		class InnerSummation extends CommonSummation <T>
 		{
-			public T factor2 (int n, int k)														//		(-1) ^ l
-			{ return alternating (manager.pow (manager.newScalar ( n/2 - k ), N ), k ); }		//	  ( k - l ) ^ 2n
-			public T factor1 (int n, int k) { return binomialCoefficient (n, k); }				//		2*k ## l
+			public T factor2 (int twoK, int l)														//		(-1) ^ l  *
+			{ return alternating (manager.pow (manager.newScalar ( twoK/2 - l ), twoN ), l ); }		//	  ( k - l ) ^ 2n
+			public T factor1 (int twoK, int l) { return binomialCoefficient (twoK, l); }			//		2*k ## l
 
-			InnerSummation (SpaceManager <T> manager) { super (manager); }
-			InnerSummation set (int N) { this.N = N; return this; }
-			protected int N;
+			InnerSummation (SpaceManager <T> manager, int twoN)
+			{ super (manager); this.twoN = twoN; }
+			protected int twoN;
 		}
 
 	}
