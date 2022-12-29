@@ -2,6 +2,7 @@
 package net.myorb.math.primenumbers;
 
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
+import net.myorb.math.computational.iterative.IterationFoundations;
 
 import java.math.BigInteger;
 import java.io.PrintStream;
@@ -12,6 +13,7 @@ import java.io.PrintStream;
  * @author Michael Druckman
  */
 public class PrecisionManipulation
+	implements IterationFoundations.PrecisionRestriction <Factorization>
 {
 
 
@@ -30,6 +32,11 @@ public class PrecisionManipulation
 		 * @return the value that replaced the adjustment factors
 		 */
 		Factorization getReducedFactor ();
+
+		/**
+		 * @return adjustment factors as fully adjusted value
+		 */
+		Factorization getRawTruncatedRatio ();
 
 		/**
 		 * @return numerator and denominator of adjustment factors
@@ -154,8 +161,16 @@ public class PrecisionManipulation
 	{
 		BigInteger N = BigInteger.valueOf (10).pow (at);
 		Factorization multiple = mgr.bigScalar (N), inverted = mgr.invert (multiple);
-		Factorization truncated = adjust (mgr.multiply (x, multiple), 1, null).getReducedFactor ();
+		Factorization truncated = adjust (mgr.multiply (x, multiple), 1, null).getRawTruncatedRatio ();
 		return mgr.multiply (truncated, inverted);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.iterative.IterationFoundations.PrecisionRestriction#adjust(java.lang.Object, int)
+	 */
+	public Factorization adjust (Factorization termValue, int toLimit)
+	{
+		return truncate (termValue, toLimit);
 	}
 
 
@@ -243,6 +258,17 @@ class ReductionImpl implements PrecisionManipulation.Reduction
 	}
 	protected Factorization fudgeFactor;
 	protected BigInteger divRem [];
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.PrecisionManipulation.Reduction#getRawTruncatedRatio()
+	 */
+	public Factorization getRawTruncatedRatio ()
+	{
+		Factorization ratio = fudgeFactor;
+		if (mgr.isNegative (source)) return mgr.negate (ratio);
+		return ratio;
+	}
 
 
 	/**
