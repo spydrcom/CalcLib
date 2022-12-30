@@ -130,17 +130,45 @@ public class IterationFoundations <T>
 	{
 		if (shortCircuit != null && shortCircuit.terminateSummation (termValue))
 		{
-			String message = "term value was " + mgr.toDecimalString (termValue);
-			throw new ShortCircuitTermination (message, atIteration);
+			throw new ShortCircuitTermination
+			(
+				termValue,
+				mgr.toDecimalString (termValue),
+				atIteration
+			);
 		}
 	}
+
+	/**
+	 * exception that indicates Short circuit conditions being met
+	 */
 	public static class ShortCircuitTermination extends Throwable
 	{
+
+		/**
+		 * simple message absent detail
+		 */
 		public ShortCircuitTermination () { super (MESSAGE); }
+
+		/**
+		 * @param message general text message for caller supplied context
+		 * @param iteration the iteration number to be kept as context
+		 */
 		public ShortCircuitTermination (String message, int iteration)
-		{ super (MESSAGE + " : " + message + ", at iteration " + iteration); }
-		private static final String MESSAGE = "Short circuit conditions met";
+		{ super ( iterationMessage ( message, iteration ) ); this.iteration = iteration; }
+		public Object getIterationNumber () { return iteration; }
+		protected int iteration;
+
+		public static String iterationMessage (String message, int iteration)
+		{ return  MESSAGE  +  " : "  +  message  +  ", at iteration "  +  iteration; }
+		private static final String  MESSAGE  =  "Short circuit conditions met";
 		private static final long serialVersionUID = 1670961473218425868L;
+
+		public ShortCircuitTermination (Object value, String valueAsText, int iteration)
+		{ this ("term value was " + valueAsText, iteration); this.value = value; }
+		public Object getTerminationValue () { return value; }
+		protected Object value;
+
 	}
 
 
