@@ -38,9 +38,18 @@ public class Euler extends IterativeCompoundAlgorithmTests
 		ExpressionFloatingFieldManager manager = new ExpressionFloatingFieldManager ();
 		IterationTools <Double> IT = new IterationTools <Double> (); IT.setManager (manager);
 		Taylor <Double> taylor = new Taylor <Double> (manager); taylor.enableTracing ();
-		double tan = taylor.run (30, IT.getTanDerivativeComputer (), Math.PI/12);
-		// 0.26794919243112270647255365849413
-		System.out.println (tan);
+		double  tan  =  taylor.run ( 18, IT.getTanDerivativeComputer (), Math.PI/12 );
+		System.out.println (tan); System.out.println ("==="); System.out.println ();
+		// 0.26794919243 112270647255365849413 precise to 11 digits w/ double
+
+		int dif = AccuracyCheck.difAt
+			(
+				"0.26794919243112270647255365849413",
+				Double.toString (tan)
+			);
+		System.out.println (dif + " places match");
+		System.out.println ("===");
+		System.out.println ();
 	}
 
 
@@ -52,9 +61,18 @@ public class Euler extends IterativeCompoundAlgorithmTests
 		ExpressionFloatingFieldManager manager = new ExpressionFloatingFieldManager ();
 		IterationTools <Double> IT = new IterationTools <Double> (); IT.setManager (manager);
 		Taylor <Double> taylor = new Taylor <Double> (manager); taylor.enableTracing ();
-		double sec = taylor.run (30, IT.getSecDerivativeComputer (), Math.PI/12);
-		// 1.0352761804100830493955953504962
-		System.out.println (sec);
+		double  sec  = taylor.run ( 20, IT.getSecDerivativeComputer (), Math.PI/12 );
+		System.out.println (sec); System.out.println ("==="); System.out.println ();
+		// 1.035276180410083 0493955953504962 precise to 15 digits w/ double
+
+		int dif = AccuracyCheck.difAt
+			(
+				"1.0352761804100830493955953504962",
+				Double.toString (sec)
+			);
+		System.out.println (dif + " places match");
+		System.out.println ("===");
+		System.out.println ();
 	}
 
 
