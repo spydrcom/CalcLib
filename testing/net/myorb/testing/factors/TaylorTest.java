@@ -241,15 +241,16 @@ public class TaylorTest extends Taylor <Factorization>
 	 * @param PI value of PI to use in calculation
 	 * @param numerator of the parameter fraction
 	 * @param ref text of the reference
+	 * @param tag identify test
 	 */
 	public void runKTest
 		(
 			int iterations,
 			Factorization PI, Factorization numerator,
-			String ref
+			String ref, String tag
 		)
 	{
-		runEITest ( iterations, IT.getKDerivativeComputer (), PI, numerator, ref, "K" );
+		runEITest ( iterations, IT.getKDerivativeComputer (), PI, numerator, ref, "K"+tag );
 	}
 
 	/**
@@ -266,7 +267,7 @@ public class TaylorTest extends Taylor <Factorization>
 			String ref
 		)
 	{
-		runEITest ( iterations, IT.getEDerivativeComputer (), PI, S2, ref, "E" );
+		runEITest ( iterations, IT.getEDerivativeComputer (), PI, S2, ref, "E(sqrt 2 / 2)" );
 	}
 
 	/**

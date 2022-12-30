@@ -24,7 +24,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	static final int PI_FRACTION = 6, CHECK_MULTIPLE = 4, CHECK_OFFSET = -3;	// 4 * cos^2(PI/6) - 3 = 0
 
 	// constants related to precision
-	static final int TRIG_SERIES_ITERATIONS = 30, HTRIG_SERIES_ITERATIONS = 20,
+	static final int TRIG_SERIES_ITERATIONS = 30, HTRIG_SERIES_ITERATIONS = 40,
 			POLYLOG_SERIES_ITERATIONS = 60, EI_SERIES_ITERATIONS = 80;
 	static final int DISPLAY_PRECISION = 20;
 
@@ -83,8 +83,8 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	 */
 	public void runEITests ()
 	{
-		runKTest (EI_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF);
-		runKTest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_3), AccuracyCheck.Ksqrt_REF);
+		runKTest (EI_SERIES_ITERATIONS, pi, IT.ONE, AccuracyCheck.K_REF, "(1/2)");
+		runKTest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_3), AccuracyCheck.Ksqrt_REF, "(sqrt 3 / 2)");
 		runETest (EI_SERIES_ITERATIONS, pi, reduce (sqrt_2), AccuracyCheck.Esqrt_REF);
 		timeStamp ();
 	}

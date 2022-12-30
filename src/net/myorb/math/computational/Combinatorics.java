@@ -34,13 +34,16 @@ public class Combinatorics<T>  extends Tolerances<T>
 			(ExpressionSpaceManager <T>) manager;
 		this.ZERO = manager.getZero ();
 		this.TWO = manager.newScalar (2);
+		this.THREE = manager.newScalar (3);
 		this.NEGONE = manager.newScalar (-1);
+		this.NEGTWO = manager.newScalar (-2);
+		this.FOUR = manager.newScalar (4);
 		this.HALF = manager.invert (TWO);
 		this.ONE = manager.getOne ();
 		this.lib = lib;
 	}
 	protected ExpressionSpaceManager <T> expressionManager;
-	protected T ZERO, ONE, NEGONE, TWO, HALF;
+	protected T ZERO, ONE, NEGONE, TWO, NEGTWO, THREE, FOUR, HALF;
 
 
 	/**
@@ -173,7 +176,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 		if (manager.lessThan (n, TWO)) return ZERO;
 
 		// !n = (n-1) ( ! (n - 1) + ! (n - 2) ) for n > 1
-		T nm1 = manager.add (n, NEGONE), nm2 = manager.add (n, manager.newScalar (-2));
+		T nm1 = manager.add (n, NEGONE), nm2 = manager.add (n, NEGTWO);
 		T nm1d = derangementsCount (nm1), nm2d = derangementsCount (nm2);
 		return manager.multiply (nm1, manager.add (nm1d, nm2d));
 	}
@@ -418,9 +421,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public T stirlingNumbers2 (int n, int k)
 	{
 		if (n < k) return ZERO;
-		StirlingComputer SC = new StirlingComputer (manager, n, k);
-		T sum = manager.add (SC.computeSum (k), manager.pow (manager.newScalar (k), n));
-		return manager.multiply (sum, manager.invert (SC.F));
+		return new StirlingComputer (manager, n, k)
+		.computeNumber ();
 	}
 
 	class StirlingComputer extends CommonSummation <T>
@@ -442,6 +444,24 @@ public class Combinatorics<T>  extends Tolerances<T>
 			return binomialCoefficient (K, i);
 		}
 		protected T F = ONE;
+
+		T computeNumber ()
+		{
+			return manager.multiply
+			(
+				manager.add
+				(									// (
+					computeSum (K),					//  SIGMA 1:K
+
+					manager.pow						//		+
+					(
+						manager.newScalar (K), N	//	  K ^ N
+					)								// )
+				),									//		/
+
+				manager.invert (F)					//		i!
+			);
+		}
 
 	}
 
@@ -509,8 +529,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		EulerComputer (SpaceManager <T> manager)
 		{
 			super (manager);
-			Q1 = manager.invert (manager.newScalar (4));
-			Q3 = manager.multiply (manager.newScalar (3), Q1);
+			Q1 = manager.invert (FOUR);
+			Q3 = manager.multiply (THREE, Q1);
 		}
 
 		public T factor1 (int n, int k) { return stirlingFactor (n, k); }
@@ -557,12 +577,12 @@ public class Combinatorics<T>  extends Tolerances<T>
 			T lT = manager.newScalar (l),
 				RF1 = raisingFactorial (Q1, lT),
 				RF3 = raisingFactorial (Q3, lT);
-			T RF = manager.multiply (manager.newScalar (3), RF1);
+			T RF = manager.multiply (THREE, RF1);
 			return manager.add (manager.negate (RF3), RF);
 		}
 		T computeNumber (int n)
 		{
-			T multiplier = manager.pow (manager.newScalar (2), 2*n-1);
+			T multiplier = manager.pow (NEGTWO, 2*n-1);
 			return manager.multiply (multiplier, computeSum (n));
 		}
 		EnComputer (SpaceManager <T> manager) { super (manager); }
@@ -589,7 +609,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 		T computeNumber (int twoN)
 		{
-			T multiplier = manager.pow (manager.newScalar (-4), twoN);
+			T multiplier = manager.pow (manager.negate (FOUR), twoN);
 			return manager.negate (manager.multiply (multiplier, computeSum (twoN)));
 		}
 		E2nComputer (SpaceManager <T> manager) { super (manager); }
@@ -617,9 +637,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		{ super (manager); this.inner = new InnerSummation (manager, twoN); }
 
 		public T factor2 (int twoN, int k) { return inner.computeSum (0, 2*k); }
-		public T factor1 (int twoN, int k) { return manager.pow (neg2, -k); }						//	   (-2) ^ (-k)
+		public T factor1 (int twoN, int k) { return manager.pow (NEGTWO, -k); }						//	   (-2) ^ (-k)
 
-		protected T neg2 = manager.newScalar (-2);
 		protected InnerSummation inner;
 
 		class InnerSummation extends CommonSummation <T>
