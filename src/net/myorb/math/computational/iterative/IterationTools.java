@@ -45,10 +45,11 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 		this.combo = new Combinatorics <T> (manager, null);
 		this.ONE = manager.getOne ();
 		this.Z = manager.getZero ();
+		this.FOUR = S (4);
 	}
 	protected SpaceManager <T> manager;
 	public Combinatorics <T> combo;
-	public T ONE, Z;
+	public T FOUR, ONE, Z;
 
 
 	/**
@@ -149,7 +150,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	{
 		// (1 + x) ^ (-1/2)
 		T RF = combo.raisingFactorial (S (n + 1), S (n));
-		return negWhenEven (productOf (RF, POW (S (4), -n)), n);
+		return negWhenEven (productOf (RF, POW (FOUR, -n)), n);
 	}
 
 	T sqrtPrime (int n)
@@ -185,7 +186,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 		int N1;
 		T sin = sinPrime (n);
 		if (isZ (sin)) return Z;
-		T four = S (4), fourN = POW (four, (N1 = n + 1)/2);
+		T fourN = POW (FOUR, (N1 = n + 1)/2);
 		T B2n = combo.firstKindBernoulli (N1), twoN = oneOver (S (N1));
 		T oneMinus4n = sumOf (ONE, NEG (fourN)), product = productOf (fourN, oneMinus4n);
 		return NEG (productOf (productOf (B2n, productOf (product, twoN)), sin));
@@ -225,20 +226,13 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public DerivativeComputer <T> getEDerivativeComputer () { return (n) -> (n%2==1)? Z: EPrime (n); }
 
 
-	T EPrime (int n)
-	{
-		return productOf ( KPrime (n), oneOver (S ( 1 - n )) );
-	}
+	T EPrime (int n) { return productOf ( KPrime (n), oneOver ( S ( 1 - n ) ) ); }
+	T KPrime (int n) { return productOf ( KPrimeRatio (n), POW ( FOUR, -n ) ); }
 
-	T KPrime (int n)
+	T KPrimeRatio (int n)
 	{
-		T ratio =
-			productOf
-			(
-				POW ( F(n), 3 ),
-				POW ( F(n/2), -4 )
-			);
-		return productOf (ratio, POW ( S(16), -n/2 ));
+		int halfN; T FF = combo.fallingFactorial ( S (n), S (halfN = n / 2) );
+		return productOf ( POW (FF, 3), oneOver ( F (halfN) ) );
 	}
 
 
