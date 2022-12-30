@@ -26,6 +26,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 	// constants related to precision
 	static final int TRIG_SERIES_ITERATIONS = 30, HTRIG_SERIES_ITERATIONS = 40,
 			POLYLOG_SERIES_ITERATIONS = 60, EI_SERIES_ITERATIONS = 80;
+	static final int COMPUTATION_PRECISION = 20;
 	static final int DISPLAY_PRECISION = 20;
 
 
