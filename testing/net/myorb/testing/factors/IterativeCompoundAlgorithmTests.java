@@ -47,7 +47,7 @@ public class IterativeCompoundAlgorithmTests extends IterativeAlgorithmTests
 
 		IterativeCompoundAlgorithmTests
 				testScripts = new IterativeCompoundAlgorithmTests ();
-		testScripts.establishParameters (FactorizationCore.mgr);
+		testScripts.establishParameters (FactorizationCore.mgr, COMPUTATION_PRECISION);
 
 //		testScripts.enableTracing ();
 		testScripts.computeSqrt ();		// prepare SQRT constants

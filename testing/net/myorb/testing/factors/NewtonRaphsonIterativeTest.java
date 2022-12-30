@@ -2,10 +2,12 @@
 package net.myorb.testing.factors;
 
 import net.myorb.math.GeneratingFunctions;
-import net.myorb.math.computational.iterative.IterationTools;
-import net.myorb.math.computational.iterative.NewtonRaphson;
-
 import net.myorb.math.primenumbers.Factorization;
+
+import net.myorb.math.computational.iterative.NewtonRaphson;
+import net.myorb.math.computational.iterative.IterationTools;
+
+import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 
 /**
  * compute SQRT n using the Newton-Raphson method
@@ -53,10 +55,25 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 
 		FactorizationCore.init (1_000_000);
 
-		approx = new NewtonRaphsonIterativeTest (2).run (11);
+		approx = new NewtonRaphsonIterativeTest (2).establishParameters (MAX_PRECISION).run (11);
 
 		FactorizationCore.display (approx, AccuracyCheck.S2_REF, "SQRT", 2000);
 
+	}
+	static final int MAX_PRECISION = 30;
+
+	NewtonRaphsonIterativeTest establishParameters (int precision)
+	{ return establishParameters (FactorizationCore.mgr, precision); }
+
+	NewtonRaphsonIterativeTest establishParameters
+		(ExpressionFactorizedFieldManager m, int precision)
+	{
+		this.installPrecisionMonitor
+		(
+			m.getPrecisionManager (),
+			m, precision
+		);
+		return this;
 	}
 
 
@@ -82,14 +99,16 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	public Factorization run (int iterations)
 	{
 		initializeFunction ();
-		for (int i = 1; i <= iterations; i++) { iterate (); }
+		try { for (int i = 1; i <= iterations; i++) { iterate (i); } }
+		catch (ShortCircuitTermination e) { System.out.println (e.getMessage ()); }
 		return getX ();
 	}
 	public Factorization run
 	(int iterations, GeneratingFunctions.Coefficients<Factorization> C)
 	{
 		initializeFunction (C);
-		for (int i = 1; i <= iterations; i++) { iterate (); }
+		try { for (int i = 1; i <= iterations; i++) { iterate (i); } }
+		catch (ShortCircuitTermination e) { System.out.println (e.getMessage ()); }
 		return getX ();
 	}
 
@@ -97,11 +116,13 @@ public class NewtonRaphsonIterativeTest extends NewtonRaphson <Factorization>
 	/**
 	 * apply next iteration to computation
 	 */
-	void iterate ()
+	void iterate (int iteration) throws ShortCircuitTermination
 	{
 		applyIteration ();
-		testVal = IT.POW (getX (), 2);
+		this.testForShortCircuit
+		(this.getDelta (), iteration, manager);
 		if ( ! tracing ) return;
+		testVal = IT.POW (getX (), 2);
 		System.out.println (this);
 		System.out.println ();
 	}

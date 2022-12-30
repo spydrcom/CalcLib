@@ -18,8 +18,8 @@ public class TaylorTest extends Taylor <Factorization>
 
 	// choose tests to run
 	public static final boolean
-			RUN_EULER_TEST =  true,
-			RUN_POWER_TESTS =  true,
+			RUN_EULER_TEST = true,
+			RUN_POWER_TESTS = true,
 			RUN_POLYLOG_TEST = true
 	;
 
@@ -51,7 +51,7 @@ public class TaylorTest extends Taylor <Factorization>
 
 		TaylorTest TT =
 			new TaylorTest ().establishParameters
-				(FactorizationCore.mgr);
+				(FactorizationCore.mgr, MAX_PRECISION);
 
 		if (RUN_EULER_TEST)
 		{
@@ -71,12 +71,12 @@ public class TaylorTest extends Taylor <Factorization>
 	}
 
 	TaylorTest establishParameters
-		(ExpressionFactorizedFieldManager m)
+		(ExpressionFactorizedFieldManager m, int precision)
 	{
 		this.installPrecisionMonitor
 		(
 			m.getPrecisionManager (),
-			m, MAX_PRECISION
+			m, precision
 		);
 		return this;
 	}

@@ -33,7 +33,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 		DISPLAY_PRECISION = 2000,
 		COMPOSITE_EVALUATION_TABLE_SIZE = 1000 * 1000,
 		TAYLOR_ITERATIONS = 70, SERIES_ITERATIONS = 30,
-		ROOT_ITERATIONS = 7, COMPUTATION_PRECISION = 25
+		ROOT_ITERATIONS = 7, COMPUTATION_PRECISION = 30
 	;
 
 
@@ -62,6 +62,7 @@ public class IterativeAlgorithmTests extends TaylorTest
 	void computeSqrt ()
 	{
 		NR = new NewtonRaphsonIterativeTest ();
+		NR.establishParameters (COMPUTATION_PRECISION);
 		sqrt_2 = display ( () -> NR.establishFunction (2).run (ROOT_ITERATIONS) , "SQRT 2" );
 		sqrt_3 = display ( () -> NR.establishFunction (3).run (ROOT_ITERATIONS) , "SQRT 3" );
 		sqrt_5 = display ( () -> NR.establishFunction (5).run (ROOT_ITERATIONS) , "SQRT 5" );
@@ -140,9 +141,8 @@ public class IterativeAlgorithmTests extends TaylorTest
 	public static void main (String[] a)
 	{
 
-		IterativeAlgorithmTests test =
-				new IterativeAlgorithmTests ();
-		test.establishParameters (FactorizationCore.mgr);
+		IterativeAlgorithmTests test = new IterativeAlgorithmTests ();
+		test.establishParameters (FactorizationCore.mgr, COMPUTATION_PRECISION);
 		test.computeValues ();
 
 		System.out.println ();

@@ -26,7 +26,7 @@ public class IterativeAlternativeAlgorithmTests
 
 		IterativeAlternativeAlgorithmTests
 			testScripts = new IterativeAlternativeAlgorithmTests ();
-		testScripts.establishParameters (FactorizationCore.mgr);
+		testScripts.establishParameters (FactorizationCore.mgr, COMPUTATION_PRECISION);
 		//testScripts.enableTracing ();
 
 		// required constants
