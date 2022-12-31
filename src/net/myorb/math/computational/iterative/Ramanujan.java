@@ -40,7 +40,7 @@ public class Ramanujan <T> extends IterationFoundations <T>
 	public T computeIteration (int k)
 	{
 		int k4 = 4 * k;
-		T kT = IT.S (k), kF = IT.F (k), k4F = IT.F (k4);
+		T kT = IT.S (k), kF = IT.combo.factorial (k), k4F = IT.combo.factorial (k4);
 		T N = IT.productOf (k4F, IT.sumOf (K1103, IT.productOf (K26390, kT)));
 		T D = IT.productOf (IT.POW (kF, 4), IT.POW (K396, k4));
 		return IT.productOf (N, IT.oneOver (D));
