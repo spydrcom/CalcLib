@@ -151,9 +151,9 @@ public class Euler extends IterativeCompoundAlgorithmTests
 			for (int n = 0; n < 20; n+=2)
 				System.out.println 
 				(
-						"E2nD  " + fmt.format (combo.E2nDoubleSum (n))
+//						"E2nD  " + fmt.format (combo.E2nDoubleSum (n))
 //						"E2n   " + fmt.format (combo.E2n (n))
-//						"En    " + fmt.format (combo.En (n))
+						"En    " + fmt.format (combo.En (n))
 				);
 		}
 		else
