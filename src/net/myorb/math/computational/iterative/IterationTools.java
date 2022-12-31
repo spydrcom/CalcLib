@@ -69,20 +69,6 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 
 
 	/**
-	 * factorial of an integer
-	 * @param N the parameter to factorial
-	 * @return the factorial value wrapped as a scalar
-	 */
-	public T F (int N)
-	{
-		if (N < 2) return ONE;
-		T product = S(N); for (int n = N-1; n > 1; n--)
-		{ product = productOf (product, S (n)); }
-		return product;
-	}
-
-
-	/**
 	 * short-circuit around factorial
 	 * @param P a value check for zero otherwise a factor
 	 * @param pow the power of n to use as a factor
@@ -92,7 +78,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public T primePow (T P, int pow, int n)
 	{
 		if (isZ (P)) return P;
-		return powTimes (productOf (P, F (n)), pow, n);
+		return powTimes (productOf (P, combo.factorial (n)), pow, n);
 	}
 	T powTimes (T PFn, int pow, int n)
 	{
@@ -137,7 +123,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	T geoPrime (int n)
 	{
 		// 1 / (1 - x)
-		return combo.factorial (S (n));
+		return combo.factorial (n);
 	}
 
 	T binPrime (int n, T alpha)
@@ -149,7 +135,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	T invSqrtPrime (int n)
 	{
 		// (1 + x) ^ (-1/2)
-		T RF = combo.raisingFactorial (S (n + 1), S (n));
+		T RF = combo.raisingFactorial (n + 1, n);
 		return negWhenEven (productOf (RF, POW (FOUR, -n)), n);
 	}
 
@@ -162,7 +148,7 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	T logPrime (int n)
 	{
 		// ln (1 + x)
-		return n == 0 ? Z : negWhenOdd (F (n - 1), n);
+		return n == 0 ? Z : negWhenOdd (combo.factorial (n - 1), n);
 	}
 
 
@@ -231,8 +217,8 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 
 	T KPrimeRatio (int n)
 	{
-		int halfN; T FF = combo.fallingFactorial ( S (n), S (halfN = n / 2) );
-		return productOf ( POW (FF, 3), oneOver ( F (halfN) ) );
+		int halfN; T FF = combo.fallingFactorial ( n, halfN = n / 2 );
+		return productOf ( POW (FF, 3), oneOver ( combo.factorial (halfN) ) );
 	}
 
 
