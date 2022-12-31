@@ -80,7 +80,16 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/*
-	 * factorial
+	 * 
+	 * factorial algorithms
+	 * 
+	 * NOTE:
+	 *		managed data types need to remain managed...
+	 *		case in point Q! and Q3 in EulerComputer class (below)
+	 *		raisingFactorial called for Q (quarter) real values
+	 *		this does fit the factorial definition
+	 *		integer versions allow optimization
+	 *
 	 */
 
 
@@ -90,13 +99,32 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param m the number of factors included
 	 * @return product of x .. x+m-1
 	 */
+	public T raisingFactorial (int x, int m)
+	{
+		T result = ONE; int endingAt = x + m;
+		for (int xPlus = x; xPlus < endingAt; xPlus++)
+		{
+			result =
+				manager.multiply
+				(
+					manager.newScalar (xPlus),
+					result
+				);
+		}
+		return result;
+	}
 	public T raisingFactorial (T x, T m)
 	{
 		T result = ONE, xPlus = x,
-			last = manager.add (x, m);
-		while (manager.lessThan (xPlus, last))
+			endingAt = manager.add (x, m);
+		while (manager.lessThan (xPlus, endingAt))
 		{
-			result = manager.multiply (result, xPlus);
+			result =
+				manager.multiply
+				(
+					xPlus,
+					result
+				);
 			xPlus = manager.add (xPlus, ONE);
 		}
 		return result;
@@ -109,17 +137,37 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param m the number of factors included
 	 * @return product of x-m+1 .. x
 	 */
+	public T fallingFactorial (int x, int m)
+	{
+		T result = ONE; int endingAt = x - m;
+		for (int xMinus = x; endingAt < xMinus; xMinus--)
+		{
+			result =
+				manager.multiply
+				(
+					manager.newScalar (xMinus),
+					result
+				);
+		}
+		return result;
+	}
 	public T fallingFactorial (T x, T m)
 	{
 		T result = ONE, xMinus = x,
-			last = manager.add (x, manager.negate (m));
-		while (manager.lessThan (last, xMinus))
+			endingAt = manager.add (x, manager.negate (m));
+		while (manager.lessThan (endingAt, xMinus))
 		{
-			result = manager.multiply (result, xMinus);
+			result =
+				manager.multiply
+				(
+					xMinus,
+					result
+				);
 			xMinus = manager.add (xMinus, NEGONE);
 		}
 		return result;
 	}
+
 
 
 	/**
@@ -130,6 +178,10 @@ public class Combinatorics<T>  extends Tolerances<T>
 	public T factorial (T x)
 	{
 		return raisingFactorial (ONE, x);
+	}
+	public T factorial (int x)
+	{
+		return raisingFactorial (1, x);
 	}
 
 
@@ -538,8 +590,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		EulerComputer (SpaceManager <T> manager)
 		{
 			super (manager);
-			Q1 = manager.invert (FOUR);
-			Q3 = manager.multiply (THREE, Q1);
+			Q1 = manager.invert (FOUR);					// 1/4 and 3/4 values having mantissa (see note above)
+			Q3 = manager.multiply (THREE, Q1);			// 	  NOTE: raising factorial forced to be managed
 		}
 
 		public T factor1 (int n, int k) { return stirlingFactor (n, k); }
