@@ -1,11 +1,13 @@
 
 package net.myorb.testing.factors;
 
-import net.myorb.math.computational.Combinatorics;
-import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+
+import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.computational.iterative.Taylor;
+
+import net.myorb.math.computational.Combinatorics;
 
 /**
  * tests for numeric series used in Taylor tests
@@ -15,10 +17,21 @@ import net.myorb.math.computational.iterative.Taylor;
 public class Euler extends IterativeCompoundAlgorithmTests
 {
 
+
+	/**
+	 * identify proper toString for data display
+	 * @param <T> data type
+	 */
 	interface Formatter <T>
 	{
+		/**
+		 * format the data item
+		 * @param x the data item to display
+		 * @return the data as text
+		 */
 		String format (T x);
 	}
+
 
 	/**
 	 * entry point for running the test
