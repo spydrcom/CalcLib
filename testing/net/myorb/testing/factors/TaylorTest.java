@@ -52,6 +52,7 @@ public class TaylorTest extends Taylor <Factorization>
 		TaylorTest TT =
 			new TaylorTest ().establishParameters
 				(FactorizationCore.mgr, MAX_PRECISION);
+		//TT.enableTracing ();
 
 		if (RUN_EULER_TEST)
 		{

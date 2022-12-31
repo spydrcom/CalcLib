@@ -1,6 +1,7 @@
 
 package net.myorb.math.computational.iterative;
 
+import net.myorb.math.GeneratingFunctions.Coefficients;
 import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.SpaceManager;
 
@@ -19,6 +20,47 @@ public class Taylor <T> extends IterationFoundations <T>
 	public Taylor
 	(SpaceManager <T> manager) { this.manager = manager; }
 	protected SpaceManager <T> manager;
+
+
+	/**
+	 * compile coefficients for an equation
+	 * @param computer the Derivative Computer for the equation
+	 * @param n the number of the term being evaluated
+	 * @return the computed coefficients
+	 */
+	public Coefficients <T> computeCoefficients
+		(IterationTools.DerivativeComputer <T> computer, int n)
+	{
+		Coefficients <T> C = new Coefficients <T> ();
+		for (int i = 0; i <= n; i++)
+		{
+			C.add
+			(
+				computeTermCoefficient
+				(
+					computer.nTHderivative (i), n
+				)
+			);
+		}
+		return C;
+	}
+
+	/**
+	 * compute the Nth coefficient for an equation
+	 * @param nTHderivative the value of the Nth derivative evaluated at zero
+	 * @param n the number of the term being evaluated
+	 * @return the computed Nth coefficient
+	 */
+	public T computeTermCoefficient
+		(T nTHderivative, int n)
+	{
+		return manager.multiply
+			(
+				manager.invert
+					(combo.factorial (n)),
+				nTHderivative
+			);
+	}
 
 
 	/**
@@ -54,10 +96,12 @@ public class Taylor <T> extends IterationFoundations <T>
 	{
 		try
 		{
-			initializeSummation
-			(computer.nTHderivative (0));
+			this.initializeSummation (computer.nTHderivative (0));
+
 			for (int n = 1; n <= iterations; n++)
-			{ applyIteration (computer.nTHderivative (n)); }
+			{
+				applyIteration (computer.nTHderivative (n));
+			}
 		}
 		catch (ShortCircuitTermination SC)
 		{
@@ -65,6 +109,7 @@ public class Taylor <T> extends IterationFoundations <T>
 		}
 		return summation;
 	}
+	protected int atTermNumber;
 
 
 	/**
@@ -73,18 +118,38 @@ public class Taylor <T> extends IterationFoundations <T>
 	 * @param nTHderivative Nth evaluated derivative for the algorithm
 	 * @throws ShortCircuitTermination for Short Circuit condition found
 	 */
-	public void applyIteration
-			(int n, T nTHderivative)
-	throws ShortCircuitTermination
+	public void applyIteration (int n, T nTHderivative) throws ShortCircuitTermination
 	{
-		this.setX (manager.pow
-			(functionParameter, n));
+		this.setX
+		(
+			manager.multiply
+			(
+				x, manager.pow (functionParameter, n - this.atTermNumber)
+			)
+		);
 		this.setDerivativeAtX (nTHderivative);
-		T xNfP = manager.multiply (x, nTHderivative);
-		T nF = combo.factorial (manager.newScalar (n));
-		this.setDelta (manager.multiply (xNfP, manager.invert (nF)));
+		this.setDelta
+		(
+			manager.multiply
+			(
+				x, this.computeTermCoefficient (nTHderivative, n)
+			)
+		);
+		this.atTermNumber = n;
+		this.addTerm ();
+	}
+
+
+	/**
+	 * add the current delta evaluation into the summation
+	 * @return the value of the summation after the term is added
+	 * @throws ShortCircuitTermination for Short Circuit condition found
+	 */
+	public T addTerm () throws ShortCircuitTermination
+	{
 		this.summation = manager.add (this.summation, this.getDelta ());
-		this.testForShortCircuit (this.getDelta (), n, manager);
+		this.testForShortCircuit (this.getDelta (), this.atTermNumber, manager);
+		return this.summation;
 	}
 	public T summation;
 
@@ -115,6 +180,7 @@ public class Taylor <T> extends IterationFoundations <T>
 	throws ShortCircuitTermination
 	{
 		this.summation = manager.getZero ();
+		this.atTermNumber = 0; this.setX (manager.getOne ());
 		this.combo = new Combinatorics <> (manager, null);
 		this.applyIteration ( n = 0, derivative0 );
 	}
