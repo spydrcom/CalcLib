@@ -75,8 +75,9 @@ public class ComboPrimitives <T> extends PowerPrimitives <T>
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
 				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
-				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers1 (n, k));
+//				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
+//				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers1HW (n, k));
+				T result = combinatorics.stirlingNumbers1 (leftDiscrete, rightDiscrete);
 				return valueManager.newDiscreteValue (result);
 			}
 
@@ -103,8 +104,9 @@ public class ComboPrimitives <T> extends PowerPrimitives <T>
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{
 				T leftDiscrete = valueManager.toDiscrete (left), rightDiscrete = valueManager.toDiscrete (right);
-				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
-				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers2HW (n, k));
+//				int n = spaceManager.toNumber (leftDiscrete).intValue (), k = spaceManager.toNumber (rightDiscrete).intValue ();
+//				T result = spaceManager.convertFromDouble (Combinatorics.stirlingNumbers2HW (n, k));
+				T result = combinatorics.stirlingNumbers2 (leftDiscrete, rightDiscrete);
 				return valueManager.newDiscreteValue (result);
 			}
 
