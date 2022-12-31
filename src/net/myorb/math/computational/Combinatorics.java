@@ -582,7 +582,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 		}
 		T computeNumber (int n)
 		{
-			T multiplier = manager.pow (NEGTWO, 2*n-1);
+			T multiplier = manager.pow (TWO, 2*n-1);
 			return manager.multiply (multiplier, computeSum (n));
 		}
 		EnComputer (SpaceManager <T> manager) { super (manager); }
