@@ -375,11 +375,20 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param k the lower number of the set
 	 * @return S ( n, k )
 	 */
-	public static double stirlingNumbers1 (int n, int k)
+	public static double stirlingNumbers1HW (int n, int k)
 	{
 		//  s (n + 1, k) = n * s (n, k) + s (n, k - 1)
 		if (n == 0 && k == 0) return 1; if (n == 0 || k == 0) return 0;
-		return (n-1) * stirlingNumbers1 (n-1, k) + stirlingNumbers1 (n-1, k-1);
+		return (n-1) * stirlingNumbers1HW (n-1, k) + stirlingNumbers1HW (n-1, k-1);
+	}
+
+	public T stirlingNumbers1 (int n, int k)
+	{
+		return stirlingNumbers1
+			(
+				manager.newScalar (n),
+				manager.newScalar (k)
+			);
 	}
 
 	public T stirlingNumbers1 (T n, T k)
@@ -451,7 +460,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 			(
 				manager.add
 				(									// (
-					computeSum (K),					//  SIGMA 1:K
+					computeSum (K),					//   SIGMA 1:K
 
 					manager.pow						//		+
 					(
@@ -636,9 +645,8 @@ public class Combinatorics<T>  extends Tolerances<T>
 		EulerSummation (SpaceManager <T> manager, int twoN)
 		{ super (manager); this.inner = new InnerSummation (manager, twoN); }
 
-		public T factor2 (int twoN, int k) { return inner.computeSum (0, 2*k); }
-		public T factor1 (int twoN, int k) { return manager.pow (NEGTWO, -k); }						//	   (-2) ^ (-k)
-
+		public T factor2 (int twoN, int k) { return inner.computeSum (0, 2*k); }					//		SIGMA 0:2k
+		public T factor1 (int twoN, int k) { return manager.pow (NEGTWO, -k); }						//	    (-2) ^ (-k)
 		protected InnerSummation inner;
 
 		class InnerSummation extends CommonSummation <T>
@@ -656,7 +664,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 
 
 	/**
-	 * Euler Numbers { n / m }
+	 * Euler Numbers A ( n , m )
 	 * @param n the upper number of the set
 	 * @param m the lower number of the set
 	 * @return E ( n, m )
@@ -711,6 +719,21 @@ public class Combinatorics<T>  extends Tolerances<T>
 			P = manager.multiply (P, t);
 		}
 		return sum;
+	}
+
+
+	/**
+	 * Euler Numbers {{ n / m }}
+	 * @param n the upper number of the set
+	 * @param m the lower number of the set
+	 * @return {{ n, m }}
+	 */
+	public static double eulerNumbersSecondOrder (int n, int m)
+	{
+		if (n == 0) return 0; else if (m == 0) return 1;
+		double En1m1 = eulerNumbersSecondOrder (n - 1, m - 1);
+		double En1m = eulerNumbersSecondOrder (n - 1, m);
+		return (2*n - m - 1) * En1m1 + (m + 1) * En1m;
 	}
 
 
