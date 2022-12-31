@@ -1,7 +1,9 @@
 
 package net.myorb.testing.factors;
 
+import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.computational.iterative.IterationTools;
+import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
 import net.myorb.math.computational.iterative.Taylor;
 
@@ -13,6 +15,10 @@ import net.myorb.math.computational.iterative.Taylor;
 public class Euler extends IterativeCompoundAlgorithmTests
 {
 
+	interface Formatter <T>
+	{
+		String format (T x);
+	}
 
 	/**
 	 * entry point for running the test
@@ -22,6 +28,8 @@ public class Euler extends IterativeCompoundAlgorithmTests
 	{
 
 		numbersTest ();
+
+		realNumbersTest ();
 
 		secantTest ();
 
@@ -82,30 +90,40 @@ public class Euler extends IterativeCompoundAlgorithmTests
 	static void numbersTest ()
 	{
 		Euler testScripts = new Euler ();
-		testScripts.IT.setManager (FactorizationCore.mgr);
-		testScripts.runNumbers ();
+		ExpressionFactorizedFieldManager m;
+		testScripts.IT.setManager (m = FactorizationCore.mgr);
+		testScripts.runNumbers (testScripts.IT.combo, x -> m.toDecimalString (x));
+	}
+	static void realNumbersTest ()
+	{
+		Euler testScripts = new Euler ();
+		ExpressionFloatingFieldManager m = new ExpressionFloatingFieldManager ();
+		Combinatorics <Double> combo = new Combinatorics <Double> (m, null);
+		testScripts.runNumbers (combo, x -> x.toString () );
 	}
 
 
 	/**
 	 * run computation of Euler and Bernoulli series
 	 */
-	void runNumbers ()
+	<T> void runNumbers (Combinatorics <T> combo, Formatter <T> fmt)
 	{
-		E2n ();
-		B2n ();
+		E2n (combo, fmt);
+		B2n (combo, fmt);
 	}
 
-	void E2n ()
+	<T> void E2n (Combinatorics <T> combo, Formatter <T> fmt)
 	{
 		System.out.println ("Euler");
 		for (int n = 0; n < 20; n+=2)
 			System.out.println 
 			(
-//					"E2nD  "+manager.toDecimalString (IT.combo.E2nDoubleSum (n))
-//					"E2n   "+manager.toDecimalString (IT.combo.E2n (n))
-					"En    "+manager.toDecimalString (IT.combo.En (n))
+//					"E2nD  " + fmt.format (combo.E2nDoubleSum (n))
+//					"E2n   " + fmt.format (combo.E2n (n))
+					"En    " + fmt.format (combo.En (n))
 			);
+		System.out.println ("===");
+		System.out.println ();
 	}
 	/*
 	 * E2n
@@ -116,14 +134,16 @@ public class Euler extends IterativeCompoundAlgorithmTests
 		177519391579539289436664789665
 	 */
 
-	void B2n ()
+	<T> void B2n (Combinatorics <T> combo, Formatter <T> fmt)
 	{
 		System.out.println ("Bernoulli");
 		for (int n = 0; n < 20; n++)
 			System.out.println 
 			(
-				manager.toDecimalString (IT.combo.firstKindBernoulli (n))
+				fmt.format (combo.firstKindBernoulli (n))
 			);
+		System.out.println ("===");
+		System.out.println ();
 	}
 	/*
 	 * B2n
