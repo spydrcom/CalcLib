@@ -34,23 +34,29 @@ public class FactorizationCore
 
 	/**
 	 * provide data describing the precision of samples
-	 * @param approx the Factorization approximation
-	 * @param REF the text of the reference value
-	 * @param tag a display name for the value
-	 * @param precision digits assumed
+	 * @param approx the Factorization approximation of a test value
+	 * @param REF the text of the reference value to compare
+	 * @param tag a display name for the computed value
+	 * @param precision maximum digits to be checked
 	 */
 	public static void display
 		(Factorization approx, String REF, String tag, int precision)
 	{
 		String APX;
 		System.out.println ();
-		int p = mgr.pushDisplayPrecision (precision);
+		int n = precision == 0 ?
+			REF.length () : precision;
+		int p = mgr.pushDisplayPrecision (n);
 		System.out.println (tag); System.out.println ();
 		System.out.println ( APX = mgr.toDecimalString ( approx ) );
 		System.out.println ( toRatio ( approx ) ); System.out.println ();
 		showDifAt ( APX, REF);  mgr.setDisplayPrecision ( p );
 		System.out.println ("==="); System.out.println ();
 	}
+	public static void display
+	(Factorization approx, String REF, String tag)
+	{ display (approx, REF, tag, 0); }
+
 
 
 	/**
