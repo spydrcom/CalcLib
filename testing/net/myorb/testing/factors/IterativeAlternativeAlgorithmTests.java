@@ -103,11 +103,17 @@ public class IterativeAlternativeAlgorithmTests
 	 */
 	void runChiTests ()
 	{
-		String ref = "1.2337005501361698273543113749845";
-		DerivativeComputer <Factorization> computer = IT.getChi2DerivativeComputer ();
-		compute (IT.ONE, 200, ref, computer, "CHI2(1)");
-		runChiPhiTests (computer);
+		DerivativeComputer <Factorization>
+			computer = IT.getChi2DerivativeComputer ();
+		runChiPhiTests (computer); // runChi1Test (computer);							// test of chi(1) takes long time
 	}
+	void runChi1Test (DerivativeComputer <Factorization> computer)
+	{
+		int iterations = 2000;															//     very slow convergence
+		compute (IT.ONE, iterations, chi1ref, computer, "CHI2(1)");						// these generate 6 digit matches
+		compute (IT.NEG (IT.ONE), iterations, "-"+chi1ref, computer, "CHI2(-1)");		//		chi2(-1) = -chi2(1)
+	}
+	String chi1ref = "1.2337005501361698273543113749845"; // chi2(1) = pi^2/8
 
 
 	/**
