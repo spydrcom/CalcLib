@@ -8,7 +8,7 @@ import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.primenumbers.Factorization;
 
 /**
- * evaluation of the Taylor series for computation of Eulers constant
+ * computation of function results using the Taylor expansion concepts
  * - this is the entry point and driver for specification of the iteration count
  * @author Michael Druckman
  */
@@ -123,22 +123,22 @@ public class TaylorTest extends Taylor <Factorization>
 		(
 			// ( 1 + 1/4 ) ^ (1/2)
 			computePowerSeries (IT.getSqrtDerivativeComputer (), P),
-			"1.1180339887498948482045868343656", "SQRT", 1000
-		);			
+			"1.1180339887498948482045868343656", "SQRT"
+		);
 
 		FactorizationCore.display
 		(
 			// ( 1 + 1/4 ) ^ (-1/2)
 			computePowerSeries (IT.getInvSqrtDerivativeComputer (), P),
-			"0.89442719099991587856366946749251", "INV SQRT", 1000
-		);			
+			"0.89442719099991587856366946749251", "INV SQRT"
+		);
 
 		FactorizationCore.display
 		(
 			// 1 / ( 1 - 1/4 ) = 4/3
 			computePowerSeries (IT.getGeometricDerivativeComputer (), P),
-			"1.3333333333333333333333333333333", "GEO", 1000
-		);			
+			"1.3333333333333333333333333333333", "GEO"
+		);
 
 		FactorizationCore.display
 		(
@@ -146,20 +146,20 @@ public class TaylorTest extends Taylor <Factorization>
 			// so this test is ( 1 + 1/4 ) ^ ( 1 / 4 )
 			computePowerSeries (IT.getBinomialDerivativeComputer (P), P),
 			"1.0573712634405641195350370000286", "BIN", 1000
-		);			
+		);
 
 		FactorizationCore.display
 		(
 			// ln ( 1 + 1/4 )
 			computePowerSeries (IT.getLogDerivativeComputer (), P),
-			"0.22314355131420975576629509030983", "LOG 1.25", 1000
-		);			
+			"0.22314355131420975576629509030983", "LOG 1.25"
+		);
 
 		FactorizationCore.display
 		(
 			// - ln ( 1 + (-1/2) )
-			computeLn2SQ (), AccuracyCheck.Ln2SQ_REF, "LOG 2 ^ 2", 1000
-		);			
+			computeLn2SQ (), AccuracyCheck.Ln2SQ_REF, "LOG 2 ^ 2"
+		);
 	}
 
 	/**
