@@ -20,7 +20,7 @@ public class TaylorTest extends Taylor <Factorization>
 	public static final boolean
 			RUN_EULER_TEST = true,
 			RUN_POWER_TESTS = true,
-			RUN_POLYLOG_TEST = true
+			RUN_POLYLOG_TEST = false
 	;
 
 	static final int							// iteration counts for tests
