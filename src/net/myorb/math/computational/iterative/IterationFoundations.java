@@ -243,6 +243,20 @@ public class IterationFoundations <T>
 	boolean tracing = false;
 
 
+	/**
+	 * trace for Short Circuit Termination conditions
+	 * - only executed when tracing is enabled
+	 * @param SC the exception raised
+	 */
+	public void trace (ShortCircuitTermination SC)
+	{
+		if (tracing)
+		{
+			System.out.println (SC.getLocalizedMessage ());
+		}
+	}
+
+
 }
 
 
