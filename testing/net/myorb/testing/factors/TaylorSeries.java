@@ -1,8 +1,6 @@
 
 package net.myorb.testing.factors;
 
-import net.myorb.math.primenumbers.Factorization;
-
 import net.myorb.math.computational.iterative.Taylor;
 import net.myorb.math.computational.iterative.IterationTools;
 import net.myorb.math.computational.iterative.IterationTools.DerivativeComputer;
@@ -10,6 +8,8 @@ import net.myorb.math.computational.iterative.IterationTools.DerivativeComputer;
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 
 import net.myorb.math.GeneratingFunctions.Coefficients;
+
+import net.myorb.math.primenumbers.Factorization;
 
 import net.myorb.math.Polynomial;
 
@@ -32,8 +32,11 @@ public class TaylorSeries extends Taylor <Factorization>
 		this.IT = new IterationTools <> (manager);
 		FactorizationCore.timeStampReset ();
 		manager.setDisplayPrecision (25);
+		this.Q = IT.oneOver (IT.S (4));
+		this.H = IT.oneOver (IT.S (2));
 		this.enableTracing ();
 	}
+	protected Factorization Q, H;	// Quarter, Half
 	protected IterationTools <Factorization> IT;
 
 
@@ -62,7 +65,9 @@ public class TaylorSeries extends Taylor <Factorization>
 	public static void main (String[] a)
 	{
 
-		FactorizationCore.init (1_000_000);
+		// compute constants used by tests
+		new IterativeAlgorithmTests ().computeSqrt ();
+		IterativeAlgorithmTests.computePhi ();
 
 		TaylorSeries TS =
 			new TaylorSeries ().establishParameters
@@ -72,6 +77,7 @@ public class TaylorSeries extends Taylor <Factorization>
 		TS.test1 ();
 		TS.test2 ();
 		TS.test3 ();
+		TS.test4 ();
 
 	}
 	TaylorSeries establishParameters
@@ -101,7 +107,7 @@ public class TaylorSeries extends Taylor <Factorization>
 	{
 		runComparisonTest
 		(
-			IT.getExpDerivativeComputer (), IT.oneOver (IT.S (2)),
+			IT.getExpDerivativeComputer (), H,
 			"1.6487212707001281468486507878142",
 			"SQRT e"
 		);
@@ -112,11 +118,9 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	void test2 ()
 	{
-		Factorization P = IT.oneOver (IT.S (4));
-
 		runComparisonTest
 		(
-			IT.getBinomialDerivativeComputer (P), P,
+			IT.getBinomialDerivativeComputer (Q), Q,
 			"1.0573712634405641195350370000286",
 			"BIN"
 		);
@@ -129,9 +133,24 @@ public class TaylorSeries extends Taylor <Factorization>
 	{
 		runComparisonTest
 		(
-			IT.getLogDerivativeComputer (), IT.oneOver (IT.S (4)),
+			IT.getLogDerivativeComputer (), Q,
 			"0.22314355131420975576629509030983",
 			"ln 1.25"
+		);
+	}
+
+	/**
+	 * chi (phi-1)
+	 */
+	void test4 ()
+	{
+		Factorization phiM1 =
+			IT.sumOf (IterativeAlgorithmTests.phi, IT.S (-1));
+		runComparisonTest
+		(
+			IT.getChi2DerivativeComputer (), phiM1,
+			IterativeAlternativeAlgorithmTests.ChiPhi_REF,
+			"chi (phi-1)"
 		);
 	}
 
@@ -151,7 +170,16 @@ public class TaylorSeries extends Taylor <Factorization>
 			S = seriesFor (computer, POLYNOMIAL_ORDER);
 		System.out.println ("Polynomial Eval");
 		FactorizationCore.timeStamp ();
+		dumpCoefficients (S);
 		return S.eval (x);
+	}
+
+	void dumpCoefficients (Polynomial.PowerFunction <Factorization> S)
+	{
+		java.util.List <Factorization> CF = S.getCoefficients ();
+		java.util.List <String> CD = new java.util.ArrayList <> ();
+		for (Factorization F : CF) { CD.add (manager.toDecimalString (F)); }
+		System.out.println (CD);
 	}
 
 	void seriesTest
