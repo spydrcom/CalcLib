@@ -202,13 +202,16 @@ public class FactorizationCore
 	 */
 	public static void timeStamp ()
 	{
-		System.out.println ();
-		System.out.println ("---");
+		System.out.println (); timeStampMark ();
 		long elapsed = System.currentTimeMillis () - start;
 		System.out.println (elapsed + "ms");
-		System.out.println ("---");
+		timeStampMark ();
 	}
-	static { start = System.currentTimeMillis (); }
+	public static void timeStampReset ()
+	{ start = System.currentTimeMillis (); timeStampMark (); }
+	public static void timeStampMark ()
+	{ System.out.println ("---"); }
+	static { timeStampReset (); }
 	static long start;
 
 
