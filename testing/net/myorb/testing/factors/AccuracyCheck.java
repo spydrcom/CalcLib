@@ -181,14 +181,6 @@ public class AccuracyCheck
 	public static String Ln2SQ_REF = Ln2SQ.replaceAll (" ", "");
 
 
-	/* inverse tangent integral */
-	public static String Ti2 = // [ 2/3*G + Pi/12*log(2-Sqrt(3)) ] : 100 decimal digit reference
-		"0.2658649582 7930698269 1875086397 1206876427 8382397513 8999380597 4153285743 9513027711 4054411407 0320577174"		// 100
-		;
-	//		taken from https://oeis.org/A244928/constant
-	public static String Ti2_REF = Ti2.replaceAll (" ", "");
-
-		
 	/* elliptic integral K (first kind) */
 	public static String K = // K(1/2) : 100 decimal digit reference
 		"1.6857503548 1259604287 1203657799 0769895008 0089414108 9044119948 2978934337 0288234676 0406450973 9366125703"		// 100
@@ -218,6 +210,22 @@ public class AccuracyCheck
 		;
 	//		taken from https://oeis.org/A002390/constant
 	public static String LnPhi_REF = LnPhi.replaceAll (" ", "");
+
+
+	/* Catalan's constant */
+	public static String Catalan = // Catalan's constant G : 100 decimal digit reference
+		"0.9159655941 7721901505 4603514932 3841107741 4937428167 2134266498 1196217630 1977625476 9479356512 9261151062"		// 100
+		;
+	//		taken from http://oeis.org/A006752/constant
+	public static String Catalan_REF = Catalan.replaceAll (" ", "");
+
+
+	/* inverse tangent integral */
+	public static String Ti2 = // [ 2/3*G + Pi/12*log(2-Sqrt(3)) ] : 100 decimal digit reference
+		"0.2658649582 7930698269 1875086397 1206876427 8382397513 8999380597 4153285743 9513027711 4054411407 0320577174"		// 100
+		;
+	//		taken from https://oeis.org/A244928/constant
+	public static String Ti2_REF = Ti2.replaceAll (" ", "");
 
 
 }
