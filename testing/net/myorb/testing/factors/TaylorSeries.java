@@ -88,6 +88,7 @@ public class TaylorSeries extends Taylor <Factorization>
 		TS.test2 ();
 		TS.test3 ();
 		TS.test4 ();
+		TS.test5 ();
 
 	}
 	TaylorSeries establishParameters
@@ -99,6 +100,20 @@ public class TaylorSeries extends Taylor <Factorization>
 			m, precision
 		);
 		return this;
+	}
+
+
+	/**
+	 * header for a test
+	 * @param text identification of the subject
+	 */
+	void title (String text)
+	{
+		System.out.println ();
+		System.out.println ("===");
+		System.out.println (text);
+		System.out.println ("===");
+		System.out.println ();
 	}
 
 
@@ -115,6 +130,8 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	void test1 ()
 	{
+		title ("Exponential exp (x)");
+
 		runComparisonTest
 		(
 			IT.getExpDerivativeComputer (), H,
@@ -128,6 +145,8 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	void test2 ()
 	{
+		title ("Binomial expansion");
+
 		runComparisonTest
 		(
 			IT.getBinomialDerivativeComputer (Q), Q,
@@ -141,6 +160,8 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	void test3 ()
 	{
+		title ("Natural logarithm ln (1+x)");
+
 		runComparisonTest
 		(
 			IT.getLogDerivativeComputer (), Q,
@@ -154,6 +175,8 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	void test4 ()
 	{
+		title ("Legendre chi function");
+
 		Factorization phiM1 =
 			IT.sumOf (IAT.getPhi (), IT.S (-1));
 		runComparisonTest
@@ -161,6 +184,73 @@ public class TaylorSeries extends Taylor <Factorization>
 			IT.getChi2DerivativeComputer (), phiM1,
 			IAT.ChiPhi_REF, "chi (phi-1)"
 		);
+	}
+
+	/**
+	 * inverse tangent integral
+	 */
+	void test5 ()
+	{
+		title ("Inverse tangent integral");
+
+		Factorization tanPi12 =								// tan (pi/12) =
+				IT.sumOf (IT.S (2), IT.NEG (IAT.sqrt_3));	//	  2 - SQRT (3)
+		Factorization ti2Computed = runComparisonTest		// Ti2 (2-sqrt 3)
+		(
+			IT.getTi2DerivativeComputer (), tanPi12,
+			AccuracyCheck.Ti2_REF, "Ti2 (tan (pi/12))"
+		);
+
+		/*
+		 * compute Catalan's number two ways and compare
+		 * - first is algebraic solution for G from Ti2
+		 */
+		computeCatalan (ti2Computed, tanPi12);
+
+		/*
+		 * Ti2(1) should result in Catalan's number
+		 * - this second approach shows less precision
+		 */
+		runComparisonTest
+		(
+			IT.getTi2DerivativeComputer (), IT.ONE,			// Ti2 (1) = G
+			AccuracyCheck.Catalan_REF, "Ti2 (1)"
+		);
+	}
+	void computeCatalan (Factorization ti2, Factorization tanPi12)
+	{
+		// Ti2 ( tan (pi/12) ) = 2/3 * G + Pi/12 * log ( tan (pi/12) )
+
+		Factorization piOver12Log =
+			IT.productOf
+				(
+					ln (tanPi12),							// ln ( tan(pi/12) )
+					PiOver12 ()								//		pi/12
+				);
+
+		//  G  =  3/2 * [ Ti2 ( tan (pi/12) ) - pi/12 * log ( tan (pi/12) ) ]
+
+		FactorizationCore.display
+		(
+			IT.productOf
+				(
+					IT.sumOf (IT.ONE, H),					//	 [ 1 + 1/2 ] *
+					IT.sumOf (ti2, IT.NEG (piOver12Log))	// [ Ti2 - log * pi/12 ]
+				),
+			AccuracyCheck.Catalan_REF, "Catalan's Number"
+		);
+	}
+	Factorization ln (Factorization x)
+	{
+		return computeSeries
+			(
+				IT.getLogDerivativeComputer (),		// using series for ln (1 + x)
+				IT.sumOf (x, IT.S (-1))
+			);
+	}
+	Factorization PiOver12 ()
+	{
+		return FactorizationCore.getPiOver (12, MAX_PRECISION);
 	}
 
 
@@ -207,14 +297,15 @@ public class TaylorSeries extends Taylor <Factorization>
 	 * @param P the parameter to the function when called
 	 * @param ref the reference showing proper result
 	 * @param tag identifier for test
+	 * @return computed value
 	 */
-	void seriesTest
+	Factorization seriesTest
 		(
 			DerivativeComputer <Factorization> computer,
 			Factorization P, String ref, String tag
 		)
 	{
-		runTest ( (c, p) -> this.computeSeries (c, p), computer, P, ref, tag+" [series]");
+		return runTest ( (c, p) -> this.computeSeries (c, p), computer, P, ref, tag+" [series]");
 	}
 
 
@@ -270,8 +361,9 @@ public class TaylorSeries extends Taylor <Factorization>
 	 * @param P parameter to function being evaluated
 	 * @param ref result evaluation reference
 	 * @param tag identifier for test
+	 * @return computed value
 	 */
-	void runTest
+	Factorization runTest
 		(
 			ComputationEngine engine,
 			DerivativeComputer <Factorization> computer,
@@ -282,6 +374,7 @@ public class TaylorSeries extends Taylor <Factorization>
 		Factorization V = engine.evaluate (computer, P);
 		FactorizationCore.display (V, ref, tag);
 		FactorizationCore.timeStamp ();
+		return V;
 	}
 
 	/**
@@ -290,15 +383,17 @@ public class TaylorSeries extends Taylor <Factorization>
 	 * @param P parameter to function being evaluated
 	 * @param ref result evaluation reference
 	 * @param tag identifier for test
+	 * @return computed value
 	 */
-	void runComparisonTest
+	Factorization runComparisonTest
 		(
 			DerivativeComputer <Factorization> computer,
 			Factorization P, String ref, String tag
 		)
 	{
-		seriesTest (computer, P, ref, tag);
+		Factorization V = seriesTest (computer, P, ref, tag);
 		foundationTest (computer, P, ref, tag);
+		return V;
 	}
 
 
