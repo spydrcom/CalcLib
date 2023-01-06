@@ -8,14 +8,18 @@ import net.myorb.math.computational.iterative.IterationTools.DerivativeComputer;
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 
 import net.myorb.math.GeneratingFunctions.Coefficients;
-
 import net.myorb.math.primenumbers.Factorization;
-
 import net.myorb.math.Polynomial;
 
 /**
  * evaluation of the Taylor series for computation of function results
- * - this is the entry point and driver for specification of the iteration count
+ * - this is the entry point and driver for specification of the iteration counts
+ * - this platform provides comparisons between use of fixed polynomials with computed coefficients
+ * - as opposed to use of the Foundation mechanisms which apply restrictions to precision of computations
+ * - HOW MUCH precision is needed from the computations VS HOW MUCH time consumption is considered acceptable
+ * - this is intended to demonstrate trade-offs of excess precision as opposed to excess monitoring
+ * - both have time efficiency considerations which can become prohibitive
+ * - and then there are the precision considerations
  * @author Michael Druckman
  */
 public class TaylorSeries extends Taylor <Factorization>
@@ -28,16 +32,25 @@ public class TaylorSeries extends Taylor <Factorization>
 
 	public TaylorSeries ()
 	{
-		super (FactorizationCore.mgr);
+		super (new IAT ().getManager ());
 		this.IT = new IterationTools <> (manager);
+		this.manager.setDisplayPrecision (25);
 		FactorizationCore.timeStampReset ();
-		manager.setDisplayPrecision (25);
-		this.Q = IT.oneOver (IT.S (4));
-		this.H = IT.oneOver (IT.S (2));
+		this.prepareConstants ();
 		this.enableTracing ();
 	}
-	protected Factorization Q, H;	// Quarter, Half
 	protected IterationTools <Factorization> IT;
+
+
+	/**
+	 * parameters to function calls
+	 */
+	void prepareConstants ()
+	{
+		this.Q = IT.oneOver (IT.S (4));		// Quarter
+		this.H = IT.oneOver (IT.S (2));		// Half
+	}
+	protected Factorization Q, H;
 
 
 	/**
@@ -46,6 +59,7 @@ public class TaylorSeries extends Taylor <Factorization>
 	public interface ComputationEngine
 	{
 		/**
+		 * execute a function call given a DerivativeComputer
 		 * @param computer the DerivativeComputer for the function
 		 * @param P the parameter to the function when called
 		 * @return the result of the function call
@@ -64,10 +78,6 @@ public class TaylorSeries extends Taylor <Factorization>
 	 */
 	public static void main (String[] a)
 	{
-
-		// compute constants used by tests
-		new IterativeAlgorithmTests ().computeSqrt ();
-		IterativeAlgorithmTests.computePhi ();
 
 		TaylorSeries TS =
 			new TaylorSeries ().establishParameters
@@ -127,7 +137,7 @@ public class TaylorSeries extends Taylor <Factorization>
 	}
 
 	/**
-	 * ln (1 + x)
+	 * ln ( 1 + x )
 	 */
 	void test3 ()
 	{
@@ -140,17 +150,16 @@ public class TaylorSeries extends Taylor <Factorization>
 	}
 
 	/**
-	 * chi (phi-1)
+	 * chi ( phi - 1 )
 	 */
 	void test4 ()
 	{
 		Factorization phiM1 =
-			IT.sumOf (IterativeAlgorithmTests.phi, IT.S (-1));
+			IT.sumOf (IAT.getPhi (), IT.S (-1));
 		runComparisonTest
 		(
 			IT.getChi2DerivativeComputer (), phiM1,
-			IterativeAlternativeAlgorithmTests.ChiPhi_REF,
-			"chi (phi-1)"
+			IAT.ChiPhi_REF, "chi (phi-1)"
 		);
 	}
 
@@ -159,9 +168,15 @@ public class TaylorSeries extends Taylor <Factorization>
 	 * evaluation of the function using polynomial evaluation
 	 */
 
+	/**
+	 * evaluate function using a polynomial built from DerivativeComputer
+	 * @param computer the DerivativeComputer for the function
+	 * @param x the parameter to the function when called
+	 * @return the result of the function call
+	 */
 	Factorization computeSeries
 		(
-			IterationTools.DerivativeComputer <Factorization> computer,
+			DerivativeComputer <Factorization> computer,
 			Factorization x
 		)
 	{
@@ -174,14 +189,25 @@ public class TaylorSeries extends Taylor <Factorization>
 		return S.eval (x);
 	}
 
+	/**
+	 * display computed coefficients
+	 * @param S the series built for the function
+	 */
 	void dumpCoefficients (Polynomial.PowerFunction <Factorization> S)
 	{
-		java.util.List <Factorization> CF = S.getCoefficients ();
 		java.util.List <String> CD = new java.util.ArrayList <> ();
-		for (Factorization F : CF) { CD.add (manager.toDecimalString (F)); }
+		for (Factorization F : S.getCoefficients ())
+		{ CD.add (manager.toDecimalString (F)); }
 		System.out.println (CD);
 	}
 
+	/**
+	 * run a test using a prepared polynomial
+	 * @param computer the DerivativeComputer for the function
+	 * @param P the parameter to the function when called
+	 * @param ref the reference showing proper result
+	 * @param tag identifier for test
+	 */
 	void seriesTest
 		(
 			DerivativeComputer <Factorization> computer,
@@ -196,9 +222,15 @@ public class TaylorSeries extends Taylor <Factorization>
 	 * evaluation of the function using IterationFoundations algorithms
 	 */
 
+	/**
+	 * evaluate function using iterative foundations algorithms
+	 * @param computer the DerivativeComputer for the function
+	 * @param x the parameter to the function when called
+	 * @return the result of the function call
+	 */
 	Factorization computeFoundation
 		(
-			IterationTools.DerivativeComputer <Factorization> computer,
+			DerivativeComputer <Factorization> computer,
 			Factorization x
 		)
 	{
@@ -210,6 +242,13 @@ public class TaylorSeries extends Taylor <Factorization>
 		return eval (x, C);
 	}
 
+	/**
+	 * run a test using iterative foundations algorithms
+	 * @param computer the DerivativeComputer for the function
+	 * @param P the parameter to the function when called
+	 * @param ref the reference showing proper result
+	 * @param tag identifier for test
+	 */
 	void foundationTest
 		(
 			DerivativeComputer <Factorization> computer,
@@ -219,6 +258,10 @@ public class TaylorSeries extends Taylor <Factorization>
 		runTest ( (c, p) -> this.computeFoundation (c, p), computer, P, ref, tag+" [foundation]");
 	}
 
+
+	/*
+	 * test controls
+	 */
 
 	/**
 	 * run a test as specified by the driver
@@ -259,5 +302,23 @@ public class TaylorSeries extends Taylor <Factorization>
 	}
 
 
+}
+
+
+/**
+ * import test suite that computes SQRT values to be used as constants
+ */
+class IAT extends IterativeAlternativeAlgorithmTests
+{
+	IAT () { computeSqrt (); }
+
+	ExpressionFactorizedFieldManager getManager ()
+	{ return FactorizationCore.mgr; }
+
+	static Factorization getPhi ()
+	{
+		computePhi ();
+		return phi;
+	}
 }
 
