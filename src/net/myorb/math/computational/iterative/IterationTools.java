@@ -61,6 +61,8 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public T oneOver (T x) { return manager.invert (x); }
 	public boolean isZ (T x) { return manager.isZero (x); }
 	public T sumOf (T x, T y) { return manager.add (x, y); }
+	public T reduce (T x, T by) { return sumOf (x, NEG (by)); }
+	public T reduce (T x, int by) { return reduce (x, S (by)); }
 	public T negWhenOdd (T x, int n) { return n % 2 == 1 ? x : NEG (x); }
 	public T negWhenEven (T x, int n) { return n % 2 == 0 ? x : NEG (x); }
 	public T productOf (T x, T y) { return manager.multiply (x, y); }
