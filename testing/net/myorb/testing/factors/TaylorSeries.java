@@ -32,25 +32,14 @@ public class TaylorSeries extends Taylor <Factorization>
 
 	public TaylorSeries ()
 	{
-		super (new IAT ().getManager ());
+		super ((PM = new ParameterManager ()).getSpaceManager ());
 		this.IT = new IterationTools <> (manager);
 		this.manager.setDisplayPrecision (25);
 		FactorizationCore.timeStampReset ();
-		this.prepareConstants ();
 		this.enableTracing ();
 	}
 	protected IterationTools <Factorization> IT;
-
-
-	/**
-	 * parameters to function calls
-	 */
-	void prepareConstants ()
-	{
-		this.Q = IT.oneOver (IT.S (4));		// Quarter
-		this.H = IT.oneOver (IT.S (2));		// Half
-	}
-	protected Factorization Q, H;
+	static ParameterManager PM;
 
 
 	/**
@@ -81,7 +70,7 @@ public class TaylorSeries extends Taylor <Factorization>
 
 		TaylorSeries TS =
 			new TaylorSeries ().establishParameters
-				(FactorizationCore.mgr, MAX_PRECISION);
+				(PM.getSpaceManager (), MAX_PRECISION);
 		//TS.enableTracing ();
 
 		TS.test1 ();
@@ -89,6 +78,7 @@ public class TaylorSeries extends Taylor <Factorization>
 		TS.test3 ();
 		TS.test4 ();
 		TS.test5 ();
+		TS.test6 ();
 
 	}
 	TaylorSeries establishParameters
@@ -134,7 +124,7 @@ public class TaylorSeries extends Taylor <Factorization>
 
 		runComparisonTest
 		(
-			IT.getExpDerivativeComputer (), H,
+			IT.getExpDerivativeComputer (), PM.H,
 			"1.6487212707001281468486507878142",
 			"SQRT e"
 		);
@@ -149,7 +139,7 @@ public class TaylorSeries extends Taylor <Factorization>
 
 		runComparisonTest
 		(
-			IT.getBinomialDerivativeComputer (Q), Q,
+			IT.getBinomialDerivativeComputer (PM.Q), PM.Q,
 			"1.0573712634405641195350370000286",
 			"BIN"
 		);
@@ -164,11 +154,13 @@ public class TaylorSeries extends Taylor <Factorization>
 
 		runComparisonTest
 		(
-			IT.getLogDerivativeComputer (), Q,
+			IT.getLogDerivativeComputer (), PM.Q,
 			"0.22314355131420975576629509030983",
 			"ln 1.25"
 		);
+		logSeries = S;
 	}
+	protected Polynomial.PowerFunction <Factorization> logSeries = null;
 
 	/**
 	 * chi ( phi - 1 )
@@ -177,35 +169,58 @@ public class TaylorSeries extends Taylor <Factorization>
 	{
 		title ("Legendre chi function");
 
-		Factorization phiM1 =
-			IT.sumOf (IAT.getPhi (), IT.S (-1));
 		runComparisonTest
 		(
-			IT.getChi2DerivativeComputer (), phiM1,
-			IAT.ChiPhi_REF, "chi (phi-1)"
+			IT.getChi2DerivativeComputer (),
+			PM.getPhiMinus1 (), ParameterManager.ChiPhi_REF,
+			"chi (phi-1)"
 		);
 	}
 
 	/**
-	 * inverse tangent integral
+	 * elliptical integral
 	 */
 	void test5 ()
 	{
+		title ("K elliptical integral");
+
+		runComparisonTest
+		(
+			IT.getKDerivativeComputer (),
+			PM.getHalfSqrt3 (), KsqrtAdjusted_REF,
+			"K (SQRT(3)/2)"
+		);
+
+		runComparisonTest
+		(
+			IT.getKDerivativeComputer (),
+			PM.H, KhalfAdjusted_REF,
+			"K (1/2)"
+		);
+	}
+	// series computes 2*K / pi so REF is adjusted value here
+	public static final String KsqrtAdjusted_REF = "1.3728805006183501646976375757715";
+	public static final String KhalfAdjusted_REF = "1.0731820071493643750528417079703";
+
+	/**
+	 * inverse tangent integral
+	 */
+	void test6 ()
+	{
 		title ("Inverse tangent integral");
 
-		Factorization tanPi12 =								// tan (pi/12) =
-				IT.sumOf (IT.S (2), IT.NEG (IAT.sqrt_3));	//	  2 - SQRT (3)
 		Factorization ti2Computed = runComparisonTest		// Ti2 (2-sqrt 3)
 		(
-			IT.getTi2DerivativeComputer (), tanPi12,
-			AccuracyCheck.Ti2_REF, "Ti2 (tan (pi/12))"
+			IT.getTi2DerivativeComputer (),
+			PM.tanPi12 (), AccuracyCheck.Ti2_REF,
+			"Ti2 (tan (pi/12))"
 		);
 
 		/*
 		 * compute Catalan's number two ways and compare
 		 * - first is algebraic solution for G from Ti2
 		 */
-		computeCatalan (ti2Computed, tanPi12);
+		computeCatalan (ti2Computed);
 
 		/*
 		 * Ti2(1) should result in Catalan's number
@@ -217,15 +232,16 @@ public class TaylorSeries extends Taylor <Factorization>
 			AccuracyCheck.Catalan_REF, "Ti2 (1)"
 		);
 	}
-	void computeCatalan (Factorization ti2, Factorization tanPi12)
+	void computeCatalan (Factorization ti2)
 	{
-		// Ti2 ( tan (pi/12) ) = 2/3 * G + Pi/12 * log ( tan (pi/12) )
+		// Ti2 ( tan (pi/12) ) =
+		//		2/3 * G + Pi/12 * log ( tan (pi/12) )
 
 		Factorization piOver12Log =
 			IT.productOf
 				(
-					ln (tanPi12),							// ln ( tan(pi/12) )
-					PiOver12 ()								//		pi/12
+					ln (PM.tanPi12 ()),						// ln ( tan(pi/12) )
+					PM.PiOver12 ()							//		pi/12
 				);
 
 		//  G  =  3/2 * [ Ti2 ( tan (pi/12) ) - pi/12 * log ( tan (pi/12) ) ]
@@ -234,23 +250,21 @@ public class TaylorSeries extends Taylor <Factorization>
 		(
 			IT.productOf
 				(
-					IT.sumOf (IT.ONE, H),					//	 [ 1 + 1/2 ] *
-					IT.sumOf (ti2, IT.NEG (piOver12Log))	// [ Ti2 - log * pi/12 ]
+					IT.sumOf (IT.ONE, PM.H),				//	 [ 1 + 1/2 ] *
+					IT.reduce (ti2, piOver12Log)			// [ Ti2 - log * pi/12 ]
 				),
 			AccuracyCheck.Catalan_REF, "Catalan's Number"
 		);
 	}
 	Factorization ln (Factorization x)
 	{
-		return computeSeries
-			(
-				IT.getLogDerivativeComputer (),		// using series for ln (1 + x)
-				IT.sumOf (x, IT.S (-1))
-			);
-	}
-	Factorization PiOver12 ()
-	{
-		return FactorizationCore.getPiOver (12, MAX_PRECISION);
+		if (logSeries == null)
+			return computeSeries
+				(
+					IT.getLogDerivativeComputer (),			// using series for ln (1 + x)
+					IT.reduce (x, 1)
+				);
+		return logSeries.eval (IT.reduce (x, 1));
 	}
 
 
@@ -271,13 +285,13 @@ public class TaylorSeries extends Taylor <Factorization>
 		)
 	{
 		System.out.println ("build series");
-		Polynomial.PowerFunction <Factorization>
-			S = seriesFor (computer, POLYNOMIAL_ORDER);
+		S = seriesFor (computer, POLYNOMIAL_ORDER);
 		System.out.println ("Polynomial Eval");
 		FactorizationCore.timeStamp ();
 		dumpCoefficients (S);
 		return S.eval (x);
 	}
+	protected Polynomial.PowerFunction <Factorization> S;
 
 	/**
 	 * display computed coefficients
@@ -397,23 +411,5 @@ public class TaylorSeries extends Taylor <Factorization>
 	}
 
 
-}
-
-
-/**
- * import test suite that computes SQRT values to be used as constants
- */
-class IAT extends IterativeAlternativeAlgorithmTests
-{
-	IAT () { computeSqrt (); }
-
-	ExpressionFactorizedFieldManager getManager ()
-	{ return FactorizationCore.mgr; }
-
-	static Factorization getPhi ()
-	{
-		computePhi ();
-		return phi;
-	}
 }
 
