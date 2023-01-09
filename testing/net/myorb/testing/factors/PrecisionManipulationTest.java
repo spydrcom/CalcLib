@@ -1,20 +1,21 @@
 
 package net.myorb.testing.factors;
 
+import net.myorb.math.primenumbers.PrecisionManipulation;
 import net.myorb.math.primenumbers.Factorization;
 
 /**
  * unit test for new PrecisionManipulation class of prime-numbers package
  * @author Michael Druckman
  */
-public class PrecisionManipulation extends net.myorb.math.primenumbers.PrecisionManipulation
+public class PrecisionManipulationTest extends PrecisionManipulation
 {
 
 
 	static int scale = 350, precision = 2000; static boolean trace = true;
 
 
-	PrecisionManipulation () { super (FactorizationCore.mgr); }
+	PrecisionManipulationTest () { super (FactorizationCore.mgr); }
 
 
 	/**
@@ -40,7 +41,7 @@ public class PrecisionManipulation extends net.myorb.math.primenumbers.Precision
 		System.out.println ("Trace PrecisionManipulation processing");
 
 		// compute reduced adjustment of original approximation
-		PrecisionManipulation pmgr = new PrecisionManipulation ();
+		PrecisionManipulationTest pmgr = new PrecisionManipulationTest ();
 		Reduction red = pmgr.adjust (approx, scale, trace? System.out: null);
 		Factorization adjustedValue = red.getAdjustedValue ();
 		// show adjusted value statistics for comparison
