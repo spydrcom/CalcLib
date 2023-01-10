@@ -26,7 +26,7 @@ public class TaylorSeries extends Taylor <Factorization>
 {
 
 
-	static final int POLYNOMIAL_ORDER = 40;		// number of terms in the polynomial evaluation
+	static final int POLYNOMIAL_ORDER = 30;		// number of terms in the polynomial evaluation
 	static final int MAX_PRECISION = 20;		// truncate intermediate results at specified precision
 
 
@@ -73,11 +73,11 @@ public class TaylorSeries extends Taylor <Factorization>
 				(PM.getSpaceManager (), MAX_PRECISION);
 		//TS.enableTracing ();
 
-		TS.test1 ();
-		TS.test2 ();
-		TS.test3 ();
-		TS.test4 ();
-		TS.test5 ();
+//		TS.test1 ();
+//		TS.test2 ();
+//		TS.test3 ();
+//		TS.test4 ();
+//		TS.test5 ();
 		TS.test6 ();
 
 	}
@@ -209,6 +209,7 @@ public class TaylorSeries extends Taylor <Factorization>
 	{
 		title ("Inverse tangent integral");
 
+		// value known to have rapid convergence
 		Factorization ti2Computed = runComparisonTest		// Ti2 (2-sqrt 3)
 		(
 			IT.getTi2DerivativeComputer (),
@@ -220,24 +221,33 @@ public class TaylorSeries extends Taylor <Factorization>
 		 * compute Catalan's number two ways and compare
 		 * - first is algebraic solution for G from Ti2
 		 */
-		computeCatalan (ti2Computed);
+		Factorization computed = computeCatalan (ti2Computed);
 
 		/*
 		 * Ti2(1) should result in Catalan's number
 		 * - this second approach shows less precision
 		 */
-		runComparisonTest
+		Factorization G = runComparisonTest
 		(
 			IT.getTi2DerivativeComputer (), IT.ONE,			// Ti2 (1) = G
 			AccuracyCheck.Catalan_REF, "Ti2 (1)"
 		);
+
+		// compute difference between versions
+		Factorization dif = IT.reduce (G, computed);
+
+		// display difference
+		System.out.println ("Difference between computations of Catalan's number");
+		System.out.println ("DIF = " + manager.toDecimalString (dif));
+		// odd that the more precise result seemed more error prone
+		// more weird is the ITI.txt script, TSQ is even better
 	}
-	void computeCatalan (Factorization ti2)
+	Factorization computeCatalan (Factorization ti2)
 	{
 		// Ti2 ( tan (pi/12) ) =
 		//		2/3 * G + Pi/12 * log ( tan (pi/12) )
 
-		Factorization piOver12Log =
+		Factorization G, piOver12Log =
 			IT.productOf
 				(
 					ln (PM.tanPi12 ()),						// ln ( tan(pi/12) )
@@ -245,16 +255,21 @@ public class TaylorSeries extends Taylor <Factorization>
 				);
 
 		//  G  =  3/2 * [ Ti2 ( tan (pi/12) ) - pi/12 * log ( tan (pi/12) ) ]
+		// this would appear to be a long ineffective way to compute the value
+		// the formula includes pi, root of 3, and a logarithm, seems error prone
 
 		FactorizationCore.display
 		(
-			IT.productOf
+			G = IT.productOf
 				(
 					IT.sumOf (IT.ONE, PM.H),				//	 [ 1 + 1/2 ] *
 					IT.reduce (ti2, piOver12Log)			// [ Ti2 - log * pi/12 ]
 				),
 			AccuracyCheck.Catalan_REF, "Catalan's Number"
 		);
+
+		// return computed G
+		return G;
 	}
 	Factorization ln (Factorization x)
 	{
