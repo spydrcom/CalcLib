@@ -1,75 +1,112 @@
 {
-   "Name": "it",
-   "Parameters": 
-   [
-      "t"
-   ],
-   "Description": "Iterative trapezoidal integral approximation of e ^ x over 0.. t ",
+   "Name": "IT",
+   "Parameter": "x",
+   "Description": null,
+   "Interpreter": "net.myorb.math.computational.splines.ChebyshevSpline",
    "Expression": 
    {
-      "Hi": 
+      "OpName": "atanc",
+      "PostFix": false,
+      "NodeType": "UnaryOP",
+      "Parameter": 
       {
          "Operator": null,
-         "Symbol": null,
+         "Symbol": "AssignedVariableStorage",
          "NodeType": "Identifier",
-         "Kind": "Unknown",
-         "Name": "t"
-      },
-      "Target": 
-      {
-         "OpName": "*",
-         "Left": 
-         {
-            "OpName": "ex",
-            "PostFix": false,
-            "NodeType": "UnaryOP",
-            "Parameter": 
-            {
-               "Operator": null,
-               "Symbol": null,
-               "NodeType": "Identifier",
-               "Kind": "Unknown",
-               "Name": "x"
-            }
-         },
-         "NodeType": "BinaryOP",
-         "Right": 
-         {
-            "OpName": "<*>",
-            "PostFix": false,
-            "NodeType": "UnaryOP",
-            "Parameter": 
-            {
-               "Operator": null,
-               "Symbol": null,
-               "NodeType": "Identifier",
-               "Kind": "Unknown",
-               "Name": "x"
-            }
-         },
-         "OpType": "Unknown"
-      },
-      "Hbnd": "<=",
-      "Variable": "x",
-      "Lo": 0.0,
-      "Consumer": "IntegralConsumer",
-      "Delta": 
-      {
-         "OpName": "/",
-         "Left": 1.0,
-         "NodeType": "BinaryOP",
-         "Right": 
-         {
-            "Operator": null,
-            "Symbol": "AssignedVariableStorage",
-            "NodeType": "Identifier",
-            "Kind": "Variable",
-            "Name": "INFINITY"
-         },
-         "OpType": "Unknown"
-      },
-      "NodeType": "Range",
-      "Lbnd": "<="
+         "Kind": "Variable",
+         "Name": "x"
+      }
    },
+   "Sections": 
+   [
+      {
+         "lo": 0.0,
+         "hi": 5.0,
+         "delta": 0.08333333333333333,
+         "error": 3.9020209455744674E-11,
+         "slope": 1.6666666666666667,
+         "unit": 0.6000000000000001,
+         "coefficients": 
+         [
+            [
+               0.5266555484546974,
+               -0.24989350927627335,
+               0.050767886298301944,
+               -0.0074021023267951715,
+               -3.32116794809633E-5,
+               5.763457484882055E-4,
+               -2.8868645771638733E-4,
+               1.0081386146223617E-4,
+               -2.7950164337315384E-5,
+               5.919518298031157E-6,
+               -6.504690503759622E-7,
+               -1.9234651313258223E-7,
+               1.6570728376323522E-7,
+               -7.28387403723319E-8,
+               2.440261218047119E-8,
+               -6.521830851384266E-9,
+               1.2642041973699128E-9,
+               -6.937281162009933E-11,
+               -8.538850790479351E-11,
+               5.467659528376259E-11,
+               -2.2404399564561513E-11,
+               7.130501854573784E-12,
+               -1.8302125606116763E-12,
+               3.6326749498045024E-13,
+               -8.414630754276988E-15,
+               -1.0483242193128024E-14,
+               1.847928120033256E-14,
+               -2.2213136603315956E-14,
+               5.013674036695197E-15,
+               1.4855938561850482E-15,
+               -4.61639070525227E-16
+            ]
+         ]
+      },
+      {
+         "lo": 5.0,
+         "hi": 10.0,
+         "delta": 0.08333333333333333,
+         "error": 3.49554830548176E-18,
+         "slope": 1.6666666666666667,
+         "unit": 0.6000000000000001,
+         "coefficients": 
+         [
+            [
+               0.19576300023491322,
+               -0.03992629934549058,
+               0.004036679903789994,
+               -4.041892568497673E-4,
+               4.0025731687448176E-5,
+               -3.912940139894144E-6,
+               3.767235157800321E-7,
+               -3.559853780992428E-8,
+               3.2854974634521772E-9,
+               -2.9393482064610266E-10,
+               2.5172394533541522E-11,
+               -2.0159967289668117E-12,
+               1.4308139658356975E-13,
+               -7.69653582029721E-15,
+               -1.4245961392340834E-16,
+               8.188335089446337E-17,
+               -3.663064500922884E-17,
+               -3.650264809543872E-20,
+               7.181889265724262E-17,
+               3.9470165646069234E-18,
+               4.9587033281757576E-17,
+               -3.138601264138295E-19,
+               -1.0693449571483127E-17,
+               -8.446663795002843E-19,
+               -1.795244386076544E-17,
+               3.3160582712058594E-19,
+               8.000603477021258E-18,
+               -4.71618299446076E-20,
+               -1.2060505869076016E-18,
+               2.3553598517281365E-21,
+               6.235227574529528E-20
+            ]
+         ]
+      }
+   ],
    "NodeType": "Profile"
 }
