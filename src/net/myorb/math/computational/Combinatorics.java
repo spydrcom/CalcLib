@@ -936,6 +936,7 @@ public class Combinatorics<T>  extends Tolerances<T>
 	 * @param n the order of the polynomial
 	 * @param m the data type manager
 	 * @return the computed value
+	 * @param <T> data type
 	 */
 	public static <T> T BernoulliPolynomial
 		(T x, int n, ExpressionSpaceManager <T> m)

@@ -252,7 +252,7 @@ public class JonquierePolylog
 	 */
 
 	/**
-	 * Taylor series for abs(Re(z))<1
+	 * Taylor series for abs(Re(z)) LT 1
 	 * @param z complex parameter to Li3
 	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
@@ -263,7 +263,7 @@ public class JonquierePolylog
 	}
 
 	/**
-	 * Taylor series for abs(Re(z))<1
+	 * Taylor series for abs(Re(z)) LT 1
 	 * @param z complex parameter to Li4
 	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
