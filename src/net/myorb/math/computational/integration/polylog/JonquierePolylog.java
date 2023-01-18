@@ -12,12 +12,51 @@ import net.myorb.data.abstractions.FunctionWrapper;
 import net.myorb.data.abstractions.Function;
 
 /**
- * polylog Li functions for integer orders -4 .. 1
+ * description of the polylog Li functions 
+ * - integer orders -4 .. 1 use known polynomials
  * - general case for negative integer orders also available
+ * - positive orders computed using Taylor series
+ * - special case provided for Dilogarithm
  * @author Michael Druckman
  */
 public class JonquierePolylog
 {
+
+
+// !! Li (s, z) = 1/GAMMA(s) * INTEGRAL [ 0 <= t <= INFINITY ] ( t^(s-1) / ( exp(t)/z - 1 ) * <*> t )
+// exp(t)/z - 1 = (exp(t)-z) / z  ;  t^(s-1) / ( exp(t)/z - 1 ) = z * t^(s-1) / ( exp(t) - z )
+// Li[s+1](z) = INTEGRAL [ 0 <= t <= Z ] ( Li[s](t) / t * <*> t )
+
+	/**
+	 * integrand of the Li Polylog functions
+	 * @param s the order of the function being described
+	 * @param z the parameter to the function
+	 * @param t the integration variable
+	 * @return the computed value
+	 */
+	public static ComplexValue <Double> Li
+		(int s, ComplexValue <Double> z, Double t)
+	{
+		ComplexValue <Double>
+			expTmZ = mgr.add (mgr.C (Math.exp (t), 0.0), mgr.negate (z)),
+			ztToSm1 = mgr.multiply (z, mgr.pow (mgr.C (t, 0.0), s-1));
+		return mgr.multiply (ztToSm1, mgr.invert (expTmZ));
+	}
+
+	/**
+	 * derivative of dilogarithm
+	 * @param t parameter to function
+	 * @return computed value
+	 */
+	public static ComplexValue <Double> Li2Prime (ComplexValue <Double> t)
+	{
+		if (mgr.isZero (t)) return mgr.getOne ();
+		ComplexValue <Double> oneMz = oneMinusZ (t);
+		if (mgr.isZero (oneMz)) return mgr.getZero ();
+		if (mgr.isNegative (oneMz)) oneMz = mgr.negate (oneMz);
+		ComplexValue <Double> lnt = ComplexSpaceCore.cplxLib.ln (oneMz);
+		return mgr.multiply (lnt, mgr.invert (t));
+	}
 
 	/**
 	 * @param f the body of the function
@@ -32,8 +71,13 @@ public class JonquierePolylog
 		);
 	}
 
+
+	/*
+	 * identify function that fulfills request
+	 */
+
 	/**
-	 * @param s the order for the Li function
+	 * @param s the (negative) order for the Li function 
 	 * @return a fully wrapped version of the function
 	 */
 	public static Function < ComplexValue <Double> > Li (int s)
@@ -56,6 +100,36 @@ public class JonquierePolylog
 				return functionFor ( (z) -> Linn (-s, z) );
 		}
 	}
+
+	/**
+	 * @param s the (positive) order for the Li function 
+	 * @param terms number of terms in series evaluation
+	 * @return a fully wrapped version of the function
+	 */
+	public static Function < ComplexValue <Double> > Li (int s, int terms)
+	{
+		switch (s)
+		{
+			//			Taylor series for abs(Re(z))<1
+			case  4:	return functionFor ( (z) -> Li4 (z, terms) );
+			case  3:	return functionFor ( (z) -> Li3 (z, terms) );
+			case  2:	return functionFor ( (z) -> Li2 (z, terms) );
+
+			//			simple formulations
+			case  1:	return functionFor ( (z) -> Li1 (z) );
+			case  0:	return functionFor ( (z) -> Li0 (z) );
+
+			default:
+				if (s < 0) return Li (s);
+				// Taylor series for abs(Re(z))<1 attempt general formula
+				return functionFor ( (z) -> Lipn (s, terms, z, true) );
+		}
+	}
+
+
+	/*
+	 * simple formula implementations for use in Li formulations
+	 */
 
 	/**
 	 * @param z the parameter to the function
@@ -105,14 +179,53 @@ public class JonquierePolylog
 		return mgr.multiply (polyValue, mgr.invert (oneMinusZto (z, power)));
 	}
 
+
+	/*
+	 * special case treatment for Dilogarithm Li2
+	 */
+
 	/**
-	 * @param z complex parameter to Li1
+	 * @param z complex parameter to Li2
+	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Li1 (ComplexValue <Double> z)
+	public static ComplexValue <Double> Li2 (ComplexValue <Double> z, int terms)
 	{
-		return mgr.negate (ComplexSpaceCore.cplxLib.ln (oneMinusZ (z)));	// -ln(1-z)
+		double zRe = Math.abs (z.Re ());
+		if (mgr.isZero (z)) return mgr.getZero ();
+		if ( zRe < 1 ) return Lipn  (2, terms, z, true);					// SIGMA [1..N] (z^k/k^2)
+		if ( zRe > 1 || z.Im () != 0 ) return nonFractional (z, terms);
+		if (z.Re () > 0) return mgr.C ( PI_SQ / 6, 0.0 );					// PI^2 / 6
+		else return mgr.C ( - PI_SQ / 12, 0.0 );							// - PI^2 / 12
 	}
+
+	/**
+	 * processing of parameters abs(Re(z)) GT 1
+	 * @param z the value of the parameter found to be GT 1
+	 * @param terms the number of terms in the series evaluation
+	 * @return
+	 */
+	public static ComplexValue <Double> nonFractional						// Re(z) > 1 || Im(z) != 0
+		(ComplexValue <Double> z, int terms)
+	{
+		ComplexValue <Double>
+			PI_SQ_over3 = mgr.C (PI_SQ/3, 0.0),								// PI^2 / 3
+			lnz = ComplexSpaceCore.cplxLib.ln (z),							// ln z
+			termSum = mgr.C (0.5, 0.0), ipi = mgr.C (0.0, Math.PI);
+		termSum = mgr.add (mgr.multiply (termSum, lnz), ipi);				// 1/2 * ln z + i * PI
+		termSum = mgr.add
+			(
+				mgr.multiply (termSum, lnz),								// 1/2 * (ln z)^2 + i * PI * ln z 
+				Lipn (2, terms, z, false)									// + SIGMA ...
+			);
+		return mgr.add (PI_SQ_over3, mgr.negate (termSum));
+	}
+	static final double PI_SQ = Math.pow (Math.PI, 2);
+
+
+	/*
+	 * Li for simple order 0 and 1
+	 */
 
 	/**
 	 * @param z complex parameter to Li0
@@ -122,6 +235,45 @@ public class JonquierePolylog
 	{
 		return mgr.multiply (z, mgr.invert (oneMinusZ (z)));				// z / (1-z)
 	}
+
+	/**
+	 * @param z complex parameter to Li1
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> Li1 (ComplexValue <Double> z)
+	{
+		return mgr.negate (ComplexSpaceCore.cplxLib.ln (oneMinusZ (z)));	// -ln(1-z)
+	}
+
+	/*
+	 * Li for positive order s
+	 */
+
+	/**
+	 * Taylor series for abs(Re(z))<1
+	 * @param z complex parameter to Li3
+	 * @param terms number of terms in series
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> Li3 (ComplexValue <Double> z, int terms)
+	{
+		return Lipn (3, terms, z, true);									// SIGMA [1..N] (z^k/k^3)
+	}
+
+	/**
+	 * Taylor series for abs(Re(z))<1
+	 * @param z complex parameter to Li4
+	 * @param terms number of terms in series
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> Li4 (ComplexValue <Double> z, int terms)
+	{
+		return Lipn (4, terms, z, true);									// SIGMA [1..N] (z^k/k^4)
+	}
+
+	/*
+	 * Li for negative order s
+	 */
 
 	/**
 	 * @param z complex parameter to Li -1
@@ -163,6 +315,35 @@ public class JonquierePolylog
 		return polyOver (z, polyProduct, 5);								// z(z+1)(z^2+10z+1) / (1-z)^5
 	}
 	static final int [] C1A1 = new int [] {1, 10, 1};
+
+	/**
+	 * general positive case
+	 * @param n the integer order
+	 * @param terms number of terms
+	 * @param z complex parameter to Li
+	 * @param LT1 indicates fractional z when TRUE
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> Lipn
+		(int n, int terms, ComplexValue <Double> z, boolean LT1)
+	{
+		ComplexValue <Double> sum = mgr.getZero ();
+		// Li(z) = SIGMA [1 <= k <= INFINITY] (   z^k  / k^(-n) )			// for |Re(z)| < 1
+		// Li(z) = SIGMA [1 <= k <= INFINITY] ( z^(-k) * k^(-n) )			// for |Re(z)| > 1
+		for (int k = 1; k <= terms; k++)
+		{
+			sum = mgr.add
+				(
+					sum,
+					mgr.multiply
+					(
+						mgr.pow (mgr.newScalar (k), -n),
+						mgr.pow (z, LT1 ? k : -k)
+					)
+				);
+		}
+		return sum;
+	}
 
 	/**
 	 * general negative case

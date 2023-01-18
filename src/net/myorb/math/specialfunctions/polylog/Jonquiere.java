@@ -46,7 +46,11 @@ public class Jonquiere extends CommonFunctionBase
 		super.addConfiguration (parameters);
 		try { s = Integer.parseInt (parameters.get ("s").toString ()); }
 		catch (Exception e) { throw new RuntimeException (ORDER_ERROR_TEXT); }
-		Li = JonquierePolylog.Li (s);
+		Object value = parameters.get ("terms");
+
+		if (value == null)
+			Li = JonquierePolylog.Li (s);
+		else Li = JonquierePolylog.Li (s, Integer.parseInt (value.toString ()));
 	}
 	static String ORDER_ERROR_TEXT = "Configration parameter 's' must identify the order of Li desired";
 
