@@ -17,6 +17,22 @@ public class InverseTangentIntegral
 {
 
 
+	/* the low order functions */
+
+	public static Double Ti0 (Double x)
+	{
+		return x / (1 + x*x);
+	}
+
+	public static Double Ti1 (Double x)
+	{
+		return Math.atan (x);
+	}
+
+
+	/* higher order functions in a series of integrals */
+
+
 	/**
 	 * integrand of the Inverse Tangent Integral
 	 * @param x parameter to function
@@ -86,8 +102,8 @@ public class InverseTangentIntegral
 	 * 		Li2(x)    = x + x^2/2^2 + x^3/3^2 + x^4/4^2 + ...
 	 * 		chi2(x)   = x + x^3/3^2 + x^5/5^2 + x^7/7^2 + ...
 	 * 
-	 * 		Ti2(z)    = ( Li2(iz) - Li2(-iz) ) / (2i)
-	 * 				  = Im ( Li2 (iz) )
+	 * 		Ti[s](z)  = ( Li[s](iz) - Li[s](-iz) ) / (2i)
+	 * 		Ti2(x)	  = Im ( Li2 (iz) )
 	 * 
 	 * 		Ti2(x)    = -i chi2 (ix)
 	 * 
