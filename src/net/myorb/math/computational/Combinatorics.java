@@ -2,8 +2,10 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
 import net.myorb.math.specialfunctions.PochhammerSymbol;
 import net.myorb.math.specialfunctions.Gamma;
+
 import net.myorb.math.*;
 
 import java.util.ArrayList;
@@ -926,6 +928,36 @@ public class Combinatorics<T>  extends Tolerances<T>
 			}
 		}
 		return n==1? -a[0]: a[0];
+	}
+
+	/**
+	 * polynomial built with Bernoulli number coefficients
+	 * @param x the variable value raised to powers in series
+	 * @param n the order of the polynomial
+	 * @param m the data type manager
+	 * @return the computed value
+	 */
+	public static <T> T BernoulliPolynomial
+		(T x, int n, ExpressionSpaceManager <T> m)
+	{
+		T sum = m.getZero (), scalar, term;
+
+		for (int k = 0; k <= n+1; k++)
+		{
+			scalar = m.convertFromDouble
+				(
+					bernoulli (k) *
+					binomialCoefficientHW (n, k)
+				);
+			term = m.multiply (scalar, m.pow (x, n-k));
+			sum = m.add (sum, term);
+		}
+
+		return sum;
+	}
+	public T BernoulliPolynomial (T x, int n)
+	{
+		return BernoulliPolynomial (x, n, expressionManager);
 	}
 
 
