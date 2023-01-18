@@ -189,23 +189,25 @@ public class JonquierePolylog
 	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Li2 (ComplexValue <Double> z, int terms)
+	public static ComplexValue <Double> Li2
+			(ComplexValue <Double> z, int terms)
 	{
 		double zRe = Math.abs (z.Re ());
 		if (mgr.isZero (z)) return mgr.getZero ();
-		if ( zRe < 1 ) return Lipn  (2, terms, z, true);					// SIGMA [1..N] (z^k/k^2)
-		if ( zRe > 1 || z.Im () != 0 ) return nonFractional (z, terms);
-		if (z.Re () > 0) return mgr.C ( PI_SQ / 6, 0.0 );					// PI^2 / 6
-		else return mgr.C ( - PI_SQ / 12, 0.0 );							// - PI^2 / 12
+		if ( zRe < 1 ) return Lipn  (2, terms, z, false);					// SIGMA [1..N] (z^k/k^2)
+		if (z.Re () < -1) return continuation (2, z, terms);				// use negative continuation
+		if ( zRe > 1 || z.Im () != 0 ) return continuation (z, terms);		// use positive continuation
+		if (z.Re () < 0) return mgr.C ( - PI_SQ / 12, 0.0 );				// - PI^2 / 12
+		else return mgr.C ( PI_SQ / 6, 0.0 );								//   PI^2 / 6
 	}
 
 	/**
-	 * processing of parameters abs(Re(z)) GT 1
+	 * processing of parameters Re(z) GT 1
 	 * @param z the value of the parameter found to be GT 1
 	 * @param terms the number of terms in the series evaluation
-	 * @return
+	 * @return computed value
 	 */
-	public static ComplexValue <Double> nonFractional						// Re(z) > 1 || Im(z) != 0
+	public static ComplexValue <Double> continuation						// Re(z) > 1 || Im(z) != 0
 		(ComplexValue <Double> z, int terms)
 	{
 		ComplexValue <Double>
@@ -216,7 +218,7 @@ public class JonquierePolylog
 		termSum = mgr.add
 			(
 				mgr.multiply (termSum, lnz),								// 1/2 * (ln z)^2 + i * PI * ln z 
-				Lipn (2, terms, z, false)									// + SIGMA ...
+				Lipn (2, terms, z, true)									// + SIGMA ...
 			);
 		return mgr.add (PI_SQ_over3, mgr.negate (termSum));
 	}
@@ -257,7 +259,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> Li3 (ComplexValue <Double> z, int terms)
 	{
-		return Lipn (3, terms, z, true);									// SIGMA [1..N] (z^k/k^3)
+		return Lipn (3, terms, z, false);									// SIGMA [1..N] (z^k/k^3)
 	}
 
 	/**
@@ -268,7 +270,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> Li4 (ComplexValue <Double> z, int terms)
 	{
-		return Lipn (4, terms, z, true);									// SIGMA [1..N] (z^k/k^4)
+		return Lipn (4, terms, z, false);									// SIGMA [1..N] (z^k/k^4)
 	}
 
 	/*
@@ -316,16 +318,77 @@ public class JonquierePolylog
 	}
 	static final int [] C1A1 = new int [] {1, 10, 1};
 
+
+	/*
+	 * analytic continuation for polylog allowing convergence for Re(z) > 1
+	 */
+
+	/**
+	 * @param s order of polylog
+	 * @param z complex parameter to Li
+	 * @param terms number of terms in series
+	 * @return computed value
+	 */
+	public static  ComplexValue <Double>  continuation
+		(int s, ComplexValue <Double> z, int terms)
+	{
+		/*
+		 * translation from MPMATH Python source:
+		 * 
+		 * if abs(z) >= 1.4 and ctx.isint(s):
+		 *		return (-1)**(s+1)*polylog_series(s, 1/z) + polylog_continuation(s, z)
+		 */
+		ComplexValue <Double> continued = Lipn (s, terms, z, true);
+		continued = s % 2 == 1 ? continued : mgr.negate (continued);
+		continued = mgr.add (continued, continuationOffset (s, z));
+		return continued;
+	}
+	public static ComplexValue <Double> continuationOffset
+			(int s, ComplexValue <Double> z)
+	{
+		ComplexValue <Double>
+			twoPiI = mgr.C (0.0, 2 * Math.PI),							// 2 * pi * i
+			lnz = ComplexSpaceCore.cplxLib.ln (z),						// ln z
+			lnz2piI = mgr.multiply (lnz, mgr.invert (twoPiI)),			// ln z / ( 2 * pi * i )
+			BP = Combinatorics.BernoulliPolynomial (lnz2piI, s, mgr),	// bernpoly ( ... )
+			sF = mgr.invert (mgr.C (Combinatorics.F (s), 0.0)),			// 1 / s !
+			offset = mgr.multiply (mgr.pow (twoPiI, s), BP);			// (2 * pi * i) ^ s * bernpoly
+
+		offset = mgr.negate (mgr.multiply (offset, sF));				// - (2 * pi * i) ^ s / s! * bernpoly
+		if (z.Im () == 0.0) return mgr.C (offset.Re (), 0.0);			// Re (offset)
+
+	/*
+	    twopij = i * 2 * pi
+	    a = -twopij**n/fac(n) * bernpoly (n, ln(z)/twopij)
+	    if _is_real_type(z) and z < 0: a = _re(a)
+	    if _im(z) < 0 or (_im(z) == 0 and _re(z) >= 1):
+	        a -= twopij*ln(z)**(n-1)/fac(n-1)
+	    return a
+	 */
+
+		ComplexValue <Double>
+			lnZ2sM1 = mgr.pow (lnz, s-1),								// s * ( ln z )^(s - 1)
+			lnZsF = mgr.multiply (lnZ2sM1, sF),							// ( ln z )^(s - 1) / (s - 1)!
+			lnZsF2piI = mgr.multiply (lnZsF, twoPiI)					// 2 * pi * i * ( ln z )^(s - 1) / (s - 1)!
+		;
+		return mgr.add (offset, mgr.negate (lnZsF2piI));
+	}
+
+
+	/*
+	 * distinct series implementations for positive order and negative order polylog computation
+	 */
+
 	/**
 	 * general positive case
 	 * @param n the integer order
 	 * @param terms number of terms
 	 * @param z complex parameter to Li
-	 * @param LT1 indicates fractional z when TRUE
+	 * @param isContinuation indicates z outside convergence when TRUE
 	 * @return complex result of function evaluation
 	 */
 	public static ComplexValue <Double> Lipn
-		(int n, int terms, ComplexValue <Double> z, boolean LT1)
+		(int n, int terms, ComplexValue <Double> z, boolean isContinuation)
 	{
 		ComplexValue <Double> sum = mgr.getZero ();
 		// Li(z) = SIGMA [1 <= k <= INFINITY] (   z^k  / k^(-n) )			// for |Re(z)| < 1
@@ -338,7 +401,7 @@ public class JonquierePolylog
 					mgr.multiply
 					(
 						mgr.pow (mgr.newScalar (k), -n),
-						mgr.pow (z, LT1 ? k : -k)
+						mgr.pow (z, isContinuation ? -k : k)
 					)
 				);
 		}
@@ -369,4 +432,6 @@ public class JonquierePolylog
 	public static ExpressionComplexFieldManager mgr = ComplexSpaceCore.manager;
 	public static ComplexValue <Double> NONE = mgr.newScalar (-1);
 
+
 }
+
