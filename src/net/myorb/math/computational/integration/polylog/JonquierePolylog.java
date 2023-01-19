@@ -350,7 +350,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 			offset = productOf (POW (twoPiI, s), bernpoly (lnz2piI, s)),		// (2 * pi * i) ^ s * bernpoly
 			sF = oneOver (RE (F (s)));											// 1 / s !
 
-		offset = NEG (productOf (offset, sF));									// - (2 * pi * i) ^ s / s! * bernpoly
+		offset = NEG (productOf (offset, sF));									// - (2 * pi * i) ^ s * bernpoly(...) / s!
 		if (z.Im () == 0.0) return RE (offset.Re ());							// Re (offset)
 
 	/*
@@ -422,11 +422,11 @@ public class JonquierePolylog extends ComplexSpaceCore
 	{
 		ComplexValue <Double>
 			SNKF = RE (SN (n+1, k+1) * F (k)),								// S{n+1,k+1} * k!
-			exp = POW (sumOf (z, NONE), -(k+1));							// ---------------
+			exp = POW (reduce (z, ONE), -(k+1));							// ---------------
 		return productOf (SNKF, exp);										//  (z-1) ^ (k+1)
 	}
 	public static ComplexValue <Double>
-		I_PI = IM (Math.PI), Z = S (0), ONE = S (1), NONE = S (-1), TWO = S (2);
+		I_PI = IM (Math.PI), Z = S (0), ONE = S (1), TWO = S (2);
 	public static final double PI_SQ = Math.pow (Math.PI, 2);
 
 
