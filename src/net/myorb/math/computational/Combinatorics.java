@@ -931,6 +931,23 @@ public class Combinatorics<T>  extends Tolerances<T>
 	}
 
 	/**
+	 * calculate Polynomial Coefficients for given order
+	 * @param order the order of the polynomial to be constructed
+	 * @return the list of Polynomial Coefficients calculated
+	 */
+	public static Polynomial.Coefficients <Double>
+			BernoulliPolynomial (int order)
+	{
+		Polynomial.Coefficients <Double>
+			C = new Polynomial.Coefficients <Double> ();
+		for (int k = order; k >= 0; k--)
+		{ C.add ( BernoulliPolynomialCoefficient (order, k) ); }
+		return C;
+	}
+	public static double BernoulliPolynomialCoefficient (int order, int index)
+	{ return bernoulli (index) * binomialCoefficientHW (order, index); }
+
+	/**
 	 * polynomial built with Bernoulli number coefficients
 	 * @param x the variable value raised to powers in series
 	 * @param n the order of the polynomial
@@ -943,13 +960,10 @@ public class Combinatorics<T>  extends Tolerances<T>
 	{
 		T sum = m.getZero (), scalar, term;
 
-		for (int k = 0; k <= n+1; k++)
+		for (int k = 0; k <= n; k++)
 		{
 			scalar = m.convertFromDouble
-				(
-					bernoulli (k) *
-					binomialCoefficientHW (n, k)
-				);
+				( BernoulliPolynomialCoefficient (n, k) );
 			term = m.multiply (scalar, m.pow (x, n-k));
 			sum = m.add (sum, term);
 		}
