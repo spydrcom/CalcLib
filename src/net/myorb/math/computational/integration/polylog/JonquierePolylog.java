@@ -1,12 +1,8 @@
 
 package net.myorb.math.computational.integration.polylog;
 
-import net.myorb.math.computational.Combinatorics;
-
 import net.myorb.math.complexnumbers.ComplexSpaceCore;
 import net.myorb.math.complexnumbers.ComplexValue;
-
-import net.myorb.math.expressions.managers.ExpressionComplexFieldManager;
 
 import net.myorb.data.abstractions.FunctionWrapper;
 import net.myorb.data.abstractions.Function;
@@ -19,7 +15,7 @@ import net.myorb.data.abstractions.Function;
  * - special case provided for Dilogarithm
  * @author Michael Druckman
  */
-public class JonquierePolylog
+public class JonquierePolylog extends ComplexSpaceCore
 {
 
 
@@ -38,9 +34,9 @@ public class JonquierePolylog
 		(int s, ComplexValue <Double> z, Double t)
 	{
 		ComplexValue <Double>
-			expTmZ = mgr.add (mgr.C (Math.exp (t), 0.0), mgr.negate (z)),
-			ztToSm1 = mgr.multiply (z, mgr.pow (mgr.C (t, 0.0), s-1));
-		return mgr.multiply (ztToSm1, mgr.invert (expTmZ));
+			expTmZ = reduce (RE (Math.exp (t)), z),
+			ztToSm1 = productOf (z, POW (RE (t), s-1));
+		return ratioOf (ztToSm1, expTmZ);
 	}
 
 	/**
@@ -50,12 +46,11 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> Li2Prime (ComplexValue <Double> t)
 	{
-		if (mgr.isZero (t)) return mgr.getOne ();
-		ComplexValue <Double> oneMz = oneMinusZ (t);
-		if (mgr.isZero (oneMz)) return mgr.getZero ();
-		if (mgr.isNegative (oneMz)) oneMz = mgr.negate (oneMz);
-		ComplexValue <Double> lnt = ComplexSpaceCore.cplxLib.ln (oneMz);
-		return mgr.multiply (lnt, mgr.invert (t));
+		if (isZ (t)) return ONE;
+		ComplexValue <Double> oneMz;
+		if (isZ (oneMz = oneMinusZ (t))) return Z;
+		if (manager.isNegative (oneMz)) oneMz = NEG (oneMz);
+		return ratioOf (ln (oneMz), t);
 	}
 
 	/**
@@ -67,7 +62,7 @@ public class JonquierePolylog
 	{
 		return new FunctionWrapper < ComplexValue <Double> >
 		(
-			f, ComplexSpaceCore.manager
+			f, manager
 		);
 	}
 
@@ -137,7 +132,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> oneMinusZ (ComplexValue <Double> z)
 	{
-		return mgr.add (mgr.getOne (), mgr.negate (z));
+		return sumOf (ONE, NEG (z));
 	}
 
 	/**
@@ -147,7 +142,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> oneMinusZto (ComplexValue <Double> z, int power)
 	{
-		return ComplexSpaceCore.cplxLib.pow (oneMinusZ (z), power);
+		return POW (oneMinusZ (z), power);
 	}
 
 	/**
@@ -158,11 +153,11 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> poly (ComplexValue <Double> z, int [] c)
 	{
-		ComplexValue <Double> sum = mgr.newScalar ( c [0] );
+		ComplexValue <Double> sum = S ( c [0] );
 		for (int i = 1; i < c.length; i++)
 		{
-			ComplexValue <Double> scalar = mgr.newScalar ( c [i] );
-			sum = mgr.add (mgr.multiply (z, sum), scalar);
+			ComplexValue <Double> scalar = S ( c [i] );
+			sum = sumOf (productOf (z, sum), scalar);
 		}
 		return sum;
 	}
@@ -176,7 +171,7 @@ public class JonquierePolylog
 	public static ComplexValue <Double> polyOver
 	(ComplexValue <Double> z, ComplexValue <Double> polyValue, int power)
 	{
-		return mgr.multiply (polyValue, mgr.invert (oneMinusZto (z, power)));
+		return ratioOf (polyValue, oneMinusZto (z, power));
 	}
 
 
@@ -192,13 +187,13 @@ public class JonquierePolylog
 	public static ComplexValue <Double> Li2
 			(ComplexValue <Double> z, int terms)
 	{
+		if (isZ (z)) return Z;
 		double zRe = Math.abs (z.Re ());
-		if (mgr.isZero (z)) return mgr.getZero ();
 		if ( zRe < 1 ) return Lipn  (2, terms, z, false);					// SIGMA [1..N] (z^k/k^2)
 		if (z.Re () < -1) return continuation (2, z, terms);				// use negative continuation
 		if ( zRe > 1 || z.Im () != 0 ) return continuation (z, terms);		// use positive continuation
-		if (z.Re () < 0) return mgr.C ( - PI_SQ / 12, 0.0 );				// - PI^2 / 12
-		else return mgr.C ( PI_SQ / 6, 0.0 );								//   PI^2 / 6
+		if (z.Re () < 0) return RE ( - PI_SQ / 12 );						// - PI^2 / 12
+		else return RE ( PI_SQ / 6 );										//   PI^2 / 6
 	}
 
 	/**
@@ -211,18 +206,19 @@ public class JonquierePolylog
 		(ComplexValue <Double> z, int terms)
 	{
 		ComplexValue <Double>
-			PI_SQ_over3 = mgr.C (PI_SQ/3, 0.0),								// PI^2 / 3
-			lnz = ComplexSpaceCore.cplxLib.ln (z),							// ln z
-			termSum = mgr.C (0.5, 0.0), ipi = mgr.C (0.0, Math.PI);
-		termSum = mgr.add (mgr.multiply (termSum, lnz), ipi);				// 1/2 * ln z + i * PI
-		termSum = mgr.add
+			lnz = ln (z), termSum = Z;										// ln z
+		termSum = sumOf
 			(
-				mgr.multiply (termSum, lnz),								// 1/2 * (ln z)^2 + i * PI * ln z 
+				productOf (RE (0.5), lnz),									// 1/2 * ln z + i * PI
+				I_PI
+			);
+		termSum = sumOf
+			(
+				productOf (termSum, lnz),									// 1/2 * (ln z)^2 + i * PI * ln z 
 				Lipn (2, terms, z, true)									// + SIGMA ...
 			);
-		return mgr.add (PI_SQ_over3, mgr.negate (termSum));
+		return reduce (RE (PI_SQ/3), termSum);								// PI^2 / 3 - SUMMATION ...
 	}
-	static final double PI_SQ = Math.pow (Math.PI, 2);
 
 
 	/*
@@ -235,7 +231,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> Li0 (ComplexValue <Double> z)
 	{
-		return mgr.multiply (z, mgr.invert (oneMinusZ (z)));				// z / (1-z)
+		return ratioOf (z, oneMinusZ (z));									// z / (1-z)
 	}
 
 	/**
@@ -244,7 +240,7 @@ public class JonquierePolylog
 	 */
 	public static ComplexValue <Double> Li1 (ComplexValue <Double> z)
 	{
-		return mgr.negate (ComplexSpaceCore.cplxLib.ln (oneMinusZ (z)));	// -ln(1-z)
+		return NEG (ln (oneMinusZ (z)));									// - ln (1-z)
 	}
 
 	/*
@@ -257,7 +253,8 @@ public class JonquierePolylog
 	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Li3 (ComplexValue <Double> z, int terms)
+	public static ComplexValue <Double> Li3
+			(ComplexValue <Double> z, int terms)
 	{
 		return Lipn (3, terms, z, false);									// SIGMA [1..N] (z^k/k^3)
 	}
@@ -268,7 +265,8 @@ public class JonquierePolylog
 	 * @param terms number of terms in series
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Li4 (ComplexValue <Double> z, int terms)
+	public static ComplexValue <Double> Li4
+			(ComplexValue <Double> z, int terms)
 	{
 		return Lipn (4, terms, z, false);									// SIGMA [1..N] (z^k/k^4)
 	}
@@ -313,7 +311,7 @@ public class JonquierePolylog
 	public static ComplexValue <Double> Lin4 (ComplexValue <Double> z)
 	{
 		ComplexValue <Double> polyProduct =
-			mgr.multiply (poly (z, C110), poly (z, C1A1));
+			productOf (poly (z, C110), poly (z, C1A1));
 		return polyOver (z, polyProduct, 5);								// z(z+1)(z^2+10z+1) / (1-z)^5
 	}
 	static final int [] C1A1 = new int [] {1, 10, 1};
@@ -338,24 +336,22 @@ public class JonquierePolylog
 		 * if abs(z) >= 1.4 and ctx.isint(s):
 		 *		return (-1)**(s+1)*polylog_series(s, 1/z) + polylog_continuation(s, z)
 		 */
-		ComplexValue <Double> continued = Lipn (s, terms, z, true);
-		continued = s % 2 == 1 ? continued : mgr.negate (continued);
-		continued = mgr.add (continued, continuationOffset (s, z));
+		ComplexValue <Double> continued =
+				negWhenOdd (Lipn (s, terms, z, true), s);
+		continued = sumOf (continued, continuationOffset (s, z));
 		return continued;
 	}
 	public static ComplexValue <Double> continuationOffset
 			(int s, ComplexValue <Double> z)
 	{
-		ComplexValue <Double>
-			twoPiI = mgr.C (0.0, 2 * Math.PI),							// 2 * pi * i
-			lnz = ComplexSpaceCore.cplxLib.ln (z),						// ln z
-			lnz2piI = mgr.multiply (lnz, mgr.invert (twoPiI)),			// ln z / ( 2 * pi * i )
-			BP = Combinatorics.BernoulliPolynomial (lnz2piI, s, mgr),	// bernpoly ( ... )
-			sF = mgr.invert (mgr.C (Combinatorics.F (s), 0.0)),			// 1 / s !
-			offset = mgr.multiply (mgr.pow (twoPiI, s), BP);			// (2 * pi * i) ^ s * bernpoly
+		ComplexValue <Double> lnz,
+			twoPiI = productOf (TWO, I_PI),										// 2 * pi * i
+			lnz2piI = ratioOf (lnz = ln (z), twoPiI),							// ln z / ( 2 * pi * i )
+			offset = productOf (POW (twoPiI, s), bernpoly (lnz2piI, s)),		// (2 * pi * i) ^ s * bernpoly
+			sF = oneOver (RE (F (s)));											// 1 / s !
 
-		offset = mgr.negate (mgr.multiply (offset, sF));				// - (2 * pi * i) ^ s / s! * bernpoly
-		if (z.Im () == 0.0) return mgr.C (offset.Re (), 0.0);			// Re (offset)
+		offset = NEG (productOf (offset, sF));									// - (2 * pi * i) ^ s / s! * bernpoly
+		if (z.Im () == 0.0) return RE (offset.Re ());							// Re (offset)
 
 	/*
 	    twopij = i * 2 * pi
@@ -367,11 +363,11 @@ public class JonquierePolylog
 	 */
 
 		ComplexValue <Double>
-			lnZ2sM1 = mgr.pow (lnz, s-1),								// s * ( ln z )^(s - 1)
-			lnZsF = mgr.multiply (lnZ2sM1, sF),							// ( ln z )^(s - 1) / (s - 1)!
-			lnZsF2piI = mgr.multiply (lnZsF, twoPiI)					// 2 * pi * i * ( ln z )^(s - 1) / (s - 1)!
+			lnZ2sM1 = POW (lnz, s-1),										// ( ln z )^(s - 1)
+			lnZsF = productOf (lnZ2sM1, productOf (sF, S (s))),				// ( ln z )^(s - 1) / (s - 1)!
+			lnZsF2piI = productOf (lnZsF, twoPiI)							// 2 * pi * i * ( ln z )^(s - 1) / (s - 1)!
 		;
-		return mgr.add (offset, mgr.negate (lnZsF2piI));
+		return reduce (offset, lnZsF2piI);
 	}
 
 
@@ -390,18 +386,18 @@ public class JonquierePolylog
 	public static ComplexValue <Double> Lipn
 		(int n, int terms, ComplexValue <Double> z, boolean isContinuation)
 	{
-		ComplexValue <Double> sum = mgr.getZero ();
-		// Li(z) = SIGMA [1 <= k <= INFINITY] (   z^k  / k^(-n) )			// for |Re(z)| < 1
+		ComplexValue <Double> sum = Z;
+		// Li(z) = SIGMA [1 <= k <= INFINITY] (   z^k  * k^(-n) )			// for |Re(z)| < 1
 		// Li(z) = SIGMA [1 <= k <= INFINITY] ( z^(-k) * k^(-n) )			// for |Re(z)| > 1
 		for (int k = 1; k <= terms; k++)
 		{
-			sum = mgr.add
+			sum = sumOf
 				(
 					sum,
-					mgr.multiply
+					productOf
 					(
-						mgr.pow (mgr.newScalar (k), -n),
-						mgr.pow (z, isContinuation ? -k : k)
+						POW (S (k), -n),
+						POW (z, isContinuation ? -k : k)
 					)
 				);
 		}
@@ -410,27 +406,28 @@ public class JonquierePolylog
 
 	/**
 	 * general negative case
+	 * - using Stirling numbers
 	 * @param n the integer order
 	 * @param z complex parameter to Li
 	 * @return complex result of function evaluation
 	 */
 	public static ComplexValue <Double> Linn (int n, ComplexValue <Double> z)
 	{
-		ComplexValue <Double>
-			sgn = mgr.newScalar ((int) Math.pow (-1, n+1)), sum = mgr.getZero ();
+		ComplexValue <Double> sum = Z;
 		// (-1)^(n+1) * SUM [0 <= k <= n] ( k! S(n+1,k+1) (-1 / (1-z) )^(k+1) )
-		for (int k = 0; k <= n; k++) sum = mgr.add (sum, term (z, n, k));
-		return mgr.multiply (sgn, sum);
+		for (int k = 0; k <= n; k++) sum = sumOf (sum, term (z, n, k));
+		return negWhenOdd (sum, n);
 	}
 	static ComplexValue <Double> term (ComplexValue <Double> z, int n, int k)
 	{
-		ComplexValue <Double> frac = mgr.invert (mgr.add (z, NONE));
-		ComplexValue <Double> exp = ComplexSpaceCore.cplxLib.pow (frac, k+1);
-		double SKF = Combinatorics.stirlingNumbers2HW (n+1, k+1) * Combinatorics.F (k);
-		return mgr.multiply (mgr.C (SKF, 0.0), exp);
+		ComplexValue <Double>
+			SNKF = RE (SN (n+1, k+1) * F (k)),								// S{n+1,k+1} * k!
+			exp = POW (sumOf (z, NONE), -(k+1));							// ---------------
+		return productOf (SNKF, exp);										//  (z-1) ^ (k+1)
 	}
-	public static ExpressionComplexFieldManager mgr = ComplexSpaceCore.manager;
-	public static ComplexValue <Double> NONE = mgr.newScalar (-1);
+	public static ComplexValue <Double>
+		I_PI = IM (Math.PI), Z = S (0), ONE = S (1), NONE = S (-1), TWO = S (2);
+	public static final double PI_SQ = Math.pow (Math.PI, 2);
 
 
 }
