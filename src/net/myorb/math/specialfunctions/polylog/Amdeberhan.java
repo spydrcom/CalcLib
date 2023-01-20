@@ -4,7 +4,7 @@ package net.myorb.math.specialfunctions.polylog;
 import net.myorb.math.computational.PolylogQuadrature;
 import net.myorb.math.computational.integration.polylog.AmdeberhanEta;
 
-import net.myorb.math.complexnumbers.CommonFunctionBase;
+import net.myorb.math.complexnumbers.CommonComplexFunctionBase;
 import net.myorb.math.complexnumbers.ComplexValue;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Amdeberhan eta integral evaluations
  * @author Michael Druckman
  */
-public class Amdeberhan extends CommonFunctionBase
+public class Amdeberhan extends CommonComplexFunctionBase
 {
 
 

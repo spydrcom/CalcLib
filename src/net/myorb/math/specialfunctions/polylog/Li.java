@@ -4,7 +4,7 @@ package net.myorb.math.specialfunctions.polylog;
 import net.myorb.math.computational.PolylogQuadrature;
 import net.myorb.math.computational.integration.polylog.BoseEinstein;
 
-import net.myorb.math.complexnumbers.CommonFunctionBase;
+import net.myorb.math.complexnumbers.CommonComplexFunctionBase;
 import net.myorb.math.complexnumbers.ComplexValue;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Li function computed from Bose integral
  * @author Michael Druckman
  */
-public class Li extends CommonFunctionBase
+public class Li extends CommonComplexFunctionBase
 {
 
 

@@ -2,7 +2,7 @@
 package net.myorb.math.specialfunctions.polylog;
 
 import net.myorb.math.complexnumbers.ComplexValue;
-import net.myorb.math.complexnumbers.CommonFunctionBase;
+import net.myorb.math.complexnumbers.CommonComplexFunctionBase;
 
 import net.myorb.math.computational.integration.polylog.GaussPi;
 import net.myorb.math.computational.PolylogQuadrature;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Pi function computed from Gauss integral
  * @author Michael Druckman
  */
-public class Pi extends CommonFunctionBase
+public class Pi extends CommonComplexFunctionBase
 {
 
 

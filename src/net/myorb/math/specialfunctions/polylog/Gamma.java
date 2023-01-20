@@ -4,7 +4,7 @@ package net.myorb.math.specialfunctions.polylog;
 import net.myorb.math.computational.PolylogQuadrature;
 import net.myorb.math.computational.integration.polylog.BernoulliGamma;
 
-import net.myorb.math.complexnumbers.CommonFunctionBase;
+import net.myorb.math.complexnumbers.CommonComplexFunctionBase;
 import net.myorb.math.complexnumbers.ComplexValue;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Gamma function computed from Bernoulli integral
  * @author Michael Druckman
  */
-public class Gamma extends CommonFunctionBase
+public class Gamma extends CommonComplexFunctionBase
 {
 
 
