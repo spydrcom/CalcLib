@@ -415,6 +415,8 @@ public class JonquierePolylog extends ComplexSpaceCore
 	{
 		ComplexValue <Double> sum = Z;
 		// (-1)^(n+1) * SUM [0 <= k <= n] ( k! S(n+1,k+1) (-1 / (1-z) )^(k+1) )
+		// (-1)^(n+1) * SUM [0 <= k <= n] ( k! S(n+1,k+1) ( 1 / (z-1) )^(k+1) )
+		// using algebra to eliminate -1 in fraction numerator (term negation)
 		for (int k = 0; k <= n; k++) sum = sumOf (sum, term (z, n, k));
 		return negWhenOdd (sum, n);
 	}
