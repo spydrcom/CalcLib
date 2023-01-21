@@ -406,21 +406,51 @@ public class JonquierePolylog extends ComplexSpaceCore
 
 	/**
 	 * general negative case
-	 * - using Stirling numbers
+	 * - using  chosen  numbers
 	 * @param n the integer order
 	 * @param z complex parameter to Li
 	 * @return complex result of function evaluation
 	 */
 	public static ComplexValue <Double> Linn (int n, ComplexValue <Double> z)
+	{ return useStirling ? LinnStirling (n, z) : LinnEuler (n, z); }
+	public static void chooseStirling () { useStirling = true; }
+	public static boolean useStirling = false;
+
+	/**
+	 * general negative case
+	 * - using  Euler  numbers
+	 * @param n the integer order
+	 * @param z complex parameter to Li
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> LinnEuler (int n, ComplexValue <Double> z)
+	{
+		ComplexValue <Double> sum = Z;
+		// Li[-n](z) = 1 / ( 1 - z ) ^ ( n + 1 ) * SIGMA [ 0 <= k < n ] ( E(n,k) * z ^ (n-k) )
+		for (int k = 0; k < n; k++) sum = sumOf (sum, termEuler (z, n, k));
+		return productOf (sum, POW (oneMinusZ (z), -(n+1)));
+	}
+	static ComplexValue <Double> termEuler (ComplexValue <Double> z, int n, int k)
+	{ return productOf (RE (EN (n, k)), POW (z, n-k)); }
+
+	/**
+	 * general negative case
+	 * - using Stirling numbers
+	 * @param n the integer order
+	 * @param z complex parameter to Li
+	 * @return complex result of function evaluation
+	 */
+	public static ComplexValue <Double> LinnStirling (int n, ComplexValue <Double> z)
 	{
 		ComplexValue <Double> sum = Z;
 		// (-1)^(n+1) * SUM [0 <= k <= n] ( k! S(n+1,k+1) (-1 / (1-z) )^(k+1) )
 		// (-1)^(n+1) * SUM [0 <= k <= n] ( k! S(n+1,k+1) ( 1 / (z-1) )^(k+1) )
 		// using algebra to eliminate -1 in fraction numerator (term negation)
-		for (int k = 0; k <= n; k++) sum = sumOf (sum, term (z, n, k));
+		for (int k = 0; k <= n; k++) sum = sumOf (sum, termStirling (z, n, k));
 		return negWhenOdd (sum, n);
 	}
-	static ComplexValue <Double> term (ComplexValue <Double> z, int n, int k)
+	static ComplexValue <Double> termStirling
+			(ComplexValue <Double> z, int n, int k)
 	{
 		ComplexValue <Double>
 			SNKF = RE (SN (n+1, k+1) * F (k)),								// S{n+1,k+1} * k!
