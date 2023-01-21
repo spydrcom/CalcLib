@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public class Jonquiere <T> extends CommonRealDomainSubset <T>
 {
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.complexnumbers.CommonFunctionBase#addConfiguration(java.util.Map)
 	 */
@@ -23,7 +22,6 @@ public class Jonquiere <T> extends CommonRealDomainSubset <T>
 		this.setDefiningOccurrence (new LiAnalyticContinuation ());
 		super.addConfiguration (parameters);
 	}
-
 }
 
 /**
@@ -31,26 +29,21 @@ public class Jonquiere <T> extends CommonRealDomainSubset <T>
  */
 class LiAnalyticContinuation extends CommonRealDomainSubset.ComplexDefinition
 {
-
-	LiAnalyticContinuation ()
-	{
-		super ("Li");
-	}
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.complexnumbers.CommonFunctionBase#addConfiguration(java.util.Map)
 	 */
 	public void addConfiguration (Map <String, Object> parameters)
 	{
-		Object terms; int s;					// order of Li to be used
+		Object terms; int s;					// order of Li and number of terms
 		super.addConfiguration (parameters);
+
 		try { s = Integer.parseInt (parameters.get ("s").toString ()); }
 		catch (Exception e) { throw new RuntimeException (ORDER_ERROR_TEXT); }
 
-		if ((terms = parameters.get ("terms")) == null)
-			this.setimplementation (JonquierePolylog.Li (s));
+		if ((terms = parameters.get ("terms")) == null) this.setimplementation (JonquierePolylog.Li (s));
 		else this.setimplementation (JonquierePolylog.Li (s, Integer.parseInt (terms.toString ())));
+		if ((terms = parameters.get ("stirling")) == null) JonquierePolylog.useStirling = true;
 	}
 	static String ORDER_ERROR_TEXT = "Configration parameter 's' must identify the order of Li desired";
-
+	LiAnalyticContinuation () { super ("Li"); }
 }

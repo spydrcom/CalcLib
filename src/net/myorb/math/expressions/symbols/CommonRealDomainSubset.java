@@ -62,7 +62,8 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		protected boolean boundaryEnforced = false;
 
 		/**
-		 * @return TRUE if RE part of complex numbers allowed in real domain results
+		 * real domain results can just discard non-zero IM portion or cause error
+		 * @return TRUE if discard of non-zero IM part of complex result not allowed
 		 */
 		public boolean isBoundaryEnforced ()
 		{
@@ -70,7 +71,7 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		}
 
 		/**
-		 * change name of other function to match ths
+		 * change name of other function to match this
 		 * @param otherFunction function to be renamed
 		 */
 		public void adoptName (CommonFunctionBase <?> otherFunction)
@@ -151,7 +152,7 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		{
 			super (null);
 			complexImplementation.adoptName (this);
-			this.parameterNameConvention = "x";
+			this.parameterNameConvention = "x";											// changed to real domain convention
 		}
 
 		/* (non-Javadoc)
@@ -161,7 +162,7 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		{
 			ComplexValue <Double>
 				result = complexImplementation.eval
-					(ComplexSpaceCore.manager.C (x, 0.0));
+					(ComplexSpaceCore.manager.C (x, 0.0));								// real part with 0.0 for imaginary part
 			if (complexImplementation.isBoundaryEnforced () && result.Im () != 0.0)
 			{ throw new RuntimeException ("function result is complex"); }
 			else return result.Re ();
