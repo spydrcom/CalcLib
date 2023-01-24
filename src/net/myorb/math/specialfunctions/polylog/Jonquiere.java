@@ -42,7 +42,7 @@ class LiAnalyticContinuation extends CommonRealDomainSubset.ComplexDefinition
 
 		if ((terms = parameters.get ("terms")) == null) this.setimplementation (JonquierePolylog.Li (s));
 		else this.setimplementation (JonquierePolylog.Li (s, Integer.parseInt (terms.toString ())));
-		if ((terms = parameters.get ("stirling")) == null) JonquierePolylog.useStirling = true;
+		JonquierePolylog.useStirling = parameters.get ("stirling") != null;
 	}
 	static String ORDER_ERROR_TEXT = "Configration parameter 's' must identify the order of Li desired";
 	LiAnalyticContinuation () { super ("Li"); }
