@@ -68,9 +68,11 @@ public class InverseTangentIntegral
 	public Double Ti2 (Double x)
 	{
 		if (x == 0.0) return 0.0;
-		else if (x < 0.0) return - Ti2 (-x);	// odd function
+		else if (x < 0.0) return - Ti2 (-x);						// odd function
+		else if (x > 1) return PI_2 * Math.log (x) + Ti2 (1/x);		// derived from PI/2 = atan t + atan 1/t 
 		return atanSpline.evalIntegralOver (0, x);
 	}
+	public static double PI_2 = Math.PI / 2;
 
 
 	/**
@@ -89,9 +91,9 @@ public class InverseTangentIntegral
 
 	/*
 	 * 
-	 * other identities:
+	 * Ti identities:
 	 * 
-	 *		Ti2(x) - Ti2(1/x) = pi/2 ln x
+	 *		Ti2(x) - Ti2(1/x) = pi/2 ln x		Re(x) > 0
 	 *
 	 * 		Ti2(x)    = x - x^3/3^2 + x^5/5^2 - x^7/7^2 + ...
 	 *		Ti[n](x)  = x - x^3/3^n + x^5/5^n - x^7/7^n + ...
@@ -107,6 +109,11 @@ public class InverseTangentIntegral
 	 * 
 	 * 		Ti2(x)    = -i chi2 (ix)
 	 * 
+	 *		Li2(i*z) = Li2(-z^2)/4 + i*Ti2(z)
+	 *		Li2(i*z) = Li2(-z^2)/4 + chi2(i*z)
+	 *
+	 * 		Ti2(x)    = Im ( Li2 (ix) )
+	 *
 	 * 
 	 * other orders of Ti:
 	 * 
