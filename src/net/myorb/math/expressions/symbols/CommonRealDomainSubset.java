@@ -7,6 +7,8 @@ import net.myorb.math.complexnumbers.CommonComplexFunctionBase;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.realnumbers.CommonRealFunctionBase;
+
+import net.myorb.data.abstractions.FunctionWrapper;
 import net.myorb.data.abstractions.Function;
 
 import java.util.Map;
@@ -49,6 +51,14 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		public void setimplementation
 			(Function < ComplexValue <Double> > implementation)
 		{ this.implementation = implementation; }
+
+		/**
+		 * specify the implementation of the function using a lambda expression
+		 * @param body function body declaration for a wrapper
+		 */
+		public void setimplementation
+		(FunctionWrapper.F <ComplexValue <Double>> body)
+		{ this.setimplementation (new FunctionWrapper <> (body, manager)); }
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.complexnumbers.CommonFunctionBase#addConfiguration(java.util.Map)
