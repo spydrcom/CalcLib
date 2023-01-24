@@ -20,19 +20,21 @@ public class BoseEinstein extends ComplexExponentComponents
 	public double mu (double s, double t)
 	{ return Math.pow (t, s-1); }
 
-	/**
-	 * complex integral factor
-	 * @param z the parameter to the Li function
-	 * @param t the integration variable
-	 * @return the complex factor
-	 */
-	public ComplexValue <Double> muz (ComplexValue <Double> z, double t)
+	static class Formula extends ComplexSpaceCore
 	{
-		ComplexValue <Double> negZ = ComplexSpaceCore.manager.negate (z);
-		ComplexValue <Double> expT = ComplexSpaceCore.manager.C ( - Math.exp (t), 0.0 );
-		ComplexValue <Double> invZexp = ComplexSpaceCore.manager.invert
-				(ComplexSpaceCore.manager.add (expT, z));
-		return ComplexSpaceCore.manager.multiply (negZ, invZexp);
+		/**
+		 * complex integral factor
+		 * @param z the parameter to the Li function
+		 * @param t the integration variable
+		 * @return the complex factor
+		 */
+		public ComplexValue <Double> muz (ComplexValue <Double> z, double t)
+		{
+			ComplexValue <Double>
+				negZ = NEG (z), expT = RE ( - Math.exp (t) ),
+				invZexp = oneOver (sumOf (expT, z));
+			return productOf (negZ, invZexp);
+		}
 	}
 
 	/**
