@@ -71,10 +71,20 @@ public class ComplexSpaceCore
 	 * complex and combination library functions
 	 */
 
+	public static ComplexValue <Double> ln (ComplexValue <Double> z) { return cplxLib.ln (z); }
+
+	public static ComplexValue <Double> toThe
+		(
+			ComplexValue <Double> z,
+			ComplexValue <Double> power
+		)
+	{ return cplxLib.power (z, power); }
+
+
 	public static ComplexValue <Double>
 		bernpoly (ComplexValue <Double> x, int n)
 	{ return Combinatorics.BernoulliPolynomial (x, n, manager); }
-	public static ComplexValue <Double> ln (ComplexValue <Double> z) { return cplxLib.ln (z); }
+
 	public static double SN (int n, int k) { return Combinatorics.stirlingNumbers2HW (n, k); }
 	public static double EN (int n, int k) { return Combinatorics.eulerNumbers (n, k); }
 	public static double F (int n) { return Combinatorics.F (n); }
