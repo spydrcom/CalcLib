@@ -172,6 +172,23 @@ public class ComputationConfiguration<T> extends SignManager
 	{ return reductionMechanism; }
 
 
+	/**
+	 * identify type of value
+	 * @param value the value to examine
+	 * @return DataType as specified in SpaceManager
+	 */
+	public static SpaceManager.DataType typeOf (String value)
+	{
+		if (value.contains (COMPLEX_INDICATOR))
+		{ return SpaceManager.DataType.Complex; }
+		Double parsedValue = Double.parseDouble (value);
+		if (parsedValue == Math.floor (parsedValue))
+		{ return SpaceManager.DataType.Integer; }
+		else return SpaceManager.DataType.Real;
+	}
+	public static final String COMPLEX_INDICATOR = "!*";
+
+
 	// symbols for access to term count for the operation
 	public static final String SIN, COS, ASIN, ATAN, SQRT, EXP, LOG;
 	
