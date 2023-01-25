@@ -171,8 +171,7 @@ public class CommonRealDomainSubset <T> extends CommonFunctionBase <T>
 		public Double eval (Double x)
 		{
 			ComplexValue <Double>
-				result = complexImplementation.eval
-					(ComplexSpaceCore.manager.C (x, 0.0));								// real part with 0.0 for imaginary part
+				result = complexImplementation.eval (ComplexSpaceCore.RE (x));			// real part with 0.0 for imaginary part
 			if (complexImplementation.isBoundaryEnforced () && result.Im () != 0.0)
 			{ throw new RuntimeException ("function result is complex"); }
 			else return result.Re ();
