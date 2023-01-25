@@ -405,6 +405,39 @@ public class JonquierePolylog extends ComplexSpaceCore
 	}
 
 	/**
+	 * general case with complex order
+	 * - negative order requires continuation
+	 * @param order complex order of Li
+	 * @param z complex parameter to Li
+	 * @param terms number of terms
+	 * @return computed value
+	 */
+	public static ComplexValue <Double> complexPolylog
+		(ComplexValue <Double> order, ComplexValue <Double> z, ComplexValue <Double> terms)
+	{
+		Double orderRe = order.Re (), termCount = terms.Re ();
+		if (order.Im () == 0.0 && orderRe == Math.floor (orderRe))
+		{ return Lipn (orderRe.intValue (), termCount.intValue (), z, false); }
+
+		ComplexValue <Double> sum = Z;
+
+		for (int k = 1; k <= termCount; k++)
+		{
+			sum = sumOf
+				(
+					sum,
+					productOf
+					(
+						toThe (S (k), NEG (order)),
+						POW (z, k)
+					)
+				);
+		}
+
+		return sum;
+	}
+
+	/**
 	 * general negative case
 	 * - using  chosen  numbers
 	 * @param n the integer order
