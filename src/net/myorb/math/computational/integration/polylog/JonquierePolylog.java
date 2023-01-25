@@ -92,7 +92,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 				{
 					throw new RuntimeException ("Function not available");
 				}
-				return functionFor ( (z) -> Linn (-s, z) );
+				return functionFor ( (z) -> negativeIntegerOrderLiSeries (-s, z) );
 		}
 	}
 
@@ -117,7 +117,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 			default:
 				if (s < 0) return Li (s);
 				// Taylor series for abs(Re(z))<1 attempt general formula
-				return functionFor ( (z) -> Lipn (s, terms, z, true) );
+				return functionFor ( (z) -> positiveIntegerOrderLiSeries (s, terms, z, true) );
 		}
 	}
 
@@ -187,9 +187,10 @@ public class JonquierePolylog extends ComplexSpaceCore
 	public static ComplexValue <Double> Li2
 			(ComplexValue <Double> z, int terms)
 	{
+		double zRe;
 		if (isZ (z)) return Z;
-		double zRe = Math.abs (z.Re ());
-		if ( zRe < 1 ) return Lipn  (2, terms, z, false);					// SIGMA [1..N] (z^k/k^2)
+		if ( (zRe = Math.abs (z.Re ())) < 1 )
+			return positiveIntegerOrderLiSeries  (2, terms, z, false);		// SIGMA [1..N] (z^k/k^2)
 		if (z.Re () < -1) return continuation (2, z, terms);				// use negative continuation
 		if ( zRe > 1 || z.Im () != 0 ) return continuation (z, terms);		// use positive continuation
 		if (z.Re () < 0) return RE ( - PI_SQ / 12 );						// - PI^2 / 12
@@ -215,7 +216,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 		termSum = sumOf
 			(
 				productOf (termSum, lnz),									// 1/2 * (ln z)^2 + i * PI * ln z 
-				Lipn (2, terms, z, true)									// + SIGMA ...
+				positiveIntegerOrderLiSeries (2, terms, z, true)			// + SIGMA ...
 			);
 		return reduce (RE (PI_SQ/3), termSum);								// PI^2 / 3 - SUMMATION ...
 	}
@@ -256,7 +257,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 	public static ComplexValue <Double> Li3
 			(ComplexValue <Double> z, int terms)
 	{
-		return Lipn (3, terms, z, false);									// SIGMA [1..N] (z^k/k^3)
+		return positiveIntegerOrderLiSeries (3, terms, z, false);			// SIGMA [1..N] (z^k/k^3)
 	}
 
 	/**
@@ -268,7 +269,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 	public static ComplexValue <Double> Li4
 			(ComplexValue <Double> z, int terms)
 	{
-		return Lipn (4, terms, z, false);									// SIGMA [1..N] (z^k/k^4)
+		return positiveIntegerOrderLiSeries (4, terms, z, false);			// SIGMA [1..N] (z^k/k^4)
 	}
 
 	/*
@@ -337,7 +338,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 		 *		return (-1)**(s+1)*polylog_series(s, 1/z) + polylog_continuation(s, z)
 		 */
 		ComplexValue <Double> continued =
-				negWhenOdd (Lipn (s, terms, z, true), s);
+			negWhenOdd (positiveIntegerOrderLiSeries (s, terms, z, true), s);
 		continued = sumOf (continued, continuationOffset (s, z));
 		return continued;
 	}
@@ -372,6 +373,56 @@ public class JonquierePolylog extends ComplexSpaceCore
 
 
 	/*
+	 * series implementation for complex order and real order polylog computation
+	 */
+
+	/**
+	 * series for complex order
+	 * @param order complex order of Li
+	 * @param z complex parameter to Li
+	 * @param terms number of terms
+	 * @return computed value
+	 */
+	public static ComplexValue <Double> complexOrderLiSeries
+	(ComplexValue <Double> order, ComplexValue <Double> z, int terms)
+	{
+		ComplexValue <Double> sum = Z;
+
+		for (int k = 1; k <= terms; k++)
+		{
+			sum = sumOf
+				(
+					sum,
+					productOf
+					(
+						toThe (S (k), NEG (order)),
+						POW (z, k)
+					)
+				);
+		}
+
+		return sum;
+	}
+
+	/**
+	 * general case with complex order
+	 * - negative order requires continuation
+	 * @param order complex order of Li
+	 * @param z complex parameter to Li
+	 * @param terms number of terms
+	 * @return computed value
+	 */
+	public static ComplexValue <Double> complexPolylog
+		(ComplexValue <Double> order, ComplexValue <Double> z, ComplexValue <Double> terms)
+	{
+		Double orderRe = order.Re (), termCount = terms.Re ();
+		if (order.Im () == 0.0 && orderRe == Math.floor (orderRe))
+		{ return positiveIntegerOrderLiSeries (orderRe.intValue (), termCount.intValue (), z, false); }
+		return complexOrderLiSeries (order, z, termCount.intValue ());
+	}
+
+
+	/*
 	 * distinct series implementations for positive order and negative order polylog computation
 	 */
 
@@ -383,7 +434,7 @@ public class JonquierePolylog extends ComplexSpaceCore
 	 * @param isContinuation indicates z outside convergence when TRUE
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Lipn
+	public static ComplexValue <Double> positiveIntegerOrderLiSeries
 		(int n, int terms, ComplexValue <Double> z, boolean isContinuation)
 	{
 		ComplexValue <Double> sum = Z;
@@ -405,46 +456,14 @@ public class JonquierePolylog extends ComplexSpaceCore
 	}
 
 	/**
-	 * general case with complex order
-	 * - negative order requires continuation
-	 * @param order complex order of Li
-	 * @param z complex parameter to Li
-	 * @param terms number of terms
-	 * @return computed value
-	 */
-	public static ComplexValue <Double> complexPolylog
-		(ComplexValue <Double> order, ComplexValue <Double> z, ComplexValue <Double> terms)
-	{
-		Double orderRe = order.Re (), termCount = terms.Re ();
-		if (order.Im () == 0.0 && orderRe == Math.floor (orderRe))
-		{ return Lipn (orderRe.intValue (), termCount.intValue (), z, false); }
-
-		ComplexValue <Double> sum = Z;
-
-		for (int k = 1; k <= termCount; k++)
-		{
-			sum = sumOf
-				(
-					sum,
-					productOf
-					(
-						toThe (S (k), NEG (order)),
-						POW (z, k)
-					)
-				);
-		}
-
-		return sum;
-	}
-
-	/**
 	 * general negative case
 	 * - using  chosen  numbers
 	 * @param n the integer order
 	 * @param z complex parameter to Li
 	 * @return complex result of function evaluation
 	 */
-	public static ComplexValue <Double> Linn (int n, ComplexValue <Double> z)
+	public static ComplexValue <Double>
+		negativeIntegerOrderLiSeries (int n, ComplexValue <Double> z)
 	{ return useStirling ? LinnStirling (n, z) : LinnEuler (n, z); }
 	public static void chooseStirling () { useStirling = true; }
 	public static boolean useStirling = false;
