@@ -90,5 +90,48 @@ public class ComplexSpaceCore
 	public static double F (int n) { return Combinatorics.F (n); }
 
 
+	/**
+	 * parse a complex literal
+	 * @param text the text of the literal
+	 * @return the representation of the value
+	 */
+	public static ComplexValue <Double> parseComplex (String text)
+	{
+		boolean imNegative = false;
+		String [] parts; double re, im;
+
+		if (text.contains (IMAG_POSITIVE))
+		{
+			parts = split (text, IMAG_POSITIVE);
+		}
+		else if (text.contains (IMAG_NEGATIVE))
+		{
+			parts = split (text, IMAG_NEGATIVE);
+			imNegative = true;
+		}
+		else
+		{
+			throw new RuntimeException ("Invalid syntax");
+		}
+
+		re = Double.parseDouble (parts[0]);
+		im = Double.parseDouble (parts[1]);
+
+		return manager.C (re, imNegative ? -im : im);
+	}
+	static String [] split (String text, String at)
+	{
+		int starting = text.indexOf (at);
+
+		return new String []
+		{
+			text.substring (0, starting),
+			text.substring (starting+3)
+		};
+	}
+	public static final String IMAG_POSITIVE = "+!*";
+	public static final String IMAG_NEGATIVE = "-!*";
+
+
 }
 
