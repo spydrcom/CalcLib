@@ -54,8 +54,7 @@ public class Beta extends ComplexSpaceCore
 	public static ComplexValue <Double> negative
 		(ComplexValue <Double> s, int n)
 	{
-		ComplexValue <Double> value;
-		value = cplxLib.power (PI_2, NEG (s));
+		ComplexValue <Double> value = toThe (PI_2, NEG (s));
 		value = productOf (value, cplxLib.sin (productOf (PI_2, s)));
 		value = productOf (value, cplxLib.gamma (s));
 		value = productOf (value, series (s, n));
