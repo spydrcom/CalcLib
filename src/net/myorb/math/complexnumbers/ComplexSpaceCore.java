@@ -111,23 +111,21 @@ public class ComplexSpaceCore
 		}
 		else
 		{
-			throw new RuntimeException ("Invalid syntax");
+			return RE (Double.parseDouble (text));
 		}
 
 		re = Double.parseDouble (parts[0]);
 		im = Double.parseDouble (parts[1]);
 
-		return manager.C (re, imNegative ? -im : im);
+		return CV (re, imNegative ? -im : im);
 	}
 	static String [] split (String text, String at)
 	{
+		String RE = "0.0";
 		int starting = text.indexOf (at);
-
-		return new String []
-		{
-			text.substring (0, starting),
-			text.substring (starting+3)
-		};
+		String IM = text.substring (starting + 3);
+		if (starting > 0) RE = text.substring (0, starting);
+		return new String [] {RE, IM};
 	}
 	public static final String IMAG_POSITIVE = "+!*";
 	public static final String IMAG_NEGATIVE = "-!*";
