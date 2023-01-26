@@ -189,8 +189,8 @@ public class JonquierePolylog extends ComplexSpaceCore
 	{
 		double zRe;
 		if (isZ (z)) return Z;
-		if ( (zRe = Math.abs (z.Re ())) < 1 )
-			return positiveIntegerOrderLiSeries  (2, terms, z, false);		// SIGMA [1..N] (z^k/k^2)
+		if ( ( zRe = Math.abs (z.Re ()) ) < 1 )
+		{ return positiveIntegerOrderLiSeries  (2, terms, z, false); }		// SIGMA [1..N] (z^k/k^2)
 		if (z.Re () < -1) return continuation (2, z, terms);				// use negative continuation
 		if ( zRe > 1 || z.Im () != 0 ) return continuation (z, terms);		// use positive continuation
 		if (z.Re () < 0) return RE ( - PI_SQ / 12 );						// - PI^2 / 12
@@ -346,13 +346,13 @@ public class JonquierePolylog extends ComplexSpaceCore
 			(int s, ComplexValue <Double> z)
 	{
 		ComplexValue <Double> lnz,
-			twoPiI = productOf (TWO, I_PI),										// 2 * pi * i
-			lnz2piI = ratioOf (lnz = ln (z), twoPiI),							// ln z / ( 2 * pi * i )
-			offset = productOf (POW (twoPiI, s), bernpoly (lnz2piI, s)),		// (2 * pi * i) ^ s * bernpoly
-			sF = oneOver (RE (F (s)));											// 1 / s !
+			twoPiI = productOf (TWO, I_PI),									// 2 * pi * i
+			lnz2piI = ratioOf (lnz = ln (z), twoPiI),						// ln z / ( 2 * pi * i )
+			offset = productOf (POW (twoPiI, s), bernpoly (lnz2piI, s)),	// (2 * pi * i) ^ s * bernpoly
+			sF = oneOver (RE (F (s)));										// 1 / s !
 
-		offset = NEG (productOf (offset, sF));									// - (2 * pi * i) ^ s * bernpoly(...) / s!
-		if (z.Im () == 0.0) return RE (offset.Re ());							// Re (offset)
+		offset = NEG (productOf (offset, sF));								// - (2 * pi * i) ^ s * bernpoly(...) / s!
+		if (z.Im () == 0.0) return RE (offset.Re ());						// Re (offset)
 
 	/*
 	    twopij = i * 2 * pi
