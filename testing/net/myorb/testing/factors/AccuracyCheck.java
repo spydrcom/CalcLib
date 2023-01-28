@@ -174,7 +174,7 @@ public class AccuracyCheck
 	public static String Li2_REF = Li2.replaceAll (" ", "");
 
 
-	public static String Ln2SQ = // Li2(1/2) = PI^2/12 - Ln(2)^2/2 : 100 decimal digit reference
+	public static String Ln2SQ = // Li2(1/2) = PI^2/12 - Ln(2)^2/2 = 0.5822405264650123 : 100 decimal digit reference
 		"0.4804530139 1820142466 7102526326 6649717305 5295159454 5586866864 1336236653 8225983447 2199948263 4439269909"		// 100
 		;
 	//		taken from https://oeis.org/A253191/constant
