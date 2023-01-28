@@ -4,6 +4,10 @@ package net.myorb.math.specialfunctions;
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.math.complexnumbers.ComplexSpaceCore;
 
+import net.myorb.data.abstractions.FunctionWrapper;
+import net.myorb.data.abstractions.Function;
+//import net.myorb.math.Function;
+
 /**
  * description of the Lerch transcendent (PHI) function
  * @author Michael Druckman
@@ -168,6 +172,18 @@ public class Lerch extends ComplexSpaceCore
 				);
 	}
 	public static ComplexValue <Double> ONE = S (1);
+
+
+	/**
+	 * treat the integrand as a function for quadrature
+	 * @param z parameter to the instance of the function call
+	 * @param s the order of the described function
+	 * @param a offset term for series denominator
+	 * @return the integrand as function of t
+	 */
+	public static Function < ComplexValue <Double> > getIntegrand
+		(ComplexValue <Double> z, ComplexValue <Double> s, ComplexValue <Double> a)
+	{ return new FunctionWrapper <> ( (t) -> integrand (z, s, a, t) , manager ); }
 
 
 }
