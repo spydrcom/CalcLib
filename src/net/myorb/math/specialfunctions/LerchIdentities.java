@@ -135,6 +135,24 @@ public class LerchIdentities extends ComplexSpaceCore
 
 
 	/**
+	 * inverse tangent integral
+	 * @param s order of the function
+	 * @param z parameter to the function
+	 * @return function result
+	 */
+	public ComplexValue <Double> Ti
+		(
+			ComplexValue <Double> s,
+			ComplexValue <Double> z
+		)
+	{
+		// Ti(s,z) = 1/4 * PHI (-z^2,s,1/2) * z
+		//	= SIGMA [k=1:INF] ( (-1)^(k-1) * z ^ (2k-1) / (2k-1) ^ s )
+		return T.PHI (NEG (POW (z, 2)), s, HALF).times (z).divideBy (S (4));
+	}
+
+
+	/**
 	 * Riemann zeta function
 	 * @param s parameter to the function
 	 * @return function result
