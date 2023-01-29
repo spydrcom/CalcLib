@@ -73,6 +73,7 @@ public class ComplexSpaceCore
 
 	public static ComplexValue <Double> ln (ComplexValue <Double> z) { return cplxLib.ln (z); }
 	public static ComplexValue <Double> exp (ComplexValue <Double> z) { return cplxLib.exp (z); }
+	public static ComplexValue <Double> GAMMA (ComplexValue <Double> z) { return cplxLib.GAMMA (z); }
 
 	public static ComplexValue <Double> toThe
 		(
