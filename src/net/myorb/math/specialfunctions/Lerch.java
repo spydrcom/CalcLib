@@ -1,15 +1,19 @@
 
 package net.myorb.math.specialfunctions;
 
-import net.myorb.math.complexnumbers.ComplexValue;
-import net.myorb.math.complexnumbers.ComplexSpaceCore;
+import net.myorb.math.computational.Parameterization;
+import net.myorb.math.computational.integration.QuadratureEntities;
 
-import net.myorb.data.abstractions.FunctionWrapper;
-import net.myorb.data.abstractions.Function;
-//import net.myorb.math.Function;
+import net.myorb.spline.algorithms.SimpleSplineQuadrature;
+
+import net.myorb.math.complexnumbers.ComplexSpaceCore;
+import net.myorb.math.complexnumbers.ComplexValue;
 
 /**
  * description of the Lerch transcendent (PHI) function
+ *   source: https://en.wikipedia.org/wiki/Lerch_zeta_function
+ * - It is named after Czech mathematician Mathias Lerch,
+ * - who published a paper about the function in 1887
  * @author Michael Druckman
  */
 public class Lerch extends ComplexSpaceCore
@@ -122,9 +126,7 @@ public class Lerch extends ComplexSpaceCore
 			int n
 		)
 	{
-		ComplexValue <Double>
-				num = POW (z, n), den = sumOf (a, S (n));
-		return productOf (num, toThe (den, NEG (s)));
+		return POW (z, n).times (toThe (a.plus (S (n)), NEG (s)));
 	}
 
 
@@ -181,9 +183,40 @@ public class Lerch extends ComplexSpaceCore
 	 * @param a offset term for series denominator
 	 * @return the integrand as function of t
 	 */
-	public static Function < ComplexValue <Double> > getIntegrand
-		(ComplexValue <Double> z, ComplexValue <Double> s, ComplexValue <Double> a)
-	{ return new FunctionWrapper <> ( (t) -> integrand (z, s, a, t) , manager ); }
+	public static QuadratureEntities.TargetSpecification < ComplexValue <Double> >
+		getIntegrand (ComplexValue <Double> z, ComplexValue <Double> s, ComplexValue <Double> a)
+	{ return (t) -> integrand (z, s, a, t); }
+
+
+	/**
+	 * instance the QuadratureImplementation
+	 * @param P the Parameterization to use for configuration of the implementation
+	 * @return access to the PHI function
+	 */
+	public static Lerch.Transcendent
+		quadratureImplementation (Parameterization P)
+	{ return new QuadratureImplementation (P); }
+
+
+	/**
+	 * Lerch.Transcendent based on quadrature applied to the integral formula
+	 */
+	public static class QuadratureImplementation
+		extends SimpleSplineQuadrature < ComplexValue <Double> >
+		implements Lerch.Transcendent
+	{
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.specialfunctions.Lerch.Transcendent#PHI(net.myorb.math.complexnumbers.ComplexValue, net.myorb.math.complexnumbers.ComplexValue, net.myorb.math.complexnumbers.ComplexValue)
+		 */
+		public ComplexValue <Double>
+				PHI (ComplexValue <Double> z, ComplexValue <Double> s, ComplexValue <Double> alpha)
+		{ return integralOf ( (t) -> Lerch.integrand (z, s, alpha, t) ).divideBy (GAMMA (s)); }
+
+		public QuadratureImplementation (Parameterization P)
+		{ super (P, ComplexSpaceCore.manager); }
+
+	}
 
 
 }
