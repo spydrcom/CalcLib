@@ -227,6 +227,10 @@ public class AccuracyCheck
 	//		taken from https://oeis.org/A244928/constant
 	public static String Ti2_REF = Ti2.replaceAll (" ", "");
 
+	// Euler-Masheroni gamma
+	public static String Masheroni =
+		"0.57721566490153286060651209008240243104215933593992"
+		;
 
 }
 
