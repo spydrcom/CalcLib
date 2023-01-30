@@ -167,11 +167,7 @@ public class Lerch extends ComplexSpaceCore
 						productOf (a, t)
 					)
 				);
-		return productOf
-				(
-					toThe (t, reduce (s, ONE)),
-					oneOver (expProduct)
-				);
+		return toThe (t, reduce (s, ONE)).divideBy (expProduct);
 	}
 	public static ComplexValue <Double> ONE = S (1);
 
