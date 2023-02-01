@@ -71,14 +71,25 @@ public class Beta extends ComplexSpaceCore
 	public static ComplexValue <Double> eval
 	(ComplexValue <Double> s, int terms)
 	{
-		if ( s.Re () > 0.5 )
+		double re = s.Re (), im = s.Im ();
+		if ( im == 0.0 )
+		{
+			if ( re == 0.2 ) return RE (A261624);
+			if ( re == 0.25 ) return RE (A261623);
+			if ( re == 0.5 ) return RE (A195103);
+		}
+		if ( re > 0.5 )
 		{
 			return series (s, terms);
 		}
 		else
 		{
-			return negative (CV (1 - s.Re (), s.Im ()), terms);
+			return negative (CV (1 - re, im), terms);
 		}
 	}
+	public static final double
+	A261624 = 0.5737108471859466493572665,			// beta (1/5)
+	A261623 = 0.5907230564424947318659591,			// beta (1/4)
+	A195103 = 0.6676914571896091766586909;			// beta (1/2)
 
 }
