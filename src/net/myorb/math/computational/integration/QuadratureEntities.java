@@ -11,7 +11,6 @@ import net.myorb.math.Function;
 
 /**
  * description primitives for quadrature target functions
- * @param <T> data type being processed
  * @author Michael Druckman
  */
 public class QuadratureEntities
