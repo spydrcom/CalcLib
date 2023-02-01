@@ -73,11 +73,11 @@ public class TaylorSeries extends Taylor <Factorization>
 				(PM.getSpaceManager (), MAX_PRECISION);
 		//TS.enableTracing ();
 
-//		TS.test1 ();
-//		TS.test2 ();
-//		TS.test3 ();
-//		TS.test4 ();
-//		TS.test5 ();
+		TS.test1 ();
+		TS.test2 ();
+		TS.test3 ();
+		TS.test4 ();
+		TS.test5 ();
 		TS.test6 ();
 
 	}
