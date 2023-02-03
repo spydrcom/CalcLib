@@ -173,6 +173,27 @@ public class Lerch <T> extends CommonRealDomainSubset <T>
 	}
 
 
+	/**
+	 * identify requested target function from configured parameters
+	 * @param parameters the map of configured parameters
+	 * @return the requested target function
+	 */
+	public static TargetFunctions identifyTargetFrom (Map <String, Object> parameters)
+	{
+		return identifyTargetCalled (parameters.get ("target"));
+	}
+
+	
+	/**
+	 * identify requested target function from name
+	 * @param name the text of the function name or NULL for default
+	 * @return the selected target
+	 */
+	public static TargetFunctions identifyTargetCalled (Object name)
+	{ return name == null ? DEFAULT_TARGET : TargetFunctions.valueOf (name.toString ()); }
+	public static TargetFunctions DEFAULT_TARGET = TargetFunctions.PHI;
+
+
 }
 
 
@@ -189,77 +210,105 @@ class LerchTranscendent extends CommonRealDomainSubset.ComplexDefinition
 	{
 		super.addConfiguration (parameters);
 
-		Object parm;
-		Lerch.TargetFunctions
-			target = Lerch.TargetFunctions.PHI;
-		if ( (parm = parameters.get ("target")) != null)
-		{ target = Lerch.TargetFunctions.valueOf (parm.toString ()); }
+		this.getFunctionConfigurationValues (parameters);
 
-		if ( (parm = parameters.get ("terms")) != null) { termCount = CV (parm); }
-		alpha = parameters.get ("alpha"); order = parameters.get ("order");
-		tolerance = parameters.get ("tolerance"); 
+		this.setimplementation
+		(
+			LerchCalculator.targetFunctionIdentity (parameters),
+			Lerch.identifyTargetFrom (parameters)
+		);
+	}
 
-		Lerch.Transcendent transcendent =
-				parameters.get ("series") != null ?
-				new Lerch.Series (CV (tolerance), termCount) :
-				Lerch.quadratureImplementation (new Parameterization (parameters));
-		LerchIdentities ID = new LerchIdentities (transcendent);
-
-		switch (target)
+	/**
+	 * identify the function being configured
+	 * @param ID the map of Lerch function identity formulae
+	 * @param function the named target function
+	 */
+	public void setimplementation (LerchIdentities ID, Lerch.TargetFunctions function)
+	{
+		switch (function)
 		{
 			case BETA:
 				this.setimplementation ( (s) -> ID.beta (s) );
 				break;
 			case CHI:
-				this.setimplementation ( (z) -> ID.chi (getOrder (), z) );
+				this.setimplementation ( (z) -> ID.chi (cache.getOrder (), z) );
 				break;
 			case ETA:
 				this.setimplementation ( (s) -> ID.eta (s) );
 				break;
 			case HURWITZ:
-				this.setimplementation ( (s) -> ID.zeta (s, getAlpha ()) );
+				this.setimplementation ( (s) -> ID.zeta (s, cache.getAlpha ()) );
 				break;
 			case L:
-				this.setimplementation ( (lambda) -> ID.L (lambda, getOrder (), getAlpha ()) );
+				this.setimplementation ( (lambda) -> ID.L (lambda, cache.getOrder (), cache.getAlpha ()) );
 				break;
 			case Li:
-				this.setimplementation ( (z) -> ID.Li (getOrder (), z) );
+				this.setimplementation ( (z) -> ID.Li (cache.getOrder (), z) );
 				break;
 			case PHI:
-				this.setimplementation ( (z) -> ID.phi (z, getOrder (), getAlpha ()) );
+				this.setimplementation ( (z) -> ID.phi (z, cache.getOrder (), cache.getAlpha ()) );
 				break;
 			case PSI:
-				this.setimplementation ( (s) -> ID.psi (getOrder (), getAlpha ()) );
+				this.setimplementation ( (s) -> ID.psi (cache.getOrder (), cache.getAlpha ()) );
 				break;
 			case Ti:
-				this.setimplementation ( (z) -> ID.Ti (getOrder (), z) );
+				this.setimplementation ( (z) -> ID.Ti (cache.getOrder (), z) );
 				break;
 			case ZETA:
 				this.setimplementation ( (s) -> ID.zeta (s) );
 				break;
 		}
 	}
+
+	/**
+	 * configure ORDER and ALPHA for use in formulae
+	 * @param parameters the map of configured parameters
+	 */
+	public void getFunctionConfigurationValues (Map <String, Object> parameters)
+	{ this.cache = new ParameterCache (parameters); }
+	protected ParameterCache cache;
+
+	/**
+	 * complex definition for Lerch Transcendent PHI
+	 */
+	LerchTranscendent () { super ("PHI"); }
+
+}
+
+
+/**
+ * cache for values parsed from configuration source
+ */
+class ParameterCache
+{
+
+	ParameterCache (Map <String, Object> parameters)
+	{
+		this.alpha = parameters.get ("alpha");
+		this.order = parameters.get ("order");
+	}
+	Object order = null, alpha = null;
+
+	/*
+	 * cache-on-demand values of configuration items specified in parameters
+	 */
+
 	ComplexValue <Double> getOrder ()
 	{
-		if (order == null)
-		{ throw new RuntimeException ("Order is required"); }
-		return CV (order.toString ());
+		return orderValue == null
+			?  orderValue = LerchCalculator.get (order, "Order")
+			:  orderValue;
 	}
+	ComplexValue <Double> orderValue = null;
+
 	ComplexValue <Double> getAlpha ()
 	{
-		if (alpha == null)
-		{ throw new RuntimeException ("Alpha is required"); }
-		return CV (alpha.toString ());
+		return alphaValue == null
+			?  alphaValue = LerchCalculator.get (alpha, "Alpha")
+			:  alphaValue;
 	}
-	ComplexValue <Double> CV (Object parameter)
-	{
-		if (parameter == null) return ComplexSpaceCore.S (0);
-		return ComplexSpaceCore.parseComplex (parameter.toString ());
-	}
-
-	LerchTranscendent () { super ("PHI"); }
-	ComplexValue <Double> termCount = ComplexSpaceCore.RE (100);
-	Object order = null, alpha = null, tolerance = null;
+	ComplexValue <Double> alphaValue = null;
 
 }
 
@@ -302,7 +351,7 @@ class LerchCalculator extends ComplexSpaceCore
 	 * @param tolerance the requested tolerance to be used
 	 * @return TRUE when tolerance criteria is met
 	 */
-	static boolean withinTolerance
+	public static boolean withinTolerance
 	(ComplexValue <Double> term, ComplexValue <Double> tolerance)
 	{ return manager.lessThan (term, tolerance); }
 
@@ -368,6 +417,56 @@ class LerchCalculator extends ComplexSpaceCore
 		{ super (P, ComplexSpaceCore.manager); }
 
 	}
+
+
+	/**
+	 * determine parameter value
+	 * @param item the specified parameter
+	 * @param name the name of the value being sought
+	 * @return the parsed complex parameter value or real treated with imaginary part being zero
+	 * @throws RuntimeException for null or erroneous items
+	 */
+	public static ComplexValue <Double> get (Object item, String name) throws RuntimeException
+	{
+		if (item == null) { return error (name, REQUIRED); }
+		try { return CV (item); } catch (Exception e) { return error (name, UNRECOGNIZED); }
+	}
+	static ComplexValue <Double> error (String name, String msg) { throw new RuntimeException (name + msg); }
+	static String UNRECOGNIZED = " is not recognized", REQUIRED = " is required";
+
+
+	/**
+	 * parse a complex value or zero if parameter is null
+	 * @param parameter the parameter specified in configuration
+	 * @return the parsed parameter value
+	 */
+	public static ComplexValue <Double> CV (Object parameter)
+	{
+		return parameter == null ? S (0) : parseComplex (parameter.toString ());
+	}
+
+
+	/**
+	 * get identity mapping object based on configured parameters
+	 * @param parameters the map of configured parameters
+	 * @return an identity mapping object
+	 */
+	public static LerchIdentities targetFunctionIdentity (Map <String, Object> parameters)
+	{
+		return new LerchIdentities
+			(
+				parameters.get ("series") != null ?
+					new Lerch.Series
+						(
+							CV (parameters.get ("tolerance")),
+							configuredSeriesLength (parameters.get ("terms"))
+						)
+				: Lerch.quadratureImplementation (new Parameterization (parameters))
+			);
+	}
+	public static ComplexValue <Double> configuredSeriesLength (Object terms)
+	{ return terms == null ? RE (DEFAULT_SERIES_LENGTH) : CV (terms); }
+	public static int DEFAULT_SERIES_LENGTH = 100;
 
 
 }
