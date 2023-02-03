@@ -214,50 +214,36 @@ class LerchTranscendent extends CommonRealDomainSubset.ComplexDefinition
 
 		this.setimplementation
 		(
-			LerchCalculator.targetFunctionIdentity (parameters),
-			Lerch.identifyTargetFrom (parameters)
+			this.getSpecification
+			(
+				LerchCalculator.targetFunctionIdentity (parameters),
+				Lerch.identifyTargetFrom (parameters)
+			)
 		);
 	}
 
 	/**
-	 * identify the function being configured
+	 * provide formula for the function being configured
 	 * @param ID the map of Lerch function identity formulae
 	 * @param function the named target function
+	 * @return the Target Specification
 	 */
-	public void setimplementation (LerchIdentities ID, Lerch.TargetFunctions function)
+	public QuadratureEntities.TargetSpecification <ComplexValue <Double>>
+		getSpecification (LerchIdentities ID, Lerch.TargetFunctions function)
 	{
 		switch (function)
 		{
-			case BETA:
-				this.setimplementation ( (s) -> ID.beta (s) );
-				break;
-			case CHI:
-				this.setimplementation ( (z) -> ID.chi (cache.getOrder (), z) );
-				break;
-			case ETA:
-				this.setimplementation ( (s) -> ID.eta (s) );
-				break;
-			case HURWITZ:
-				this.setimplementation ( (s) -> ID.zeta (s, cache.getAlpha ()) );
-				break;
-			case L:
-				this.setimplementation ( (lambda) -> ID.L (lambda, cache.getOrder (), cache.getAlpha ()) );
-				break;
-			case Li:
-				this.setimplementation ( (z) -> ID.Li (cache.getOrder (), z) );
-				break;
-			case PHI:
-				this.setimplementation ( (z) -> ID.phi (z, cache.getOrder (), cache.getAlpha ()) );
-				break;
-			case PSI:
-				this.setimplementation ( (s) -> ID.psi (cache.getOrder (), cache.getAlpha ()) );
-				break;
-			case Ti:
-				this.setimplementation ( (z) -> ID.Ti (cache.getOrder (), z) );
-				break;
-			case ZETA:
-				this.setimplementation ( (s) -> ID.zeta (s) );
-				break;
+			case BETA:		return (s) -> ID.beta (s);
+			case Li:		return (z) -> ID.Li (cache.getOrder (), z);
+			case CHI:		return (z) -> ID.chi (cache.getOrder (), z);
+			case HURWITZ:	return (s) -> ID.zeta (s, cache.getAlpha ());
+			case L:			return (lambda) -> ID.L (lambda, cache.getOrder (), cache.getAlpha ());
+			case PHI:		return (z) -> ID.phi (z, cache.getOrder (), cache.getAlpha ());
+			case PSI:		return (s) -> ID.psi (cache.getOrder (), cache.getAlpha ());
+			case Ti:		return (z) -> ID.Ti (cache.getOrder (), z);
+			case ZETA:		return (s) -> ID.zeta (s);
+			case ETA:		return (s) -> ID.eta (s);
+			default:		return null;
 		}
 	}
 
