@@ -239,7 +239,7 @@ class LerchTranscendent extends CommonRealDomainSubset.ComplexDefinition
 			case HURWITZ:	return (s) -> ID.zeta (s, cache.getAlpha ());
 			case L:			return (lambda) -> ID.L (lambda, cache.getOrder (), cache.getAlpha ());
 			case PHI:		return (z) -> ID.phi (z, cache.getOrder (), cache.getAlpha ());
-			case PSI:		return (s) -> ID.psi (cache.getOrder (), cache.getAlpha ());
+			case PSI:		return (z) -> ID.psi (cache.getOrder (), z);
 			case Ti:		return (z) -> ID.Ti (cache.getOrder (), z);
 			case ZETA:		return (s) -> ID.zeta (s);
 			case ETA:		return (s) -> ID.eta (s);
