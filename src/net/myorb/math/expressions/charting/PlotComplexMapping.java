@@ -37,13 +37,19 @@ public class PlotComplexMapping
 	 * @param slices number of slices in a unit circle of 2PI radians
 	 * @param portions number of parts dividing a segmented unit of radius
 	 * @param segments the number of segments from each angle
+	 * @param divergenceFilterEnabled remove divergent maps
 	 */
 	public PlotComplexMapping
-	(int rasterSize, int slices, int portions, int segments)
+		(
+			int rasterSize,
+			int slices, int portions, int segments,
+			boolean divergenceFilterEnabled
+		)
 	{
 		this.slices = slices;
 		this.segment = 1.0 / portions;
 		this.portions = portions; this.segments = segments;
+		this.divergenceFilterEnabled = divergenceFilterEnabled;
 		this.radians = 2 * Math.PI / slices;
 		this.raster = rasterSize;
 		this.half = raster / 2;
@@ -113,10 +119,18 @@ public class PlotComplexMapping
 	Point map (ComplexValue<Double> from)
 	{
 		Point p = new Point ();
+
 		p.x = from.Re () * half + half;
 		p.y = from.Im () * half + half;
+
+		if (divergenceFilterEnabled)
+		{
+			if (p.x < 0 || p.x > raster) return null;
+			if (p.y < 0 || p.y > raster) return null;
+		}
 		return p;
 	}
+	protected boolean divergenceFilterEnabled = false;
 
 
 	/**
@@ -127,6 +141,8 @@ public class PlotComplexMapping
 	 */
 	void plot (Point from, Point to)
 	{
+		if (from == null || to == null) return;
+
 		g.setColor
 		(
 			Color.getHSBColor
@@ -150,14 +166,23 @@ public class PlotComplexMapping
 
 	/**
 	 * prepare the raster objects
+	 */
+	public void init ()
+	{
+		image = DisplayGraph3D.createBufferedImage (raster);
+		g = image.createGraphics ();
+	}
+	protected BufferedImage image;
+
+
+	/**
+	 * display to screen
 	 * @param title text of frame title
 	 */
-	public void init (String title)
+	public void display (String title)
 	{
 		MouseMotionHandler mouse = new MouseMotionHandler (5, 5, null);
-		BufferedImage image = DisplayGraph3D.createBufferedImage (raster);
 		c = DisplayGraph3D.showImage (image, title, mouse);
-		g = image.createGraphics ();
 	}
 	protected JComponent c;
 
@@ -169,13 +194,15 @@ public class PlotComplexMapping
 	public static void main (String[] args)
 	{
 		PlotComplexMapping plotter =
-			new PlotComplexMapping (800, 12, 60, 20);
-		plotter.init ("TEST");
+			new PlotComplexMapping (800, 24, 60, 20, false);
+		plotter.init ();
 
 		Lerch.Series LS = new Lerch.Series (Z, H);
 		LerchIdentities ID = new LerchIdentities (LS);
 
+		String title = "Lerch Zeta Function Map";
 		plotter.plot ( (z) -> ID.zeta (z, ComplexSpaceCore.RE (5)) );
+		plotter.display (title);
 	}
 	static ComplexValue<Double>
 	TWO = ComplexSpaceCore.RE (2),
