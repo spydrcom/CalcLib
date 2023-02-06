@@ -21,7 +21,7 @@ public class PlotTest
 
 	static int
 		raster = 800, half = raster/2,
-		segments = 40, portions = 30, slices = 24;
+		segments = 30, portions = 40, slices = 96;
 	static double radians = 2 * Math.PI / slices;
 	static double segment = 1.0 / portions;
 
@@ -38,11 +38,17 @@ public class PlotTest
 
 	public static void main (String[] args)
 	{
-		MouseMotionHandler mouse = new MouseMotionHandler (5, 5, null);
-		BufferedImage image = DisplayGraph3D.createBufferedImage (raster);
-		c = DisplayGraph3D.showImage (image, "TEST", mouse);
+		image = DisplayGraph3D.createBufferedImage (raster);
 		g = image.createGraphics ();
-		plot ();
+		plot (); display ();
+	}
+	static BufferedImage image;
+
+
+	static void display ()
+	{
+		MouseMotionHandler mouse = new MouseMotionHandler (5, 5, null);
+		c = DisplayGraph3D.showImage (image, "TEST", mouse);
 	}
 	static JComponent c;
 
@@ -70,7 +76,8 @@ public class PlotTest
 		//return Beta.eval (z, 100);
 		//return JonquierePolylog.Li (1, 100).eval (z);
 		//return JonquierePolylog.Li2 (z, 100);
-		return ID.Ti (TWO, z);
+		//return ID.Ti (TWO, z);
+		return ID.L(z, TWO, TWO);
 	}
 	static ComplexValue<Double>
 		TWO = ComplexSpaceCore.RE (2),
@@ -102,12 +109,16 @@ public class PlotTest
 		Point p = new Point ();
 		p.x = from.Re () * half + half;
 		p.y = from.Im () * half + half;
+		if (p.x < 0 || p.x > raster) return null;
+		if (p.y < 0 || p.y > raster) return null;
 		return p;
 	}
 
 
 	static void plot (Point from, Point to)
 	{
+		if (from == null || to == null) return;
+
 		g.setColor
 		(
 			Color.getHSBColor
