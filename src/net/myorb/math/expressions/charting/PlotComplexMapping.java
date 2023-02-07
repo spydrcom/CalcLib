@@ -188,24 +188,55 @@ public class PlotComplexMapping
 
 
 	/**
+	 * a driver that will produce a one-off map plot
+	 * @param rasterSize number of edge pixels in square raster
+	 * @param function the function that will supply the mapping
+	 * @param slices number of slices in a unit circle of 2PI radians
+	 * @param portions number of parts dividing a segmented unit of radius
+	 * @param segments the number of segments from each angle
+	 * @param divergenceFilterEnabled remove divergent maps
+	 * @param title a title to display on frame
+	 */
+	public static void displayPlot
+		(
+			String rasterSize,
+			QuadratureEntities.TargetSpecification < ComplexValue <Double> > function,
+			String slices, String portions, String segments,
+			String divergenceFilterEnabled,
+			String title
+		)
+	{
+		PlotComplexMapping plotter = new PlotComplexMapping
+			(
+				Integer.parseInt (rasterSize), Integer.parseInt (slices),
+				Integer.parseInt (portions), Integer.parseInt (segments),
+				divergenceFilterEnabled.toUpperCase ().startsWith ("T")
+			);
+		plotter.init (); plotter.plot (function);
+		plotter.display (title);
+	}
+
+
+	/**
 	 * unit test
 	 * @param args not used
 	 */
 	public static void main (String[] args)
 	{
-		PlotComplexMapping plotter =
-			new PlotComplexMapping (800, 24, 60, 20, false);
-		plotter.init ();
 
 		Lerch.Series LS = new Lerch.Series (Z, H);
 		LerchIdentities ID = new LerchIdentities (LS);
 
-		String title = "Lerch Zeta Function Map";
-		plotter.plot ( (z) -> ID.zeta (z, ComplexSpaceCore.RE (5)) );
-		plotter.display (title);
+		displayPlot
+		(
+			"800",
+			(z) -> ID.zeta (z),
+			"24", "60", "20", "false",
+			"Lerch Zeta Function Map"
+		);
+
 	}
 	static ComplexValue<Double>
-	TWO = ComplexSpaceCore.RE (2),
 	H = ComplexSpaceCore.RE (100),
 	Z = ComplexSpaceCore.RE (0);
 
