@@ -27,6 +27,13 @@ public class ImportedFunctionWrapper <T>
 	protected Function <T> function;
 
 
+	/**
+	 * get access to function implementation
+	 * @return underlying function object
+	 */
+	public Function <T> getFunctionAccess () { return function; }
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
 	 */
