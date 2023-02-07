@@ -144,5 +144,44 @@ public class Plotting<T> extends Utilities<T>
 	}
 
 
+	/**
+	 * request map style complex plot
+	 * @return a keyword command for the MAPZ keyword
+	 */
+	public PlotCommand constructMapzKeywordCommand ()
+	{
+		return new PlotCommand ()
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.KeywordMap.KeywordCommand#describe()
+			 */
+			public String describe ()
+			{ return "Display a plot of a complex plane mapping parameter to result"; }
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.KeywordMap.KeywordCommand#execute(java.util.List)
+			 */
+			public void execute (CommandSequence tokens)
+			{
+				Object plotter = getPlotter (tokens);
+
+				if (plotter == null || ! (plotter instanceof SymbolMap.Plotter))
+				{ throw new RuntimeException ("Plotter object not found"); }
+
+				((SymbolMap.Plotter) plotter).displayPlot
+				(
+					tokens.get (1).getTokenImage ()
+				);
+			}
+			Object getPlotter (CommandSequence tokens)
+			{
+				String plotterName = "Zplot";
+				if (tokens.size () > 2) plotterName = tokens.get (2).getTokenImage ();
+				return environment.getSymbolMap ().get (plotterName);
+			}
+		};		
+	}
+
+
 }
 
