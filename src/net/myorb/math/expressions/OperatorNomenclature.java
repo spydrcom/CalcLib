@@ -89,6 +89,7 @@ public class OperatorNomenclature
 	public static
 		final String
 	FFT_KEYWORD = "FFT",						// FFT(X,Y)				compute and plot a fast Fourier transform
+	MAPZ_KEYWORD = "MAPZ",						// MAPZ f				plot a map of the results of a complex function
 	PLOTF_KEYWORD = "PLOTF",					// PLOTF f [...]		plot a specified range of a user defined function
 	PLOTL_KEYWORD = "PLOTL",					// PLOTL   [...]		plot a specified range for lambda declared function(s)
 	CHART_KEYWORD = "CHART",					// CHART kind  a b c	bar and pie charts with a kind specific to implementation
