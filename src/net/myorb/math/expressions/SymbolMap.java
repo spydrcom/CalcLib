@@ -336,7 +336,18 @@ public class SymbolMap extends HashMap <String, Object>
 	}
 	public interface ImportedConsumer extends ConfiguredImport {}
 	public interface ImportedFunction extends ConfiguredImport {}
+	public interface ImportedFeature  extends ConfiguredImport {}
 
+	/**
+	 * identify implementation of plotter functionality
+	 */
+	public interface Plotter extends ImportedFeature
+	{
+		/**
+		 * @param functionName name of function to be plotted
+		 */
+		void displayPlot (String functionName);
+	}
 	
 	/**
 	 * provide a factory for importing symbols
