@@ -188,6 +188,7 @@ public class EnvironmentalUtilities<T> extends CommandAdministration<T>
 		Plotting<T> plotting = new Plotting<T>(environment);
 		addAsLowerCase (OperatorNomenclature.POLAR_ANGULAR_KEYWORD, plotting.constructAngularKeywordCommand ());
 		addAsLowerCase (OperatorNomenclature.POLAR_RADIAL_KEYWORD, plotting.constructRadialKeywordCommand ());
+		addAsLowerCase (OperatorNomenclature.MAPZ_KEYWORD, plotting.constructMapzKeywordCommand ());
 	}
 
 
