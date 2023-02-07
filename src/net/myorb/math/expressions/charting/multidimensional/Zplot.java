@@ -2,8 +2,11 @@
 package net.myorb.math.expressions.charting.multidimensional;
 
 import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.symbols.ImportedFunctionWrapper;
 import net.myorb.math.expressions.charting.PlotComplexMapping;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.complexnumbers.ComplexValue;
 import net.myorb.data.abstractions.Configurable;
@@ -16,9 +19,17 @@ import java.util.Map;
  * - plot lines connect the function parameter to the function result
  * @author Michael Druckman
  */
-public class Zplot implements Configurable,
+public class Zplot implements Configurable, SymbolMap.Plotter,
 	Environment.AccessAcceptance < ComplexValue <Double> >
 {
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.ConfiguredImport#getConfiguration()
+	 */
+	public Map<String, Object>
+		getConfiguration () { return configuration; }
+	protected Map<String, Object> configuration;
 
 
 	/* (non-Javadoc)
@@ -26,8 +37,19 @@ public class Zplot implements Configurable,
 	 */
 	public void setEnvironment
 		(Environment < ComplexValue <Double> > environment)
-	{ this.symbols = environment.getSymbolMap (); }
+	{ this.symbols = environment.getSymbolMap (); post (); }
 	protected SymbolMap symbols;
+
+
+	/**
+	 * post this plotter feature to symbol table
+	 */
+	public void post ()
+	{
+		if (this.featureName == null)
+		{ throw new RuntimeException ("Name expected for plotter"); }
+		this.symbols.put (featureName, this);
+	}
 
 
 	/* (non-Javadoc)
@@ -35,17 +57,25 @@ public class Zplot implements Configurable,
 	 */
 	public void addConfiguration (Map <String, Object> parameters)
 	{
-		this.slices = lookup ("slices");
-		this.portions = lookup ("portions");
-		this.divergenceFilterEnabled = lookup ("filter");
-		this.segments = lookup ("segments");
-		this.rasterSize = lookup ("size");
-		this.title = lookup ("title");
+		this.divergenceFilterEnabled =
+			lookup ("filter", this.divergenceFilterEnabled, parameters);
+		this.featureName = lookup ("named", this.featureName, parameters);
+		this.segments = lookup ("segments", this.segments, parameters);
+		this.rasterSize = lookup ("size", this.rasterSize, parameters);
+		this.portions = lookup ("portions", this.portions, parameters);
+		this.slices = lookup ("slices", this.slices, parameters);
+		this.title = lookup ("title", this.title, parameters);
+		this.configuration = parameters;
 	}
-	String lookup (String name)
+	String lookup
+		(
+			String name, String defaultValue,
+			Map <String, Object> from
+		)
 	{
-		Object symbol = symbols.get (name);
-		return symbol==null? null: symbol.toString ();
+		Object symbol = from.get (name);
+		if (symbol == null) return defaultValue;
+		else return symbol.toString ();
 	}
 
 
@@ -55,10 +85,8 @@ public class Zplot implements Configurable,
 	 */
 	public void displayPlot (String functionName)
 	{
-		@SuppressWarnings("unchecked")
-		Function < ComplexValue <Double> > function =
-			(Function < ComplexValue <Double> >)
-				symbols.get (functionName);
+		Function < ComplexValue <Double> >
+			function = verify (symbols.get (functionName));
 		PlotComplexMapping.displayPlot
 		(
 			rasterSize, (z) -> function.eval (z),
@@ -66,11 +94,45 @@ public class Zplot implements Configurable,
 			title == null ? functionName : title
 		);
 	}
+	@SuppressWarnings("unchecked") Function < ComplexValue <Double> >
+					verify (Object symbol)
+	{
+		if (symbol instanceof ImportedFunctionWrapper)
+		{
+			ImportedFunctionWrapper < ComplexValue <Double> > wrapper = 
+				(ImportedFunctionWrapper < ComplexValue <Double> >) symbol;
+			return wrapper.getFunctionAccess ();
+		}
+		if (symbol instanceof Subroutine)
+		{
+			Subroutine < ComplexValue <Double> >
+				subroutine = (Subroutine < ComplexValue <Double> >) symbol;
+			return subroutine.toSimpleFunction ();
+		}
+		throw new RuntimeException ("Function expected");
+	}
 	public String slices = "24", portions = "60", segments = "20";
 	public String divergenceFilterEnabled = "FALSE";
+	public String featureName = "Zplot";
 	public String rasterSize = "800";
 	public String title = null;
 
+	/*
+	 * 
+		init "net.myorb.math.expressions.charting.multidimensional.Zplot" named "HIDEF" filter "TRUE" slices "96"
+
+		MAPZ myfunction HIDEF
+
+	 *
+		named		"Zplot"
+		filter		"FALSE"
+		segments	"20"
+		portions	"60"
+		slices		"24"
+		size		"800"
+		title		NULL
+	 *
+	 */
 
 }
 
