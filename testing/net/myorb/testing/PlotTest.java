@@ -21,7 +21,7 @@ public class PlotTest
 
 	static int
 		raster = 800, half = raster/2,
-		segments = 30, portions = 40, slices = 96;
+		segments = 30, portions = 40, slices = 24;
 	static double radians = 2 * Math.PI / slices;
 	static double segment = 1.0 / portions;
 
