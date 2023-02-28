@@ -1,0 +1,137 @@
+{
+   "Name": "FSEJN",
+   "Parameter": "x",
+   "Description": null,
+   "Expression": 
+   {
+      "OpName": "+",
+      "Left": 
+      {
+         "OpName": "+",
+         "Left": 
+         {
+            "OpName": "*",
+            "Left": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "x"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 2.0,
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "FSE2",
+               "PostFix": false,
+               "NodeType": "UnaryOP",
+               "Parameter": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "x"
+               }
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "*",
+            "Left": 
+            {
+               "Operator": null,
+               "Symbol": "AssignedVariableStorage",
+               "NodeType": "Identifier",
+               "Kind": "Variable",
+               "Name": "x"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "FSE1",
+               "PostFix": false,
+               "NodeType": "UnaryOP",
+               "Parameter": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "x"
+               }
+            },
+            "OpType": "Binary"
+         },
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "*",
+         "Left": 
+         {
+            "OpName": "-",
+            "Left": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "x"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 2.0,
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "Operator": null,
+                  "Symbol": null,
+                  "NodeType": "Identifier",
+                  "Kind": "Unknown",
+                  "Name": "n"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 2.0,
+               "OpType": "Binary"
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "FSE",
+            "PostFix": false,
+            "NodeType": "UnaryOP",
+            "Parameter": 
+            {
+               "Operator": null,
+               "Symbol": "AssignedVariableStorage",
+               "NodeType": "Identifier",
+               "Kind": "Variable",
+               "Name": "x"
+            }
+         },
+         "OpType": "Binary"
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}

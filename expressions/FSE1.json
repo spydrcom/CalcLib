@@ -1,0 +1,259 @@
+{
+   "Name": "f'",
+   "Parameter": "x",
+   "Description": null,
+   "Expression": 
+   {
+      "OpName": "+",
+      "Left": 
+      {
+         "OpName": "+",
+         "Left": 
+         {
+            "OpName": "+",
+            "Left": 
+            {
+               "OpName": "+",
+               "Left": 
+               {
+                  "OpName": "+",
+                  "Left": 
+                  {
+                     "OpName": "+",
+                     "Left": 
+                     {
+                        "Operator": null,
+                        "Symbol": "AssignedVariableStorage",
+                        "NodeType": "Identifier",
+                        "Kind": "Variable",
+                        "Name": "f1"
+                     },
+                     "NodeType": "BinaryOP",
+                     "Right": 
+                     {
+                        "OpName": "*",
+                        "Left": 
+                        {
+                           "OpName": "*",
+                           "Left": 2.0,
+                           "NodeType": "BinaryOP",
+                           "Right": 
+                           {
+                              "Operator": null,
+                              "Symbol": "AssignedVariableStorage",
+                              "NodeType": "Identifier",
+                              "Kind": "Variable",
+                              "Name": "c2"
+                           },
+                           "OpType": "Binary"
+                        },
+                        "NodeType": "BinaryOP",
+                        "Right": 
+                        {
+                           "Operator": null,
+                           "Symbol": "AssignedVariableStorage",
+                           "NodeType": "Identifier",
+                           "Kind": "Variable",
+                           "Name": "x"
+                        },
+                        "OpType": "Binary"
+                     },
+                     "OpType": "Binary"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "OpName": "*",
+                     "Left": 
+                     {
+                        "OpName": "*",
+                        "Left": 3.0,
+                        "NodeType": "BinaryOP",
+                        "Right": 
+                        {
+                           "Operator": null,
+                           "Symbol": "AssignedVariableStorage",
+                           "NodeType": "Identifier",
+                           "Kind": "Variable",
+                           "Name": "c3"
+                        },
+                        "OpType": "Binary"
+                     },
+                     "NodeType": "BinaryOP",
+                     "Right": 
+                     {
+                        "OpName": "^",
+                        "Left": 
+                        {
+                           "Operator": null,
+                           "Symbol": "AssignedVariableStorage",
+                           "NodeType": "Identifier",
+                           "Kind": "Variable",
+                           "Name": "x"
+                        },
+                        "NodeType": "BinaryOP",
+                        "Right": 2.0,
+                        "OpType": "Binary"
+                     },
+                     "OpType": "Binary"
+                  },
+                  "OpType": "Binary"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "OpName": "*",
+                  "Left": 
+                  {
+                     "OpName": "*",
+                     "Left": 4.0,
+                     "NodeType": "BinaryOP",
+                     "Right": 
+                     {
+                        "Operator": null,
+                        "Symbol": "AssignedVariableStorage",
+                        "NodeType": "Identifier",
+                        "Kind": "Variable",
+                        "Name": "c4"
+                     },
+                     "OpType": "Binary"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "OpName": "^",
+                     "Left": 
+                     {
+                        "Operator": null,
+                        "Symbol": "AssignedVariableStorage",
+                        "NodeType": "Identifier",
+                        "Kind": "Variable",
+                        "Name": "x"
+                     },
+                     "NodeType": "BinaryOP",
+                     "Right": 3.0,
+                     "OpType": "Binary"
+                  },
+                  "OpType": "Binary"
+               },
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "*",
+               "Left": 
+               {
+                  "OpName": "*",
+                  "Left": 5.0,
+                  "NodeType": "BinaryOP",
+                  "Right": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "c5"
+                  },
+                  "OpType": "Binary"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "OpName": "^",
+                  "Left": 
+                  {
+                     "Operator": null,
+                     "Symbol": "AssignedVariableStorage",
+                     "NodeType": "Identifier",
+                     "Kind": "Variable",
+                     "Name": "x"
+                  },
+                  "NodeType": "BinaryOP",
+                  "Right": 4.0,
+                  "OpType": "Binary"
+               },
+               "OpType": "Binary"
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "*",
+            "Left": 
+            {
+               "OpName": "*",
+               "Left": 6.0,
+               "NodeType": "BinaryOP",
+               "Right": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "c6"
+               },
+               "OpType": "Binary"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "OpName": "^",
+               "Left": 
+               {
+                  "Operator": null,
+                  "Symbol": "AssignedVariableStorage",
+                  "NodeType": "Identifier",
+                  "Kind": "Variable",
+                  "Name": "x"
+               },
+               "NodeType": "BinaryOP",
+               "Right": 5.0,
+               "OpType": "Binary"
+            },
+            "OpType": "Binary"
+         },
+         "OpType": "Binary"
+      },
+      "NodeType": "BinaryOP",
+      "Right": 
+      {
+         "OpName": "*",
+         "Left": 
+         {
+            "OpName": "*",
+            "Left": 7.0,
+            "NodeType": "BinaryOP",
+            "Right": 
+            {
+               "Operator": null,
+               "Symbol": "AssignedVariableStorage",
+               "NodeType": "Identifier",
+               "Kind": "Variable",
+               "Name": "c7"
+            },
+            "OpType": "Binary"
+         },
+         "NodeType": "BinaryOP",
+         "Right": 
+         {
+            "OpName": "^",
+            "Left": 
+            {
+               "Operator": null,
+               "Symbol": "AssignedVariableStorage",
+               "NodeType": "Identifier",
+               "Kind": "Variable",
+               "Name": "x"
+            },
+            "NodeType": "BinaryOP",
+            "Right": 6.0,
+            "OpType": "Binary"
+         },
+         "OpType": "Binary"
+      },
+      "OpType": "Binary"
+   },
+   "NodeType": "Profile"
+}
