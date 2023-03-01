@@ -45,8 +45,8 @@ public class Elements
 	public static class Product extends Factors
 	{
 		public String toString () { return image (this, "*"); }
-		public OpTypes getType () { return OpTypes.Multiplication; }
 		private static final long serialVersionUID = 5153646408526934363L;
+		public OpTypes getType () { return OpTypes.Multiplication; }
 	}
 
 
@@ -136,18 +136,20 @@ public class Elements
 	 */
 	public static String image (Factors factors, String op)
 	{
-		if (factors.size () == 0) return "";
-
-		StringBuffer buf =
-			new StringBuffer ("( ")
-				.append (factors.get (0).toString ());
-		for (int i=1; i<factors.size (); i++)
+		int factorCount; StringBuffer buf;
+		if ((factorCount = factors.size ()) > 0)
 		{
-			buf.append (" ")
-				.append (op).append (" ")
-				.append (factors.get (i).toString ());
+			buf = new StringBuffer ("( ")
+				.append (factors.get (0).toString ());
+			for (int i = 1; i < factorCount; i++)
+			{
+				buf.append (" ")
+					.append (op).append (" ")
+					.append (factors.get (i).toString ());
+			}
+			return buf.append (" )").toString ();
 		}
-		return buf.append (" )").toString ();
+		return "";
 	}
 
 

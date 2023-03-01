@@ -17,9 +17,7 @@ public class Operations extends Elements
 	 */
 	public static Factor sumOf (Factor left, Factor right)
 	{
-		Sum sum = new Sum ();
-		add (left, sum); add (right, sum);
-		return sum;
+		return binary (left, right, new Sum ());
 	}
 
 
@@ -55,12 +53,7 @@ public class Operations extends Elements
 	{
 		Sum result = new Sum ();
 		for ( Factor leftTerm : (Factors) left )
-		{
-			for ( Factor rightTerm : (Factors) right )
-			{
-				add ( simpleProduct (leftTerm, rightTerm), result );
-			}
-		}
+		{ add ( sumTimesFactor (right, leftTerm), result ); }
 		return result;
 	}
 
@@ -88,8 +81,22 @@ public class Operations extends Elements
 	 */
 	public static Factor simpleProduct (Factor left, Factor right)
 	{
-		Product result = new Product ();
-		add (left, result); add (right, result);
+		return binary (left, right, new Product ());
+	}
+
+
+	/**
+	 * apply binary function to operands
+	 * @param left the left side operand of the function
+	 * @param right the right side operand of the function
+	 * @param result the collection object for the result
+	 * @return the filled collection object
+	 */
+	public static Factor binary
+		(Factor left, Factor right, Factor result)
+	{
+		add (left, result);
+		add (right, result);
 		return result;
 	}
 
