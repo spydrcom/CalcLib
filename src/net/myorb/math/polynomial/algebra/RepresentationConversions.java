@@ -82,14 +82,26 @@ public class RepresentationConversions extends Elements
 			(JsonSemantics.JsonObject) node;
 		Factor parent = identifyOperation (object);
 		recognize ( object.getMemberCalled ("Left"), parent );
-		recognize ( object.getMemberCalled ("Right"), parent );
+		recognize ( object.getMemberCalled ("Right"), rightParentFor (parent) );
 		return parent;
+	}
+	public static Factor rightParentFor (Factor parent)
+	{
+		Factor rightParent = parent;
+		if (parent instanceof Difference)
+		{
+			rightParent = new Product ();
+			add (new Constant ("-1"), rightParent);
+			add (rightParent, parent);
+		}
+		return rightParent;
 	}
 	public static Factor identifyOperation (JsonSemantics.JsonObject node)
 	{
 		switch ( member ("OpName", node).charAt (0) )
 		{
 			case '+': return new Sum ();
+			case '-': return new Difference ();
 			case '*': return new Product ();
 			case '^': return new Power ();
 		}
