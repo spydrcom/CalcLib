@@ -1,0 +1,312 @@
+
+package net.myorb.math.polynomial.algebra;
+
+import java.util.HashMap;
+import java.util.Arrays;
+
+/**
+ * applications of algebraic rules to equations
+ * @author Michael Druckman
+ */
+public class Manipulations extends Elements
+{
+
+
+	/**
+	 * collect symbols in a product
+	 */
+	static class Symbols extends HashMap <String, Double>
+	{
+
+		/**
+		 * represent a variable
+		 * @param identifier the text of the variable name
+		 * @param exponent the exponent to apply to the variable
+		 */
+		void include (String identifier, double exponent)
+		{
+			Double prior;
+			if ((prior = get (identifier)) != null)
+			{ put (identifier, prior + exponent); }
+			else put (identifier, exponent);				
+		}
+
+		/**
+		 * @param variable the symbol to include
+		 */
+		void include (Variable variable)
+		{
+			include (variable.identifier, 1);
+		}
+
+		/**
+		 * @param power description of a symbol with an exponent
+		 */
+		void include (Power power)
+		{
+			include
+			(
+				power.base ().toString (),
+				((Constant) power.exponent ()).getValue ()
+			);
+		}
+
+		/**
+		 * represent a term as a product of elements
+		 * @param scalar the constant portion of the product
+		 * @return a factor describing a term
+		 */
+		Factor getTerm (double scalar)
+		{
+			if (scalar == 0) return null;
+
+			Product result = new Product ();
+			
+			if (scalar != 1)
+			{
+				result.add (new Constant (Double.toString (scalar)));
+			}
+
+			for (String id : this.keySet ())
+			{
+				result.add (powerFactor (id, this.get (id)));
+			}
+
+			return result;
+		}
+
+		private static final long serialVersionUID = -9070913436157833971L;
+		
+	}
+
+
+	/**
+	 * @param term a product or other factor making a term
+	 * @return a factor describing a term
+	 */
+	public static Factor reduce (Factor term)
+	{
+		Factors factors = getChildList (term);
+		if (factors == null) return term;
+		return reduce (factors);
+	}
+	public static Factor reduce (Factors factors)
+	{
+		double scalar = 1.0;
+		Symbols Symbols = new Symbols ();
+		for (Factor factor : factors)
+		{
+			if (factor instanceof Constant)
+			{
+				scalar *= ( (Constant) factor ).getValue ();
+			}
+			else if (factor instanceof Variable)
+			{
+				Symbols.include ( (Variable) factor );
+			}
+			else if (factor instanceof Power)
+			{
+				Symbols.include ( (Power) factor );
+			}
+		}
+		return Symbols.getTerm (scalar);
+	}
+
+
+	/**
+	 * reduce the factor list of each term of a series
+	 * @param series the series being manipulated
+	 * @return the modified series
+	 */
+	public static Sum reduceTerms (Sum series)
+	{
+		Factor reduced;
+		Sum result = new Sum ();
+		for (Factor term : series)
+		{
+			if ((reduced = reduce (term)) != null)
+			{ add (reduced, result); }
+		}
+		return result;
+	}
+
+
+	/**
+	 * collect terms of common powers of a polynomial
+	 */
+	static class Powers extends HashMap <Double, Sum>
+	{
+
+		Powers (String variable)
+		{ this.variable = variable; }
+		String variable;
+
+		/**
+		 * @param id symbol to check
+		 * @return TRUE when id matched polynomial variable
+		 */
+		boolean matchesVariable (Factor factor)
+		{
+			if (factor instanceof Reference)
+			{ return ((Reference) factor).refersTo (variable); }
+			return false;
+		}
+
+		/**
+		 * include term in sum for power
+		 * @param term the term being evaluated
+		 * @param exponent the exponent of the term
+		 */
+		void includeInPowerSum (Factor term, Double exponent)
+		{
+			Sum sum;
+			if ((sum = get (exponent)) == null)
+			{
+				sum = new Sum ();
+				put (exponent, sum);
+			}
+			sum.add (term);
+		}
+
+		/**
+		 * identify power for term
+		 * @param term the term being evaluated
+		 * @param base the factor to check for the variable
+		 * @return TRUE when variable match found
+		 */
+		boolean includeForMatchWith (Factor term, Factor base)
+		{
+			if (base instanceof Variable)
+			{
+				if (matchesVariable (base))
+				{
+					includeInPowerSum (term, 1.0); return true;
+				}
+			}
+			else if (base instanceof Power)
+			{
+				Power p = (Power) base;
+				if (matchesVariable (p.base ()))
+				{
+					Constant exp = (Constant) p.exponent ();
+					includeInPowerSum (term, exp.getValue ());
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * identify variable power in factors
+		 * @param term the term being evaluated
+		 * @param product the list of factors in a term
+		 */
+		void includeInIdentifiedPower (Factor term, Factors product)
+		{
+			for (Factor factor : product)
+			{ if (includeForMatchWith (term, factor)) return; }
+			includeInPowerSum (term, 0.0);
+		}
+
+		/**
+		 * identify order of term and include with appropriate sum
+		 * @param term the term being evaluated
+		 */
+		void include (Factor term)
+		{
+			if (isMultiFactored (term))
+			{ includeInIdentifiedPower (term, (Factors) term); }
+			else if (term instanceof Constant) { includeInPowerSum (term, 0.0); }
+			else if ( ! includeForMatchWith (term, term) )
+			{ includeInPowerSum (term, 0.0); }
+		}
+
+		/**
+		 * distribute terms with matching powers of variable
+		 * @param e the value of the exponent for terms to distribute
+		 * @return a factor describing the power term
+		 */
+		Factor distribute (Double e)
+		{
+			Sum terms = get (e);
+			if (e == 0.0 || simpleReference (terms)) return terms;
+			return distributedProduct (terms, e);
+		}
+		Factor distributedProduct (Sum terms, Double e)
+		{
+			Product term = new Product ();
+			add (multiplier (terms), term);
+			add (powerFactor (variable, e), term);
+			return term;
+		}
+		Factor multiplier (Sum terms)
+		{
+			Sum factors = new Sum ();
+			for ( Factor term  :  terms )
+			{ add ( termFor (term), factors ); }
+			return reduceSingle (factors);
+		}
+		Factor termFor (Factor term)
+		{
+			if ( isMultiFactored (term) )
+			{
+				Factor product = new Product ();
+				for (Factor factor : (Factors) term)
+				{ if ( ! matchesVariable (factor) ) add (factor, product); }
+				return reduceSingle (product);
+			}
+			return new Constant ("1");
+		}
+
+		/**
+		 * @return the completed series
+		 */
+		Sum getSeries ()
+		{
+			Sum result = new Sum ();
+			for (Double e : getPowers ())
+			{ add (distribute (e), result); }
+			return result;
+		}
+		Double [] getPowers ()
+		{
+			Double [] exponents =
+				keySet ().toArray (new Double[]{});
+			Arrays.sort (exponents);
+			return exponents;
+		}
+
+		private static final long serialVersionUID = 2421713129615367536L;
+		
+	}
+
+
+	/**
+	 * collect terms around powers of a variable
+	 * @param series the series being analyzed as a polynomial
+	 * @param variable the variable name terms are to be collected across
+	 * @return the modified series
+	 */
+	public static Sum collectTerms (Sum series, String variable)
+	{
+		Powers powers = new Powers (variable);
+		for (Factor term : series) powers.include (term);
+		return powers.getSeries ();
+	}
+
+
+	/**
+	 * collect terms around powers of a variable
+	 * - terms of the series will be reduced in complexity
+	 * @param series the series being analyzed as a polynomial
+	 * @param variable the variable name terms are to be collected across
+	 * @return the modified series
+	 */
+	public static Sum reduceAndCollectTerms (Sum series, String variable)
+	{
+		return collectTerms (reduceTerms (series), variable);
+	}
+
+
+}
+
