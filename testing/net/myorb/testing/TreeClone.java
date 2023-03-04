@@ -58,7 +58,7 @@ public class TreeClone
 //		System.out.println (Operations.productOf (eqn3, eqn2));
 //		show (Operations.productOf (eqn3, eqn2));
 
-//		!! FSEJN (x) = ( x^2 * FSE2(x) ) + ( x * FSE1(x) ) + ( (x^2-n^2) * FSE(x) )
+//		!! J_n (x) = ( x^2 * FSE2(x) ) + ( x * FSE1(x) ) + ( (x^2-n^2) * FSE(x) )
 
 		Factor
 			x = Elements.powerFactor ("x", 1.0),
@@ -76,7 +76,7 @@ public class TreeClone
 		show (J0);
 
 		Elements.Sum x2n2 = new Elements.Sum ();
-		Elements.add (new Elements.Constant ("-1"), x2n2);
+		Elements.add (new Elements.Constant (-1.0), x2n2);
 		Elements.add (x2, x2n2);
 
 		Elements.Sum J1 = new Elements.Sum ();
@@ -89,6 +89,21 @@ public class TreeClone
 		System.out.println ("= J1 =");
 		System.out.println ("===");
 		show (J1);
+
+		x2n2 = new Elements.Sum ();
+		Elements.add (new Elements.Constant (-4.0), x2n2);
+		Elements.add (x2, x2n2);
+
+		Elements.Sum J2 = new Elements.Sum ();
+		Elements.add (Operations.productOf (x, eqn1), J2);
+		Elements.add (Operations.productOf (x2n2, eqn0), J2);
+		Elements.add (Operations.productOf (x2, eqn2), J2);
+
+		System.out.println ();
+		System.out.println ("===");
+		System.out.println ("= J2 =");
+		System.out.println ("===");
+		show (J2);
 
 	}
 
