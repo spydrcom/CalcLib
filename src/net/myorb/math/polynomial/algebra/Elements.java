@@ -74,10 +74,15 @@ public class Elements
 				value.substring (0, value.length () - 2) :
 				value;
 		}
+
 		public double getValue ()
 		{ return Double.parseDouble (value); }
+		public static double getValue (Factor factor)
+		{ return ( (Constant) factor ).getValue (); }
+
 		public OpTypes getType () { return OpTypes.Operand; }
 		public Constant (String value) { this.value = value; }
+
 		String value;
 	}
 
@@ -139,7 +144,7 @@ public class Elements
 	 */
 	public static void add (Factor factor, Factor parent)
 	{
-		if (parent instanceof Factors)
+		if (parent instanceof Factors && factor != null)
 		{
 			if (factorMatchesParent (factor, parent))
 			{ ((Factors) parent).addAll ((Factors) factor); }

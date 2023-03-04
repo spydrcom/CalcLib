@@ -32,6 +32,7 @@ public class Manipulations extends Elements
 		}
 
 		/**
+		 * reference as order 1
 		 * @param variable the symbol to include
 		 */
 		void include (Variable variable)
@@ -40,6 +41,7 @@ public class Manipulations extends Elements
 		}
 
 		/**
+		 * reference as order specified in Power object
 		 * @param power description of a symbol with an exponent
 		 */
 		void include (Power power)
@@ -47,7 +49,7 @@ public class Manipulations extends Elements
 			include
 			(
 				power.base ().toString (),
-				((Constant) power.exponent ()).getValue ()
+				Constant.getValue ( power.exponent () )
 			);
 		}
 
@@ -81,10 +83,11 @@ public class Manipulations extends Elements
 
 
 	/**
+	 * examine child list with Symbols algorithm
 	 * @param term a product or other factor making a term
 	 * @return a factor describing a term
 	 */
-	public static Factor reduce (Factor term)
+	public static Factor reduceChildFactors (Factor term)
 	{
 		Factors factors = getChildList (term);
 		if (factors == null) return term;
@@ -98,7 +101,7 @@ public class Manipulations extends Elements
 		{
 			if (factor instanceof Constant)
 			{
-				scalar *= ( (Constant) factor ).getValue ();
+				scalar *= Constant.getValue (factor);
 			}
 			else if (factor instanceof Variable)
 			{
@@ -122,12 +125,153 @@ public class Manipulations extends Elements
 	{
 		Factor reduced;
 		Sum result = new Sum ();
-		for (Factor term : series)
+		for ( Factor term : series )
 		{
-			if ((reduced = reduce (term)) != null)
-			{ add (reduced, result); }
+			reduced = reduceChildFactors (term);
+			if ( reduced != null ) add ( reduced, result );
 		}
 		return result;
+	}
+
+
+	/**
+	 * analysis providing ability to combine like terms
+	 */
+	static class FactorAnalysis
+	{
+
+
+		/**
+		 * term described as separate scalar and product
+		 */
+		class ScaledFactor
+		{
+			ScaledFactor (Product factors, Double scalar)
+			{ this.factors = factors; this.scalar = scalar; }
+			Product factors; Double scalar;
+		}
+
+		/**
+		 * map a factor image to the related scalar
+		 */
+		class TermFactors extends HashMap <String, ScaledFactor>
+		{
+
+			/**
+			 * increase existing scalar
+			 * - or insert new record when none exists
+			 * @param factors the product absent the scalar factor
+			 * @param scalar the value of the scalar
+			 */
+			void addTerm (Product factors, Double scalar)
+			{
+				ScaledFactor factor;
+				String image = factors.toString ();
+				if ( ( factor = this.get (image) ) == null )
+				{ this.put ( image, new ScaledFactor (factors, scalar) ); }
+				else factor.scalar += scalar;
+			}
+
+			/**
+			 * add a factor to a term product
+			 * @param factor the factor to be added
+			 */
+			void addFactor (Factor factor)
+			{
+				if ( factor instanceof Product ) addProduct ( (Product) factor );
+				else if ( factor instanceof Constant ) addTerm ( new Product (), Constant.getValue (factor) );
+				else
+				{
+					Product product = new Product ();
+					add ( factor, product ); addTerm ( product, 1.0 );
+				}
+			}
+
+			/**
+			 * describe term as separate scalar and product
+			 * @param product the product including scalar
+			 */
+			void addProduct (Product product)
+			{
+				Double scalar = 1.0;
+				Product termFactors = new Product ();
+				for ( Factor factor : product )
+				{
+					if (factor instanceof Constant)
+					{ scalar = Constant.getValue (factor); }
+					else add ( factor, termFactors );
+				}
+				addTerm ( termFactors, scalar );
+			}
+
+			/**
+			 * format optimized series
+			 * @return the series in reduced form
+			 */
+			Sum getReducedSeries ()
+			{
+				Sum result = new Sum (); Double scalar;
+				for (String factorImage : this.keySet () )
+				{
+					ScaledFactor factor = this.get (factorImage);
+					if ( (scalar = factor.scalar) == 0 ) continue;
+					add ( termFor ( factor, scalar ), result );
+				}
+				if ( result.size () == 0 ) return null;
+				return result;
+			}
+
+			/**
+			 * format multiplier for term
+			 * - optimize removal of unit scalar as appropriate
+			 * @param factor the factors without the scalar factor
+			 * @param scalar the scalar multiple for this product
+			 * @return the full product description
+			 */
+			Product termFor (ScaledFactor factor, Double scalar)
+			{
+				Product term = new Product (), factors = factor.factors;
+				if ( scalar != 1 ) add ( new Constant ( scalar.toString () ), term );
+				add ( factors, term );
+				return term;
+			}
+
+			private static final long serialVersionUID = 6359843120046263025L;
+		}
+
+
+		/**
+		 * @param factor the factor to be analyzed
+		 */
+		FactorAnalysis (Factor factor)
+		{ this.factor = factor; }
+		Factor factor;
+
+
+		/**
+		 * @return optimal version of the analyzed factor
+		 */
+		Factor getReducedFactor ()
+		{
+			if ( factor instanceof Sum )
+			{ return getReducedSeries ( (Sum) factor ); }
+			return factor;
+		}
+
+
+		/**
+		 * map the factors in terms of a series
+		 * @param sum the series represented as a sum
+		 * @return the optimized version of the series
+		 */
+		Sum getReducedSeries (Sum sum)
+		{
+			TermFactors map = new TermFactors ();
+			for ( Factor factor : sum ) map.addFactor (factor);
+			return map.getReducedSeries ();
+		}
+
+
 	}
 
 
@@ -147,8 +291,8 @@ public class Manipulations extends Elements
 		 */
 		boolean matchesVariable (Factor factor)
 		{
-			if (factor instanceof Reference)
-			{ return ((Reference) factor).refersTo (variable); }
+			if ( factor instanceof Reference )
+			{ return ( (Reference) factor ).refersTo (variable); }
 			return false;
 		}
 
@@ -160,11 +304,8 @@ public class Manipulations extends Elements
 		void includeInPowerSum (Factor term, Double exponent)
 		{
 			Sum sum;
-			if ((sum = get (exponent)) == null)
-			{
-				sum = new Sum ();
-				put (exponent, sum);
-			}
+			if ( ( sum = get (exponent) ) == null )
+			{ put ( exponent, sum = new Sum () ); }
 			sum.add (term);
 		}
 
@@ -188,8 +329,8 @@ public class Manipulations extends Elements
 				Power p = (Power) base;
 				if (matchesVariable (p.base ()))
 				{
-					Constant exp = (Constant) p.exponent ();
-					includeInPowerSum (term, exp.getValue ());
+					includeInPowerSum
+					( term, Constant.getValue (p.exponent ()) );
 					return true;
 				}
 			}
@@ -229,16 +370,36 @@ public class Manipulations extends Elements
 		Factor distribute (Double e)
 		{
 			Sum terms = get (e);
-			if (e == 0.0 || simpleReference (terms)) return terms;
+			if ( e == 0.0 || simpleReference (terms) ) return terms;
 			return distributedProduct (terms, e);
 		}
+
+		/**
+		 * do analysis of a term multiplier
+		 * - eliminate terms where scalar has reduced to 0
+		 * - reintroduce the power factor as a factor of the term
+		 * @param terms the series of factors that comprise the term of the order
+		 * @param e the value of the order (exponent) of this polynomial term
+		 * @return the full polynomial term of the series
+		 */
 		Factor distributedProduct (Sum terms, Double e)
 		{
-			Product term = new Product ();
-			add (multiplier (terms), term);
-			add (powerFactor (variable, e), term);
+			return reducedTerm ( new FactorAnalysis ( multiplier (terms) ).getReducedFactor (), e );
+		}
+		Factor reducedTerm (Factor termFactors, Double e)
+		{
+			Product term;
+			if ( termFactors == null ) return null;
+			add ( termFactors, term = new Product () );
+			add ( powerFactor (variable, e), term );
 			return term;
 		}
+
+		/**
+		 * examine products making up each term
+		 * @param terms the terms of the series being examined
+		 * @return the series making up the multiplier of a power
+		 */
 		Factor multiplier (Sum terms)
 		{
 			Sum factors = new Sum ();
@@ -251,7 +412,7 @@ public class Manipulations extends Elements
 			if ( isMultiFactored (term) )
 			{
 				Factor product = new Product ();
-				for (Factor factor : (Factors) term)
+				for ( Factor factor : (Factors) term )
 				{ if ( ! matchesVariable (factor) ) add (factor, product); }
 				return reduceSingle (product);
 			}
@@ -264,8 +425,8 @@ public class Manipulations extends Elements
 		Sum getSeries ()
 		{
 			Sum result = new Sum ();
-			for (Double e : getPowers ())
-			{ add (distribute (e), result); }
+			for ( Double e : getPowers () )
+			{ add ( distribute (e), result ); }
 			return result;
 		}
 		Double [] getPowers ()
@@ -290,7 +451,7 @@ public class Manipulations extends Elements
 	public static Sum collectTerms (Sum series, String variable)
 	{
 		Powers powers = new Powers (variable);
-		for (Factor term : series) powers.include (term);
+		for ( Factor term : series ) powers.include (term);
 		return powers.getSeries ();
 	}
 
@@ -304,7 +465,7 @@ public class Manipulations extends Elements
 	 */
 	public static Sum reduceAndCollectTerms (Sum series, String variable)
 	{
-		return collectTerms (reduceTerms (series), variable);
+		return collectTerms ( reduceTerms (series), variable );
 	}
 
 
