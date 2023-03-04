@@ -26,9 +26,9 @@ public class Manipulations extends Elements
 		void include (String identifier, double exponent)
 		{
 			Double prior;
-			if ((prior = get (identifier)) != null)
-			{ put (identifier, prior + exponent); }
-			else put (identifier, exponent);				
+			if ( ( prior = get (identifier) ) != null )
+			{ put ( identifier, prior + exponent ); }
+			else put ( identifier, exponent );				
 		}
 
 		/**
@@ -66,7 +66,7 @@ public class Manipulations extends Elements
 			
 			if (scalar != 1)
 			{
-				result.add (new Constant (Double.toString (scalar)));
+				result.add (new Constant (scalar));
 			}
 
 			for (String id : this.keySet ())
@@ -180,11 +180,7 @@ public class Manipulations extends Elements
 			{
 				if ( factor instanceof Product ) addProduct ( (Product) factor );
 				else if ( factor instanceof Constant ) addTerm ( new Product (), Constant.getValue (factor) );
-				else
-				{
-					Product product = new Product ();
-					add ( factor, product ); addTerm ( product, 1.0 );
-				}
+				else addTerm ( new Product (factor), 1.0 );
 			}
 
 			/**
@@ -208,7 +204,7 @@ public class Manipulations extends Elements
 			 * format optimized series
 			 * @return the series in reduced form
 			 */
-			Sum getReducedSeries ()
+			Factor getReducedSeries ()
 			{
 				Sum result = new Sum (); Double scalar;
 				for (String factorImage : this.keySet () )
@@ -218,7 +214,7 @@ public class Manipulations extends Elements
 					add ( termFor ( factor, scalar ), result );
 				}
 				if ( result.size () == 0 ) return null;
-				return result;
+				return reduceSingle (result);
 			}
 
 			/**
@@ -231,7 +227,7 @@ public class Manipulations extends Elements
 			Product termFor (ScaledFactor factor, Double scalar)
 			{
 				Product term = new Product (), factors = factor.factors;
-				if ( scalar != 1 ) add ( new Constant ( scalar.toString () ), term );
+				if ( scalar != 1 ) add ( new Constant (scalar), term );
 				add ( factors, term );
 				return term;
 			}
@@ -264,7 +260,7 @@ public class Manipulations extends Elements
 		 * @param sum the series represented as a sum
 		 * @return the optimized version of the series
 		 */
-		Sum getReducedSeries (Sum sum)
+		Factor getReducedSeries (Sum sum)
 		{
 			TermFactors map = new TermFactors ();
 			for ( Factor factor : sum ) map.addFactor (factor);
@@ -388,9 +384,8 @@ public class Manipulations extends Elements
 		}
 		Factor reducedTerm (Factor termFactors, Double e)
 		{
-			Product term;
 			if ( termFactors == null ) return null;
-			add ( termFactors, term = new Product () );
+			Product term = new Product (termFactors);
 			add ( powerFactor (variable, e), term );
 			return term;
 		}
