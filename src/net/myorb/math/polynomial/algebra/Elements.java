@@ -58,6 +58,8 @@ public class Elements
 		public String toString () { return image (this, "*"); }
 		private static final long serialVersionUID = 5153646408526934363L;
 		public OpTypes getType () { return OpTypes.Multiplication; }
+		public Product (Factor factor) { add (factor); }
+		public Product () {}
 	}
 
 
@@ -81,6 +83,7 @@ public class Elements
 		{ return ( (Constant) factor ).getValue (); }
 
 		public OpTypes getType () { return OpTypes.Operand; }
+		public Constant (Double value) { this.value = value.toString (); }
 		public Constant (String value) { this.value = value; }
 
 		String value;
@@ -119,7 +122,7 @@ public class Elements
 		public static Factor reference (Variable variable, Double order)
 		{
 			Factors power = new Power ();
-			Constant exp = new Constant (order.toString ());
+			Constant exp = new Constant (order);
 			power.add (variable); power.add (exp);
 			return power;
 		}
@@ -146,9 +149,9 @@ public class Elements
 	{
 		if (parent instanceof Factors && factor != null)
 		{
-			if (factorMatchesParent (factor, parent))
-			{ ((Factors) parent).addAll ((Factors) factor); }
-			else ((Factors) parent).add (factor);
+			if ( factorMatchesParent (factor, parent) )
+			{ ( (Factors) parent ).addAll ( (Factors) factor ); }
+			else ( (Factors) parent ).add (factor);
 		}
 	}
 	static boolean factorMatchesParent (Factor factor, Factor parent)
