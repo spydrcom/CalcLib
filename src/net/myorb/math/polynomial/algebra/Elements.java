@@ -56,9 +56,9 @@ public class Elements
 	public static class Product extends Factors
 	{
 		public String toString () { return image (this, "*"); }
-		private static final long serialVersionUID = 5153646408526934363L;
 		public OpTypes getType () { return OpTypes.Multiplication; }
-		public Product (Factor factor) { add (factor); }
+		private static final long serialVersionUID = 5153646408526934363L;
+		public Product (Factor factor) { Elements.add (factor, this); }
 		public Product () {}
 	}
 
