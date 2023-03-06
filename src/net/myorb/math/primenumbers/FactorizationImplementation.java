@@ -331,6 +331,60 @@ public class FactorizationImplementation
 	}
 
 	/**
+	 * count prime factors
+	 * @param n the number to evaluate
+	 * @param multiplicity sum exponents as contributions
+	 * @param singleFactored any squared factor results as 0
+	 * @return the count of factors given criteria
+	 */
+	public int countPrimes (int n, boolean multiplicity, boolean singleFactored)
+	{
+		int count = 0, factors;
+		if (n >= primeCounts.size ())
+			throw new RuntimeException ("Factor list unavailable");
+		while (n != 1)
+		{
+			factors = baseFactors [n];
+			if ( singleFactored && factors > 1 ) return 0;
+			count += multiplicity ? factors : 1;
+			n = multiplier [n];
+		}
+		return count;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#OMEGA(int)
+	 */
+	public int OMEGA (int n)
+	{
+		return countPrimes (n, true, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#omega(int)
+	 */
+	public int omega (int n)
+	{
+		return countPrimes (n, false, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#lambda(int)
+	 */
+	public int lambda (int n) { return (int) Math.pow (-1, OMEGA (n)); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#mobius(int)
+	 */
+	public int mobius (int n)
+	{
+		if (n == 1) return 1;
+		int count = countPrimes (n, false, true);
+		if (count > 0) return count % 2 == 0 ? 1 : -1;
+		else return 0;
+	}
+
+	/**
 	 * provide a name for the prime selection algorithm
 	 * @return the name of the algorithm that will be used to select prime range for evaluation
 	 */
