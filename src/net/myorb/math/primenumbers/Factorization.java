@@ -117,16 +117,33 @@ public class Factorization extends SignManager
 
 		/**
 		 * prime count parity
+		 * - ( named for August Mobius )
 		 * @param n the number being tested
 		 * @return -1 (odd count), 0 (has square), 1 (even count)
 		 */
 		int mobius (int n);
 
-		// Liouville prime omega functions
-		int OMEGA (int n); // with multiplicity
-		int omega (int n); // without multiplicity
+		/**
+		 * OMEGA prime factor count function
+		 * - ( count including multiplicity )
+		 * @param n the number being tested
+		 * @return computed function value
+		 */
+		int OMEGA (int n);
 
-		// Liouville lambda function
+		/**
+		 * omega prime factor count function
+		 * - ( count without multiplicity )
+		 * @param n the number being tested
+		 * @return computed function value
+		 */
+		int omega (int n);
+
+		/**
+		 * Liouville lambda function
+		 * @param n the number being tested
+		 * @return computed function value
+		 */
 		int lambda (int n);
 
 		/**

@@ -379,6 +379,8 @@ public class FactorizationImplementation
 	public int mobius (int n)
 	{
 		if (n == 1) return 1;
+		// delta(O[n] o[n])*lamba(n)
+		// Kronecker delta [ p1=p2 ? 1 : 0 ]
 		int count = countPrimes (n, false, true);
 		if (count > 0) return count % 2 == 0 ? 1 : -1;
 		else return 0;
