@@ -116,6 +116,20 @@ public class Factorization extends SignManager
 		BigInteger piFunction (int n);
 
 		/**
+		 * prime count parity
+		 * @param n the number being tested
+		 * @return -1 (odd count), 0 (has square), 1 (even count)
+		 */
+		int mobius (int n);
+
+		// Liouville prime omega functions
+		int OMEGA (int n); // with multiplicity
+		int omega (int n); // without multiplicity
+
+		// Liouville lambda function
+		int lambda (int n);
+
+		/**
 		 * compute using one of the standard methods
 		 * @param n the value to use as upper limit
 		 * @return the count of primes
