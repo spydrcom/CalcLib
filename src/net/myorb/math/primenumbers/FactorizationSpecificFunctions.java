@@ -99,6 +99,46 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 	}
 
 
+	/**
+	 * mu function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getMobiusPrimeOp ()
+	{
+		return (x) -> BigInteger.valueOf (core.mobius (x.intValue ()));
+	}
+
+
+	/**
+	 * OMEGA function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getOmegaMultiplicityFunctionOp ()
+	{
+		return (x) -> BigInteger.valueOf (core.OMEGA (x.intValue ()));
+	}
+
+
+	/**
+	 * omega function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getOmegaFunctionOp ()
+	{
+		return (x) -> BigInteger.valueOf (core.omega (x.intValue ()));
+	}
+
+
+	/**
+	 * lambda function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getLambdaFunctionOp ()
+	{
+		return (x) -> BigInteger.valueOf (core.lambda (x.intValue ()));
+	}
+
+
 	/*
 	 * Factorization formulas directly tied to Combinatorics
 	 */

@@ -198,5 +198,45 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 		return helpers.processUnary (parameter, functions.getNthPrimeOp ());
 	}
 
+	/**
+	 * compute Mobius count
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue mu (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getMobiusPrimeOp ());
+	}
+
+	/**
+	 * compute OMEGA count
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue OMEGA (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getOmegaMultiplicityFunctionOp ());
+	}
+
+	/**
+	 * compute omega count
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue omega (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getOmegaFunctionOp ());
+	}
+
+	/**
+	 * compute lambda count
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue lambda (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getLambdaFunctionOp ());
+	}
+
 }
 

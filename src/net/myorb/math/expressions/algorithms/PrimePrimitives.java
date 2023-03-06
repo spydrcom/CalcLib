@@ -404,6 +404,94 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
+	 * implement operator - Mobius (mu)
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getMobiusFunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.mu (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("mu") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - OMEGA
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getOmegaMultiplicityFunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.OMEGA (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("OMEGA") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - omega
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getOmegaFunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.omega (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("omega") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - lambda
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getLambdaFunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.lambda (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("lambda") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
 	 * implement operator - PI function
 	 * @param symbol the symbol associated
 	 * @param precedence the associated precedence
