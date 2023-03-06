@@ -70,6 +70,7 @@ public class OperatorNomenclature
 	TDES_KEYWORD = "TDES",						// TDES function		Test differential equation solution
 	RADIX_KEYWORD = "RADIX",					// RADIX 16 value		display value with specified radix
 	REQUEST_KEYWORD = "REQUEST",				// REQUEST x			request value for symbol and verify result
+	EXPAND_KEYWORD = "EXPAND",					// EXPAND function		perform series expansion on named polynomial function
 	SERVE_KEYWORD = "SERVE",					// SERVE service,port	request service start on port given
 	VERIFY_KEYWORD = "VERIFY",					// VERIFY x				lookup symbol and verify present
 	HELP_KEYWORD = "HELP",						// HELP					list of operator descriptions
