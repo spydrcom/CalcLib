@@ -182,6 +182,7 @@ public class FactorizationImplementation
 		markCompositesFor (primeNumber);						// mark composites relative to this prime
 	}
 
+
 	/*******************************************
 	 * implementation of SieveDriver interface *
 	 *******************************************/
@@ -214,6 +215,7 @@ public class FactorizationImplementation
 	{
 		return "Sieve Of Eratosthenes (DEFAULT)"; // the name of the sieve selected, mark this as the default version
 	}
+
 
 	/********************************************************
 	 * implementation of Factorization.Underlying interface *
@@ -285,50 +287,24 @@ public class FactorizationImplementation
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getNthPrime(int)
+	 */
+	public BigInteger getNthPrime (int n) { return n == 0 ? BigInteger.ONE : primes.get (n-1); }
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getPrimes(int)
 	 */
-	public List<BigInteger> getPrimes (int n)
-	{
-		return primes.subList (0, n);
-	}
+	public List<BigInteger> getPrimes (int n) { return primes.subList (0, n); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getAllPrimes()
 	 */
-	public List<BigInteger> getAllPrimes ()
-	{
-		return primes;
-	}
+	public List<BigInteger> getAllPrimes () { return primes; }
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getNthPrime(int)
-	 */
-	public BigInteger getNthPrime (int n)
-	{
-		if (n == 0) return BigInteger.ONE;
-		return primes.get (n-1);
-	}
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(int)
+	/*
+	 * prime counting functions
 	 */
-	public BigInteger piFunction (int n)
-	{
-		if (n >= primeCounts.size ())
-			return piFunctionApproximation (n);
-		return BigInteger.valueOf (this.primeCounts.get (n));
-	}
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(int)
-	 */
-	public BigInteger piFunctionApproximation (int n)								// Error at n=10^9 (pi=50,847,534)
-	{
-//		common Approximation formulas being n/ln(n) and Li(n)
-//		as long as the factors table LENGTH > 10^6 the choice is obvious
-//		return BigInteger.valueOf ((long) Math.floor ((double) n / Math.log (n)));	//		2,592,592 =	5.1000%
-		return BigInteger.valueOf ((long) ExponentialIntegral.Li (n));				//			1,701 =	0.0033%
-	}
 
 	/**
 	 * count prime factors
@@ -352,49 +328,70 @@ public class FactorizationImplementation
 		return count;
 	}
 
+	/**
+	 * represent parity of value
+	 * @param n value being considered
+	 * @return 1 for even or -1 for odd
+	 */
+	public int parity (int n) { return n % 2 == 0 ? 1 : -1; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(int)
+	 */
+	public BigInteger piFunction (int n)
+	{
+		if (n >= primeCounts.size ())
+			return piFunctionApproximation (n);
+		return BigInteger.valueOf (this.primeCounts.get (n));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(int)
+	 */
+	public BigInteger piFunctionApproximation (int n)								// Error at n=10^9 (pi=50,847,534)
+	{
+//		common Approximation formulas being n/ln(n) and Li(n)
+//		as long as the factors table LENGTH > 10^6 the choice is obvious
+//		return BigInteger.valueOf ((long) Math.floor ((double) n / Math.log (n)));	//		2,592,592 =	5.1000%
+		return BigInteger.valueOf ((long) ExponentialIntegral.Li (n));				//			1,701 =	0.0033%
+	}
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#OMEGA(int)
 	 */
-	public int OMEGA (int n)
-	{
-		return countPrimes (n, true, false);
-	}
+	public int OMEGA (int n) { return countPrimes (n, true, false); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#omega(int)
 	 */
-	public int omega (int n)
-	{
-		return countPrimes (n, false, false);
-	}
+	public int omega (int n) { return countPrimes (n, false, false); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#lambda(int)
 	 */
-	public int lambda (int n) { return (int) Math.pow (-1, OMEGA (n)); }
+	public int lambda (int n) { return parity (OMEGA (n)); } // = (-1)^(OMEGA(n))
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#mobius(int)
 	 */
 	public int mobius (int n)
 	{
-		if (n == 1) return 1;
-		// delta(O[n] o[n])*lamba(n)
-		// Kronecker delta [ p1=p2 ? 1 : 0 ]
-		int count = countPrimes (n, false, true);
-		if (count > 0) return count % 2 == 0 ? 1 : -1;
-		else return 0;
+		// delta(OMEGA[n],omega[n])*lamba(n) -- Kronecker delta [ p1==p2 ? 1 : 0 ]
+		return n == 1 ? 1 : (n = countSingleFactoredPrimes (n)) == 0 ? 0 : parity (n);
 	}
+	public int countSingleFactoredPrimes (int n)
+	{ return countPrimes (n, false, true); }
+
+
+	/*************************************************************
+	 * initialization of factorization algorithm data structures *
+	 *************************************************************/
 
 	/**
 	 * provide a name for the prime selection algorithm
 	 * @return the name of the algorithm that will be used to select prime range for evaluation
 	 */
 	protected String algotithmUsed () { return "TABLE SCAN"; }
-
-	/*************************************************************
-	 * initialization of factorization algorithm data structures *
-	 *************************************************************/
 
 	/**
 	 * perform init and report timing and quantities
@@ -428,6 +425,7 @@ public class FactorizationImplementation
 	{
 		initFactorizationsWithStats (this); // this class implements SieveDriver as a default
 	}
+
 
 }
 
