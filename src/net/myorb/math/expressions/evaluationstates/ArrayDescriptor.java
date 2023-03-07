@@ -1,10 +1,7 @@
 
 package net.myorb.math.expressions.evaluationstates;
 
-import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.TypedRangeDescription;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.ConventionalNotations;
+import net.myorb.math.expressions.*;
 
 import net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor;
 
@@ -159,6 +156,19 @@ public class ArrayDescriptor <T>
 	public String getExpressionText ()
 	{
 		return TokenParser.toPrettyText (getExpression ());
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.evaluationstates.Arrays.Descriptor#columnTitles()
+	 */
+	public List < String > columnTitles ()
+	{
+		List < String > titles = new ArrayList <> ();
+		String text = TokenParser.toPrettyText (getExpression ());
+		String expressionList = text.substring (1, text.length() - 2);
+		for (String title : expressionList.split (",")) titles.add (title);
+		return titles;
 	}
 
 

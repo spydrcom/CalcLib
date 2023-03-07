@@ -48,7 +48,7 @@ public class Arrays<T> extends OperatorNomenclature
 
 
 	/**
-	 * metadata capture describing an array
+	 * meta-data capture describing an array
 	 * @param <T> type on which operations are to be executed
 	 */
 	public interface Descriptor<T> extends ConstrainedDomain<T>
@@ -68,7 +68,7 @@ public class Arrays<T> extends OperatorNomenclature
 		ConstrainedDomain<T> getDomainConstraints ();
 
 		/**
-		 * build a descriptor for a reduced constarint
+		 * build a descriptor for a reduced constraint
 		 * @param lo the new lo value for the constraint
 		 * @param hi the new hi value for the constraint
 		 * @param op the operation constraining the domain
@@ -77,7 +77,7 @@ public class Arrays<T> extends OperatorNomenclature
 		ArrayFunctionDescriptor<T> describeReducedInterval (T lo, T hi, String op);
 
 		/**
-		 * build a descriptor for a similar constarint
+		 * build a descriptor for a similar constraint
 		 * @param op the operation constraining the domain
 		 * @return the new descriptor
 		 */
@@ -94,6 +94,12 @@ public class Arrays<T> extends OperatorNomenclature
 		 * @return text string describing expression
 		 */
 		String getExpressionText ();
+
+		/**
+		 * format text titles columns of displays related to this array
+		 * @return the formatted text titles
+		 */
+		List < String > columnTitles ();
 
 		/**
 		 * format a text title for displays related to this array
