@@ -398,9 +398,7 @@ public class FactorizationImplementation
 	 */
 	public Number piFunctionApproximation (Number n)
 	{
-		Number count = defaultPiApproximation.numberOfPrimes (n);
-		if (count instanceof BigInteger) return (BigInteger) count;
-		return BigInteger.valueOf (count.longValue ());
+		return defaultPiApproximation.numberOfPrimes (n);
 	}
 
 //	common Approximation formulas being n/ln(n) and li(n)
