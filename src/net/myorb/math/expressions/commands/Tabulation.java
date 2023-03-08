@@ -7,6 +7,10 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 
+import net.myorb.gui.components.SimpleScreenIO.WidgetFrame;
+import net.myorb.gui.components.RenderingDisplay;
+import net.myorb.data.abstractions.HtmlTable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +56,7 @@ public class Tabulation <T>
 	{
 		List < ValueManager.DimensionedValue <T> > table =
 			tableOf ( (ValueManager.ValueList) array );
-		format (table);
+		format (domainDescriptor.formatTitle (), titles, table);
 	}
 	@SuppressWarnings("unchecked") List < ValueManager.DimensionedValue <T> >
 				tableOf (ValueManager.ValueList values)
@@ -62,18 +66,47 @@ public class Tabulation <T>
 		{ table.add ( (ValueManager.DimensionedValue <T>) v ); }
 		return table;
 	}
-	void format (List < ValueManager.DimensionedValue <T> > table)
+
+
+	/**
+	 * construct and show HTML mark-up of data
+	 * @param documentTitle a title for the display
+	 * @param titles the titles given to individual columns
+	 * @param table the table data as list of lists
+	 */
+	public void format
+		(
+			String documentTitle, List < String > titles,
+			List < ValueManager.DimensionedValue <T> > table
+		)
 	{
-		StringBuffer buffer;
+		String [] rowCells = new String [titles.size ()];
+		HtmlTable html = new HtmlTable (); html.setTitle (documentTitle);
+		html.setTableHeader (documentTitle); html.setColumnHeaders (titles.toArray (new String[]{}));
+		
 		for (int row = 0; row < table.get (0).getValues ().size (); row++)
 		{
-			buffer = new StringBuffer ();
 			for (int col = 0; col < table.size (); col++)
-			{
-				buffer.append ("\t").append (mgr.format (table.get (col).getValues ().get (row)));
-			}
-			System.out.println (buffer);
+			{ rowCells[col] = mgr.format (table.get (col).getValues ().get (row)); }
+			html.addRow (rowCells);
 		}
+
+		showTable (html, documentTitle);
+	}
+
+
+	/**
+	 * build a GUI to display table
+	 * @param html mark-up object describing table
+	 * @param title the title to place in the header
+	 */
+	public static void showTable
+		(HtmlTable html, String title)
+	{
+		RenderingDisplay display;
+		(display = RenderingDisplay.newRenderingDisplayPanel ()).addComponent (html);
+		new WidgetFrame (display.getRenderingPanel (), title)
+		.showOrHide (1200, 500);
 	}
 
 
