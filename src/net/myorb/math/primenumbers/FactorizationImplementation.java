@@ -1,10 +1,13 @@
 
 package net.myorb.math.primenumbers;
 
+import net.myorb.math.specialfunctions.Riemann;
 import net.myorb.math.specialfunctions.ExponentialIntegral;
 
-import net.myorb.math.ComputationConfiguration;
+import net.myorb.math.primenumbers.Factorization.CountingFunction;
 import net.myorb.math.primenumbers.sieves.*;
+
+import net.myorb.math.ComputationConfiguration;
 
 import java.math.BigInteger;
 
@@ -307,6 +310,26 @@ public class FactorizationImplementation
 	 */
 
 	/**
+	 * conversion implementation for algorithms based on real number functions
+	 */
+	public interface BigRealOp { Double op (Double x); }
+
+	/**
+	 * translate a real function to conform with the CountingFunction profile
+	 * @param function real number function that approximates a pi counting function
+	 * @return the function wrapped as a Number to Number parameter profile
+	 */
+	public CountingFunction toCountingFunction (BigRealOp function)
+	{ return (n) -> BigInteger.valueOf (function.op (n.doubleValue ()).longValue ()); }
+
+	/**
+	 * represent parity of value
+	 * @param n value being considered
+	 * @return 1 for even or -1 for odd
+	 */
+	public int parity (int n) { return n % 2 == 0 ? 1 : -1; }
+
+	/**
 	 * count prime factors
 	 * @param n the number to evaluate
 	 * @param multiplicity sum exponents as contributions
@@ -316,7 +339,7 @@ public class FactorizationImplementation
 	public int countPrimes (int n, boolean multiplicity, boolean singleFactored)
 	{
 		int count = 0, factors;
-		if (n >= primeCounts.size ())
+		if ( primeCounts == null || n >= primeCounts.size () )
 			throw new RuntimeException ("Factor list unavailable");
 		while (n != 1)
 		{
@@ -328,32 +351,74 @@ public class FactorizationImplementation
 		return count;
 	}
 
-	/**
-	 * represent parity of value
-	 * @param n value being considered
-	 * @return 1 for even or -1 for odd
-	 */
-	public int parity (int n) { return n % 2 == 0 ? 1 : -1; }
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(int)
 	 */
 	public BigInteger piFunction (int n)
 	{
-		if (n >= primeCounts.size ())
-			return piFunctionApproximation (n);
-		return BigInteger.valueOf (this.primeCounts.get (n));
+		if (n < primeCounts.size ())
+			return BigInteger.valueOf ( (long) pi (n) );
+		else return piFunctionApproximation (n);
 	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#pi()
+	 */
+	public CountingFunction pi () { return (n) -> pi ( n.intValue () ); }
+	// these implementations of pi give exactly correct counts of the integer parameters
+	// the limitation is it is based on the primeCounts array that contains a limited count of entries
+	// so error conditions come if the parameter is larger that the size of the primeCounts list of values
+	// note the piFunction query of the list size and the use of the default in recognition of the restriction
+	int pi (int n) { return this.primeCounts.get (n); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#xLx()
+	 */
+	public CountingFunction xLx () { return toCountingFunction ( (x) -> xLx (x) ); }
+	Double xLx (Double x) { return Math.floor (x / Math.log (x)); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#li()
+	 */
+	public CountingFunction li () { return toCountingFunction ( (x) -> li (x) ); }
+	Double li (Double x) { return ExponentialIntegral.Li (x); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#T()
+	 */
+	public CountingFunction T ()
+	{
+		if (harmonicsOfRiemann == null) harmonicsOfRiemann = new Riemann ();
+		return toCountingFunction ( (x) -> harmonicsOfRiemann.T (x) );
+	}
+	Riemann harmonicsOfRiemann = null;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(int)
 	 */
-	public BigInteger piFunctionApproximation (int n)								// Error at n=10^9 (pi=50,847,534)
+	public BigInteger piFunctionApproximation (int n)
 	{
-//		common Approximation formulas being n/ln(n) and Li(n)
-//		as long as the factors table LENGTH > 10^6 the choice is obvious
-//		return BigInteger.valueOf ((long) Math.floor ((double) n / Math.log (n)));	//		2,592,592 =	5.1000%
-		return BigInteger.valueOf ((long) ExponentialIntegral.Li (n));				//			1,701 =	0.0033%
+		Number count = defaultPiApproximation.numberOfPrimes (n);
+		if (count instanceof BigInteger) return (BigInteger) count;
+		return BigInteger.valueOf (count.longValue ());
+	}
+
+//	common Approximation formulas being n/ln(n) and li(n)
+//	as long as the factors table LENGTH > 10^6 the choice is obvious
+//
+//			   Function		Error at n=10^9 (pi=50,847,534)
+//
+//				x/log(x)		2,592,592 =	5.1000%
+//				  li(x)				1,701 =	0.0033%
+//
+	protected CountingFunction defaultPiApproximation = li ();
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#setDefaultPiApproximation(net.myorb.math.primenumbers.Factorization.CountingFunction)
+	 */
+	public void setDefaultPiApproximation (CountingFunction function)
+	{
+		this.defaultPiApproximation = function;
 	}
 
 	/* (non-Javadoc)
