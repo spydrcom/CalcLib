@@ -49,6 +49,19 @@ public class Factorization extends SignManager
 	public FactorCollection getFactors () { return factorCollection; }
 
 	/**
+	 * descriptions of functions that count prime numbers
+	 */
+	public interface CountingFunction
+	{
+		/**
+		 * a function that applies a counting algorithm
+		 * @param n the number which gives criteria for the count
+		 * @return the computed count
+		 */
+		Number numberOfPrimes (Number n);
+	}
+
+	/**
 	 * an underlying mechanism provides an expedited means of computing factorizations
 	 */
 	public interface Underlying
@@ -116,6 +129,30 @@ public class Factorization extends SignManager
 		BigInteger piFunction (int n);
 
 		/**
+		 * implementation of the pifunction
+		 * @return the computed count
+		 */
+		CountingFunction pi ();
+
+		/**
+		 * implementation of x/ln(x)
+		 * @return the computed count
+		 */
+		CountingFunction xLx ();
+
+		/**
+		 * implementation of the logarithmic integral
+		 * @return the computed count
+		 */
+		CountingFunction li ();
+
+		/**
+		 * implementation of the Riemann harmonic sum
+		 * @return the computed count
+		 */
+		CountingFunction T ();
+
+		/**
 		 * prime count parity
 		 * - ( named for August Mobius )
 		 * @param n the number being tested
@@ -152,6 +189,12 @@ public class Factorization extends SignManager
 		 * @return the count of primes
 		 */
 		BigInteger piFunctionApproximation (int n);
+
+		/**
+		 * identify the algorithm to use for pi function approximation
+		 * @param function an implementer of the CountingFunction interface
+		 */
+		void setDefaultPiApproximation (CountingFunction function);
 
 		/**
 		 * check for option being enabled
