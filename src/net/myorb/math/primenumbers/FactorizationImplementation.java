@@ -358,7 +358,7 @@ public class FactorizationImplementation
 	{
 		if (n < primeCounts.size ())
 			return BigInteger.valueOf ( (long) pi (n) );
-		else return piFunctionApproximation (n);
+		else return (BigInteger) piFunctionApproximation (n);
 	}
 
 	/* (non-Javadoc)
@@ -394,9 +394,9 @@ public class FactorizationImplementation
 	Riemann harmonicsOfRiemann = null;
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunctionApproximation(java.lang.Number)
 	 */
-	public BigInteger piFunctionApproximation (int n)
+	public Number piFunctionApproximation (Number n)
 	{
 		Number count = defaultPiApproximation.numberOfPrimes (n);
 		if (count instanceof BigInteger) return (BigInteger) count;

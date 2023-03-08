@@ -188,7 +188,7 @@ public class Factorization extends SignManager
 		 * @param n the value to use as upper limit
 		 * @return the count of primes
 		 */
-		BigInteger piFunctionApproximation (int n);
+		Number piFunctionApproximation (Number n);
 
 		/**
 		 * identify the algorithm to use for pi function approximation
