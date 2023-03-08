@@ -382,6 +382,72 @@ public class PrimePrimitives extends FactorizationPrimitives
 	}
 
 	/**
+	 * implement operator - xLx
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getXlxAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.xLx (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("xLx") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - li
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getLiAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.li (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("li") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
+	 * implement operator - T
+	 * @param symbol the symbol associated
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractUnaryOperator getTfunctionAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameter)
+			{
+				return formulas.T (parameter);
+			}
+
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{
+				return using.formatIdentifierReference ("T") + using.formatParenthetical (operand);
+			}
+		};
+	}
+
+	/**
 	 * implement operator - Pn
 	 * @param symbol the symbol associated
 	 * @param precedence the associated precedence

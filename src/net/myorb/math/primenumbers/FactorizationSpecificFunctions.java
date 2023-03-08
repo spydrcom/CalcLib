@@ -90,6 +90,36 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 
 
 	/**
+	 * xLx function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getXlxOp ()
+	{
+		return (x) -> (BigInteger) core.xLx ().numberOfPrimes (x);
+	}
+
+
+	/**
+	 * li function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getLiOp ()
+	{
+		return (x) -> (BigInteger) core.li ().numberOfPrimes (x);
+	}
+
+
+	/**
+	 * T function
+	 * @return operation formula 
+	 */
+	public BigUnaryOp getTOp ()
+	{
+		return (x) -> (BigInteger) core.T ().numberOfPrimes (x);
+	}
+
+
+	/**
 	 * Pn function (Nth prime)
 	 * @return operation formula 
 	 */

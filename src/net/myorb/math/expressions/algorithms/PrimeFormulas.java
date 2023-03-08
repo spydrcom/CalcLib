@@ -189,6 +189,36 @@ public class PrimeFormulas extends FactorizationFormulas <Factorization>
 	}
 
 	/**
+	 * compute xLx function
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue xLx (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getXlxOp ());
+	}
+
+	/**
+	 * compute li function
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue li (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getLiOp ());
+	}
+
+	/**
+	 * compute T function
+	 * @param parameter the parameter from the request
+	 * @return the computed result
+	 */
+	public ValueManager.GenericValue T (ValueManager.GenericValue parameter)
+	{
+		return helpers.processUnary (parameter, functions.getTOp ());
+	}
+
+	/**
 	 * compute Nth prime number
 	 * @param parameter the parameter from the request
 	 * @return the computed result
