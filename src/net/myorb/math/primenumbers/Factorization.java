@@ -119,14 +119,14 @@ public class Factorization extends SignManager
 		 * @param n index of prime of interest
 		 * @return the Nth prime
 		 */
-		BigInteger getNthPrime (int n);
+		Number getNthPrime (int n);
 
 		/**
 		 * number of primes below n
 		 * @param n the value to use as upper limit
 		 * @return the count of primes
 		 */
-		BigInteger piFunction (int n);
+		Number piFunction (Number n);
 
 		/**
 		 * implementation of the pifunction
@@ -158,7 +158,7 @@ public class Factorization extends SignManager
 		 * @param n the number being tested
 		 * @return -1 (odd count), 0 (has square), 1 (even count)
 		 */
-		int mobius (int n);
+		int mobius (Number n);
 
 		/**
 		 * OMEGA prime factor count function
@@ -166,7 +166,7 @@ public class Factorization extends SignManager
 		 * @param n the number being tested
 		 * @return computed function value
 		 */
-		int OMEGA (int n);
+		int OMEGA (Number n);
 
 		/**
 		 * omega prime factor count function
@@ -174,14 +174,14 @@ public class Factorization extends SignManager
 		 * @param n the number being tested
 		 * @return computed function value
 		 */
-		int omega (int n);
+		int omega (Number n);
 
 		/**
 		 * Liouville lambda function
 		 * @param n the number being tested
 		 * @return computed function value
 		 */
-		int lambda (int n);
+		int lambda (Number n);
 
 		/**
 		 * compute using one of the standard methods

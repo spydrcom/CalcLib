@@ -85,7 +85,7 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 	 */
 	public BigUnaryOp getPiOp ()
 	{
-		return (x) -> core.piFunction (x.intValue ());
+		return (x) -> (BigInteger) core.piFunction (x);
 	}
 
 
@@ -125,7 +125,7 @@ public class FactorizationSpecificFunctions extends FactorizationPrimitives
 	 */
 	public BigUnaryOp getNthPrimeOp ()
 	{
-		return (x) -> core.getNthPrime (x.intValue ());
+		return (x) -> (BigInteger) core.getNthPrime (x.intValue ());
 	}
 
 

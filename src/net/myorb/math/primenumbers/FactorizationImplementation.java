@@ -292,7 +292,7 @@ public class FactorizationImplementation
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getNthPrime(int)
 	 */
-	public BigInteger getNthPrime (int n) { return n == 0 ? BigInteger.ONE : primes.get (n-1); }
+	public Number getNthPrime (int n) { return n == 0 ? BigInteger.ONE : primes.get (n-1); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.primenumbers.Factorization.Underlying#getPrimes(int)
@@ -336,28 +336,28 @@ public class FactorizationImplementation
 	 * @param singleFactored any squared factor results as 0
 	 * @return the count of factors given criteria
 	 */
-	public int countPrimes (int n, boolean multiplicity, boolean singleFactored)
+	public int countPrimes (Number n, boolean multiplicity, boolean singleFactored)
 	{
-		int count = 0, factors;
-		if ( primeCounts == null || n >= primeCounts.size () )
+		int count = 0, query = n.intValue (), factors;
+		if ( primeCounts == null || query >= primeCounts.size () )
 			throw new RuntimeException ("Factor list unavailable");
-		while (n != 1)
+		while (query != 1)
 		{
-			factors = baseFactors [n];
+			factors = baseFactors [query];
 			if ( singleFactored && factors > 1 ) return 0;
 			count += multiplicity ? factors : 1;
-			n = multiplier [n];
+			query = multiplier [query];
 		}
 		return count;
 	}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#piFunction(java.lang.Number)
 	 */
-	public BigInteger piFunction (int n)
+	public Number piFunction (Number n)
 	{
-		if (n < primeCounts.size ())
-			return BigInteger.valueOf ( (long) pi (n) );
+		if (n.intValue () < primeCounts.size ())
+			return BigInteger.valueOf ( (long) pi (n.intValue ()) );
 		else return (BigInteger) piFunctionApproximation (n);
 	}
 
@@ -420,29 +420,30 @@ public class FactorizationImplementation
 	}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#OMEGA(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#OMEGA(java.lang.Number)
 	 */
-	public int OMEGA (int n) { return countPrimes (n, true, false); }
+	public int OMEGA (Number n) { return countPrimes (n, true, false); }
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#omega(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#omega(java.lang.Number)
 	 */
-	public int omega (int n) { return countPrimes (n, false, false); }
+	public int omega (Number n) { return countPrimes (n, false, false); }
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#lambda(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#lambda(java.lang.Number)
 	 */
-	public int lambda (int n) { return parity (OMEGA (n)); } // = (-1)^(OMEGA(n))
+	public int lambda (Number n) { return parity (OMEGA (n)); } // = (-1)^(OMEGA(n))
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.primenumbers.Factorization.Underlying#mobius(int)
+	 * @see net.myorb.math.primenumbers.Factorization.Underlying#mobius(java.lang.Number)
 	 */
-	public int mobius (int n)
+	public int mobius (Number n)
 	{
+		int query = n.intValue ();
 		// delta(OMEGA[n],omega[n])*lamba(n) -- Kronecker delta [ p1==p2 ? 1 : 0 ]
-		return n == 1 ? 1 : (n = countSingleFactoredPrimes (n)) == 0 ? 0 : parity (n);
+		return query == 1 ? 1 : (query = countSingleFactoredPrimes (n)) == 0 ? 0 : parity (query);
 	}
-	public int countSingleFactoredPrimes (int n)
+	public int countSingleFactoredPrimes (Number n)
 	{ return countPrimes (n, false, true); }
 
 
