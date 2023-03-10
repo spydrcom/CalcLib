@@ -271,13 +271,16 @@ public class Factorization extends SignManager
 	 */
 	public BigInteger reduce ()
 	{
-		BigInteger result = BigInteger.ONE;										// start product as 1
+		int exponent;
 		FactorCollection factors = this.getFactors ();
+		BigInteger num = BigInteger.ONE, den = BigInteger.ONE;					// start ratio as 1
 		for (BigInteger prime : factors.getPrimes ())							// the key set is the list of primes in this value
 		{
-			int exponent = factors.readExponentFor (prime);
-			result = result.multiply (prime.pow (exponent));
+			if ( ( exponent = factors.readExponentFor (prime) ) < 0 )
+			{  den  =  den.multiply ( prime.pow ( - exponent ) );  }
+			else num = num.multiply ( prime.pow (exponent) );
 		}																		// prime value maps to exponent value
+		BigInteger result = num.divide (den);
 		if (this.isNegative ()) result = result.negate ();						// respect negative flag
 		return result;
 	}
