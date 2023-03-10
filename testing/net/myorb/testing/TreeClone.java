@@ -20,19 +20,21 @@ public class TreeClone
 			mgr = new ExpressionFloatingFieldManager ();
 		Environment <Double> environment = new Environment <> (mgr);
 
+		SeriesExpansion <Double> root = new SeriesExpansion <> (null);
+
 		Gardener <Double> G0, G1, G2;
 		G0 = Gardener.loadFromJson ("FSE", environment);
 		JsonSemantics.JsonValue tree0 = G0.getExpression ().toJson ();
-		Elements.Equation eqn0 = RepresentationConversions.translate (tree0);
+		Elements.Factor eqn0 = RepresentationConversions.translate (tree0, root);
 
 		G1 = Gardener.loadFromJson ("FSE1", environment);
 		JsonSemantics.JsonValue tree1 = G1.getExpression ().toJson ();
-		Elements.Equation eqn1 = RepresentationConversions.translate (tree1);
+		Elements.Factor eqn1 = RepresentationConversions.translate (tree1, root);
 //		JsonPrettyPrinter.sendTo (tree, System.out);
 
 		G2 = Gardener.loadFromJson ("FSE2", environment);
 		JsonSemantics.JsonValue tree2 = G2.getExpression ().toJson ();
-		Elements.Equation eqn2 = RepresentationConversions.translate (tree2);
+		Elements.Factor eqn2 = RepresentationConversions.translate (tree2, root);
 //		JsonPrettyPrinter.sendTo (tree, System.out);
 
 //		System.out.println (G.getExpressionName ());

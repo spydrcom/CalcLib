@@ -29,18 +29,33 @@ public class SeriesExpansion <T>
 	public void performExpansion
 	(String functionName, CommandSequence tokens, int tokenPosition)
 	{
-		Subroutine<T> s = Subroutine.cast (environment.getSymbolMap ().get (functionName));
-		if (s == null) throw new RuntimeException ("Symbol is not a user defined function: " + functionName);
+		System.out.println (expandSymbol (functionName, this));
+	}
+
+
+	/**
+	 * construct element tree for a polynomial in the symbol table
+	 * @param functionName the name of the function expected to be a polynomial
+	 * @param root the expansion object for this processing request
+	 * @return the root Factor node for describing this symbol
+	 */
+	public Elements.Factor expandSymbol (String functionName, SeriesExpansion <?> root)
+	{
+		Subroutine <T> s = Subroutine.cast ( environment.getSymbolMap ().get (functionName) );
+		if ( s == null ) throw new RuntimeException ( "Symbol is not a user defined function: " + functionName );
 
 		try { s.allowExpressionTree (); s.enableExpression (); }
 		catch (Exception e) { throw new RuntimeException ("Error building tree", e); }
 
-		try { JsonPrettyPrinter.sendTo (s.getExpression ().toJson (), System.out); }
-		catch (Exception e) { e.printStackTrace (); }
+		if (showFunctionJson)
+		{
+			try { JsonPrettyPrinter.sendTo (s.getExpression ().toJson (), System.out); }
+			catch (Exception e) { e.printStackTrace (); }
+		}
 
-		Elements.Equation eqn = RepresentationConversions.translate (s.getExpression ().toJson ());
-		System.out.println (eqn);
+		return RepresentationConversions.translate ( s.getExpression ().toJson (), root );
 	}
+	boolean showFunctionJson = false;
 
 
 }
