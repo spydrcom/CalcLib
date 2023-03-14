@@ -1,7 +1,9 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.commands.CommandSequence;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
@@ -20,16 +22,45 @@ public class SeriesExpansion <T>
 	Environment <T> environment;
 
 
+	public void setPolynomialVariable
+	(String polynomialVariable) { this.polynomialVariable =  polynomialVariable; }
+	public String getPolynomialVariable () { return polynomialVariable; }
+	String polynomialVariable = "x";
+
+
+	/**
+	 * produce expanded version of function sequence
+	 * @param functionName the name of the function in the symbol table
+	 * @param tokens the command tokens specified on the request
+	 * @param tokenPosition the position of the next token
+	 * @return the expanded sequence
+	 */
+	public CommandSequence expandSequence
+	(String functionName, CommandSequence tokens, int tokenPosition)
+	{
+		String expanded = performExpansion
+				(functionName, tokens, tokenPosition);
+		//System.out.println (expanded);
+
+		return new CommandSequence
+		(
+			TokenParser.parse (new StringBuffer (expanded))
+		);
+	}
+
+
 	/**
 	 * perform expansion of named polynomial
 	 * @param functionName the function name given to the polynomial
 	 * @param tokens the command tokens specified on the request
 	 * @param tokenPosition the position of the next token
+	 * @return the expanded equation
 	 */
-	public void performExpansion
+	public String performExpansion
 	(String functionName, CommandSequence tokens, int tokenPosition)
 	{
-		System.out.println (expandSymbol (functionName, this));
+		return RepresentationConversions.organizeTerms
+		(expandSymbol (functionName, this)).toString ();
 	}
 
 
