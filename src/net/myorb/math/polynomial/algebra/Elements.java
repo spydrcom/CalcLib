@@ -47,6 +47,7 @@ public class Elements
 	 */
 	public static class Difference extends Sum
 	{
+		public String toString () { return bracketedImage (this, " - "); }
 		private static final long serialVersionUID = -5098433414832709926L;
 	}
 
