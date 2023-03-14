@@ -29,13 +29,42 @@ public class RepresentationConversions extends Elements
 	public static Factor translate
 	(JsonLowLevel.JsonValue tree, SeriesExpansion <?> root)
 	{
-		Factor equation = new Equation ();
-		recognize (tree, equation, root);
-//		equation = Manipulations.reduceAndCollectTerms
-//		(
-//			(Elements.Sum) equation, "x"
-//		);
-		return equation;
+		Elements.Sum equation;
+		recognize (tree, equation = new Equation (), root);
+		return Manipulations.reduceAndCollectTerms
+		(
+			reduceTermsOf (equation),
+			root.getPolynomialVariable ()
+		);
+	}
+	static Elements.Sum reduceTermsOf (Elements.Sum equation)
+	{
+		Elements.Sum reduced = new Elements.Sum ();
+		for (Factor factor : equation)
+		{
+			reduced = (Elements.Sum) Operations.sumOf
+				(reduced, reducedTerm (factor));
+		}
+		return reduced;
+	}
+	static Factor reducedTerm (Factor term)
+	{
+		if (term instanceof Elements.Product)
+		{ return reducedProductsFrom ((Elements.Product) term); }
+		else return term;
+	}
+	static Factor reducedProductsFrom (Elements.Product factors)
+	{
+		int factorCount = factors.size ();
+		if (factorCount == 1) return factors.get (0);
+		else return reducedProductFrom (factors, factorCount);
+	}
+	static Factor reducedProductFrom
+		(Elements.Product factors, int n)
+	{
+		Factor product = Operations.productOf (factors.get (0), factors.get (1));
+		for (int i = 2; i < n; i++) product = Operations.productOf (product, factors.get (i));
+		return product;
 	}
 
 
@@ -136,4 +165,76 @@ public class RepresentationConversions extends Elements
 	}
 
 
+	// organization of terms to provide representation of subtraction
+	
+	/**
+	 * present negative terms with subtraction
+	 * @param root the root element of the tree
+	 * @return reordered Element tree
+	 */
+	public static Factor organizeTerms
+			(Factor root)
+	{
+		if (root instanceof Sum)
+		{ return organizeTerms ( (Sum) root ); }
+		else return root;
+	}
+	public static Factor organizeTerms (Sum root)
+	{
+		Sum positive = new Sum (), negative = new Sum ();
+		for (Factor factor : root)
+		{
+			if (factor instanceof Product)
+			{ processFactor ( (Product) factor, positive, negative); }
+			else positive.add (factor);
+		}
+		return reorderedAsDifference (positive, negative);
+	}
+	public static void processFactor
+		(Product product, Sum positive, Sum negative)
+	{
+		boolean dup = false;
+		Sum choice = positive;
+		Product factors = product;
+		Factor first = product.get (0);
+
+		if (first instanceof Constant)
+		{
+			Constant C = (Constant) first;
+			double value = - C.getValue ();
+
+			if (value > 0.0)
+			{
+				choice = negative; factors = new Product ();
+				if (value != 1) factors.add (new Constant (value));
+				dup = true;
+			}
+		}
+		else if (first instanceof Sum)
+		{
+			factors = new Product ();
+			factors.add (organizeTerms (first));
+			dup = true;
+		}
+
+		if (dup)
+		{
+			for (int i = 1; i < product.size (); i++)
+			{ factors.add (product.get (i)); }
+		}
+
+		choice.add (factors);
+	}
+	public static Factor reorderedAsDifference
+			(Sum positive, Sum negative)
+	{
+		if (negative.size () == 0) return positive;
+		Difference result = new Difference ();
+		result.add (positive);
+		result.add (negative);
+		return result;
+	}
+
+
 }
+
