@@ -185,7 +185,7 @@ public class RepresentationConversions extends Elements
 		for (Factor factor : root)
 		{
 			if (factor instanceof Product)
-			{ processFactor ( (Product) factor, positive, negative); }
+			{ processFactor ( (Product) factor, positive, negative ); }
 			else positive.add (factor);
 		}
 		return reorderedAsDifference (positive, negative);
