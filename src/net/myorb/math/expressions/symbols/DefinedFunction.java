@@ -200,6 +200,7 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 	 * @param symbol the symbol to cast as Subroutine
 	 * @return the resulting cast object verified
 	 * @throws RuntimeException for cast errors
+	 * @param <T> the data type for Subroutine
 	 */
 	public static <T> Subroutine <T>
 			asUDF (Object symbol)
