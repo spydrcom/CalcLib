@@ -28,6 +28,7 @@ import net.myorb.math.computational.Spline.Operations;
 
 // data abstractions from IO library
 import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.ErrorHandling;
 
 // JRE
@@ -138,6 +139,18 @@ public class Subroutine<T>
 		newExpressionTree (functionTokens);
 	}
 	protected boolean useExpressionTree = false; // allow use of tree
+
+
+	/**
+	 * request a description of the subroutine as a JSON expression tree
+	 * @return the JSON tree root for a description of the subroutine
+	 * @throws Exception for errors in semantic resolution attempts
+	 */
+	public JsonValue getExpressionTree () throws Exception
+	{
+		allowExpressionTree (); enableExpression ();
+		return getExpression ().toJson ();
+	}
 
 
 	/*
