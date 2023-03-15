@@ -2,11 +2,13 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.commands.CommandSequence;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
+import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
 
 /**
@@ -38,14 +40,33 @@ public class SeriesExpansion <T>
 	public CommandSequence expandSequence
 	(String functionName, CommandSequence tokens, int tokenPosition)
 	{
-		String expanded = performExpansion
-				(functionName, tokens, tokenPosition);
-		//System.out.println (expanded);
-
 		return new CommandSequence
 		(
-			TokenParser.parse (new StringBuffer (expanded))
+			TokenParser.parse
+			(
+				expandedDescription
+				(
+					functionName, tokens, tokenPosition
+				)
+			)
 		);
+	}
+
+
+	/**
+	 * buffer the text of expanded version of equation
+	 * @param functionName the name of the function in the symbol table
+	 * @param tokens the command tokens specified on the request
+	 * @param tokenPosition the position of the next token
+	 * @return buffer holding text of expanded equation
+	 */
+	public StringBuffer expandedDescription
+	(String functionName, CommandSequence tokens, int tokenPosition)
+	{
+		Elements.Factor expanded =
+			performExpansion (functionName, tokens, tokenPosition);
+		if (showFunctionExpanded) System.out.println (expanded);
+		return new StringBuffer (expanded.toString ());
 	}
 
 
@@ -56,11 +77,13 @@ public class SeriesExpansion <T>
 	 * @param tokenPosition the position of the next token
 	 * @return the expanded equation
 	 */
-	public String performExpansion
+	public Elements.Factor performExpansion
 	(String functionName, CommandSequence tokens, int tokenPosition)
 	{
 		return RepresentationConversions.organizeTerms
-		(expandSymbol (functionName, this)).toString ();
+		(
+			expandSymbol (functionName, this)
+		);
 	}
 
 
@@ -72,21 +95,35 @@ public class SeriesExpansion <T>
 	 */
 	public Elements.Factor expandSymbol (String functionName, SeriesExpansion <?> root)
 	{
-		Subroutine <T> s = Subroutine.cast ( environment.getSymbolMap ().get (functionName) );
-		if ( s == null ) throw new RuntimeException ( "Symbol is not a user defined function: " + functionName );
-
-		try { s.allowExpressionTree (); s.enableExpression (); }
-		catch (Exception e) { throw new RuntimeException ("Error building tree", e); }
-
+		JsonValue jsonTree = getJsonDescription (functionName);
+		return RepresentationConversions.translate ( trace (jsonTree), root );
+	}
+	JsonValue getJsonDescription (String functionName)
+	{
+		Subroutine <T> udf = null;
+		try { udf = DefinedFunction.asUDF ( lookup (functionName) ); }
+		catch (Exception e) { error ( functionName + " not recognized", e ); }
+		return getExpressionTree (udf);
+	}
+	JsonValue getExpressionTree (Subroutine <T> s)
+	{
+		JsonValue root = null;
+		try { root = s.getExpressionTree (); }
+		catch (Exception e) { error ( "Unable to build expression tree", e ); }
+		return root;
+	}
+	JsonValue trace (JsonValue jsonTree)
+	{
 		if (showFunctionJson)
 		{
-			try { JsonPrettyPrinter.sendTo (s.getExpression ().toJson (), System.out); }
-			catch (Exception e) { e.printStackTrace (); }
+			try { JsonPrettyPrinter.sendTo ( jsonTree, System.out ); }
+			catch (Exception e) { error ( "JSON trace formatter failed", e ); }
 		}
-
-		return RepresentationConversions.translate ( s.getExpression ().toJson (), root );
+		return jsonTree;
 	}
-	boolean showFunctionJson = false;
+	Object lookup (String functionName) { return environment.getSymbolMap ().get (functionName); }
+	void error (String message, Exception source) { throw new RuntimeException (message, source); }
+	boolean showFunctionJson = false, showFunctionExpanded = false;
 
 
 }
