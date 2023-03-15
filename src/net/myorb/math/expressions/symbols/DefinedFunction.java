@@ -113,7 +113,7 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 	{
 		AbstractFunction<T>
 			function = verifyAbstractFunction (functionSymbol);
-		return udfCheck (Subroutine.cast (function));
+		return asUDF (function);
 	}
 
 
@@ -193,6 +193,20 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 	}
 	public static final String UDF_ERROR =
 	"Selected symbol is not a user defined function";
+
+
+	/**
+	 * treat a symbol as a user-defined-function
+	 * @param symbol the symbol to cast as Subroutine
+	 * @return the resulting cast object verified
+	 * @throws RuntimeException for cast errors
+	 */
+	public static <T> Subroutine <T>
+			asUDF (Object symbol)
+	throws RuntimeException
+	{
+		return udfCheck (Subroutine.cast (symbol));
+	}
 
 
 }
