@@ -2,13 +2,18 @@
 package net.myorb.math.specialfunctions;
 
 import net.myorb.math.complexnumbers.ComplexValue;
+
 import net.myorb.math.expressions.managers.ExpressionFactorizedFieldManager;
 import net.myorb.math.expressions.managers.ExpressionFloatingFieldManager;
+
 import net.myorb.math.primenumbers.sieves.SieveOfSundaram;
-import net.myorb.data.abstractions.SpaceDescription;
-import net.myorb.math.primenumbers.*;
+import net.myorb.math.primenumbers.FactorizationImplementation;
+import net.myorb.math.primenumbers.Factorization;
+
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
+
+import net.myorb.data.abstractions.SpaceDescription;
 
 /**
  * implementation of the approximation of the Riemann Harmonic function
@@ -252,6 +257,93 @@ public class Riemann
 	}
 	// (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97)
 	//  1  2  3  4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25
+
+
+	/**
+	 * Riemann set up all the equations
+	 *		to state the grand formula for the prime counting function
+	 * https://www.cantorsparadise.com/riemanns-explicit-formula-a-beautiful-expression-for-the-prime-counting-function-1c83f5b65dfd
+	 */
+	public class ExplicitFormula
+	{
+
+		public ExplicitFormula
+		(Factorization.Underlying primes)
+		{
+			this ( primes, primes.getAllPrimes ().size () - 1 );
+		}
+
+		public ExplicitFormula
+		(Factorization.Underlying primes, int lim)
+		{ this.primes = primes; this.infinityApproximation = lim; }
+		Factorization.Underlying primes;
+		int infinityApproximation;
+
+		/*
+		 * R(x) = SIGMA [ 1 <= n <= INFINITY ] ( mu(n)/n * li(x^(1/n)) )
+		 * pi(x) = R(x) - SIGMA [ p : PRIME ] ( R(x^p) ) - SIGMA [ 1 <= m <= INFINITY ] ( x^(-2*m) )
+		 */
+
+		/**
+		 * foundation for the Riemann counting function
+		 * @param x parameter to function
+		 * @return the computed value
+		 */
+		public double R (double x)
+		{
+			double sum = 0.0;
+			for ( int n = 1; n <= infinityApproximation; n++ )
+			{
+				sum +=
+					ExponentialIntegral.li ( Math.pow (x, 1/n) ) *
+					(double) primes.mobius (n) / n;
+			}
+			return sum;
+		}
+
+		/**
+		 * sum of function of negative even integer powers
+		 * @param x parameter to function
+		 * @return the computed value
+		 */
+		double sumRexp (double x)
+		{
+			double sum = 0.0;
+			for ( int m = 1; m <= infinityApproximation; m++ )
+			{
+				sum += R ( Math.pow ( x, -2 * m ) );
+			}
+			return sum;
+		}
+
+		/**
+		 * sum of function of prime powers
+		 * @param x parameter to function
+		 * @return the computed value
+		 */
+		double sumRprimes (double x)
+		{
+			double sum = 0.0; Number nTHprime;
+			for ( int n = 1; n <= infinityApproximation; n++ )
+			{
+				nTHprime = primes.getNthPrime (n);
+				sum += R ( Math.pow ( x, nTHprime.doubleValue () ) );
+			}
+			return sum;
+		}
+
+		/**
+		 * the pi prime counting function being approximated
+		 * @param x parameter to function
+		 * @return the computed value
+		 */
+		public double pi (double x)
+		{
+			return R (x) - sumRprimes (x) - sumRexp (x);
+		}
+
+	}
+
 
 }
 
