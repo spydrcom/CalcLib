@@ -9,7 +9,10 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+
 import net.myorb.data.notations.json.JsonPrettyPrinter;
+
+import java.util.ArrayList;
 
 /**
  * command implementation for Series Expansion algorithm
@@ -24,10 +27,37 @@ public class SeriesExpansion <T>
 	Environment <T> environment;
 
 
+	/**
+	 * get and set variable name
+	 * @param polynomialVariable the name of the parameter in the profile
+	 */
 	public void setPolynomialVariable
 	(String polynomialVariable) { this.polynomialVariable =  polynomialVariable; }
 	public String getPolynomialVariable () { return polynomialVariable; }
-	String polynomialVariable = "x";
+	String polynomialVariable = null;
+
+
+	/**
+	 * verify polynomial variable description from profile
+	 * @param profile the Subroutine ParameterList description
+	 */
+	public void setPolynomialVariable (Subroutine.ParameterList profile)
+	{
+		setPolynomialVariable (profile.get (0));
+	}
+
+	/**
+	 * verify polynomial variable description
+	 * @return the parameter read from the function profile
+	 */
+	public ArrayList <String> parameterList ()
+	{
+		ArrayList <String>
+			parameterNameList = new ArrayList <> ();
+		try { parameterNameList.add ( getPolynomialVariable () ); }
+		catch (Exception e) { error ( "Error in function profile", e ); }
+		return parameterNameList;
+	}
 
 
 	/**
@@ -103,6 +133,7 @@ public class SeriesExpansion <T>
 		Subroutine <T> udf = null;
 		try { udf = DefinedFunction.asUDF ( lookup (functionName) ); }
 		catch (Exception e) { error ( functionName + " not recognized", e ); }
+		setPolynomialVariable (udf.getParameterNames ());
 		return getExpressionTree (udf);
 	}
 	JsonValue getExpressionTree (Subroutine <T> s)
