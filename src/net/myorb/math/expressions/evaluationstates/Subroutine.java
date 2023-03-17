@@ -28,7 +28,10 @@ import net.myorb.math.computational.Spline.Operations;
 
 // data abstractions from IO library
 import net.myorb.data.abstractions.SimpleUtilities;
+import net.myorb.data.abstractions.CommonCommandParser;
+import net.myorb.data.abstractions.CommonCommandParser.TokenType;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.abstractions.ExpressionTokenParser;
 import net.myorb.data.abstractions.ErrorHandling;
 
 // JRE
@@ -100,8 +103,6 @@ public class Subroutine<T>
 
 		try { gardener.completeLexicalAnalysis (tokens); }
 		catch (Exception e) { throw new RuntimeException ("Error in expression", e); }
-
-		//catch (Exception e) { e.printStackTrace (); }
 	}
 
 
@@ -136,9 +137,33 @@ public class Subroutine<T>
 	public void allowExpressionTree ()
 	{
 		useExpressionTree = true;
-		newExpressionTree (functionTokens);
+		newExpressionTree (reducedSequence ());
 	}
 	protected boolean useExpressionTree = false; // allow use of tree
+
+
+	/**
+	 * process token patterns disallowed in tree representation
+	 * @return token sequence with appropriate changes
+	 */
+	TokenParser.TokenSequence reducedSequence ()
+	{
+		CommonCommandParser.TokenDescriptor token, prior = null; String image;
+		TokenParser.TokenSequence reduced = new TokenParser.TokenSequence ();
+		for (int i = 0; i < functionTokens.size (); i++)
+		{
+			token = functionTokens.get (i);
+			image = token.getTokenImage ();
+			if (image.startsWith ("'"))
+			{
+				token = ExpressionTokenParser.newToken
+					(prior.getTokenImage () + image, TokenType.IDN);
+				reduced.remove (prior);
+			}
+			reduced.add (prior = token);
+		}
+		return reduced;
+	}
 
 
 	/**
