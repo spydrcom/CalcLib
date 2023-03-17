@@ -45,7 +45,7 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 	public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
 	{
 		if (parameters != null) establishCallFrame (parameters);
-		// determine if an expression tree has ben built for this function
+		// determine if an expression tree has been built for this function
 		if ( ! useExpressionTree ) return tokenStreamInterpretation (constructEngine ());
 		// the flag indicates that the pre-processing of the token stream has provided an expression tree
 		else return processExpression ();
