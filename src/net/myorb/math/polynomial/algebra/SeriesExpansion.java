@@ -63,12 +63,9 @@ public class SeriesExpansion <T>
 	/**
 	 * produce expanded version of function sequence
 	 * @param functionName the name of the function in the symbol table
-	 * @param tokens the command tokens specified on the request
-	 * @param tokenPosition the position of the next token
 	 * @return the expanded sequence
 	 */
-	public CommandSequence expandSequence
-	(String functionName, CommandSequence tokens, int tokenPosition)
+	public CommandSequence expandSequence (String functionName)
 	{
 		return new CommandSequence
 		(
@@ -76,7 +73,7 @@ public class SeriesExpansion <T>
 			(
 				expandedDescription
 				(
-					functionName, tokens, tokenPosition
+					functionName
 				)
 			)
 		);
@@ -86,15 +83,12 @@ public class SeriesExpansion <T>
 	/**
 	 * buffer the text of expanded version of equation
 	 * @param functionName the name of the function in the symbol table
-	 * @param tokens the command tokens specified on the request
-	 * @param tokenPosition the position of the next token
 	 * @return buffer holding text of expanded equation
 	 */
-	public StringBuffer expandedDescription
-	(String functionName, CommandSequence tokens, int tokenPosition)
+	public StringBuffer expandedDescription (String functionName)
 	{
 		Elements.Factor expanded =
-			performExpansion (functionName, tokens, tokenPosition);
+			performExpansion (functionName);
 		if (showFunctionExpanded) System.out.println (expanded);
 		return new StringBuffer (expanded.toString ());
 	}
@@ -103,12 +97,9 @@ public class SeriesExpansion <T>
 	/**
 	 * perform expansion of named polynomial
 	 * @param functionName the function name given to the polynomial
-	 * @param tokens the command tokens specified on the request
-	 * @param tokenPosition the position of the next token
 	 * @return the expanded equation
 	 */
-	public Elements.Factor performExpansion
-	(String functionName, CommandSequence tokens, int tokenPosition)
+	public Elements.Factor performExpansion (String functionName)
 	{
 		return RepresentationConversions.organizeTerms
 		(
