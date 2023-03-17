@@ -150,12 +150,8 @@ public class JsonBinding
 	@SuppressWarnings ("unchecked")
 	public static <T> JsonSemantics.JsonValue toJson (Element element)
 	{
-		if (element instanceof JsonRepresentation)
-		{
-			return ((JsonRepresentation<T>) element).toJson ();
-		}
-		System.out.println
-		("JSON conversion error: " + element.toString () + " - " + element.getElementType ());
+		if (element instanceof JsonRepresentation) return ((JsonRepresentation<T>) element).toJson ();
+		System.out.println ("JSON conversion error: " + element.toString () + " - " + element.getElementType ());
 		return new LexicalAnalysis.Identifier<T> (element.toString ()).toJson ();
 	}
 
