@@ -156,7 +156,7 @@ public class JsonBinding
 		}
 		System.out.println
 		("JSON conversion error: " + element.toString () + " - " + element.getElementType ());
-		return new LexicalAnalysis.Identifier<T> ("'").toJson ();
+		return new LexicalAnalysis.Identifier<T> (element.toString ()).toJson ();
 	}
 
 
