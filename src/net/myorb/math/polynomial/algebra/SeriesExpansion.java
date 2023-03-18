@@ -103,21 +103,56 @@ public class SeriesExpansion <T>
 	{
 		return RepresentationConversions.organizeTerms
 		(
-			expandSymbol (functionName, this)
+			expandSymbol (functionName, null, this)
 		);
 	}
 
 
 	/**
+	 * identify actual parameter for use in substitutions
+	 * @param actualParameter the description of the actual parameter
+	 */
+	void prepareParameterSubstitution
+		(
+			Elements.Factor actualParameter
+		)
+	{
+		this.actualParameter = actualParameter;
+	}
+	
+	/**
+	 * check for formal parameter reference
+	 * @param name the name of the identifier
+	 * @return TRUE when identifier matches formal
+	 */
+	boolean referencesFormalParameter (String name)
+	{
+		return actualParameter != null && name.equals (getPolynomialVariable ());
+	}
+
+	/**
+	 * @return the captured actual parameter factor
+	 */
+	Elements.Factor getActualParameter () { return actualParameter; }
+	Elements.Factor actualParameter = null;
+
+
+	/**
 	 * construct element tree for a polynomial in the symbol table
 	 * @param functionName the name of the function expected to be a polynomial
+	 * @param parameter the description of the parameter used in the symbol reference
 	 * @param root the expansion object for this processing request
 	 * @return the root Factor node for describing this symbol
 	 */
-	public Elements.Factor expandSymbol (String functionName, SeriesExpansion <?> root)
+	public Elements.Factor expandSymbol
+		(String functionName, Elements.Factor parameter, SeriesExpansion <?> root)
 	{
+		String formalParameter = getPolynomialVariable ();
 		JsonValue jsonTree = getJsonDescription (functionName);
-		return RepresentationConversions.translate ( trace (jsonTree), root );
+		if (parameter != null) prepareParameterSubstitution (parameter);
+		Elements.Factor result = RepresentationConversions.translate ( trace (jsonTree), root );
+		setPolynomialVariable (formalParameter);
+		return result;
 	}
 	JsonValue getJsonDescription (String functionName)
 	{

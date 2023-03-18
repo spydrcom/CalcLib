@@ -69,6 +69,33 @@ public class RepresentationConversions extends Elements
 
 
 	/**
+	 * process an identifier reference
+	 * @param name the name of the identifier
+	 * @param parent the Factor that will reference the identifier
+	 * @param root the active processor root
+	 */
+	public static void processIdentifier
+	(String name, Factor parent, SeriesExpansion <?> root)
+	{
+		Factor using, actual;
+		if (root.referencesFormalParameter (name))
+		{
+			if ( (actual = root.getActualParameter ()) instanceof Sum )
+			{ using = processFactor ( (Sum) actual ); }
+			else using = actual;
+		}
+		else using = new Variable (name);
+		add (using, parent);
+	}
+	public static Factor processFactor (Sum actual)
+	{
+		if (actual.size () == 1)
+		{ return actual.get (0); }
+		return actual;
+	}
+
+
+	/**
 	 * recognize a node from node-type
 	 * @param node the JSON node to recognize
 	 * @param parent the element node being built
@@ -79,9 +106,10 @@ public class RepresentationConversions extends Elements
 	{
 		switch (recognizeType (node))
 		{
+			case Identifier:	processIdentifier
+									(member ("Name", node), parent, root);			break;
 			case BinaryOP:		add (translateOperation (node, root), parent);		break;
 			case UnaryOP:		add (translateInvocation (node, root), parent);		break;
-			case Identifier:	add (new Variable (member ("Name", node)), parent); break;
 			case Value: 		add (new Constant (node.toString ()), parent);		break;
 			default:			throw new RuntimeException ("Unrecognized node");
 		}
@@ -104,7 +132,7 @@ public class RepresentationConversions extends Elements
 		Factor parent = new Sum (), parameter = new Sum ();
 		JsonSemantics.JsonObject object = (JsonSemantics.JsonObject) node;
 		recognize ( object.getMemberCalled ("Parameter"), parameter, root );
-		parent = root.expandSymbol (member ("OpName", object), root);
+		parent = root.expandSymbol (member ("OpName", object), parameter, root);
 		return parent;
 	}
 
