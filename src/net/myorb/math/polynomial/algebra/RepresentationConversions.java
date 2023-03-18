@@ -47,21 +47,22 @@ public class RepresentationConversions extends Elements
 		}
 		return reduced;
 	}
-	static Factor reducedTerm (Factor term)
+	static Factor reducedTerm ( Factor term )
 	{
 		if (term instanceof Elements.Product)
-		{ return reducedProductsFrom ((Elements.Product) term); }
+		{ return reducedProductsFrom ( (Elements.Product) term ); }
 		else return term;
 	}
-	static Factor reducedProductsFrom (Elements.Product factors)
+	static Factor reducedProductsFrom ( Elements.Product factors )
 	{
-		int factorCount = factors.size ();
-		if (factorCount == 1) return factors.get (0);
-		else return reducedProductFrom (factors, factorCount);
+		Factor result;
+		if ( ( result = getSingleChild (factors) ) == null )
+		{ result = reducedProductFrom (factors); }
+		return result;
 	}
-	static Factor reducedProductFrom
-		(Elements.Product factors, int n)
+	static Factor reducedProductFrom ( Elements.Product factors )
 	{
+		int n = factors.size ();
 		Factor product = Operations.productOf (factors.get (0), factors.get (1));
 		for (int i = 2; i < n; i++) product = Operations.productOf (product, factors.get (i));
 		return product;
@@ -70,28 +71,17 @@ public class RepresentationConversions extends Elements
 
 	/**
 	 * process an identifier reference
-	 * @param name the name of the identifier
+	 * @param symbolReferenced the name of the identifier
 	 * @param parent the Factor that will reference the identifier
 	 * @param root the active processor root
 	 */
 	public static void processIdentifier
-	(String name, Factor parent, SeriesExpansion <?> root)
+		(String symbolReferenced, Factor parent, SeriesExpansion <?> root)
 	{
-		Factor using, actual;
-		if (root.referencesFormalParameter (name))
-		{
-			if ( (actual = root.getActualParameter ()) instanceof Sum )
-			{ using = processFactor ( (Sum) actual ); }
-			else using = actual;
-		}
-		else using = new Variable (name);
-		add (using, parent);
-	}
-	public static Factor processFactor (Sum actual)
-	{
-		if (actual.size () == 1)
-		{ return actual.get (0); }
-		return actual;
+		Factor ref = root.referencesFormalParameter (symbolReferenced) ?
+			reduceSingle ( root.getActualParameter () ) :
+			new Variable (symbolReferenced);
+		add (ref, parent);
 	}
 
 
