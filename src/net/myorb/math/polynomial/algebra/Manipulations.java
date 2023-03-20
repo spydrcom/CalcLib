@@ -64,7 +64,7 @@ public class Manipulations extends Elements
 
 			Product result = new Product ();
 			
-			if (scalar != 1)
+			if (scalar != 1 || this.keySet ().size () == 0)
 			{
 				result.add (new Constant (scalar));
 			}

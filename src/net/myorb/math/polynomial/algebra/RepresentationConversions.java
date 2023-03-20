@@ -211,6 +211,8 @@ public class RepresentationConversions extends Elements
 	public static void processFactor
 		(Product product, Sum positive, Sum negative)
 	{
+		if (product.size () == 0) return;
+
 		boolean dup = false;
 		Sum choice = positive;
 		Product factors = product;
@@ -224,7 +226,7 @@ public class RepresentationConversions extends Elements
 			if (value > 0.0)
 			{
 				choice = negative; factors = new Product ();
-				if (value != 1) factors.add (new Constant (value));
+				addConstant (value, factors, product);
 				dup = true;
 			}
 		}
@@ -242,6 +244,17 @@ public class RepresentationConversions extends Elements
 		}
 
 		choice.add (factors);
+	}
+	static void addConstant (double value, Product factors, Product source)
+	{
+		if (value != 1)
+		{
+			factors.add (new Constant (value));
+		}
+		else if (source.size () == 1)
+		{
+			factors.add (new Constant (1.0));
+		}
 	}
 	public static Factor reorderedAsDifference
 			(Sum positive, Sum negative)
