@@ -53,6 +53,46 @@ public class Utilities extends Elements
 	}
 
 
+	// processing for constants
+
+	/**
+	 * check for Constant
+	 * @param factor source to check
+	 * @return TRUE when instance-of Constant
+	 */
+	public static boolean isConstant (Factor factor)
+	{
+		return factor instanceof Constant;
+	}
+
+	/**
+	 * determine if factor is constant
+	 * @param factor the factor to be evaluated
+	 * @return the factor as Constant or null if fails
+	 */
+	public static Constant getConstant (Factor factor)
+	{
+		return isConstant (factor) ? (Constant) factor : null;
+	}
+
+	/*
+	 * product factors will have a constant at the beginning of the child list
+	 * this may not be present if the value is 1 so presence cannot be assumed
+	 * when present this will be the scalar multiplier for the product
+	 */
+
+	/**
+	 * get scalar if present
+	 * @param factor a multi-child factor 
+	 * @return leading constant from child list if present
+	 */
+	public static Constant getScalarFrom (Factor factor)
+	{
+		// this assumes the caller verified the factor as a product
+		return getConstant ( Factors.firstOf (factor) );
+	}
+
+
 	// complexity management
 
 	/**
@@ -82,9 +122,8 @@ public class Utilities extends Elements
 	 */
 	public static Factor getSingleChild (Factors factors)
 	{
-		if ( hasSingleChild (factors) )
-			return factors.get (0);
-		else return null;
+		return ! hasSingleChild (factors) ? null :
+			Factors.firstOf (factors);
 	}
 
 	/**
@@ -94,7 +133,7 @@ public class Utilities extends Elements
 	 */
 	public static Factor reduceSingle (Factor factor)
 	{
-		if (isMultiFactored (factor))
+		if ( isMultiFactored (factor) )
 		{
 			Factor child = getSingleChild ( (Factors) factor );
 			if ( child != null ) return child;
@@ -175,18 +214,14 @@ public class Utilities extends Elements
 	 */
 	public static boolean isNegative (Elements.Factor factor)
 	{
-		if (factor instanceof Constant)
+		if ( isConstant (factor) )
 		{
 			return isNegative ( (Constant) factor );
 		}
-		else if (factor instanceof Factors)
+		else if ( isMultiFactored (factor) )
 		{
-			Factor first = ( (Factors) factor ).get (0);
-
-			if (first instanceof Constant)
-			{
-				return isNegative ( (Constant) first );
-			}
+			Constant C = getScalarFrom ( factor );
+			if ( C != null ) return isNegative ( C );
 		}
 		return false;
 	}
@@ -208,7 +243,7 @@ public class Utilities extends Elements
 	 */
 	public static Elements.Factor negate (Elements.Factor factor)
 	{
-		return new Elements.Negated (negated (factor, -1.0));
+		return new Elements.Negated ( negated (factor, -1.0) );
 	}
 
 	/**
@@ -219,20 +254,14 @@ public class Utilities extends Elements
 	 */
 	public static Elements.Factor negated (Elements.Factor factor, Double toIgnore)
 	{
-		if (factor instanceof Constant)
+		if ( isConstant (factor) )
 		{
 			return negatedConstant ( (Constant) factor );
 		}
-		else if (factor instanceof Factors)
+		else if ( isMultiFactored (factor) )
 		{
-			Factors factors = (Factors) factor;
-			Factor expectedConstantFactor = factors.get (0);
-
-			if (expectedConstantFactor instanceof Constant)
-			{
-				Constant C = (Constant) expectedConstantFactor;
-				return qualified ( C, toIgnore, factors);
-			}
+			Constant C = getScalarFrom ( factor );
+			if ( C != null ) return qualified ( C, toIgnore, (Factors) factor );
 		}
 		return null;
 	}
@@ -248,11 +277,11 @@ public class Utilities extends Elements
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		(Constant C, Double toIgnore, Factors originalProduct)
+		( Constant C, Double toIgnore, Factors originalProduct )
 	{
 		Product product = new Product ();
 		if ( constantQualifies ( C, toIgnore ) ) negateConstant ( C, product ); 
-		duplicate (1, originalProduct, product);
+		duplicate ( 1, originalProduct, product );
 		return product;
 	}
 
@@ -264,8 +293,8 @@ public class Utilities extends Elements
 	 */
 	public static boolean constantQualifies (Constant C, Double toIgnore)
 	{
-		if (toIgnore == null) return true;
-		if (C.getValue () == toIgnore.doubleValue ()) return false;
+		if ( toIgnore == null ) return true;
+		if ( C.getValue () == toIgnore.doubleValue () ) return false;
 		return true;
 	}
 
