@@ -2,7 +2,6 @@
 package net.myorb.testing;
 
 import net.myorb.math.polynomial.algebra.*;
-import net.myorb.math.polynomial.algebra.Elements.Factor;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -11,7 +10,7 @@ import net.myorb.math.expressions.tree.*;
 
 import net.myorb.data.notations.json.*;
 
-public class TreeClone
+public class TreeClone extends Utilities
 {
 
 	public static void main (String [] args) throws Exception
@@ -63,13 +62,13 @@ public class TreeClone
 //		!! J_n (x) = ( x^2 * FSE2(x) ) + ( x * FSE1(x) ) + ( (x^2-n^2) * FSE(x) )
 
 		Factor
-			x = Elements.powerFactor ("x", 1.0),
-			x2 = Elements.powerFactor ("x", 2.0);
+			x = powerFactor ("x", 1.0),
+			x2 = powerFactor ("x", 2.0);
 		Elements.Sum J0 = new Elements.Sum ();
 
-		Elements.add (Operations.productOf (x, eqn1), J0);
-		Elements.add (Operations.productOf (x2, eqn0), J0);
-		Elements.add (Operations.productOf (x2, eqn2), J0);
+		add (Operations.productOf (x, eqn1), J0);
+		add (Operations.productOf (x2, eqn0), J0);
+		add (Operations.productOf (x2, eqn2), J0);
 
 		System.out.println ();
 		System.out.println ("===");
@@ -77,14 +76,14 @@ public class TreeClone
 		System.out.println ("===");
 		show (J0);
 
-		Elements.Sum x2n2 = new Elements.Sum ();
-		Elements.add (new Elements.Constant (-1.0), x2n2);
-		Elements.add (x2, x2n2);
+		Sum x2n2 = new Sum ();
+		add (new Elements.Constant (-1.0), x2n2);
+		add (x2, x2n2);
 
-		Elements.Sum J1 = new Elements.Sum ();
-		Elements.add (Operations.productOf (x, eqn1), J1);
-		Elements.add (Operations.productOf (x2n2, eqn0), J1);
-		Elements.add (Operations.productOf (x2, eqn2), J1);
+		Sum J1 = new Elements.Sum ();
+		add (Operations.productOf (x, eqn1), J1);
+		add (Operations.productOf (x2n2, eqn0), J1);
+		add (Operations.productOf (x2, eqn2), J1);
 
 		System.out.println ();
 		System.out.println ("===");
@@ -92,14 +91,14 @@ public class TreeClone
 		System.out.println ("===");
 		show (J1);
 
-		x2n2 = new Elements.Sum ();
-		Elements.add (new Elements.Constant (-4.0), x2n2);
-		Elements.add (x2, x2n2);
+		x2n2 = new Sum ();
+		add (new Elements.Constant (-4.0), x2n2);
+		add (x2, x2n2);
 
-		Elements.Sum J2 = new Elements.Sum ();
-		Elements.add (Operations.productOf (x, eqn1), J2);
-		Elements.add (Operations.productOf (x2n2, eqn0), J2);
-		Elements.add (Operations.productOf (x2, eqn2), J2);
+		Sum J2 = new Sum ();
+		add (Operations.productOf (x, eqn1), J2);
+		add (Operations.productOf (x2n2, eqn0), J2);
+		add (Operations.productOf (x2, eqn2), J2);
 
 		System.out.println ();
 		System.out.println ("===");
