@@ -119,6 +119,7 @@ public class RepresentationConversions extends Elements
 	public static Factor translateInvocation
 	(JsonLowLevel.JsonValue node, SeriesExpansion <?> root)
 	{
+		root.prepareParameterSubstitution (null);
 		Factor parent = new Sum (), parameter = new Sum ();
 		JsonSemantics.JsonObject object = (JsonSemantics.JsonObject) node;
 		recognize ( object.getMemberCalled ("Parameter"), parameter, root );
@@ -259,11 +260,37 @@ public class RepresentationConversions extends Elements
 	public static Factor reorderedAsDifference
 			(Sum positive, Sum negative)
 	{
-		if (negative.size () == 0) return positive;
-		Difference result = new Difference ();
-		result.add (positive);
-		result.add (negative);
+		Sum result = positive;
+		if (negative.size () > 0)
+		{
+			add ( positive, result = new Sum () );
+			for (Factor term : negative) negate (term, result);
+		}
 		return result;
+	}
+	static void negate (Factor term, Sum series)
+	{
+		if (term instanceof Constant)
+		{
+			negateConstant ( (Constant) term, series );
+			return;
+		}
+		else if (term instanceof Factors)
+		{
+			Factors factors = (Factors) term;
+			Factor first = factors.get (0);
+
+			if (first instanceof Constant)
+			{
+				Product product = new Product ();
+				negateConstant ( (Constant) first, product );
+				for (int i = 1; i < factors.size (); i++)
+				{ product.add (factors.get (i)); }
+				add (product, series);
+				return;
+			}
+		}
+		add (Operations.productOf (new Constant (-1.0), term), series);
 	}
 
 
