@@ -30,7 +30,10 @@ public abstract class Elements
 	 */
 	public abstract static class Factors
 			extends ArrayList <Factor> implements Factor
-	{ private static final long serialVersionUID = 35114701359602093L; }
+	{
+		public static Factor firstOf (Factor factors) { return ( (Factors) factors ).get (0); }
+		private static final long serialVersionUID = 35114701359602093L;
+	}
 
 	/**
 	 * a set of factors comprising a sum
