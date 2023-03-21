@@ -8,7 +8,7 @@ import java.util.Arrays;
  * applications of algebraic rules to equations
  * @author Michael Druckman
  */
-public class Manipulations extends Elements
+public class Manipulations extends Utilities
 {
 
 
