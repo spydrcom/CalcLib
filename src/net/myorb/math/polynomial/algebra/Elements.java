@@ -52,6 +52,17 @@ public class Elements
 	}
 
 	/**
+	 * mark factor as negative
+	 */
+	public static class Negated implements Factor
+	{
+		public OpTypes getType () { return null; }
+		public Negated (Factor factor) { this.child = factor; }
+		public Factor getFactor () { return child; }
+		Factor child;
+	}
+
+	/**
 	 * a set of factors comprising a product
 	 */
 	public static class Product extends Factors
@@ -86,6 +97,11 @@ public class Elements
 		public OpTypes getType () { return OpTypes.Operand; }
 		public Constant (Double value) { this.value = value.toString (); }
 		public Constant (String value) { this.value = value; }
+
+		public void negate ()
+		{
+			value = Double.toString ( - getValue () );
+		}
 
 		String value;
 	}
@@ -250,6 +266,87 @@ public class Elements
 	}
 
 
+	// adjust negative terms
+
+	/**
+	 * apply NEGATE structure to prepare display format
+	 * @param description the description of a portion of an expression
+	 * @return the altered structure
+	 */
+	public static Elements.Factor reducedForm (Elements.Factor description)
+	{
+		if (description instanceof Elements.Sum)
+		{
+			return reducedSum ( (Elements.Sum) description );
+		}
+		if (description instanceof Elements.Product)
+		{
+			if ( isNegative (description) )
+			{
+				return negate (description);
+			}
+		}
+		return description;
+	}
+	public static Elements.Factor reducedSum (Elements.Sum sum)
+	{
+		Elements.Sum reduced = new Elements.Sum ();
+		for (Elements.Factor term : sum)
+		{
+			if ( isNegative (term) )
+			{
+				term = negate (term);
+			}
+			Elements.add (term, reduced);
+		}
+		return reduced;
+	}
+	static boolean isNegative (Elements.Factor factor)
+	{
+		if (factor instanceof Constant)
+		{
+			return ( (Constant) factor ).getValue () < 0;
+		}
+		else if (factor instanceof Factors)
+		{
+			Factor first = ( (Factors) factor ).get (0);
+
+			if (first instanceof Constant)
+			{
+				return ( (Constant) first ).getValue () < 0;
+			}
+		}
+		return false;
+	}
+	static Elements.Factor negate (Elements.Factor factor)
+	{
+		Factor negatedFactor = null;
+		if (factor instanceof Constant)
+		{
+			negatedFactor = negatedConstant ( (Constant) factor );
+		}
+		else if (factor instanceof Factors)
+		{
+			Product product = new Product ();
+			Factors factors = (Factors) factor;
+			Constant C = (Constant) ( (Factors) factor ).get (0);
+			if ( C.getValue () != -1 ) negateConstant ( C, product );
+			for (int i = 1; i < factors.size (); i++)
+			{ product.add (factors.get (i)); }
+			negatedFactor = product;
+		}
+		return new Elements.Negated (negatedFactor);
+	}
+	public static void negateConstant (Constant term, Factors series)
+	{
+		add ( negatedConstant (term), series );
+	}
+	public static Constant negatedConstant (Constant C)
+	{
+		return new Constant ( - C.getValue () );
+	}
+
+
 	// display formatter
 
 	/**
@@ -260,14 +357,16 @@ public class Elements
 	 */
 	public static String image (Factors factors, String op)
 	{
-		int factorCount; StringBuffer buf;
+		int factorCount; StringBuffer buf; Factor next;
 		if ((factorCount = factors.size ()) > 0)
 		{
 			buf = new StringBuffer ()
 				.append (factors.get (0).toString ());
 			for (int i = 1; i < factorCount; i++)
 			{
-				buf.append (op).append (factors.get (i).toString ());
+				if ( (next = reducedForm (factors.get (i))) instanceof Negated )
+				{ buf.append (" - ").append ( ( (Negated) next ).getFactor () ); }
+				else buf.append (op).append (next);
 			}
 			return buf.toString ();
 		}
