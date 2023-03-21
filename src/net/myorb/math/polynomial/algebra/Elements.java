@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * representations of polynomial expressions
  * @author Michael Druckman
  */
-public class Elements
+public abstract class Elements
 {
 
 
@@ -70,7 +70,7 @@ public class Elements
 		public String toString () { return image (this, "*"); }
 		public OpTypes getType () { return OpTypes.Multiplication; }
 		private static final long serialVersionUID = 5153646408526934363L;
-		public Product (Factor factor) { Elements.add (factor, this); }
+		public Product (Factor factor) { Utilities.add (factor, this); }
 		public Product () {}
 	}
 
@@ -155,198 +155,6 @@ public class Elements
 	{ private static final long serialVersionUID = 8507384482661667874L; }
 
 
-	// node linkage
-
-	/**
-	 * add a factor to a parent
-	 * @param factor the factor to be added
-	 * @param parent the parent summation or product node
-	 */
-	public static void add (Factor factor, Factor parent)
-	{
-		if (parent instanceof Factors && factor != null)
-		{
-			if ( factorMatchesParent (factor, parent) )
-			{ ( (Factors) parent ).addAll ( (Factors) factor ); }
-			else ( (Factors) parent ).add (factor);
-		}
-	}
-	static boolean factorMatchesParent (Factor factor, Factor parent)
-	{
-		OpTypes factorType = factor.getType ();
-		if (factorType == OpTypes.Operand) return false;
-		return factorType == parent.getType ();
-	}
-
-
-	/**
-	 * construct a reference to a variable
-	 * @param variable the identifier referenced
-	 * @param order the polynomial term order
-	 * @return the appropriate reference to
-	 */
-	public static Factor powerFactor (String variable, Double order)
-	{
-		Variable symbol = new Variable (variable);
-		if (order != 1) return Power.reference (symbol, order);
-		return symbol;
-	}
-
-
-	// complexity management
-
-	/**
-	 * check for child nodes
-	 * @param factor source to check
-	 * @return TRUE when instance-of Factors
-	 */
-	public static boolean isMultiFactored (Factor factor)
-	{
-		return factor instanceof Factors;
-	}
-
-	/**
-	 * check for single child case
-	 * @param factors source to check
-	 * @return TRUE when child count is one
-	 */
-	public static boolean hasSingleChild (Factors factors)
-	{
-		return factors.size () == 1;
-	}
-
-	/**
-	 * get singleton child node
-	 * @param factors source to check
-	 * @return child node or NULL when not singleton
-	 */
-	public static Factor getSingleChild (Factors factors)
-	{
-		if ( hasSingleChild (factors) )
-			return factors.get (0);
-		else return null;
-	}
-
-	/**
-	 * promote single factors
-	 * @param factor a factor that may be a single factor set
-	 * @return the single factor where appropriate otherwise parameter factor
-	 */
-	public static Factor reduceSingle (Factor factor)
-	{
-		if (isMultiFactored (factor))
-		{
-			Factor child = getSingleChild ( (Factors) factor );
-			if ( child != null ) return child;
-		}
-		return factor;
-	}
-
-	/**
-	 * check for single grand-child
-	 * @param terms the source to check
-	 * @return TRUE if contains single grand-child
-	 */
-	public static boolean simpleReference (Sum terms)
-	{
-		Factor child = getSingleChild (terms);
-		if ( child == null || ! isMultiFactored (child) ) return false;
-		return hasSingleChild ( (Factors) child );
-	}
-
-	/**
-	 * treat factor as factor list when appropriate
-	 * @param factor the source node to check for children
-	 * @return NULL if not appropriate otherwise child list
-	 */
-	public static Factors getChildList (Factor factor)
-	{
-		if ( ! isMultiFactored (factor) ) return null;
-		else return (Factors) factor;
-	}
-
-
-	// adjust negative terms
-
-	/**
-	 * apply NEGATE structure to prepare display format
-	 * @param description the description of a portion of an expression
-	 * @return the altered structure
-	 */
-	public static Elements.Factor reducedForm (Elements.Factor description)
-	{
-		if (description instanceof Elements.Sum)
-		{
-			return reducedSum ( (Elements.Sum) description );
-		}
-		if (description instanceof Elements.Product)
-		{
-			if ( isNegative (description) )
-			{
-				return negate (description);
-			}
-		}
-		return description;
-	}
-	public static Elements.Factor reducedSum (Elements.Sum sum)
-	{
-		Elements.Sum reduced = new Elements.Sum ();
-		for (Elements.Factor term : sum)
-		{
-			if ( isNegative (term) )
-			{
-				term = negate (term);
-			}
-			Elements.add (term, reduced);
-		}
-		return reduced;
-	}
-	static boolean isNegative (Elements.Factor factor)
-	{
-		if (factor instanceof Constant)
-		{
-			return ( (Constant) factor ).getValue () < 0;
-		}
-		else if (factor instanceof Factors)
-		{
-			Factor first = ( (Factors) factor ).get (0);
-
-			if (first instanceof Constant)
-			{
-				return ( (Constant) first ).getValue () < 0;
-			}
-		}
-		return false;
-	}
-	static Elements.Factor negate (Elements.Factor factor)
-	{
-		Factor negatedFactor = null;
-		if (factor instanceof Constant)
-		{
-			negatedFactor = negatedConstant ( (Constant) factor );
-		}
-		else if (factor instanceof Factors)
-		{
-			Product product = new Product ();
-			Factors factors = (Factors) factor;
-			Constant C = (Constant) ( (Factors) factor ).get (0);
-			if ( C.getValue () != -1 ) negateConstant ( C, product );
-			for (int i = 1; i < factors.size (); i++)
-			{ product.add (factors.get (i)); }
-			negatedFactor = product;
-		}
-		return new Elements.Negated (negatedFactor);
-	}
-	public static void negateConstant (Constant term, Factors series)
-	{
-		add ( negatedConstant (term), series );
-	}
-	public static Constant negatedConstant (Constant C)
-	{
-		return new Constant ( - C.getValue () );
-	}
-
-
 	// display formatter
 
 	/**
@@ -364,7 +172,7 @@ public class Elements
 				.append (factors.get (0).toString ());
 			for (int i = 1; i < factorCount; i++)
 			{
-				if ( (next = reducedForm (factors.get (i))) instanceof Negated )
+				if ( (next = Utilities.reducedForm (factors.get (i))) instanceof Negated )
 				{ buf.append (" - ").append ( ( (Negated) next ).getFactor () ); }
 				else buf.append (op).append (next);
 			}
@@ -372,6 +180,13 @@ public class Elements
 		}
 		return "";
 	}
+
+	/**
+	 * parenthetical version
+	 * @param factors the factors making sub-expression
+	 * @param op the text of the operator
+	 * @return the formatted display
+	 */
 	public static String bracketedImage (Factors factors, String op)
 	{
 		return "( " + image (factors, op) + " )";
