@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.polynomial.algebra.Elements;
+
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.commands.CommandSequence;
@@ -9,7 +11,6 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
-
 import net.myorb.data.notations.json.JsonPrettyPrinter;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * command implementation for Series Expansion algorithm
  * @author Michael Druckman
  */
-public class SeriesExpansion <T>
+public class SeriesExpansion <T> extends Elements
 {
 
 
@@ -88,7 +89,7 @@ public class SeriesExpansion <T>
 	public StringBuffer expandedDescription (String functionName)
 	{
 		Elements.Factor expanded =
-			performExpansion (functionName);
+			reducedForm (performExpansion (functionName));
 		if (showFunctionExpanded) System.out.println (expanded);
 		return new StringBuffer (expanded.toString ());
 	}
