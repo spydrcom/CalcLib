@@ -366,7 +366,8 @@ public class Manipulations extends Elements
 		Factor distribute (Double e)
 		{
 			Sum terms = get (e);
-			if ( e == 0.0 || simpleReference (terms) ) return terms;
+			if ( simpleReference (terms) ) return terms;
+			if ( e == 0.0 ) return reducedSumOf ( terms );
 			return distributedProduct (terms, e);
 		}
 
@@ -422,7 +423,7 @@ public class Manipulations extends Elements
 			Sum result = new Sum ();
 			for ( Double e : getPowers () )
 			{ add ( distribute (e), result ); }
-			return result;
+			return reducedSumOf (result);
 		}
 		Double [] getPowers ()
 		{
@@ -436,6 +437,41 @@ public class Manipulations extends Elements
 		
 	}
 
+	/**
+	 * attempt to fold constants
+	 * @param terms the terms of a sum
+	 * @return the reduced sum
+	 */
+	static Sum reducedSumOf (Sum terms)
+	{
+		double constant = 0.0;
+		Sum reduced = new Sum ();
+
+		for (Factor term : terms)
+		{
+			if (term instanceof Product)
+			{
+				Factor child = getSingleChild ( (Product) term );
+				if (child != null) term = child;
+			}
+
+			if (term instanceof Constant)
+			{
+				constant += ( (Constant) term ).getValue ();
+			}
+			else
+			{
+				add (term, reduced);
+			}
+		}
+
+		if (constant != 0)
+		{
+			add ( new Constant (constant), reduced );
+		}
+
+		return reduced;
+	}
 
 	/**
 	 * collect terms around powers of a variable
