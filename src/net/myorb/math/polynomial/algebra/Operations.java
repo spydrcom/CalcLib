@@ -5,7 +5,7 @@ package net.myorb.math.polynomial.algebra;
  * implementations of operations on polynomials
  * @author Michael Druckman
  */
-public class Operations extends Elements
+public class Operations extends Utilities
 {
 
 
