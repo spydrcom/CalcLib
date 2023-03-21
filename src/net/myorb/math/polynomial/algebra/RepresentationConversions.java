@@ -8,7 +8,7 @@ import net.myorb.data.notations.json.JsonLowLevel;
  * conversions between representations of polynomials
  * @author Michael Druckman
  */
-public class RepresentationConversions extends Elements
+public class RepresentationConversions extends Utilities
 {
 
 
@@ -37,7 +37,13 @@ public class RepresentationConversions extends Elements
 			root.getPolynomialVariable ()
 		);
 	}
-	static Elements.Sum reduceTermsOf (Elements.Sum equation)
+
+	/**
+	 * apply summation algorithm to a set of terms
+	 * @param equation the equation being analyzed
+	 * @return modified sum
+	 */
+	public static Elements.Sum reduceTermsOf (Elements.Sum equation)
 	{
 		Elements.Sum reduced = new Elements.Sum ();
 		for (Factor factor : equation)
@@ -47,20 +53,38 @@ public class RepresentationConversions extends Elements
 		}
 		return reduced;
 	}
-	static Factor reducedTerm ( Factor term )
+
+	/**
+	 * process product found in term
+	 * @param term the term being analyzed
+	 * @return modified term
+	 */
+	public static Factor reducedTerm ( Factor term )
 	{
 		if (term instanceof Elements.Product)
 		{ return reducedProductsFrom ( (Elements.Product) term ); }
 		else return term;
 	}
-	static Factor reducedProductsFrom ( Elements.Product factors )
+
+	/**
+	 * check for singleton factor in product
+	 * @param factors product factors being processed
+	 * @return modified product
+	 */
+	public static Factor reducedProductsFrom ( Elements.Product factors )
 	{
 		Factor result;
 		if ( ( result = getSingleChild (factors) ) == null )
 		{ result = reducedProductFrom (factors); }
 		return result;
 	}
-	static Factor reducedProductFrom ( Elements.Product factors )
+
+	/**
+	 * apply product algorithm to a set of factors
+	 * @param factors product factors being processed
+	 * @return modified product
+	 */
+	public static Factor reducedProductFrom ( Elements.Product factors )
 	{
 		int n = factors.size ();
 		Factor product = Operations.productOf (factors.get (0), factors.get (1));
@@ -69,20 +93,8 @@ public class RepresentationConversions extends Elements
 	}
 
 
-	/**
-	 * process an identifier reference
-	 * @param symbolReferenced the name of the identifier
-	 * @param parent the Factor that will reference the identifier
-	 * @param root the active processor root
-	 */
-	public static void processIdentifier
-		(String symbolReferenced, Factor parent, SeriesExpansion <?> root)
-	{
-		Factor ref = root.referencesFormalParameter (symbolReferenced) ?
-			reduceSingle ( root.getActualParameter () ) :
-			new Variable (symbolReferenced);
-		add (ref, parent);
-	}
+
+	// algorithms applied by node type
 
 
 	/**
@@ -107,6 +119,22 @@ public class RepresentationConversions extends Elements
 	static String member (String called, JsonLowLevel.JsonValue in)
 	{
 		return ((JsonSemantics.JsonObject) in).getMemberString (called);
+	}
+
+
+	/**
+	 * process an identifier reference
+	 * @param symbolReferenced the name of the identifier
+	 * @param parent the Factor that will reference the identifier
+	 * @param root the active processor root
+	 */
+	public static void processIdentifier
+		(String symbolReferenced, Factor parent, SeriesExpansion <?> root)
+	{
+		Factor ref = root.referencesFormalParameter (symbolReferenced) ?
+			reduceSingle ( root.getActualParameter () ) :
+			new Variable (symbolReferenced);
+		add (ref, parent);
 	}
 
 
@@ -160,6 +188,13 @@ public class RepresentationConversions extends Elements
 		recognize ( object.getMemberCalled ("Right"), rightParentFor (parent), root );
 		return parent;
 	}
+
+
+	/**
+	 * process right side of Difference
+	 * @param parent object to analyze for processing
+	 * @return negated product if parent is Difference otherwise just parent
+	 */
 	public static Factor rightParentFor (Factor parent)
 	{
 		Factor rightParent = parent;
@@ -171,6 +206,13 @@ public class RepresentationConversions extends Elements
 		}
 		return rightParent;
 	}
+
+
+	/**
+	 * identify operation specified in node
+	 * @param node the node to be verified and analyzed
+	 * @return the object appropriate to specified operation
+	 */
 	public static Factor identifyOperation (JsonSemantics.JsonObject node)
 	{
 		switch ( member ("OpName", node).charAt (0) )
@@ -184,8 +226,10 @@ public class RepresentationConversions extends Elements
 	}
 
 
+
 	// organization of terms to provide representation of subtraction
-	
+
+
 	/**
 	 * present negative terms with subtraction
 	 * @param root the root element of the tree
@@ -198,6 +242,13 @@ public class RepresentationConversions extends Elements
 		{ return organizeTerms ( (Sum) root ); }
 		else return root;
 	}
+
+
+	/**
+	 * process terms of an equation
+	 * @param root the root descriptor for the equation
+	 * @return an organized sum of terms of the equation
+	 */
 	public static Factor organizeTerms (Sum root)
 	{
 		Sum positive = new Sum (), negative = new Sum ();
@@ -209,6 +260,14 @@ public class RepresentationConversions extends Elements
 		}
 		return reorderedAsDifference (positive, negative);
 	}
+
+
+	/**
+	 * determine sign of a product
+	 * @param product the product to analyze
+	 * @param positive the sum to append for positive products
+	 * @param negative the sum to append for negative products
+	 */
 	public static void processFactor
 		(Product product, Sum positive, Sum negative)
 	{
@@ -238,15 +297,18 @@ public class RepresentationConversions extends Elements
 			dup = true;
 		}
 
-		if (dup)
-		{
-			for (int i = 1; i < product.size (); i++)
-			{ factors.add (product.get (i)); }
-		}
-
+		if (dup) duplicate (1, product, factors);
 		choice.add (factors);
 	}
-	static void addConstant (double value, Product factors, Product source)
+
+
+	/**
+	 * apply constant scalar to product
+	 * @param value the value of the scalar
+	 * @param factors the product being built
+	 * @param source the original product
+	 */
+	public static void addConstant (double value, Product factors, Product source)
 	{
 		if (value != 1)
 		{
@@ -257,6 +319,14 @@ public class RepresentationConversions extends Elements
 			factors.add (new Constant (1.0));
 		}
 	}
+
+
+	/**
+	 * construct a sum with Negate flags on subtracted terms 
+	 * @param positive the terms seen as included with addition
+	 * @param negative the terms seen as included with subtraction
+	 * @return the new version of the sum
+	 */
 	public static Factor reorderedAsDifference
 			(Sum positive, Sum negative)
 	{
@@ -267,30 +337,6 @@ public class RepresentationConversions extends Elements
 			for (Factor term : negative) negate (term, result);
 		}
 		return result;
-	}
-	static void negate (Factor term, Sum series)
-	{
-		if (term instanceof Constant)
-		{
-			negateConstant ( (Constant) term, series );
-			return;
-		}
-		else if (term instanceof Factors)
-		{
-			Factors factors = (Factors) term;
-			Factor first = factors.get (0);
-
-			if (first instanceof Constant)
-			{
-				Product product = new Product ();
-				negateConstant ( (Constant) first, product );
-				for (int i = 1; i < factors.size (); i++)
-				{ product.add (factors.get (i)); }
-				add (product, series);
-				return;
-			}
-		}
-		add (Operations.productOf (new Constant (-1.0), term), series);
 	}
 
 
