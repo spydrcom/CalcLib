@@ -1,8 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.polynomial.algebra.Elements;
-
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.commands.CommandSequence;
@@ -19,7 +17,7 @@ import java.util.ArrayList;
  * command implementation for Series Expansion algorithm
  * @author Michael Druckman
  */
-public class SeriesExpansion <T> extends Elements
+public class SeriesExpansion <T> extends Utilities
 {
 
 
