@@ -118,7 +118,7 @@ public class RepresentationConversions extends Utilities
 	}
 	static String member (String called, JsonLowLevel.JsonValue in)
 	{
-		return ((JsonSemantics.JsonObject) in).getMemberString (called);
+		return ( (JsonSemantics.JsonObject) in ).getMemberString (called);
 	}
 
 
@@ -163,8 +163,8 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static NodeTypes recognizeType (JsonLowLevel.JsonValue node)
 	{
-		if (isNumeric (node)) return NodeTypes.Value;
-		else return NodeTypes.valueOf (member ("NodeType", node));
+		if ( isNumeric (node) ) return NodeTypes.Value;
+		else return NodeTypes.valueOf ( member ("NodeType", node) );
 	}
 	static boolean isNumeric (JsonLowLevel.JsonValue node)
 	{
@@ -197,14 +197,21 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Factor rightParentFor (Factor parent)
 	{
-		Factor rightParent = parent;
-		if (parent instanceof Difference)
-		{
-			rightParent = new Product ();
-			add (new Constant (-1.0), rightParent);
-			add (rightParent, parent);
-		}
-		return rightParent;
+		return parent instanceof Difference ? subtractionChild (parent) : parent;
+	}
+
+
+	/**
+	 * build product with negation scalar
+	 * @param parent the parent Difference node indicating Subtraction
+	 * @return the new Product element
+	 */
+	public static Factor subtractionChild (Factor parent)
+	{
+		Product newChild =
+			new Product (Constant.NEG_ONE);
+		add (newChild, parent);
+		return newChild;
 	}
 
 
@@ -271,52 +278,59 @@ public class RepresentationConversions extends Utilities
 	public static void processFactor
 		(Product product, Sum positive, Sum negative)
 	{
-		if (product.size () == 0) return;
-
-		boolean dup = false;
-		Sum choice = positive;
-		Product factors = product;
-		Factor first = product.get (0);
-
-		if (first instanceof Constant)
+		if ( ! product.isEmpty () )
 		{
-			Constant C = (Constant) first;
-			double value = - C.getValue ();
+			Product factors = product, subtractionProduct;
+			boolean dup = false; Sum choice = positive;
+			Factor first = product.getFirstChild ();
 
-			if (value > 0.0)
+			if ( first instanceof Constant )
 			{
-				choice = negative; factors = new Product ();
-				addConstant (value, factors, product);
+				if ( ( subtractionProduct = getSubtractionFactor ( first, product ) ) != null )
+				{ factors = subtractionProduct; choice = negative; dup = true; }
+			}
+			else if ( first instanceof Sum )
+			{
+				factors = new Product ();
+				factors.add ( organizeTerms (first) );
 				dup = true;
 			}
-		}
-		else if (first instanceof Sum)
-		{
-			factors = new Product ();
-			factors.add (organizeTerms (first));
-			dup = true;
-		}
 
-		if (dup) duplicate (1, product, factors);
-		choice.add (factors);
+			if (dup) duplicate (1, product, factors);
+			choice.add (factors);
+		}
+	}
+
+
+	/**
+	 * build product for factors containing negative scalars
+	 * @param constant the scalar found in the product sign unknown
+	 * @param product the original product found to have a scalar as first child
+	 * @return a product for negative factors or null when scalar positive
+	 */
+	public static Product getSubtractionFactor
+		(Factor constant, Product product)
+	{
+		Constant C; Product result = null;
+		if ( ( C = Constant.negated (constant) ).isPositive () )
+		{ addConstant ( C, result = new Product (), product ); }
+		return result;
 	}
 
 
 	/**
 	 * apply constant scalar to product
-	 * @param value the value of the scalar
+	 * @param C the constant value of the scalar
 	 * @param factors the product being built
 	 * @param source the original product
 	 */
-	public static void addConstant (double value, Product factors, Product source)
+	public static void addConstant (Constant C, Product factors, Product source)
 	{
-		if (value != 1)
+		if ( C.getValue () != 1 || source.isSingleton () )
 		{
-			factors.add (new Constant (value));
-		}
-		else if (source.size () == 1)
-		{
-			factors.add (new Constant (1.0));
+			// scalar 1 would be redundant in multiple factor product
+			// when the value of the product is constant ONE then value must be present
+			factors.add (C);
 		}
 	}
 
@@ -331,7 +345,7 @@ public class RepresentationConversions extends Utilities
 			(Sum positive, Sum negative)
 	{
 		Sum result = positive;
-		if (negative.size () > 0)
+		if ( ! negative.isEmpty () )
 		{
 			add ( positive, result = new Sum () );
 			for (Factor term : negative) negate (term, result);
