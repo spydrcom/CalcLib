@@ -106,24 +106,14 @@ public class Utilities extends Elements
 	}
 
 	/**
-	 * check for single child case
-	 * @param factors source to check
-	 * @return TRUE when child count is one
-	 */
-	public static boolean hasSingleChild (Factors factors)
-	{
-		return factors.size () == 1;
-	}
-
-	/**
 	 * get singleton child node
 	 * @param factors source to check
 	 * @return child node or NULL when not singleton
 	 */
 	public static Factor getSingleChild (Factors factors)
 	{
-		return ! hasSingleChild (factors) ? null :
-			Factors.firstOf (factors);
+		return ! factors.isSingleton () ? null :
+			factors.getFirstChild ();
 	}
 
 	/**
@@ -150,7 +140,7 @@ public class Utilities extends Elements
 	{
 		Factor child = getSingleChild (terms);
 		if ( child == null || ! isMultiFactored (child) ) return false;
-		return hasSingleChild ( (Factors) child );
+		return ( (Factors) child ).isSingleton ();
 	}
 
 	/**
@@ -214,26 +204,20 @@ public class Utilities extends Elements
 	 */
 	public static boolean isNegative (Elements.Factor factor)
 	{
-		if ( isConstant (factor) )
-		{
-			return isNegative ( (Constant) factor );
-		}
-		else if ( isMultiFactored (factor) )
-		{
-			Constant C = getScalarFrom ( factor );
-			if ( C != null ) return isNegative ( C );
-		}
-		return false;
+		Constant C = checkForScalar (factor);
+		return C != null && C.isNegative ();
 	}
 
 	/**
-	 * check the sign of a constant
-	 * @param constant the object to check
-	 * @return TRUE when constant &lt; 0
+	 * find scalar in a factor
+	 * @param factor possible product holding a scalar
+	 * @return the value of the scalar or null if not present
 	 */
-	public static boolean isNegative (Elements.Constant constant)
+	public static Elements.Constant checkForScalar (Elements.Factor factor)
 	{
-		return constant.getValue () < 0;
+		Constant C;
+		if ( ( C = getConstant (factor) ) != null ) return C;
+		else return getExpectedScalar ( factor );
 	}
 
 	/**
@@ -249,21 +233,26 @@ public class Utilities extends Elements
 	/**
 	 * build a negated form of a factor
 	 * @param factor the sub-expression being negated
-	 * @param toIgnore the value that should be ignored if seen
+	 * @param ignoring the value that should be ignored if seen
 	 * @return the negated form of the expression
 	 */
-	public static Elements.Factor negated (Elements.Factor factor, Double toIgnore)
+	public static Elements.Factor negated (Elements.Factor factor, Double ignoring)
 	{
-		if ( isConstant (factor) )
-		{
-			return negatedConstant ( (Constant) factor );
-		}
-		else if ( isMultiFactored (factor) )
-		{
-			Constant C = getScalarFrom ( factor );
-			if ( C != null ) return qualified ( C, toIgnore, (Factors) factor );
-		}
-		return null;
+		Constant C;
+		if ( ( C = getConstant (factor) ) != null ) return C.negated ();
+		if ( ( C = getExpectedScalar (factor) ) == null ) return null;
+		else return qualified ( C, ignoring, (Factors) factor );
+	}
+
+	/**
+	 * get scalar from factor
+	 * @param factor possible product holding a scalar
+	 * @return the value of the scalar or null if not present
+	 */
+	public static Elements.Constant getExpectedScalar (Elements.Factor factor)
+	{
+		if ( ! isMultiFactored (factor) ) return null;
+		else return getScalarFrom ( factor );
 	}
 
 
@@ -272,30 +261,17 @@ public class Utilities extends Elements
 	/**
 	 * build a product starting with a given scalar
 	 * @param C the constant to be used as scalar if qualified
-	 * @param toIgnore the value that should be ignored if seen
+	 * @param ignoring the value that should be ignored if seen
 	 * @param originalProduct the product object being modified
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		( Constant C, Double toIgnore, Factors originalProduct )
+		( Constant C, Double ignoring, Factors originalProduct )
 	{
 		Product product = new Product ();
-		if ( constantQualifies ( C, toIgnore ) ) negateConstant ( C, product ); 
+		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }
 		duplicate ( 1, originalProduct, product );
 		return product;
-	}
-
-	/**
-	 * determine if constant should be ignored
-	 * @param C the constant in question for this test
-	 * @param toIgnore the value that should be ignored if seen
-	 * @return TRUE when constant not the ignored value
-	 */
-	public static boolean constantQualifies (Constant C, Double toIgnore)
-	{
-		if ( toIgnore == null ) return true;
-		if ( C.getValue () == toIgnore.doubleValue () ) return false;
-		return true;
 	}
 
 	/**
@@ -305,9 +281,9 @@ public class Utilities extends Elements
 	 */
 	public static void negate (Factor term, Sum series)
 	{
-		Factor f = negated (term, null);
-		if (f == null) { f = Operations.productOf (new Constant (-1.0), term); }
-		add (f, series);
+		Factor factorToAdd = negated (term, null);
+		if (factorToAdd == null) { factorToAdd = Operations.negative (term); }
+		add (factorToAdd, series);
 	}
 
 	/**
@@ -317,17 +293,7 @@ public class Utilities extends Elements
 	 */
 	public static void negateConstant (Constant constant, Factors series)
 	{
-		add ( negatedConstant (constant), series );
-	}
-
-	/**
-	 * produce a constant with negative value from source
-	 * @param C the constant to reflect
-	 * @return the negated object
-	 */
-	public static Constant negatedConstant (Constant C)
-	{
-		return new Constant ( - C.getValue () );
+		add ( constant.negated (), series );
 	}
 
 
