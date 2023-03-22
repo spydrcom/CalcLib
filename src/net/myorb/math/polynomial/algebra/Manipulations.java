@@ -37,7 +37,7 @@ public class Manipulations extends Utilities
 		 */
 		void include (Variable variable)
 		{
-			include (variable.identifier, 1);
+			include (variable.toString (), 1);
 		}
 
 		/**
@@ -49,7 +49,7 @@ public class Manipulations extends Utilities
 			include
 			(
 				power.base ().toString (),
-				Constant.getValue ( power.exponent () )
+				Constant.getValueFrom ( power.exponent () )
 			);
 		}
 
@@ -101,7 +101,7 @@ public class Manipulations extends Utilities
 		{
 			if (factor instanceof Constant)
 			{
-				scalar *= Constant.getValue (factor);
+				scalar *= Constant.getValueFrom (factor);
 			}
 			else if (factor instanceof Variable)
 			{
@@ -179,7 +179,7 @@ public class Manipulations extends Utilities
 			void addFactor (Factor factor)
 			{
 				if ( factor instanceof Product ) addProduct ( (Product) factor );
-				else if ( factor instanceof Constant ) addTerm ( new Product (), Constant.getValue (factor) );
+				else if ( factor instanceof Constant ) addTerm ( new Product (), Constant.getValueFrom (factor) );
 				else addTerm ( new Product (factor), 1.0 );
 			}
 
@@ -194,7 +194,7 @@ public class Manipulations extends Utilities
 				for ( Factor factor : product )
 				{
 					if (factor instanceof Constant)
-					{ scalar = Constant.getValue (factor); }
+					{ scalar = Constant.getValueFrom (factor); }
 					else add ( factor, termFactors );
 				}
 				addTerm ( termFactors, scalar );
@@ -213,7 +213,7 @@ public class Manipulations extends Utilities
 					if ( (scalar = factor.scalar) == 0 ) continue;
 					add ( termFor ( factor, scalar ), result );
 				}
-				if ( result.size () == 0 ) return null;
+				if ( result.isEmpty () ) return null;
 				return reduceSingle (result);
 			}
 
@@ -326,7 +326,7 @@ public class Manipulations extends Utilities
 				if (matchesVariable (p.base ()))
 				{
 					includeInPowerSum
-					( term, Constant.getValue (p.exponent ()) );
+					( term, Constant.getValueFrom (p.exponent ()) );
 					return true;
 				}
 			}
@@ -412,7 +412,7 @@ public class Manipulations extends Utilities
 				{ if ( ! matchesVariable (factor) ) add (factor, product); }
 				return reduceSingle (product);
 			}
-			return new Constant ("1");
+			return Constant.ONE;
 		}
 
 		/**
@@ -457,7 +457,7 @@ public class Manipulations extends Utilities
 
 			if (term instanceof Constant)
 			{
-				constant += ( (Constant) term ).getValue ();
+				constant += Constant.getValueFrom (term);
 			}
 			else
 			{
