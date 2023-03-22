@@ -31,7 +31,10 @@ public abstract class Elements
 	public abstract static class Factors
 			extends ArrayList <Factor> implements Factor
 	{
-		public static Factor firstOf (Factor factors) { return ( (Factors) factors ).get (0); }
+		public static Factor firstOf (Factor factors)
+		{ return ( (Factors) factors ).getFirstChild (); }
+		public Factor getFirstChild () { return this.get (0); }
+		public boolean isSingleton () { return this.size () == 1; }
 		private static final long serialVersionUID = 35114701359602093L;
 	}
 
@@ -62,7 +65,7 @@ public abstract class Elements
 		public OpTypes getType () { return null; }
 		public Negated (Factor factor) { this.child = factor; }
 		public Factor getFactor () { return child; }
-		Factor child;
+		private Factor child;
 	}
 
 	/**
@@ -85,28 +88,87 @@ public abstract class Elements
 	 */
 	public static class Constant implements Factor
 	{
-		public String toString ()
-		{
-			return value.endsWith (".0") ?
-				value.substring (0, value.length () - 2) :
-				value;
-		}
 
-		public double getValue ()
-		{ return Double.parseDouble (value); }
-		public static double getValue (Factor factor)
-		{ return ( (Constant) factor ).getValue (); }
+		// factor abstraction compliance
 
+		/* (non-Javadoc)
+		 * @see net.myorb.math.polynomial.algebra.Elements.Factor#getType()
+		 */
 		public OpTypes getType () { return OpTypes.Operand; }
-		public Constant (Double value) { this.value = value.toString (); }
-		public Constant (String value) { this.value = value; }
 
-		public void negate ()
+		// image processing
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString () { return formatImage ( value.toString () ); }
+
+		/**
+		 * truncate trailing zeros
+		 * @param text the value to process
+		 * @return truncated where appropriate
+		 */
+		public String formatImage (String text)
+		{ return ! representsInteger (text) ? text : asInteger (text); }
+		public String asInteger (String text) { return text.substring (0, text.length () - 2); }
+		public boolean representsInteger (String text) { return text.endsWith (".0"); }
+
+		// constructors
+
+		/**
+		 * @param value source from string
+		 */
+		public Constant (String value) { this.value = Double.parseDouble (value); }
+
+		/**
+		 * @param value source from double value
+		 */
+		public Constant (Double value) { this.value = value; }
+
+		// value processing
+
+		/**
+		 * determine if constant should be ignored
+		 * @param filter the value that should be ignored if seen
+		 * @return TRUE when constant not the filtered value
+		 */
+		public boolean otherThan (Double filter)
 		{
-			value = Double.toString ( - getValue () );
+			if ( filter == null ) return true;
+			if ( value == filter.doubleValue () ) return false;
+			return true;
 		}
 
-		String value;
+		/**
+		 * build negative valued constant
+		 * @return a constant with negative value of THIS
+		 */
+		public Constant negated () { return new Constant ( - value ); }
+
+		/**
+		 * get negated value of constant factor
+		 * @param constant a factor expected to be a Constant object
+		 * @return the negated value Constant
+		 */
+		public static Constant negated (Factor constant) { return ( (Constant) constant ).negated (); }
+
+		/**
+		 * check the sign of a constant
+		 * @return TRUE when value is negative
+		 */
+		public boolean isNegative () { return value < 0; }
+		public boolean isPositive () { return value > 0; }
+
+		/**
+		 * @return value of constant as double float
+		 */
+		public double getValue () { return value; }
+		public static Constant ONE = new Constant (1.0);
+		public static Constant NEG_ONE = new Constant (-1.0);
+		public static double getValueFrom (Factor factor)
+		{ return ( (Constant) factor ).getValue (); }
+		private Double value;
+
 	}
 
 	/**
@@ -120,7 +182,7 @@ public abstract class Elements
 		{ return identifier.equals (symbol); }
 		public Variable (String identifier)
 		{ this.identifier = identifier; }
-		String identifier;
+		private String identifier;
 	}
 
 	/**
