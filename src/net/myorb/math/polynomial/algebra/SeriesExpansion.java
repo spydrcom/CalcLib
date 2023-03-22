@@ -87,9 +87,9 @@ public class SeriesExpansion <T> extends Utilities
 	public StringBuffer expandedDescription (String functionName)
 	{
 		Elements.Factor expanded =
-			reducedForm (performExpansion (functionName));
+			reducedForm ( performExpansion (functionName) );
 		if (showFunctionExpanded) System.out.println (expanded);
-		return new StringBuffer (expanded.toString ());
+		return new StringBuffer ( expanded.toString () );
 	}
 
 
@@ -126,7 +126,7 @@ public class SeriesExpansion <T> extends Utilities
 	 */
 	boolean referencesFormalParameter (String name)
 	{
-		return actualParameter != null && name.equals (getPolynomialVariable ());
+		return actualParameter != null && name.equals ( getPolynomialVariable () );
 	}
 
 	/**
