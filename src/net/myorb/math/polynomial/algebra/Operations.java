@@ -101,5 +101,16 @@ public class Operations extends Utilities
 	}
 
 
+	/**
+	 * multiply parameter by negative 1 to form negated factor
+	 * @param factor the factor to negate
+	 * @return negated factor
+	 */
+	public static Factor negative (Factor factor)
+	{
+		return productOf (Constant.NEG_ONE, factor);
+	}
+
+
 }
 
