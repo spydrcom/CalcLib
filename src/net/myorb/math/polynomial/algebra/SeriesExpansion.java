@@ -11,52 +11,17 @@ import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
 
-import java.util.ArrayList;
-
 /**
  * command implementation for Series Expansion algorithm
  * @author Michael Druckman
  */
-public class SeriesExpansion <T> extends Utilities
+public class SeriesExpansion <T> extends ParameterManagement
 {
 
 
-	public SeriesExpansion (Environment <T> environment)
-	{ this.environment = environment; }
-	Environment <T> environment;
-
-
-	/**
-	 * get and set variable name
-	 * @param polynomialVariable the name of the parameter in the profile
-	 */
-	public void setPolynomialVariable
-	(String polynomialVariable) { this.polynomialVariable =  polynomialVariable; }
-	public String getPolynomialVariable () { return polynomialVariable; }
-	String polynomialVariable = null;
-
-
-	/**
-	 * verify polynomial variable description from profile
-	 * @param profile the Subroutine ParameterList description
-	 */
-	public void setPolynomialVariable (Subroutine.ParameterList profile)
-	{
-		setPolynomialVariable (profile.get (0));
-	}
-
-	/**
-	 * verify polynomial variable description
-	 * @return the parameter read from the function profile
-	 */
-	public ArrayList <String> parameterList ()
-	{
-		ArrayList <String>
-			parameterNameList = new ArrayList <> ();
-		try { parameterNameList.add ( getPolynomialVariable () ); }
-		catch (Exception e) { error ( "Error in function profile", e ); }
-		return parameterNameList;
-	}
+	public SeriesExpansion
+		(Environment <T> environment) { this.environment = environment; }
+	protected Environment <T> environment;
 
 
 	/**
@@ -108,35 +73,6 @@ public class SeriesExpansion <T> extends Utilities
 
 
 	/**
-	 * identify actual parameter for use in substitutions
-	 * @param actualParameter the description of the actual parameter
-	 */
-	void prepareParameterSubstitution
-		(
-			Elements.Factor actualParameter
-		)
-	{
-		this.actualParameter = actualParameter;
-	}
-	
-	/**
-	 * check for formal parameter reference
-	 * @param name the name of the identifier
-	 * @return TRUE when identifier matches formal
-	 */
-	boolean referencesFormalParameter (String name)
-	{
-		return actualParameter != null && name.equals ( getPolynomialVariable () );
-	}
-
-	/**
-	 * @return the captured actual parameter factor
-	 */
-	Elements.Factor getActualParameter () { return actualParameter; }
-	Elements.Factor actualParameter = null;
-
-
-	/**
 	 * construct element tree for a polynomial in the symbol table
 	 * @param functionName the name of the function expected to be a polynomial
 	 * @param parameter the description of the parameter used in the symbol reference
@@ -153,22 +89,43 @@ public class SeriesExpansion <T> extends Utilities
 		setPolynomialVariable (formalParameter);
 		return result;
 	}
-	JsonValue getJsonDescription (String functionName)
+
+
+	/**
+	 * process the profile of a function
+	 * @param functionName the name of the function
+	 * @return the expression tree found linked to the Subroutine
+	 */
+	public JsonValue getJsonDescription (String functionName)
 	{
 		Subroutine <T> udf = null;
 		try { udf = DefinedFunction.asUDF ( lookup (functionName) ); }
 		catch (Exception e) { error ( functionName + " not recognized", e ); }
-		setPolynomialVariable (udf.getParameterNames ());
-		return getExpressionTree (udf);
+		setPolynomialVariable ( udf.getParameterNames () );
+		return getExpressionTree ( udf );
 	}
-	JsonValue getExpressionTree (Subroutine <T> s)
+
+
+	/**
+	 * read expression tree from posted Subroutine
+	 * @param symbol the Subroutine object found in the symbol table
+	 * @return the expression tree found linked to the Subroutine
+	 */
+	public JsonValue getExpressionTree (Subroutine <T> symbol)
 	{
 		JsonValue root = null;
-		try { root = s.getExpressionTree (); }
+		try { root = symbol.getExpressionTree (); }
 		catch (Exception e) { error ( "Unable to build expression tree", e ); }
 		return root;
 	}
-	JsonValue trace (JsonValue jsonTree)
+
+
+	/**
+	 * format a trace message for an expression tree
+	 * @param jsonTree the JSON root node to be traced
+	 * @return the node passed as parameter for chaining
+	 */
+	public JsonValue trace (JsonValue jsonTree)
 	{
 		if (showFunctionJson)
 		{
@@ -177,9 +134,15 @@ public class SeriesExpansion <T> extends Utilities
 		}
 		return jsonTree;
 	}
-	Object lookup (String functionName) { return environment.getSymbolMap ().get (functionName); }
-	void error (String message, Exception source) { throw new RuntimeException (message, source); }
-	boolean showFunctionJson = false, showFunctionExpanded = false;
+
+
+	/**
+	 * find function in the symbol table
+	 * @param functionName the name of the function
+	 * @return the symbol if found otherwise null
+	 */
+	protected Object lookup (String functionName) { return environment.getSymbolMap ().get (functionName); }
+	protected boolean showFunctionJson = false, showFunctionExpanded = false;
 
 
 }
