@@ -198,29 +198,6 @@ public class Utilities extends Elements
 	}
 
 	/**
-	 * check the sign of a factor
-	 * @param factor the object to check
-	 * @return TRUE when factor is determined to be negative
-	 */
-	public static boolean isNegative (Elements.Factor factor)
-	{
-		Constant C = checkForScalar (factor);
-		return C != null && C.isNegative ();
-	}
-
-	/**
-	 * find scalar in a factor
-	 * @param factor possible product holding a scalar
-	 * @return the value of the scalar or null if not present
-	 */
-	public static Elements.Constant checkForScalar (Elements.Factor factor)
-	{
-		Constant C;
-		if ( ( C = getConstant (factor) ) != null ) return C;
-		else return getExpectedScalar ( factor );
-	}
-
-	/**
 	 * insert Negate links in factor connections
 	 * @param factor the object to process
 	 * @return the Negate link
@@ -256,7 +233,30 @@ public class Utilities extends Elements
 	}
 
 
-	// process constants
+	// process constants / scalars
+
+	/**
+	 * check the sign of a factor
+	 * @param factor the object to check
+	 * @return TRUE when factor is determined to be negative
+	 */
+	public static boolean isNegative (Elements.Factor factor)
+	{
+		Constant C = checkForScalar (factor);
+		return C != null && C.isNegative ();
+	}
+
+	/**
+	 * find scalar in a factor
+	 * @param factor possible product holding a scalar
+	 * @return the value of the scalar or null if not present
+	 */
+	public static Elements.Constant checkForScalar (Elements.Factor factor)
+	{
+		Constant C;
+		if ( ( C = getConstant (factor) ) != null ) return C;
+		else return getExpectedScalar ( factor );
+	}
 
 	/**
 	 * build a product starting with a given scalar
@@ -309,6 +309,19 @@ public class Utilities extends Elements
 	{
 		for (int i = starting; i < from.size (); i++) { to.add (from.get (i)); }
 	}
+
+
+	// error processing
+
+	/**
+	 * produce Exception for error conditions
+	 * @param message the text of a message for the condition
+	 * @param source an initial Exception thrown causing the error
+	 * @throws RuntimeException formatted with message and initial Exception
+	 */
+	public static void error
+	(String message, Exception source) throws RuntimeException
+	{ throw new RuntimeException (message, source); }
 
 
 }

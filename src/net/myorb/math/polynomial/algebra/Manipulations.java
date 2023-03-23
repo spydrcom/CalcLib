@@ -15,7 +15,7 @@ public class Manipulations extends Utilities
 	/**
 	 * collect symbols in a product
 	 */
-	static class Symbols extends HashMap <String, Double>
+	public static class Symbols extends HashMap <String, Double>
 	{
 
 		/**
@@ -137,7 +137,7 @@ public class Manipulations extends Utilities
 	/**
 	 * analysis providing ability to combine like terms
 	 */
-	static class FactorAnalysis
+	public static class FactorAnalysis
 	{
 
 
@@ -274,7 +274,7 @@ public class Manipulations extends Utilities
 	/**
 	 * collect terms of common powers of a polynomial
 	 */
-	static class Powers extends HashMap <Double, Sum>
+	public static class Powers extends HashMap <Double, Sum>
 	{
 
 		Powers (String variable)
@@ -442,7 +442,7 @@ public class Manipulations extends Utilities
 	 * @param terms the terms of a sum
 	 * @return the reduced sum
 	 */
-	static Sum reducedSumOf (Sum terms)
+	public static Sum reducedSumOf (Sum terms)
 	{
 		double constant = 0.0;
 		Sum reduced = new Sum ();
