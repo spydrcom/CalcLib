@@ -222,14 +222,25 @@ public class Utilities extends Elements
 	}
 
 	/**
-	 * get scalar from factor
-	 * @param factor possible product holding a scalar
-	 * @return the value of the scalar or null if not present
+	 * add a negated term to a series
+	 * @param term the description of the term to be added
+	 * @param series the series being modified
 	 */
-	public static Elements.Constant getExpectedScalar (Elements.Factor factor)
+	public static void negate (Factor term, Sum series)
 	{
-		if ( ! isMultiFactored (factor) ) return null;
-		else return getScalarFrom ( factor );
+		Factor factorToAdd = negated (term, null);
+		if (factorToAdd == null) { factorToAdd = Operations.negative (term); }
+		add (factorToAdd, series);
+	}
+
+	/**
+	 * add a negated constant to a series
+	 * @param constant the constant to apply to the series
+	 * @param series the series being modified
+	 */
+	public static void negateConstant (Constant constant, Factors series)
+	{
+		add ( constant.negated (), series );
 	}
 
 
@@ -259,6 +270,17 @@ public class Utilities extends Elements
 	}
 
 	/**
+	 * get scalar from factor
+	 * @param factor possible product holding a scalar
+	 * @return the value of the scalar or null if not present
+	 */
+	public static Elements.Constant getExpectedScalar (Elements.Factor factor)
+	{
+		if ( ! isMultiFactored (factor) ) return null;
+		else return getScalarFrom ( factor );
+	}
+
+	/**
 	 * build a product starting with a given scalar
 	 * @param C the constant to be used as scalar if qualified
 	 * @param ignoring the value that should be ignored if seen
@@ -272,28 +294,6 @@ public class Utilities extends Elements
 		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }
 		duplicate ( 1, originalProduct, product );
 		return product;
-	}
-
-	/**
-	 * add a negated term to a series
-	 * @param term the description of the term to be added
-	 * @param series the series being modified
-	 */
-	public static void negate (Factor term, Sum series)
-	{
-		Factor factorToAdd = negated (term, null);
-		if (factorToAdd == null) { factorToAdd = Operations.negative (term); }
-		add (factorToAdd, series);
-	}
-
-	/**
-	 * add a negated constant to a series
-	 * @param constant the constant to apply to the series
-	 * @param series the series being modified
-	 */
-	public static void negateConstant (Constant constant, Factors series)
-	{
-		add ( constant.negated (), series );
 	}
 
 
