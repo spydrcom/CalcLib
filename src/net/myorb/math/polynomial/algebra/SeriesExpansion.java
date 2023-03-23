@@ -84,7 +84,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	}
 
 
-	// symbol table query
+	// symbol table queries and expression tree links
 
 
 	/**
@@ -101,6 +101,18 @@ public class SeriesExpansion <T> extends ParameterManagement
 
 
 	/**
+	 * get the expression tree linked to a profile
+	 * @param profile the profile of a UDF in the symbol table
+	 * @return the expression tree found linked to the profile
+	 */
+	public JsonValue getExpressionTreeFrom (Subroutine <T> profile)
+	{
+		setPolynomialVariable ( profile.getParameterNames () );
+		return getExpressionTree ( profile );
+	}
+
+
+	/**
 	 * read expression tree from posted Subroutine
 	 * @param symbol the Subroutine object found in the symbol table
 	 * @return the expression tree found linked to the Subroutine
@@ -111,21 +123,6 @@ public class SeriesExpansion <T> extends ParameterManagement
 		try { root = symbol.getExpressionTree (); }
 		catch (Exception e) { error ( "Unable to build expression tree", e ); }
 		return root;
-	}
-
-
-	// expression tree processing
-
-
-	/**
-	 * get the expression tree linked to a profile
-	 * @param profile the profile of a UDF in the symbol table
-	 * @return the expression tree found linked to the profile
-	 */
-	public JsonValue getExpressionTreeFrom (Subroutine <T> profile)
-	{
-		setPolynomialVariable ( profile.getParameterNames () );
-		return getExpressionTree ( profile );
 	}
 
 
