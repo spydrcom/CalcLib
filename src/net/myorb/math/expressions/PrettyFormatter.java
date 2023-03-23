@@ -1,17 +1,21 @@
 
 package net.myorb.math.expressions;
 
-// CalcLib math
-import net.myorb.data.abstractions.Function;
+// CalcLib Polynomial math
 import net.myorb.math.Polynomial;
+import net.myorb.math.polynomial.algebra.SeriesExpansion;
 
-// CalcLib Matrix
-import net.myorb.math.matrices.Matrix;
+// CalcLib Matrix math
 import net.myorb.math.matrices.MatrixOperations;
+import net.myorb.math.matrices.Matrix;
 
 // CalcLib expressions
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MathML;
+import net.myorb.math.expressions.commands.Rendering;
+
+// IOlib abstractions
+import net.myorb.data.abstractions.Function;
 
 // JRE imports
 import java.io.PrintStream;
@@ -219,6 +223,28 @@ public class PrettyFormatter<T>
 		SymbolMap s =
 			getContextSpecificSymbolMap (parameterNames);
 		return new MathML (s).render (tokens);
+	}
+
+
+	/**
+	 * rendering implementation for series expansion
+	 * @param functionName the name of the function being expanded
+	 * @param renderer the Rendering engine to use
+	 */
+	public void renderExpandedSeries (String functionName, Rendering <T> renderer)
+	{
+		try { renderExpandedSeries (functionName, renderer, new SeriesExpansion <T> (environment)); }
+		catch (Exception e) { throw new RuntimeException ( "Render failed", e ); }
+	}
+	public void renderExpandedSeries
+		(String functionName, Rendering <T> renderer, SeriesExpansion <T> processor)
+	throws Exception
+	{
+		renderer.render
+		(
+			processor.expandSequence ( functionName ),
+			processor.parameterList (), "Expanded series from " + functionName
+		);
 	}
 
 
