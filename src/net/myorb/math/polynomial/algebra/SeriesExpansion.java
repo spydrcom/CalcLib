@@ -24,6 +24,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	protected Environment <T> environment;
 
 
+	// expansion driver
+
+
 	/**
 	 * produce expanded version of function sequence
 	 * @param functionName the name of the function in the symbol table
@@ -66,43 +69,34 @@ public class SeriesExpansion <T> extends ParameterManagement
 	public Elements.Factor performExpansion (String functionName)
 	{
 		return RepresentationConversions.organizeTerms
-		(
-			expandSymbol (functionName, null, this)
-		);
+		( expandSymbol ( getProfile (functionName) ) );
 	}
 
 
 	/**
-	 * construct element tree for a polynomial in the symbol table
-	 * @param functionName the name of the function expected to be a polynomial
-	 * @param parameter the description of the parameter used in the symbol reference
-	 * @param root the expansion object for this processing request
+	 * construct element tree from a profile description
+	 * @param profile the profile of a UDF in the symbol table
 	 * @return the root Factor node for describing this symbol
 	 */
-	public Elements.Factor expandSymbol
-		(String functionName, Elements.Factor parameter, SeriesExpansion <?> root)
+	public Elements.Factor expandSymbol (Subroutine <T> profile)
 	{
-		String formalParameter = getPolynomialVariable ();
-		JsonValue jsonTree = getJsonDescription (functionName);
-		if (parameter != null) prepareParameterSubstitution (parameter);
-		Elements.Factor result = RepresentationConversions.translate ( trace (jsonTree), root );
-		setPolynomialVariable (formalParameter);
-		return result;
+		return expandSymbol ( getExpressionTreeFrom (profile), this );
 	}
 
 
+	// symbol table query
+
+
 	/**
-	 * process the profile of a function
+	 * get profile for function
 	 * @param functionName the name of the function
-	 * @return the expression tree found linked to the Subroutine
+	 * @return the profile object or null for error
 	 */
-	public JsonValue getJsonDescription (String functionName)
+	public Subroutine <T> getProfile (String functionName)
 	{
-		Subroutine <T> udf = null;
-		try { udf = DefinedFunction.asUDF ( lookup (functionName) ); }
+		try { return DefinedFunction.asUDF ( lookup (functionName) ); }
 		catch (Exception e) { error ( functionName + " not recognized", e ); }
-		setPolynomialVariable ( udf.getParameterNames () );
-		return getExpressionTree ( udf );
+		return null;
 	}
 
 
@@ -117,6 +111,69 @@ public class SeriesExpansion <T> extends ParameterManagement
 		try { root = symbol.getExpressionTree (); }
 		catch (Exception e) { error ( "Unable to build expression tree", e ); }
 		return root;
+	}
+
+
+	// expression tree processing
+
+
+	/**
+	 * get the expression tree linked to a profile
+	 * @param profile the profile of a UDF in the symbol table
+	 * @return the expression tree found linked to the profile
+	 */
+	public JsonValue getExpressionTreeFrom (Subroutine <T> profile)
+	{
+		setPolynomialVariable ( profile.getParameterNames () );
+		return getExpressionTree ( profile );
+	}
+
+
+	/**
+	 * process the profile of a function
+	 * @param functionName the name of the function
+	 * @param parameter the description of the parameter used in the symbol reference
+	 * @return the expression tree found linked to the Subroutine
+	 */
+	public JsonValue getExpressionTreeFrom (String functionName, Elements.Factor parameter)
+	{
+		JsonValue tree = getExpressionTreeFrom ( getProfile (functionName) );
+		prepareParameterSubstitution (parameter);
+		return tree;
+	}
+
+
+	// expansion algorithm layers
+
+
+	/**
+	 * construct element tree for a polynomial in the symbol table
+	 * @param functionName the name of the function expected to be a polynomial
+	 * @param parameter the description of the parameter used in the symbol reference
+	 * @param root the expansion object for this processing request
+	 * @return the root Factor node for describing this symbol
+	 */
+	public Elements.Factor expandSymbol
+		(String functionName, Elements.Factor parameter, SeriesExpansion <?> root)
+	{
+		String formalParameter = getPolynomialVariable ();
+		JsonValue expressionTree = getExpressionTreeFrom (functionName, parameter);
+		Elements.Factor result = expandSymbol ( expressionTree, root );
+		setPolynomialVariable (formalParameter);
+		return result;
+	}
+
+
+	/**
+	 * construct element tree for a polynomial in the symbol table
+	 * @param expressionTree the expression tree found linked to the Subroutine
+	 * @param root the expansion object for this processing request
+	 * @return the root Factor node for describing this symbol
+	 */
+	public Elements.Factor expandSymbol
+	(JsonValue expressionTree, SeriesExpansion <?> root)
+	{
+		return RepresentationConversions.translate ( trace (expressionTree), root );
 	}
 
 
