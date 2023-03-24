@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.symbols;
 
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.EvaluationEngine;
@@ -173,6 +174,20 @@ public class DefinedFunction <T> extends AbstractFunction <T>
 		f.setSymbolTable (symbols);
 		symbols.add (f);
 		return f;
+	}
+	public static <T> DefinedFunction <T> defineUserFunction
+		(
+			String name,
+			List<String> parameterNames,
+			TokenParser.TokenSequence functionTokens,
+			Environment <T> environment
+		)
+	{
+		return defineUserFunction
+		(
+			name, parameterNames, functionTokens,
+			environment.getSpaceManager (), environment.getSymbolMap ()
+		);
 	}
 
 
