@@ -17,6 +17,10 @@ public class Solution
 	 * Simultaneous Equation solution to coefficients of Chebyshev DiffEQ
 	 * 
 
+		-------------------
+		the expanded series
+		-------------------
+
 	   ( f_0 * n ^ 2 +             2 * c_2 + 
 	   ( f_1 * n ^ 2 -      f_1 +  6 * c_3 ) * z + 
 	   ( c_2 * n ^ 2 + 12 * c_4 -  4 * c_2 ) * z ^ 2 + 
@@ -54,24 +58,20 @@ public class Solution
 		n = 5
 		f_0 = 0
 		f_1 = 5
-		
-		c_2 = - f_0*n^2 / 2
-		c_3 =  (1-n^2) * f_1 / 6	
+
+		// algebraic solution
+		// ------------------
+
+		c_2 = -( n^2 ) * f_0 /  2
+		c_3 =  (1-n^2) * f_1 /  6	
 		c_4 =  (4-n^2) * c_2 / 12
 		c_5 =  (9-n^2) * c_3 / 20
 		c_6 = (16-n^2) * c_4 / 30
 		c_7 = (25-n^2) * c_5 / 42
 
-		n = 5
-		f_0 = 0
-		f_1 = 5
-
-		c_2 = - f_0*n^2 / 2
-		c_3 = (1-n^2) * f_1 / 6	
-		c_4 = (4-n^2) * c_2 / 12
-		c_5 = (9-n^2) * c_3 / 20
-		c_6 = (16-n^2) * c_4 / 30
-		c_7 = (25-n^2) * c_5 / 42
+		// linear algebra solution
+		// -----------------------
+		// substitute constants
 
 		25 *  0 +  2 * c2
 		24 *  5 +  6 * c3
@@ -80,16 +80,16 @@ public class Solution
 		 9 * c4 + 30 * c6
 		 0 * c5 + 42 * c7
 
-		Matrix to solve
+		// Matrix to solve
 
 		c2	c3	c4	c5	c6	c7	  =
 		----------------------------
-		2						   0
-			6					-120
+		 2						   0
+			 6					-120
 		21		12				   0
 			16		20			   0
-				9		30		   0
-					0		42	   0
+				 9		30		   0
+					 0		42	   0
 					
 	*/
 
