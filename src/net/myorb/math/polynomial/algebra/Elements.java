@@ -19,8 +19,10 @@ public abstract class Elements
 
 	// atomic Factor description base
 
+	public static interface References
+	{ void identify (java.util.Set <String> symbols); }
 	public static interface Reference { boolean refersTo (String symbol); }
-	public static interface Factor { OpTypes getType (); }
+	public static interface Factor extends References { OpTypes getType (); }
 
 
 	// binary operation factors
@@ -36,6 +38,11 @@ public abstract class Elements
 		public Factor getFirstChild () { return this.get (0); }
 		public boolean isSingleton () { return this.size () == 1; }
 		private static final long serialVersionUID = 35114701359602093L;
+
+		public void identify (java.util.Set <String> symbols)
+		{
+			for (Factor factor : this) factor.identify (symbols);
+		}
 	}
 
 	/**
@@ -64,6 +71,7 @@ public abstract class Elements
 	{
 		public OpTypes getType () { return null; }
 		public Negated (Factor factor) { this.child = factor; }
+		public void identify (java.util.Set <String> symbols) { child.identify (symbols); }
 		public Factor getFactor () { return child; }
 		private Factor child;
 	}
@@ -95,6 +103,7 @@ public abstract class Elements
 		 * @see net.myorb.math.polynomial.algebra.Elements.Factor#getType()
 		 */
 		public OpTypes getType () { return OpTypes.Operand; }
+		public void identify (java.util.Set <String> symbols) {}
 
 		// image processing
 
@@ -176,8 +185,10 @@ public abstract class Elements
 	 */
 	public static class Variable implements Factor, Reference
 	{
-		public String toString () { return identifier; }
+		public void identify
+		(java.util.Set <String> symbols) { symbols.add (identifier); }
 		public OpTypes getType () { return OpTypes.Operand; }
+		public String toString () { return identifier; }
 		public boolean refersTo (String symbol)
 		{ return identifier.equals (symbol); }
 		public Variable (String identifier)
