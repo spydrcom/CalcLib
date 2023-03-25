@@ -367,23 +367,47 @@ public class Manipulations extends Utilities
 		{
 			Sum terms = get (e);
 			if ( simpleReference (terms) ) return terms;
-			if ( e == 0.0 ) return reducedSumOf ( terms );
-			return distributedProduct (terms, e);
+			return distribute ( e, terms, true );
 		}
 
 		/**
 		 * do analysis of a term multiplier
 		 * - eliminate terms where scalar has reduced to 0
 		 * - reintroduce the power factor as a factor of the term
-		 * @param terms the series of factors that comprise the term of the order
 		 * @param e the value of the order (exponent) of this polynomial term
-		 * @return the full polynomial term of the series
+		 * @param terms the series of factors that comprise the term of the order
+		 * @param includingPowerFactor TRUE to reintroduce the power factor
+		 * @return the description of a term of the series
 		 */
-		Factor distributedProduct (Sum terms, Double e)
+		Factor distribute
+			(
+				Double e, Sum terms,
+				boolean includingPowerFactor
+			)
 		{
-			return reducedTerm ( new FactorAnalysis ( multiplier (terms) ).getReducedFactor (), e );
+			if ( e == 0.0 ) return reducedSumOf ( terms );
+			Factor reduced = simpleReducedFactor ( terms );
+			if ( ! includingPowerFactor ) return reduced;
+			return appendPowerOfVariable ( reduced, e );
 		}
-		Factor reducedTerm (Factor termFactors, Double e)
+
+		/**
+		 * do factor analysis of a set of terms
+		 * @param terms the terms to analyze
+		 * @return reduction of factors
+		 */
+		Factor simpleReducedFactor (Sum terms)
+		{
+			return new FactorAnalysis ( multiplier (terms) ).getReducedFactor ();
+		}
+
+		/**
+		 * build complete description of term
+		 * @param termFactors the factors of the term
+		 * @param e the value of the order (exponent) of this polynomial term
+		 * @return the full term including the power factor
+		 */
+		Factor appendPowerOfVariable (Factor termFactors, Double e)
 		{
 			if ( termFactors == null ) return null;
 			Product term = new Product (termFactors);
@@ -418,14 +442,20 @@ public class Manipulations extends Utilities
 		/**
 		 * @return the completed series
 		 */
-		Sum getSeries ()
+		public Sum getSeries ()
 		{
 			Sum result = new Sum ();
 			for ( Double e : getPowers () )
 			{ add ( distribute (e), result ); }
 			return reducedSumOf (result);
 		}
-		Double [] getPowers ()
+		public Sum getTermFor (double e)
+		{
+			Sum result = new Sum ();
+			add ( distribute (e, get (e), false), result );
+			return reducedSumOf (result);			
+		}
+		public Double [] getPowers ()
 		{
 			Double [] exponents =
 				keySet ().toArray (new Double[]{});
@@ -477,12 +507,15 @@ public class Manipulations extends Utilities
 	 * collect terms around powers of a variable
 	 * @param series the series being analyzed as a polynomial
 	 * @param variable the variable name terms are to be collected across
+	 * @param root the root node for the equation
 	 * @return the modified series
 	 */
-	public static Sum collectTerms (Sum series, String variable)
+	public static Sum collectTerms
+		(Sum series, String variable, SeriesExpansion <?> root)
 	{
 		Powers powers = new Powers (variable);
 		for ( Factor term : series ) powers.include (term);
+		root.linkAnalysis ( powers );
 		return powers.getSeries ();
 	}
 
@@ -492,11 +525,13 @@ public class Manipulations extends Utilities
 	 * - terms of the series will be reduced in complexity
 	 * @param series the series being analyzed as a polynomial
 	 * @param variable the variable name terms are to be collected across
+	 * @param root the root node for the equation
 	 * @return the modified series
 	 */
-	public static Sum reduceAndCollectTerms (Sum series, String variable)
+	public static Sum reduceAndCollectTerms
+		(Sum series, String variable, SeriesExpansion <?> root)
 	{
-		return collectTerms ( reduceTerms (series), variable );
+		return collectTerms ( reduceTerms (series), variable, root );
 	}
 
 
