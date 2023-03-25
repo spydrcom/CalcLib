@@ -56,7 +56,10 @@ public class SeriesExpansion <T> extends ParameterManagement
 	{
 		Elements.Factor expanded =
 			reducedForm ( performExpansion (functionName) );
+
 		if (showFunctionExpanded) System.out.println (expanded);
+		showAnalysis (functionName);
+
 		return new StringBuffer ( expanded.toString () );
 	}
 
@@ -187,6 +190,38 @@ public class SeriesExpansion <T> extends ParameterManagement
 			catch (Exception e) { error ( "JSON trace formatter failed", e ); }
 		}
 		return jsonTree;
+	}
+
+
+	/**
+	 * link to analysis of the equation done by Powers in Manipulations
+	 * @param analysis the Powers analysis of the equation
+	 */
+	public void linkAnalysis
+	(Manipulations.Powers analysis) { this.analysis = analysis; }
+	protected Manipulations.Powers analysis;
+
+
+	/**
+	 * show analysis of equation
+	 * @param functionName name of the function
+	 */
+	public void showAnalysis (String functionName)
+	{
+		java.io.PrintStream stream = environment.getOutStream ();
+
+		stream.println (); stream.println ("===");
+		stream.println (functionName); stream.println ("===");
+
+		for (double power : analysis.getPowers ())
+		{
+			stream.print (power); stream.print ("\t");
+			stream.print (analysis.getTermFor (power));
+			stream.println ();
+		}
+
+		stream.println ("===");
+		stream.println ();
 	}
 
 
