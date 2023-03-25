@@ -26,6 +26,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 
 	// solve coefficient equations
 
+
 	/**
 	 * find simultaneous equation solution 
 	 *  for coefficients of expanded polynomial series
@@ -36,7 +37,11 @@ public class SeriesExpansion <T> extends ParameterManagement
 		Subroutine <T> profile = getProfile (functionName);
 		SeriesExpansion <T> linkedSeries = profile.getSeries ();
 		if (linkedSeries == null) throw new RuntimeException ("No linked series");
+
 		linkedSeries.showAnalysis (functionName);
+
+		new Solution <T> (environment).analyze
+		(linkedSeries, profile);
 	}
 
 
@@ -70,11 +75,11 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public StringBuffer expandedDescription (String functionName)
 	{
-		Elements.Factor expanded =
-			reducedForm ( performExpansion (functionName) );
-		if (showFunctionExpanded) System.out.println (expanded);
-		return new StringBuffer ( expanded.toString () );
+		expandedRoot = reducedForm ( performExpansion (functionName) );
+		if (showFunctionExpanded) System.out.println (expandedRoot);
+		return new StringBuffer ( expandedRoot.toString () );
 	}
+	protected Elements.Factor expandedRoot;
 
 
 	/**
