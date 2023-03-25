@@ -24,6 +24,22 @@ public class SeriesExpansion <T> extends ParameterManagement
 	protected Environment <T> environment;
 
 
+	// solve coefficient equations
+
+	/**
+	 * find simultaneous equation solution 
+	 *  for coefficients of expanded polynomial series
+	 * @param functionName name of an expanded series function
+	 */
+	public void solve (String functionName)
+	{
+		Subroutine <T> profile = getProfile (functionName);
+		SeriesExpansion <T> linkedSeries = profile.getSeries ();
+		if (linkedSeries == null) throw new RuntimeException ("No linked series");
+		linkedSeries.showAnalysis (functionName);
+	}
+
+
 	// expansion driver
 
 
@@ -56,10 +72,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	{
 		Elements.Factor expanded =
 			reducedForm ( performExpansion (functionName) );
-
 		if (showFunctionExpanded) System.out.println (expanded);
-		showAnalysis (functionName);
-
 		return new StringBuffer ( expanded.toString () );
 	}
 
@@ -71,8 +84,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public Elements.Factor performExpansion (String functionName)
 	{
-		return RepresentationConversions.organizeTerms
-		( expandSymbol ( getProfile (functionName) ) );
+		Subroutine <T> profile;
+		( profile = getProfile (functionName) ).setSeries (this);
+		return RepresentationConversions.organizeTerms ( expandSymbol ( profile ) );
 	}
 
 

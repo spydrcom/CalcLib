@@ -18,6 +18,7 @@ import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
 
 // representation of low level math objects
+import net.myorb.math.polynomial.algebra.SeriesExpansion;
 import net.myorb.math.MultiDimensional;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Function;
@@ -66,6 +67,15 @@ public class Subroutine<T>
 		newExpressionTree (functionTokens);
 	}
 	protected ValueManager<T> valueManager;
+
+
+	/**
+	 * get a linked polynomial expansion
+	 * @return polynomial expansion connected to this function
+	 */
+	public SeriesExpansion <T> getSeries () { return series; }
+	public void setSeries (SeriesExpansion <T> series) { this.series = series; }
+	protected SeriesExpansion <T> series;
 
 
 	/**
