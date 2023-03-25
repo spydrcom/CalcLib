@@ -110,8 +110,8 @@ public abstract class Elements
 		 */
 		public String formatImage (String text)
 		{ return ! representsInteger (text) ? text : asInteger (text); }
-		public String asInteger (String text) { return text.substring (0, text.length () - 2); }
-		public boolean representsInteger (String text) { return text.endsWith (".0"); }
+		public static String asInteger (String text) { return text.substring (0, text.length () - 2); }
+		public static boolean representsInteger (String text) { return text.endsWith (".0"); }
 
 		// constructors
 

@@ -227,10 +227,10 @@ public class SeriesExpansion <T> extends ParameterManagement
 		stream.println (); stream.println ("===");
 		stream.println (functionName); stream.println ("===");
 
-		for (double power : analysis.getPowers ())
+		for (Double power : analysis.getPowers ())
 		{
-			stream.print (power); stream.print ("\t");
-			stream.print (analysis.getTermFor (power));
+			stream.print (Constant.asInteger (power.toString ()));
+			stream.print ("\t"); stream.print (analysis.getTermFor (power));
 			stream.println ();
 		}
 
