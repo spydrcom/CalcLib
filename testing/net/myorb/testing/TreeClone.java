@@ -114,7 +114,7 @@ public class TreeClone extends Utilities
 		(
 			Manipulations.reduceAndCollectTerms
 			(
-				(Elements.Sum) eqn, "x"
+				(Elements.Sum) eqn, "x", null
 			)
 		);
 		System.out.println ("===");
