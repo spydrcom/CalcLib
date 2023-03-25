@@ -34,7 +34,8 @@ public class RepresentationConversions extends Utilities
 		return Manipulations.reduceAndCollectTerms
 		(
 			reduceTermsOf (equation),
-			root.getPolynomialVariable ()
+			root.getPolynomialVariable (),
+			root
 		);
 	}
 
