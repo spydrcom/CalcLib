@@ -11,38 +11,21 @@ import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
 
+import net.myorb.data.abstractions.CommonCommandParser;
+import net.myorb.data.abstractions.ConfigurationParser;
+
 /**
  * command implementation for Series Expansion algorithm
  * @author Michael Druckman
  */
 public class SeriesExpansion <T> extends ParameterManagement
+	implements ConfigurationParser.Interpreter
 {
 
 
 	public SeriesExpansion
 		(Environment <T> environment) { this.environment = environment; }
 	protected Environment <T> environment;
-
-
-	// solve coefficient equations
-
-
-	/**
-	 * find simultaneous equation solution 
-	 *  for coefficients of expanded polynomial series
-	 * @param functionName name of an expanded series function
-	 */
-	public void solve (String functionName)
-	{
-		Subroutine <T> profile = getProfile (functionName);
-		SeriesExpansion <T> linkedSeries = profile.getSeries ();
-		if (linkedSeries == null) throw new RuntimeException ("No linked series");
-
-		linkedSeries.showAnalysis (functionName);
-
-		new Solution <T> (environment).analyze
-		(linkedSeries, profile);
-	}
 
 
 	// expansion driver
@@ -251,6 +234,52 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	protected Object lookup (String functionName) { return environment.getSymbolMap ().get (functionName); }
 	protected boolean showFunctionJson = false, showFunctionExpanded = false;
+
+
+	// solve coefficient equations
+
+
+	/**
+	 * find simultaneous equation solution 
+	 *  for coefficients of expanded polynomial series
+	 * @param sourceFunctionName name of an expanded series function
+	 * @param solutionFunctionName name for solution being built
+	 * @param tokens parameters listed on command line
+	 * @param position the starting parameter
+	 */
+	public void solve
+		(
+			String sourceFunctionName, String solutionFunctionName,
+			CommandSequence tokens, int position
+		)
+	{
+		Subroutine <T> profile =
+				getProfile (sourceFunctionName);
+		SeriesExpansion <T> linkedSeries = profile.getSeries ();
+		if (linkedSeries == null) throw new RuntimeException ("No linked series");
+		parse ( tokens, position ); linkedSeries.showAnalysis ( sourceFunctionName );
+		new Solution <T> (environment).analyze (linkedSeries, profile, symbolTable);
+	}
+
+	/**
+	 * process symbol specifications in command
+	 * @param tokens the text from the command line
+	 * @param position the starting position to use
+	 */
+	void parse (CommandSequence tokens, int position)
+	{
+		for (int i = position; i > 0; i--) tokens.remove (i - 1);
+		ConfigurationParser.process (tokens, this);
+	}
+	protected Solution.SymbolValues symbolTable = new Solution.SymbolValues ();
+
+	/* (non-Javadoc)
+	 * @see net.myorb.data.abstractions.ConfigurationParser.Interpreter#process(java.lang.String, net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor)
+	 */
+	public void process (String symbol, CommonCommandParser.TokenDescriptor token)
+	{
+		symbolTable.add (symbol, token.getTokenImage ());
+	}
 
 
 }
