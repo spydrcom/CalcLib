@@ -311,6 +311,21 @@ public class Utilities extends Elements
 	}
 
 
+	// list symbolic references
+
+	/**
+	 * identify symbolic references from specified factor
+	 * @param factor container to analyze for references
+	 * @return the set of identifiers
+	 */
+	public SymbolicReferences references (Factor factor)
+	{
+		SymbolicReferences symbols = new SymbolicReferences ();
+		factor.identify (symbols);
+		return symbols;
+	}
+
+
 	// error processing
 
 	/**
