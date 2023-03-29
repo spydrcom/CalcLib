@@ -35,6 +35,26 @@ public class SeriesExpansion <T> extends ParameterManagement
 	protected Solution <T> solution;
 
 
+	/**
+	 * post a function based on a polynomial expansion
+	 * @param sourceFunctionName the function to expand
+	 * @param newFunctionName the function to post
+	 */
+	public void declareExpandedSource
+		(
+			String sourceFunctionName, String newFunctionName
+		)
+	{
+		CommandSequence seq =
+			expandSequence ( sourceFunctionName );
+		DefinedFunction.defineUserFunction
+		(
+			newFunctionName, parameterList (),
+			seq, environment
+		);
+	}
+
+
 	// expansion driver
 
 
