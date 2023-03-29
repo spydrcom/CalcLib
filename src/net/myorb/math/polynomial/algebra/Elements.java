@@ -2,6 +2,7 @@
 package net.myorb.math.polynomial.algebra;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * representations of polynomial expressions
@@ -20,8 +21,23 @@ public abstract class Elements
 	/**
 	 * enumeration sets of Symbolic References
 	 */
-	public static class SymbolicReferences extends java.util.HashSet <String>
-	{ private static final long serialVersionUID = -3309761616352672364L; }
+	public static class SymbolicReferences extends HashSet <String>
+	{
+		/**
+		 * @return expected single symbol referenced
+		 */
+		public String getReferencedSymbol ()
+		{
+			if (isEmpty ()) return null;
+			if (size () > 1) throw new RuntimeException ("Term not reduced");
+			return toArray (EMPTY) [0];
+		}
+		private static final long serialVersionUID = -3309761616352672364L;
+		protected static final String [] EMPTY = new String [] {};
+	}
+
+	public static class SymbolList extends ArrayList <String>
+	{ private static final long serialVersionUID = -1596326735237091669L; }
 
 
 	// atomic Factor description base
