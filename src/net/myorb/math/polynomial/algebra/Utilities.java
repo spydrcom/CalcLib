@@ -318,10 +318,27 @@ public class Utilities extends Elements
 	 * @param factor container to analyze for references
 	 * @return the set of identifiers
 	 */
-	public SymbolicReferences references (Factor factor)
+	public static SymbolicReferences references (Factor factor)
 	{
 		SymbolicReferences symbols = new SymbolicReferences ();
 		factor.identify (symbols);
+		return symbols;
+	}
+
+	/**
+	 * simple polynomial should be terms of coefficient-power pairs
+	 * @param equation the Sum making the polynomial description
+	 * @return the symbol list holding coefficients
+	 */
+	public static SymbolList getCoefficientsFrom (Factor equation)
+	{
+		SymbolList symbols = new SymbolList ();
+		for (Factor term : (Sum) equation)
+		{
+			if (term instanceof Product)
+			{ term = ( (Product) term ).getFirstChild (); }
+			symbols.add ( references (term).getReferencedSymbol () );
+		}
 		return symbols;
 	}
 
