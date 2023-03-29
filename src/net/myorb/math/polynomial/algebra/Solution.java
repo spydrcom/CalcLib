@@ -1,8 +1,12 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.DataConversions;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+
 import net.myorb.math.matrices.Matrix;
 
 import java.util.*;
@@ -11,37 +15,22 @@ import java.util.*;
  * command implementation for Series Expansion Solve algorithm
  * @author Michael Druckman
  */
-public class Solution <T> extends Utilities
+public class Solution <T> extends SolutionData
 {
 
 
-	/**
-	 * text value name with Constant value
-	 */
-	public static class NameValuePair
+	public Solution (Environment <T> environment)
 	{
-		public NameValuePair (String name, String value)
-		{ this.name = name; this.value = new Constant (value); }
-		public String toString () { return value.toString (); }
-		String name; Constant value;
+		this.environment = environment;
+		this.valueManager = environment.getValueManager ();
+		this.dataConversions = environment.getConversionManager ();
+		this.stream = environment.getOutStream ();
+		environment.getValueManager ();
 	}
-
-	/**
-	 * map name to pair
-	 */
-	public static class SymbolValues extends HashMap <String, NameValuePair>
-	{
-		public void add (String name, String value)
-		{
-			this.put (name, new NameValuePair (name, value));
-		}
-		private static final long serialVersionUID = 70879534035012284L;
-	}
-
-
-	public Solution
-		(Environment <T> environment) { this.environment = environment; }
 	protected Environment <T> environment;
+	protected ValueManager <T> valueManager;
+	protected DataConversions <T> dataConversions;
+	protected java.io.PrintStream stream;
 
 
 	/**
@@ -51,24 +40,31 @@ public class Solution <T> extends Utilities
 	 */
 	public void analyze (SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
 	{
-		this.stream = environment.getOutStream ();
 		this.series = series; this.profile = profile;
-		this.symbolTable = symbolTable;
-
-		this.analysis = series.analysis;
-
-		this.doSubstitution ();
-		this.showAnalysis ();
-
-		this.solution = new MatrixSolution <T>
-		(environment).solve (equations);
+		this.symbolTable = symbolTable; this.analysis = series.analysis;
+		this.doSubstitution (); this.showAnalysis ();
+		this.solve (equations);
 	}
-	protected java.io.PrintStream stream;
 	protected Manipulations.Powers analysis;
 	protected SeriesExpansion <T> series;
 	protected SymbolValues symbolTable;
 	protected Subroutine <T> profile;
+
+
+	/**
+	 * build matrix for linear algebra solution
+	 * @param equations description of equations to solve
+	 */
+	public void solve (SystemOfEquations equations)
+	{
+		MatrixSolution <T> MS = new MatrixSolution <> (environment);
+		this.solution = MS.solve (equations, symbolTable);
+		this.symbolTable.showSymbols (stream);
+	}
 	protected Matrix <T> solution;
+
+
+	// primary substitution driver
 
 
 	/**
@@ -82,6 +78,9 @@ public class Solution <T> extends Utilities
 		}
 	}
 	protected MatrixSolution.SystemOfEquations equations = new MatrixSolution.SystemOfEquations ();
+
+
+	// tree traversal for substitution actions
 
 
 	/**
@@ -139,10 +138,10 @@ public class Solution <T> extends Utilities
 	{
 		if (operand instanceof Variable)
 		{
-			Variable v = (Variable) operand;
-			NameValuePair nvp = symbolTable.get ( v.toString () );
-			if (nvp == null) return v;
-			return nvp.value;
+			NameValuePair NVP;
+			Variable variable = (Variable) operand;
+			return ( NVP = symbolTable.get ( variable.toString () ) ) == null ?
+					variable : NVP.getConstantValue ();
 		}
 		if (operand instanceof Power)
 		{
@@ -150,10 +149,13 @@ public class Solution <T> extends Utilities
 			Variable v = (Variable) p.base ();
 			NameValuePair nvp = symbolTable.get ( v.toString () );
 			if (nvp == null) throw new RuntimeException ("Non constant power base");
-			return new Constant (Math.pow (nvp.value.getValue (), ((Constant) p.exponent ()).getValue ()));			
+			return new Constant (Math.pow (nvp.getNamedValue (), ((Constant) p.exponent ()).getValue ()));			
 		}
 		return operand;
 	}
+
+
+	// analysis display formatter
 
 
 	/**
@@ -187,10 +189,39 @@ public class Solution <T> extends Utilities
 			stream.println ();
 		}
 
-		stream.println ("===");
-		stream.println (symbolTable);
-		stream.println ("===");
-		stream.println ();
+		symbolTable.showSymbols (stream);
+	}
+
+
+	// solution vector processing
+
+
+	/**
+	 * build ordered vector of solution values
+	 * @param coefficients the values of the solution coefficients
+	 * @param solutionVector list collecting vector elements
+	 */
+	public void solutionVectorFor (SymbolList coefficients, List <T> solutionVector)
+	{
+		for (String C : coefficients)
+		{
+			T environmentValue = dataConversions.fromDouble
+				(symbolTable.get (C).getNamedValue ());
+			solutionVector.add (environmentValue);
+		}
+	}
+
+
+	/**
+	 * convert coefficient vector into internal format
+	 * @param coefficients the list of coefficient symbols
+	 * @return the internal representation of the solution vector
+	 */
+	public ValueManager.DimensionedValue <T> getCoefficientsVector (SymbolList coefficients)
+	{
+		List <T> solutionVector = new ArrayList <> ();
+		solutionVectorFor (coefficients, solutionVector);
+		return valueManager.newDimensionedValue (solutionVector);
 	}
 
 
