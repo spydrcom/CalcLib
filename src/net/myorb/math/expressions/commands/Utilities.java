@@ -280,6 +280,20 @@ public class Utilities<T>
 
 
 	/**
+	 * special case for last identifier on line
+	 * @param tokens the tokens from the command line
+	 * @param starting the starting token for the identifier
+	 * @return the text of the identifier
+	 */
+	public static String getLastIdentifier (CommandSequence tokens, int starting)
+	{
+		StringBuffer identifier = new StringBuffer ();
+		getFunctionName ( starting, tokens, identifier );
+		return identifier.toString ();
+	}
+
+
+	/**
 	 * default function name starting at 0
 	 * @param tokens the list of tokens being parsed
 	 * @return the text of the name, pos is lost
