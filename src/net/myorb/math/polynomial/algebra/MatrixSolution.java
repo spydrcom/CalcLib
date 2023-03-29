@@ -14,7 +14,7 @@ import java.util.*;
  * linear algebra solution for system of equations
  * @author Michael Druckman
  */
-public class MatrixSolution <T> extends Utilities
+public class MatrixSolution <T> extends SolutionData
 {
 
 
@@ -30,17 +30,12 @@ public class MatrixSolution <T> extends Utilities
 
 
 	/**
-	 * a set of equation to solve with linear algebra
-	 */
-	public static class SystemOfEquations extends ArrayList <Factor>
-	{ private static final long serialVersionUID = 2065886325470713453L; }
-
-
-	/**
 	 * @param equations a System Of Equations to solve
+	 * @param symbolTable set of symbols used in the solution
 	 * @return the computed solution vector
 	 */
-	public Matrix <T> solve (SystemOfEquations equations)
+	public Matrix <T> solve
+	(SystemOfEquations equations, SymbolValues symbolTable)
 	{
 		this.mapReferences (equations);
 		stream.println (symbolOrder);
@@ -60,11 +55,14 @@ public class MatrixSolution <T> extends Utilities
 		ops.show (stream, SMI); stream.println ();
 
 		stream.println ("Inverse product");
-		Matrix<T> S = ops.product (SMI, solutionVector);
-		ops.show (stream, S);
-		return S;
+		computedSolution = ops.product (SMI, solutionVector);
+		ops.show (stream, computedSolution);
+		this.postSymbols (symbolTable);
+
+		return computedSolution;
 	}
 	protected Matrix <T> solutionMatrix, solutionVector;
+	protected Matrix<T> computedSolution;
 	protected MatrixOperations <T> ops;
 
 
@@ -144,12 +142,8 @@ public class MatrixSolution <T> extends Utilities
 	 */
 	Integer indexOf (SymbolicReferences symbolFound)
 	{
-		if (symbolFound.isEmpty ()) return null;
-		if (symbolFound.size () > 1) throw new RuntimeException ("Term not reduced");
-		String symbol = symbolFound.toArray (EMPTY) [0];
-		return symbolIndex.get (symbol);
+		return symbolIndex.get (symbolFound.getReferencedSymbol ());
 	}
-	protected static final String [] EMPTY = new String [] {};
 
 
 	/**
@@ -207,6 +201,21 @@ public class MatrixSolution <T> extends Utilities
 	}
 	protected Map <String, Integer> symbolIndex = new HashMap <> ();
 	protected List <String> symbolOrder = new ArrayList <> ();
+
+
+	/**
+	 * update symbol table with computed values
+	 * @param symbolTable the collection of symbols
+	 */
+	public void postSymbols (SymbolValues symbolTable)
+	{
+		for (int i = 1; i <= computedSolution.rowCount (); i++)
+		{
+			T computedValue = computedSolution.get (i, 1);
+			Constant value = new Constant (manager.convertToDouble (computedValue));
+			symbolTable.add (symbolOrder.get (i - 1), value);
+		}
+	}
 
 
 }
