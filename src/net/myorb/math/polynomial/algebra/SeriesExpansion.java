@@ -2,11 +2,14 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.commands.CommandSequence;
+import net.myorb.math.expressions.ValueManager.DimensionedValue;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.expressions.symbols.AssignedVariableStorage;
+import net.myorb.math.expressions.symbols.DefinedFunction;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
@@ -23,9 +26,13 @@ public class SeriesExpansion <T> extends ParameterManagement
 {
 
 
-	public SeriesExpansion
-		(Environment <T> environment) { this.environment = environment; }
+	public SeriesExpansion (Environment <T> environment)
+	{
+		this.solution  =  new Solution <T>
+		(this.environment = environment);
+	}
 	protected Environment <T> environment;
+	protected Solution <T> solution;
 
 
 	// expansion driver
@@ -242,43 +249,83 @@ public class SeriesExpansion <T> extends ParameterManagement
 	/**
 	 * find simultaneous equation solution 
 	 *  for coefficients of expanded polynomial series
-	 * @param sourceFunctionName name of an expanded series function
+	 * @param expandedFunctionName name of an expanded series function
+	 * @param sourceFunctionName name of the polynomial solution to analyze
 	 * @param solutionFunctionName name for solution being built
 	 * @param tokens parameters listed on command line
 	 * @param position the starting parameter
 	 */
 	public void solve
 		(
+			String expandedFunctionName,
 			String sourceFunctionName, String solutionFunctionName,
 			CommandSequence tokens, int position
 		)
 	{
-		Subroutine <T> profile =
-				getProfile (sourceFunctionName);
-		SeriesExpansion <T> linkedSeries = profile.getSeries ();
-		if (linkedSeries == null) throw new RuntimeException ("No linked series");
-		parse ( tokens, position ); linkedSeries.showAnalysis ( sourceFunctionName );
-		new Solution <T> (environment).analyze (linkedSeries, profile, symbolTable);
+		SeriesExpansion <T>
+			sourceSeries = seriesFor ( sourceFunctionName ),
+			expandedSeries = seriesFor ( expandedFunctionName );
+		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
+		this.solution.analyze ( expandedSeries, currentProfile, symbolTable );
+		this.describeSolution ( solutionFunctionName,  sourceSeries );
 	}
+
+
+	/**
+	 * post solution to symbol table
+	 * @param solutionFunctionName the name requested for the solution
+	 * @param sourceSeries the series specified as the model for the solution
+	 */
+	public void describeSolution
+		(String solutionFunctionName, SeriesExpansion <T> sourceSeries)
+	{
+		DimensionedValue <T> vector =
+			solution.getCoefficientsVector ( getCoefficientsFrom (sourceSeries.expandedRoot) );
+		this.environment.getSymbolMap ().add ( new AssignedVariableStorage (solutionFunctionName, vector) );
+		this.environment.getOutStream ().println ( solutionFunctionName + " = " + vector );
+	}
+
+
+	/**
+	 * get series linked to function symbol
+	 * @param functionName name of the function to locate
+	 * @return the series expansion linked to symbol
+	 */
+	public SeriesExpansion <T> seriesFor (String functionName)
+	{
+		currentProfile = getProfile (functionName);
+		SeriesExpansion <T> linkedSeries = currentProfile.getSeries ();
+		if (linkedSeries == null) throw new RuntimeException ("No linked series");
+		return linkedSeries;
+	}
+	protected Subroutine <T> currentProfile;
+
+
+	// command line token parser
+
 
 	/**
 	 * process symbol specifications in command
 	 * @param tokens the text from the command line
 	 * @param position the starting position to use
 	 */
-	void parse (CommandSequence tokens, int position)
+	public void parse (CommandSequence tokens, int position)
 	{
 		for (int i = position; i > 0; i--) tokens.remove (i - 1);
 		ConfigurationParser.process (tokens, this);
 	}
 	protected Solution.SymbolValues symbolTable = new Solution.SymbolValues ();
 
+
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.ConfigurationParser.Interpreter#process(java.lang.String, net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor)
 	 */
 	public void process (String symbol, CommonCommandParser.TokenDescriptor token)
 	{
-		symbolTable.add (symbol, token.getTokenImage ());
+		String image;
+		if ( (image = token.getTokenImage ()).startsWith ("\"") )
+		{ image = CommonCommandParser.stripQuotes (image); }
+		symbolTable.add (symbol, image);
 	}
 
 
