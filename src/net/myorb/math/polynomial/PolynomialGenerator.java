@@ -1,9 +1,10 @@
 
 package net.myorb.math.polynomial;
 
-import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+
+import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.polynomial.algebra.SeriesExpansion;
 
@@ -37,43 +38,17 @@ public class PolynomialGenerator <T>
 			CommandSequence tokens, int position
 		)
 	{
-		this.parameterName = parameterName;
-		this.parameterList.add (parameterName);
-		this.coefficientName = coefficientName;
-
-		int degree = Integer.parseInt (tokens.get (position).getTokenImage ());
-
-//		environment.getOutStream ().println
-//		(
-//			functionName + " (" + parameterName + ") = " + coefficientName + " * " + parameterName + "^" + degree
-//		);
-		
-		int [] none = new int [degree+1], first  = new int [degree+1], second = new int [degree+1];
-		
-		for (int i = 0; i <= degree; i++)
-		{
-			none [i] = 1; first [i] = i + 1;
-			second [i] = (i + 1) * (i + 2);
-		}
-		
+		this.parameterList.add (this.parameterName = parameterName); this.coefficientName = coefficientName;
 		StringBuffer poly0 = new StringBuffer (), poly1 = new StringBuffer (), poly2 = new StringBuffer ("2*");
 		addCoef (0, poly0).append (" + "); addCoef (1, poly1).append (" + "); addCoef (2, poly2).append (" + ");
 		addProduct (1, 1, poly0); addProduct (2, 2, poly1); addProduct (6, 3, poly2);
+		int degree = Integer.parseInt (tokens.get (position).getTokenImage ());
 
 		for (int i = 2; i <= degree; i++)
-		{
-			addTerm (i, none[i], i, poly0);
-			addTerm (i, first[i], i+1, poly1);
-			addTerm (i, second[i], i+2, poly2);
-		}
-
-		define (functionName, poly0);
-		define (functionName+"'", poly1);
-		define (functionName+"''", poly2);
-
+		{ int i1 = i + 1, i2 = i + 2; addTerm (i, 1, i, poly0); addTerm (i, i1, i1, poly1); addTerm (i, i1*i2, i2, poly2); }
+		define (functionName, poly0); define (functionName+"'", poly1); define (functionName+"''", poly2);
 		new SeriesExpansion <T> (environment).expandSequence (functionName);
 	}
-	Subroutine.ParameterList parameterList = new Subroutine.ParameterList ();
 
 
 	/**
@@ -91,7 +66,7 @@ public class PolynomialGenerator <T>
 		buffer.append (parameterName).append ("^").append (power);
 		return buffer.append (")");
 	}
-	String parameterName;
+	protected String parameterName;
 
 	/**
 	 * add parameter multiple to buffer
@@ -134,7 +109,7 @@ public class PolynomialGenerator <T>
 		buffer.append (n);
 		return buffer;
 	}
-	String coefficientName;
+	protected String coefficientName;
 
 
 	/**
@@ -151,6 +126,7 @@ public class PolynomialGenerator <T>
 			name, parameterList, CommandSequence.parse (source), environment
 		);
 	}
+	protected Subroutine.ParameterList parameterList = new Subroutine.ParameterList ();
 
 
 }
