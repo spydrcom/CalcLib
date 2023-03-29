@@ -172,6 +172,7 @@ public class OperatorNomenclature
 	POLYDER_FUNCTION = "POLYDER",				// POLYDER (1, 2, 3)	derivative of polynomial from coefficients
 	CHEBDER_FUNCTION = "CHEBDER",				// CHEBDER (1, 2, 3)	derivative of Chebyshev T polynomial from coefficients
 	POLYHG_FUNCTION = "POLYHG",					// POLYHG (a1, a2)		build coefficients for hyper geometric polynomial
+	POLYGEN_KEYWORD = "POLYGEN",				// POLYGEN N P C D		define a polynomial function from Name Param Coef Degree
 	POLYNOMIAL_KEYWORD = "POLYNOMIAL",			// POLYNOMIAL (1, 2)	evaluate a polynomial given coefficient array
 	POLY_ABBREVIATION_KEYWORD = "POLY",			// POLY (1, 2, 3)		an abbreviation for POLYNOMIAL (short form)
 	EVALSPLINE_FUNCTION = "EVALSPLINE",			// EVALSPLINE (M, b, x)	evaluate a Chebyshev spline function at X
