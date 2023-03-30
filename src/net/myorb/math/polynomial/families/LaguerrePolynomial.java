@@ -3,9 +3,12 @@ package net.myorb.math.polynomial.families;
 
 import net.myorb.math.polynomial.PolynomialFamily;
 import net.myorb.math.polynomial.GeneralRecurrence;
+import net.myorb.math.polynomial.InitialConditions;
 
 import net.myorb.math.polynomial.PolynomialFamilyManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+
+import net.myorb.math.computational.Combinatorics;
 
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
@@ -15,25 +18,36 @@ import net.myorb.math.Polynomial;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class LaguerrePolynomial<T> extends Polynomial<T>
-			implements PolynomialFamily<T>
+public class LaguerrePolynomial <T> extends Polynomial <T>
+			implements PolynomialFamily <T>
 {
 
 	public LaguerrePolynomial
-	(SpaceManager<T> manager) { super (manager); init (); }
+	(SpaceManager <T> manager) { super (manager); init (); }
 	public LaguerrePolynomial () { super (null); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.PolynomialFamily#init(net.myorb.math.SpaceManager)
 	 */
-	public void init (SpaceManager<T> manager)
+	public void init (SpaceManager <T> manager)
 	{ this.manager = manager; init (); }
 	public void init ()
 	{
-		this.psm = new LaguerrePolynomialSpaceManager<T>(manager);
+		this.psm = new LaguerrePolynomialSpaceManager <T>(manager);
 	}
 	protected PolynomialSpaceManager<T> psm;
-	
+
+	/**
+	 * compute Initial Conditions for solution
+	 * @param degree the degree of the solution polynomial
+	 * @param alpha the value of alpha for the solution
+	 * @return the Initial Conditions object
+	 */
+	public InitialConditions <T> getInitialConditions (int degree, int alpha)
+	{
+		return new LaguerreInitialConditions <T> (degree, alpha, manager);
+	}
+
 	/**
 	 * use function inter-dependencies to generate series L
 	 * @param upTo highest order of functions to be generated
@@ -75,7 +89,7 @@ public class LaguerrePolynomial<T> extends Polynomial<T>
 
 }
 
-class LaguerreRecurrenceFormula<T> extends GeneralRecurrence<T>
+class LaguerreRecurrenceFormula <T> extends GeneralRecurrence <T>
 {
 	// (n+1) * L[n+1](x) = ( (2n+1)*L[n](x) - x*L[n](x) - nL[n-1](x) )
 
@@ -102,7 +116,7 @@ class LaguerreRecurrenceFormula<T> extends GeneralRecurrence<T>
 	private static final long serialVersionUID = 1L;
 }
 
-class LaguerrePolynomialSpaceManager<T> extends PolynomialSpaceManager<T>
+class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
 {
 
 	/**
@@ -125,5 +139,30 @@ class LaguerrePolynomialSpaceManager<T> extends PolynomialSpaceManager<T>
 //		// then the Laguerre L function of (x) replaces the traditional x^n
 //		buffer.append ("L[").append (termNo).append ("](x)");
 //	}
+
+}
+
+class LaguerreInitialConditions <T> implements InitialConditions <T>
+{
+
+	LaguerreInitialConditions (int degree, int alpha, SpaceManager<T> manager)
+	{
+		double sign = degree % 2 == 1 ? -1 : 1;
+		Double l = Combinatorics.F ( (double) degree ) * sign;
+		Double c = Combinatorics.binomialCoefficientHW (degree + alpha, degree);
+		this.constant = manager.newScalar ( c.intValue () );
+		this.lead = manager.newScalar ( l.intValue () );
+	}
+	protected T constant, lead;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditions#getConstantTerm()
+	 */
+	public T getConstantTerm () { return constant; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditions#getLeadTerm()
+	 */
+	public T getLeadTerm () { return lead; }
 
 }
