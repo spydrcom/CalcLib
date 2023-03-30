@@ -260,6 +260,7 @@ public class OperatorNomenclature
 
 	public static
 		final String
+	SUBSCRIPT_RENDER_TICK = "_",					// ID_n will render as ID with subscript n
 	ASSIGNMENT_DELIMITER = "=",						// let A = 1		identify variable assignment
 	GROUP_CONTINUATION_DELIMITER = ",",				// f(a,b,c,d,e)		separation of parameters
 	END_OF_STATEMENT_DELIMITER = ";",				// @A=1; @B=2		separation of statements
@@ -272,7 +273,7 @@ public class OperatorNomenclature
 	START_OF_LOOP_BLOCK_DELIMITER = "*{",			// *{  id   }*		count id number of iterations
 	END_OF_LOOP_BLOCK_DELIMITER = "}*",				//						non-existing equivalent of 0
 	END_OF_ARRAY_DELIMITER = "]",					// [ lo < id < hi ]	values for range
-	END_OF_GROUP_DELIMITER = ")"
+	END_OF_GROUP_DELIMITER = ")"					// completion of parenthetical
 		;
 
 
