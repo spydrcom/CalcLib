@@ -5,7 +5,11 @@ import net.myorb.math.Polynomial;
 import net.myorb.math.SpaceManager;
 import net.myorb.math.ListOperations;
 
+import net.myorb.math.linalg.SolutionPrimitives;
+
 import net.myorb.data.abstractions.Portable;
+import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
+import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonTools;
@@ -21,7 +25,7 @@ import java.util.List;
  * @author Michael Druckman
  */
 public class MatrixOperations <T> extends ListOperations <T>
-		implements Portable.AsJson <Matrix <T>>
+		implements Portable.AsJson <Matrix <T>>, SolutionPrimitives <T>
 {
 
 	/**
@@ -792,4 +796,76 @@ public class MatrixOperations <T> extends ListOperations <T>
 		return m;
 	}
 
+	// implementation of SolutionPrimitives
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#decompose(net.myorb.math.matrices.Matrix)
+	 */
+	public SolutionPrimitives.Decomposition decompose (Matrix <T> A)
+	{
+		return new InvertedMatrix <T> ( inv (A) );
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#solve(net.myorb.math.linalg.SolutionPrimitives.Decomposition, net.myorb.math.linalg.SolutionPrimitives.RequestedResultVector)
+	 */
+	public SolutionPrimitives.SolutionVector solve
+		(
+			Decomposition D, RequestedResultVector b
+		)
+	{
+		Matrix <T> column = columnVectorFrom (b);
+		@SuppressWarnings("unchecked") Matrix <T> S =
+			product ( ( (InvertedMatrix <T>) D ).M, column );
+		return new SolutionPrimitives.Content <T>
+		( S.getColAccess (1), manager);
+	}
+	Matrix <T> columnVectorFrom (RequestedResultVector b)
+	{
+		@SuppressWarnings("unchecked") Vector <T> result = (Vector <T>) b;
+		Matrix <T> column = new Matrix <> (result.size (), 1, manager);
+		setCol (1, column, result);
+		return column;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+	 */
+	public SolutionPrimitives.Decomposition restore (TextSource from)
+	{
+		SolutionPrimitives.Decomposition D;
+		(D = new InvertedMatrix <T> ()).load (from);
+		return D;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
+	 */
+	public SolutionPrimitives.Decomposition restore (JsonValue source)
+	{ return new InvertedMatrix <T> (source); }
+
 }
+
+/**
+ * a wrapper for a matrix to use as a solution primitive
+ */
+class InvertedMatrix <T> implements SolutionPrimitives.Decomposition
+{
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
+	 */
+	public void store (TextSink to) {}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
+	 */
+	public void load (TextSource from) {}
+
+	InvertedMatrix () {}
+	InvertedMatrix (JsonValue source) {}
+	InvertedMatrix (Matrix <T> M) { this.M = M; }
+	protected Matrix <T> M;
+
+}
+
