@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.OperatorNomenclature;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -272,13 +274,14 @@ public abstract class Elements
 			for (int i = 1; i < factorCount; i++)
 			{
 				if ( (next = Utilities.reducedForm (factors.get (i))) instanceof Negated )
-				{ buf.append (" - ").append ( ( (Negated) next ).getFactor () ); }
+				{ buf.append (MINUS).append ( ( (Negated) next ).getFactor () ); }
 				else buf.append (op).append (next);
 			}
 			return buf.toString ();
 		}
 		return "";
 	}
+	static final String MINUS = " "+OperatorNomenclature.SUBTRACTION_OPERATOR+" ";
 
 	/**
 	 * parenthetical version
