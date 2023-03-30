@@ -38,17 +38,43 @@ public class PolynomialGenerator <T>
 			CommandSequence tokens, int position
 		)
 	{
-		this.parameterList.add (this.parameterName = parameterName); this.coefficientName = coefficientName;
-		StringBuffer poly0 = new StringBuffer (), poly1 = new StringBuffer (), poly2 = new StringBuffer ("2*");
-		addCoef (0, poly0).append (" + "); addCoef (1, poly1).append (" + "); addCoef (2, poly2).append (" + ");
-		addProduct (1, 1, poly0); addProduct (2, 2, poly1); addProduct (6, 3, poly2);
 		int degree = Integer.parseInt (tokens.get (position).getTokenImage ());
+		this.parameterList.add (this.parameterName = parameterName); this.coefficientName = coefficientName;
+		this.poly0 = new StringBuffer (); this.poly1 = new StringBuffer (); this.poly2 = new StringBuffer ("2").append (TIMES);
+		this.establishInitialConditions (); this.defineFunctions (functionName, degree);
+	}
+	protected StringBuffer poly0, poly1, poly2;
 
+
+	/**
+	 * first term coefficients present initial conditions
+	 *			c0 = f(0) and c1 = df/dx(0)
+	 */
+	public void establishInitialConditions ()
+	{
+		this.addCoef (0, poly0).append (PLUS); this.addCoef (1, poly1).append (PLUS); this.addCoef (2, poly2).append (PLUS);
+		this.addProduct (1, 1, poly0); this.addProduct (2, 2, poly1); this.addProduct (6, 3, poly2);
+	}
+	static final String PLUS = " + ", TIMES = "*", TO = "^", SUB = "_";
+
+
+	/**
+	 * complete function expression formatting
+	 *  and post declarations to symbol table with appropriate names
+	 * @param functionName the name of the function being declared
+	 * @param degree the highest power of the polynomial
+	 */
+	public void defineFunctions (String functionName, int degree)
+	{
 		for (int i = 2; i <= degree; i++)
 		{ int i1 = i + 1, i2 = i + 2; addTerm (i, 1, i, poly0); addTerm (i, i1, i1, poly1); addTerm (i, i1*i2, i2, poly2); }
-		define (functionName, poly0); define (functionName+"'", poly1); define (functionName+"''", poly2);
+		define (functionName, poly0); define (functionName+FIRST, poly1); define (functionName+SECOND, poly2);
 		new SeriesExpansion <T> (environment).expandSequence (functionName);
 	}
+	static final String FIRST = "'", SECOND = "''";
+
+
+	// formatting for terms and coefficient products
 
 
 	/**
@@ -61,10 +87,10 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addTerm (int power, int multiple, int n, StringBuffer buffer)
 	{
-		buffer.append (" + (");
+		buffer.append (PLUS).append (OPEN);
 		addCoefWithMultiplier (multiple, n, buffer);
-		buffer.append (parameterName).append ("^").append (power);
-		return buffer.append (")");
+		buffer.append (parameterName).append (TO).append (power);
+		return buffer.append (CLOSE);
 	}
 	protected String parameterName;
 
@@ -77,10 +103,11 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addProduct (int multiple, int n, StringBuffer buffer)
 	{
-		buffer.append ("(");
+		buffer.append (OPEN);
 		addCoefWithMultiplier (multiple, n, buffer).append (parameterName);
-		return buffer.append (")");
+		return buffer.append (CLOSE);
 	}
+	static final String OPEN = "(", CLOSE = ")";
 
 	/**
 	 * append buffer with multiple of coefficient
@@ -91,8 +118,8 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addCoefWithMultiplier (int multiple, int n, StringBuffer buffer)
 	{
-		if (multiple != 1) buffer.append (multiple).append ("*");
-		addCoef (n, buffer).append ("*");
+		if (multiple != 1) buffer.append (multiple).append (TIMES);
+		addCoef (n, buffer).append (TIMES);
 		return buffer;
 	}
 
@@ -105,11 +132,15 @@ public class PolynomialGenerator <T>
 	StringBuffer addCoef (int n, StringBuffer buffer)
 	{
 		buffer.append (coefficientName);
-		if (n < 10) { buffer.append ("_"); } // underscore render only works for single digit
+		// underscore render only works for single digit
+		if (n < 10) { buffer.append (SUB); }
 		buffer.append (n);
 		return buffer;
 	}
 	protected String coefficientName;
+
+
+	// symbol table profile posting
 
 
 	/**
