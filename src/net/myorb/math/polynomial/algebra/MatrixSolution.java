@@ -4,6 +4,9 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.linalg.SolutionApplication;
+import net.myorb.math.linalg.SolutionPrimitives;
+
 import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
@@ -20,50 +23,52 @@ public class MatrixSolution <T> extends SolutionData
 
 	public MatrixSolution (Environment <T> environment)
 	{
-		this.environment = environment;
 		this.manager = environment.getSpaceManager ();
+		this.solutionApplication = new SolutionApplication <T> (manager);
+		this.ops = new MatrixOperations <T> (manager);
 		this.stream = environment.getOutStream ();
 	}
-	protected Environment <T> environment;
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;
+	protected MatrixOperations <T> ops;
 
 
 	/**
+	 * solve system of equations
 	 * @param equations a System Of Equations to solve
 	 * @param symbolTable set of symbols used in the solution
-	 * @return the computed solution vector
+	 * @return computed solution
 	 */
 	public Matrix <T> solve
-	(SystemOfEquations equations, SymbolValues symbolTable)
+		(SystemOfEquations equations, SymbolValues symbolTable)
 	{
-		this.mapReferences (equations);
-		stream.println (symbolOrder);
-
-		int N = symbolOrder.size ();
-		this.ops = new MatrixOperations<T> (manager);
-		this.solutionMatrix = new Matrix <> (N, N, manager);
-		this.solutionVector = new Matrix <> (N, 1, manager);
-		this.zero (solutionVector.getColAccess (1));
-
-		this.loadSolution (equations, N);
-		ops.show (stream, solutionMatrix); stream.println ();
-		ops.show (stream, solutionVector); stream.println ();
-
-		stream.println ("Inverse of Solution");
-		Matrix<T> SMI = ops.inv (solutionMatrix);
-		ops.show (stream, SMI); stream.println ();
-
-		stream.println ("Inverse product");
-		computedSolution = ops.product (SMI, solutionVector);
-		ops.show (stream, computedSolution);
+		int N = this.mapReferences (equations);
+		this.prepareSolution (N); this.loadSolution (equations, N);
+		this.computedSolution = solutionApplication.decompositionSolution
+				(solutionMatrix, solutionVector);
 		this.postSymbols (symbolTable);
-
 		return computedSolution;
 	}
-	protected Matrix <T> solutionMatrix, solutionVector;
-	protected Matrix<T> computedSolution;
-	protected MatrixOperations <T> ops;
+
+
+	/**
+	 * @param N order of the solution matrix
+	 */
+	public void prepareSolution (int N)
+	{
+		this.solutionMatrix = new Matrix <> (N, N, manager);
+		this.solutionVector = new Matrix <> (N, 1, manager);
+	}
+	protected Matrix <T> solutionMatrix, solutionVector, computedSolution;
+
+
+	/**
+	 * identify solution algorithm to be used
+	 * @param primitives implementation of SolutionPrimitives
+	 */
+	public void setPrimitives (SolutionPrimitives <T> primitives)
+	{ this.solutionApplication.setPrimitives (primitives); }
+	protected SolutionApplication <T> solutionApplication;
 
 
 	/**
@@ -73,6 +78,8 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public void loadSolution (SystemOfEquations equations, int N)
 	{
+		this.zero (solutionVector.getColAccess (1));
+
 		for (int i = 1; i <= N; i++)
 		{
 			T value = loadEquation
@@ -184,20 +191,19 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * cross reference symbols to matrix columns
 	 * @param equations the equations being analyzed
+	 * @return the count of symbols
 	 */
-	void mapReferences (SystemOfEquations equations)
+	int mapReferences (SystemOfEquations equations)
 	{
 		int N = 1;
 		SymbolicReferences symbolsSeen = new SymbolicReferences ();
 		for (Factor factor : equations) factor.identify (symbolsSeen);
-
-		symbolOrder.addAll (symbolsSeen);
-		symbolOrder.sort (null);
+		symbolOrder.addAll (symbolsSeen); symbolOrder.sort (null);
 
 		for (String symbol : symbolOrder)
-		{
-			symbolIndex.put (symbol, N++);
-		}
+		{ symbolIndex.put (symbol, N++); }
+		stream.println (symbolOrder);
+		return symbolOrder.size ();
 	}
 	protected Map <String, Integer> symbolIndex = new HashMap <> ();
 	protected List <String> symbolOrder = new ArrayList <> ();
