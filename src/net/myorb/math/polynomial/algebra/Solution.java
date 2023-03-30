@@ -7,6 +7,7 @@ import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
+import net.myorb.math.linalg.LUDSolution;
 import net.myorb.math.matrices.Matrix;
 
 import java.util.*;
@@ -25,7 +26,6 @@ public class Solution <T> extends SolutionData
 		this.valueManager = environment.getValueManager ();
 		this.dataConversions = environment.getConversionManager ();
 		this.stream = environment.getOutStream ();
-		environment.getValueManager ();
 	}
 	protected Environment <T> environment;
 	protected ValueManager <T> valueManager;
@@ -58,6 +58,7 @@ public class Solution <T> extends SolutionData
 	public void solve (SystemOfEquations equations)
 	{
 		MatrixSolution <T> MS = new MatrixSolution <> (environment);
+		MS.setPrimitives (new LUDSolution <T> (environment.getSpaceManager ()));
 		this.solution = MS.solve (equations, symbolTable);
 		this.symbolTable.showSymbols (stream);
 	}
