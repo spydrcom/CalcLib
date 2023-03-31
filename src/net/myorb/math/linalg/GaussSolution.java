@@ -12,7 +12,6 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
-
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 /**
@@ -39,7 +38,7 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 	 */
 	public SolutionPrimitives.Decomposition decompose (Matrix <T> A)
 	{
-		return new AugmentedMatrix <T> (A, manager);
+		return new AugmentedMatrix <T> (A, ops, manager);
 	}
 
 	/* (non-Javadoc)
@@ -61,7 +60,7 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 	public SolutionPrimitives.Decomposition restore (TextSource from)
 	{
 		SolutionPrimitives.Decomposition D;
-		(D = new AugmentedMatrix <T> ()).load (from);
+		( D = new AugmentedMatrix <T> (ops) ).load (from);
 		return D;
 	}
 
@@ -89,18 +88,19 @@ class AugmentedMatrix <T> implements SolutionPrimitives.Decomposition
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 	 */
-	public void store (TextSink to) {}
+	public void store (TextSink to) { ops.saveTo (this.M, to); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
 	 */
-	public void load (TextSource from) {}
+	public void load (TextSource from) { this.M = ops.readFrom (from); }
 
-	AugmentedMatrix () {}
-	AugmentedMatrix (JsonValue source) {}
-	AugmentedMatrix (Matrix <T> M, ExpressionSpaceManager <T> manager)
-	{ this.M = M; simeq = new SimultaneousEquations <T> (manager); }
+	AugmentedMatrix (MatrixOperations <T> ops) { this.ops = ops; }
+	AugmentedMatrix (JsonValue source)  { this.M = ops.fromJson (source); }
+	AugmentedMatrix (Matrix <T> M, MatrixOperations <T> ops, ExpressionSpaceManager <T> manager)
+	{ this (ops); this.M = M; simeq = new SimultaneousEquations <T> (manager); }
 	protected SimultaneousEquations <T> simeq;
+	protected MatrixOperations <T> ops;
 	protected Matrix <T> M;
 
 }
