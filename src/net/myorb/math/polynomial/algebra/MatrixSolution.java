@@ -78,8 +78,9 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public void loadSolution (SystemOfEquations equations, int N)
 	{
+		if (N > equations.size ())
+			throw new RuntimeException ("Insufficient criteria for solution");
 		this.zero (solutionVector.getColAccess (1));
-
 		for (int i = 1; i <= N; i++)
 		{
 			T value = loadEquation
