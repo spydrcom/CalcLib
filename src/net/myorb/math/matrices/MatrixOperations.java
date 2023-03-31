@@ -231,7 +231,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 	}
 
 	/**
-	 * copy diagnoal from matrix to matrix
+	 * copy diagonal from matrix to matrix
 	 * @param number number of diagonal, 0 = center, + = upper, - = lower
 	 * @param from source matrix
 	 * @param to destination 
@@ -686,6 +686,9 @@ public class MatrixOperations <T> extends ListOperations <T>
 		}
 	}
 
+
+	// display formatters
+
 	/**
 	 * display matrix
 	 * @param m the matrix to be displayed
@@ -763,6 +766,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 	static final int MINIMUM_SPACING = 5;
 	static final boolean DUMPING = true;
 
+
 	// JSON representation conversions
 
 	/* (non-Javadoc)
@@ -801,6 +805,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 		return m;
 	}
 
+
 	// implementation of matrix IO with JSON representation
 
 	/**
@@ -824,6 +829,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 		try { JsonPrettyPrinter.sinkTo (this.toJson (M), to); }
 		catch (Exception e) { throw new RuntimeException ("Error saving matrix", e); }
 	}
+
 
 	// implementation of SolutionPrimitives
 
@@ -855,6 +861,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 		return product ( wrapper.M, columnMatrix ( solution ) ).getColAccess (1);
 	}
 
+
 	// implementation of Decomposition IO interface
 
 	/* (non-Javadoc)
@@ -871,15 +878,25 @@ public class MatrixOperations <T> extends ListOperations <T>
 	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
 	 */
 	public SolutionPrimitives.Decomposition restore (JsonValue source)
-	{ return new InvertedMatrix <T> (source); }
+	{ return new InvertedMatrix <T> (source, this); }
+
 
 }
+
 
 /**
  * a wrapper for a matrix to use as a solution primitive
  */
 class InvertedMatrix <T> implements SolutionPrimitives.Decomposition
 {
+
+	/**
+	 * capture MatrixOperations object as support for IO
+	 * @param ops an operations object for IO and JSON conversions
+	 */
+	InvertedMatrix
+	(MatrixOperations <T> ops) { this.ops = ops; }
+	protected MatrixOperations <T> ops;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
@@ -891,10 +908,20 @@ class InvertedMatrix <T> implements SolutionPrimitives.Decomposition
 	 */
 	public void load (TextSource from) { this.M = ops.readFrom (from); }
 
+	/**
+	 * wrap matrix with operations object
+	 * @param M the matrix object to be wrapped
+	 * @param ops an operations object for IO and JSON conversions
+	 */
 	InvertedMatrix (Matrix <T> M, MatrixOperations <T> ops) { this (ops); this.M = M; }
-	InvertedMatrix (JsonValue source) { this.M = ops.fromJson (source); }
-	InvertedMatrix (MatrixOperations <T> ops) { this.ops = ops; }
-	protected MatrixOperations <T> ops; protected Matrix <T> M;
+
+	/**
+	 * @param source contents of matrix to decode from JSON
+	 * @param ops an operations object for IO and JSON conversions
+	 */
+	InvertedMatrix (JsonValue source, MatrixOperations <T> ops)
+	{ this (ops.fromJson (source), ops); }
+	protected Matrix <T> M;
 
 }
 
