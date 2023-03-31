@@ -62,7 +62,7 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 	public SolutionPrimitives.Decomposition restore (SimpleStreamIO.TextSource from)
 	{
 		SolutionPrimitives.Decomposition D;
-		( D = new AugmentedMatrix <T> (ops) ).load (from);
+		( D = new AugmentedMatrix <T> (ops, manager) ).load (from);
 		return D;
 	}
 
@@ -70,7 +70,7 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.notations.json.JsonLowLevel.JsonValue)
 	 */
 	public SolutionPrimitives.Decomposition restore (JsonValue source)
-	{ return new AugmentedMatrix <T> (source); }
+	{ return new AugmentedMatrix <T> (source, ops, manager); }
 
 
 }
@@ -81,6 +81,24 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
  */
 class AugmentedMatrix <T> implements SolutionPrimitives.Decomposition
 {
+
+	/**
+	 * @param M the matrix being Decomposed
+	 * @param ops MatrixOperations support object
+	 * @param manager space manager for data type
+	 */
+	AugmentedMatrix
+	(Matrix <T> M, MatrixOperations <T> ops, ExpressionSpaceManager <T> manager)
+	{ this (ops, manager); this.M = M; }
+
+	/**
+	 * @param ops MatrixOperations support object
+	 * @param manager space manager for data type
+	 */
+	AugmentedMatrix (MatrixOperations <T> ops, ExpressionSpaceManager <T> manager)
+	{ this.ops = ops; simeq = new SimultaneousEquations <T> (manager); }
+	protected SimultaneousEquations <T> simeq;
+	protected MatrixOperations <T> ops;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
@@ -100,14 +118,12 @@ class AugmentedMatrix <T> implements SolutionPrimitives.Decomposition
 	VectorAccess <T> solve (VectorAccess <T> column) { return simeq.applyGaussianElimination (M, column); }
 
 	/**
+	 * @param source JSON representation of matrix
 	 * @param ops MatrixOperations support object
+	 * @param manager space manager for data type
 	 */
-	AugmentedMatrix (MatrixOperations <T> ops) { this.ops = ops; }
-	AugmentedMatrix (JsonValue source)  { this.M = ops.fromJson (source); }
-	AugmentedMatrix (Matrix <T> M, MatrixOperations <T> ops, ExpressionSpaceManager <T> manager)
-	{ this (ops); this.M = M; simeq = new SimultaneousEquations <T> (manager); }
-	protected SimultaneousEquations <T> simeq;
-	protected MatrixOperations <T> ops;
+	AugmentedMatrix (JsonValue source, MatrixOperations <T> ops, ExpressionSpaceManager <T> manager) 
+	{ this (ops.fromJson (source), ops, manager); }
 	protected Matrix <T> M;
 
 }
