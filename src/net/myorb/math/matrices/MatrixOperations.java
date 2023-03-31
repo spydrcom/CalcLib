@@ -10,7 +10,9 @@ import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.data.abstractions.Portable;
 import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
+
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.notations.json.JsonReader;
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonTools;
 
@@ -796,6 +798,24 @@ public class MatrixOperations <T> extends ListOperations <T>
 		return m;
 	}
 
+	/**
+	 * @param from text source for matrix
+	 * @return the parsed matrix
+	 */
+	public Matrix <T> readFrom (TextSource from)
+	{
+		try { return fromJson (JsonReader.readFrom (from)); }
+		catch (Exception e) { throw new RuntimeException ("Error reading matrix", e); }
+	}
+
+	/**
+	 * @param M matrix to save
+	 * @param from sink to use for output
+	 */
+	public void saveTo (Matrix <T> M, TextSink from)
+	{
+	}
+
 	// implementation of SolutionPrimitives
 
 	/* (non-Javadoc)
@@ -803,7 +823,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 	 */
 	public SolutionPrimitives.Decomposition decompose (Matrix <T> A)
 	{
-		return new InvertedMatrix <T> ( inv (A) );
+		return new InvertedMatrix <T> ( inv (A), this );
 	}
 
 	/* (non-Javadoc)
@@ -832,7 +852,7 @@ public class MatrixOperations <T> extends ListOperations <T>
 	public SolutionPrimitives.Decomposition restore (TextSource from)
 	{
 		SolutionPrimitives.Decomposition D;
-		(D = new InvertedMatrix <T> ()).load (from);
+		(D = new InvertedMatrix <T> (this)).load (from);
 		return D;
 	}
 
@@ -853,17 +873,17 @@ class InvertedMatrix <T> implements SolutionPrimitives.Decomposition
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 	 */
-	public void store (TextSink to) {}
+	public void store (TextSink to) { ops.saveTo (this.M, to); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
 	 */
-	public void load (TextSource from) {}
+	public void load (TextSource from) { this.M = ops.readFrom (from); }
 
-	InvertedMatrix () {}
-	InvertedMatrix (JsonValue source) {}
-	InvertedMatrix (Matrix <T> M) { this.M = M; }
-	protected Matrix <T> M;
+	InvertedMatrix (Matrix <T> M, MatrixOperations <T> ops) { this (ops); this.M = M; }
+	InvertedMatrix (JsonValue source) { this.M = ops.fromJson (source); }
+	InvertedMatrix (MatrixOperations <T> ops) { this.ops = ops; }
+	protected MatrixOperations <T> ops; protected Matrix <T> M;
 
 }
 
