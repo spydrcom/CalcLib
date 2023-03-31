@@ -152,17 +152,19 @@ class LaguerreInitialConditions <T> implements InitialConditions <T>
 		Double c = Combinatorics.binomialCoefficientHW (degree + alpha, degree);
 		this.constant = manager.newScalar ( c.intValue () );
 		this.lead = manager.newScalar ( l.intValue () );
+		this.manager = manager;
 	}
+	protected SpaceManager<T> manager;
 	protected T constant, lead;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditions#getLeadTerm()
+	 */
+	public T getLeadTerm () { return manager.invert (lead); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.InitialConditions#getConstantTerm()
 	 */
 	public T getConstantTerm () { return constant; }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.InitialConditions#getLeadTerm()
-	 */
-	public T getLeadTerm () { return lead; }
 
 }
