@@ -56,10 +56,11 @@ public class PolynomialGenerator <T>
 		this.addCoef (0, poly0).append (PLUS); this.addCoef (1, poly1).append (PLUS); this.addCoef (2, poly2).append (PLUS);
 		this.addProduct (1, 1, poly0); this.addProduct (2, 2, poly1); this.addProduct (6, 3, poly2);
 	}
-	static final String SUB = OperatorNomenclature.SUBSCRIPT_RENDER_TICK;
-	static final String PLUS = " "+OperatorNomenclature.ADDITION_OPERATOR+" ";
-	static final String TIMES = OperatorNomenclature.MULTIPLICATION_OPERATOR;
-	static final String TO = OperatorNomenclature.POW_OPERATOR;
+	public static final String SUB = OperatorNomenclature.SUBSCRIPT_RENDER_TICK;
+	public static final String PLUS = " "+OperatorNomenclature.ADDITION_OPERATOR+" ";		// terms format with extra spacing
+	public static final String MINUS = " "+OperatorNomenclature.SUBTRACTION_OPERATOR+" ";	// this seems to improve readability
+	public static final String TIMES = OperatorNomenclature.MULTIPLICATION_OPERATOR;
+	public static final String TO = OperatorNomenclature.POW_OPERATOR;
 
 
 	/**
@@ -75,8 +76,8 @@ public class PolynomialGenerator <T>
 		define (functionName, poly0); define (functionName+FIRST, poly1); define (functionName+SECOND, poly2);
 		new SeriesExpansion <T> (environment).expandSequence (functionName);
 	}
-	static final String FIRST = OperatorNomenclature.PRIME_OPERATOR;
-	static final String SECOND = OperatorNomenclature.DPRIME_OPERATOR;
+	public static final String FIRST = OperatorNomenclature.PRIME_OPERATOR;
+	public static final String SECOND = OperatorNomenclature.DPRIME_OPERATOR;
 
 
 	// formatting for terms and coefficient products
@@ -112,8 +113,8 @@ public class PolynomialGenerator <T>
 		addCoefWithMultiplier (multiple, n, buffer).append (parameterName);
 		return buffer.append (CLOSE);
 	}
-	static final String OPEN = OperatorNomenclature.START_OF_GROUP_DELIMITER;
-	static final String CLOSE = OperatorNomenclature.END_OF_GROUP_DELIMITER;
+	public static final String OPEN = OperatorNomenclature.START_OF_GROUP_DELIMITER;
+	public static final String CLOSE = OperatorNomenclature.END_OF_GROUP_DELIMITER;
 
 	/**
 	 * append buffer with multiple of coefficient
