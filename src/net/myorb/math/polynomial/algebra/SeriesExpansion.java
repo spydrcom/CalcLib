@@ -341,12 +341,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @see net.myorb.data.abstractions.ConfigurationParser.Interpreter#process(java.lang.String, net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor)
 	 */
 	public void process (String symbol, CommonCommandParser.TokenDescriptor token)
-	{
-		String image;
-		if ( (image = token.getTokenImage ()).startsWith ("\"") )
-		{ image = CommonCommandParser.stripQuotes (image); }
-		symbolTable.add (symbol, image);
-	}
+	{ symbolTable.add (symbol, CommonCommandParser.unQuoted (token)); }
 
 
 }
