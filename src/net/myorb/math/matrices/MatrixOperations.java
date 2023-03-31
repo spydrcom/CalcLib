@@ -814,18 +814,16 @@ public class MatrixOperations <T> extends ListOperations <T>
 			Decomposition D, RequestedResultVector b
 		)
 	{
-		Matrix <T> column = columnVectorFrom (b);
-		@SuppressWarnings("unchecked") Matrix <T> S =
-			product ( ( (InvertedMatrix <T>) D ).M, column );
-		return new SolutionPrimitives.Content <T>
-		( S.getColAccess (1), manager);
+		return new SolutionPrimitives.Content <T> ( product (D, b), manager );
 	}
-	Matrix <T> columnVectorFrom (RequestedResultVector b)
+	@SuppressWarnings("unchecked") VectorAccess <T> product
+		(Decomposition D, RequestedResultVector b)
 	{
-		@SuppressWarnings("unchecked") Vector <T> result = (Vector <T>) b;
-		Matrix <T> column = new Matrix <> (result.size (), 1, manager);
-		setCol (1, column, result);
-		return column;
+		return product ( (InvertedMatrix <T>) D, (Vector <T>) b );
+	}
+	VectorAccess <T> product (InvertedMatrix <T> wrapper, Vector <T> solution)
+	{
+		return product ( wrapper.M, columnMatrix ( solution ) ).getColAccess (1);
 	}
 
 	/* (non-Javadoc)
