@@ -91,6 +91,10 @@ public class MatrixSolution <T> extends SolutionData
 			);
 			solutionVector.set (i, 1, value);
 		}
+
+		stream.println ("===");
+		ops.show (stream, solutionMatrix); stream.println ("===");
+		ops.show (stream, solutionVector); stream.println ("==="); stream.println ();
 	}
 
 
@@ -118,7 +122,7 @@ public class MatrixSolution <T> extends SolutionData
 			{
 				if (column < 1 || column > vector.size ())
 				{
-					System.out.println ("Factor in error: " + factor);
+					stream.println ("Factor in error: " + factor);
 					continue;
 				}
 				T cell = manager.add (vector.get (column), scalar);
