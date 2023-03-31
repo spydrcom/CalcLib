@@ -26,6 +26,14 @@ public abstract class MatrixSlice<T> implements VectorAccess<T>
 	 */
 	public void nextSpan () { throw new RuntimeException ("N/A"); }
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.matrices.VectorAccess#fill(java.lang.Object)
+	 */
+	public void fill (T value)
+	{
+		for (int i = 1; i <= size; i++) set (i, value);
+	}
+
 	/**
 	 * initialize parameters for access object
 	 * @param access the parent matrix access object

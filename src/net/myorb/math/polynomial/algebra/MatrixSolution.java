@@ -78,9 +78,10 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public void loadSolution (SystemOfEquations equations, int N)
 	{
-		if (N > equations.size ())
-			throw new RuntimeException ("Insufficient criteria for solution");
-		this.zero (solutionVector.getColAccess (1));
+		if ( N > equations.size () )
+		{ throw new RuntimeException ("Insufficient criteria for solution"); }
+		solutionVector.getColAccess (1).fill ( manager.getZero () );
+		
 		for (int i = 1; i <= N; i++)
 		{
 			T value = loadEquation
@@ -101,9 +102,8 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public T loadEquation (Sum equation, VectorAccess <T> vector)
 	{
-		Integer column;
-		this.zero (vector);
-		T value = manager.getZero ();
+		Integer column; T value;
+		vector.fill (value = manager.getZero ());
 
 		for (Factor factor : equation)
 		{
@@ -177,15 +177,6 @@ public class MatrixSolution <T> extends SolutionData
 			}
 		}
 		return manager.convertFromDouble (value);
-	}
-
-
-	/**
-	 * @param vector the vector to set to all-zero
-	 */
-	public void zero (VectorAccess <T> vector)
-	{
-		for (int i = 1; i <= vector.size (); i++) vector.set (i, manager.getZero ());
 	}
 
 

@@ -61,6 +61,14 @@ public class Vector <T> extends ListOperations <T>
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.matrices.VectorAccess#fill(java.lang.Object)
+	 */
+	public void fill (T value)
+	{
+		this.fillList (elements, value);
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.matrices.VectorAccess#get(int)
 	 */
 	public T get (int index)

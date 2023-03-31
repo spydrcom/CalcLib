@@ -89,6 +89,14 @@ public class MinorMatrixComputationTask<T> extends MinorMatrixComputationPool<T>
 	public void set (int index, T value) { elements.set (index - 1, value); }
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.matrices.VectorAccess#fill(java.lang.Object)
+	 */
+	public void fill (T value)
+	{
+		for (int i = 1; i <= size; i++) set (i, value);
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.matrices.VectorAccess#get(int)
 	 */
 	public T get (int index) { return elements.get (index - 1); }

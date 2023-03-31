@@ -39,4 +39,10 @@ public interface VectorAccess<T>
 	 */
 	public void set (int index, T value);
 
+	/**
+	 * set all elements to value
+	 * @param value the value to use
+	 */
+	public void fill (T value);
+
 }

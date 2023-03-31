@@ -69,6 +69,14 @@ public class SpanAccess<T> implements VectorAccess<T>
 	}
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.matrices.VectorAccess#fill(java.lang.Object)
+	 */
+	public void fill (T value)
+	{
+		for (int i = 1; i <= size; i++) set (i, value);
+	}
+
+	/* (non-Javadoc)
 	 * @see net.myorb.math.matrices.VectorAccess#nextSpan()
 	 */
 	public void nextSpan ()
