@@ -10,9 +10,8 @@ import net.myorb.math.matrices.Matrix;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
-import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
+import net.myorb.data.abstractions.SimpleStreamIO;
 
 /**
  * an implementation of SolutionPrimitives using Gaussian Elimination
@@ -54,10 +53,13 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 		return new SolutionPrimitives.Content <T> ( S, manager );
 	}
 
+
+	// Decomposition IO implementation
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
 	 */
-	public SolutionPrimitives.Decomposition restore (TextSource from)
+	public SolutionPrimitives.Decomposition restore (SimpleStreamIO.TextSource from)
 	{
 		SolutionPrimitives.Decomposition D;
 		( D = new AugmentedMatrix <T> (ops) ).load (from);
@@ -80,21 +82,26 @@ public class GaussSolution <T> implements SolutionPrimitives <T>
 class AugmentedMatrix <T> implements SolutionPrimitives.Decomposition
 {
 
-	VectorAccess <T> solve (VectorAccess <T> column)
-	{
-		return simeq.applyGaussianElimination (M, column);
-	}
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#store(net.myorb.data.abstractions.SimpleStreamIO.TextSink)
 	 */
-	public void store (TextSink to) { ops.saveTo (this.M, to); }
+	public void store (SimpleStreamIO.TextSink to) { ops.saveTo (this.M, to); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives.Decomposition#load(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
 	 */
-	public void load (TextSource from) { this.M = ops.readFrom (from); }
+	public void load (SimpleStreamIO.TextSource from) { this.M = ops.readFrom (from); }
 
+	/**
+	 * solve system using Simultaneous Equations implementation of Gaussian Elimination
+	 * @param column the requested solutions vector
+	 * @return the solution to the system
+	 */
+	VectorAccess <T> solve (VectorAccess <T> column) { return simeq.applyGaussianElimination (M, column); }
+
+	/**
+	 * @param ops MatrixOperations support object
+	 */
 	AugmentedMatrix (MatrixOperations <T> ops) { this.ops = ops; }
 	AugmentedMatrix (JsonValue source)  { this.M = ops.fromJson (source); }
 	AugmentedMatrix (Matrix <T> M, MatrixOperations <T> ops, ExpressionSpaceManager <T> manager)
