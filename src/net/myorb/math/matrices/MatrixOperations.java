@@ -12,8 +12,9 @@ import net.myorb.data.abstractions.SimpleStreamIO.TextSink;
 import net.myorb.data.abstractions.SimpleStreamIO.TextSource;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
-import net.myorb.data.notations.json.JsonReader;
+import net.myorb.data.notations.json.JsonPrettyPrinter;
 import net.myorb.data.notations.json.JsonSemantics;
+import net.myorb.data.notations.json.JsonReader;
 import net.myorb.data.notations.json.JsonTools;
 
 import java.io.PrintStream;
@@ -762,6 +763,8 @@ public class MatrixOperations <T> extends ListOperations <T>
 	static final int MINIMUM_SPACING = 5;
 	static final boolean DUMPING = true;
 
+	// JSON representation conversions
+
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.Portable.AsJson#toJson(java.lang.Object)
 	 */
@@ -798,22 +801,28 @@ public class MatrixOperations <T> extends ListOperations <T>
 		return m;
 	}
 
+	// implementation of matrix IO with JSON representation
+
 	/**
+	 * read matrix from source
 	 * @param from text source for matrix
 	 * @return the parsed matrix
 	 */
 	public Matrix <T> readFrom (TextSource from)
 	{
-		try { return fromJson (JsonReader.readFrom (from)); }
+		try { return this.fromJson (JsonReader.readFrom (from)); }
 		catch (Exception e) { throw new RuntimeException ("Error reading matrix", e); }
 	}
 
 	/**
+	 * send matrix to sink
 	 * @param M matrix to save
-	 * @param from sink to use for output
+	 * @param to sink to use for output
 	 */
-	public void saveTo (Matrix <T> M, TextSink from)
+	public void saveTo (Matrix <T> M, TextSink to)
 	{
+		try { JsonPrettyPrinter.sinkTo (this.toJson (M), to); }
+		catch (Exception e) { throw new RuntimeException ("Error saving matrix", e); }
 	}
 
 	// implementation of SolutionPrimitives
@@ -845,6 +854,8 @@ public class MatrixOperations <T> extends ListOperations <T>
 	{
 		return product ( wrapper.M, columnMatrix ( solution ) ).getColAccess (1);
 	}
+
+	// implementation of Decomposition IO interface
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.linalg.SolutionPrimitives#restore(net.myorb.data.abstractions.SimpleStreamIO.TextSource)
