@@ -1,7 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.expressions.OperatorNomenclature;
+import net.myorb.math.polynomial.PolynomialGenerator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -281,7 +281,7 @@ public abstract class Elements
 		}
 		return "";
 	}
-	static final String MINUS = " "+OperatorNomenclature.SUBTRACTION_OPERATOR+" ";
+	static final String MINUS = PolynomialGenerator.MINUS;
 
 	/**
 	 * parenthetical version
@@ -291,8 +291,10 @@ public abstract class Elements
 	 */
 	public static String bracketedImage (Factors factors, String op)
 	{
-		return "( " + image (factors, op) + " )";
+		return OPEN + image (factors, op) + CLOSE;
 	}
+	static final String CLOSE = " " + PolynomialGenerator.CLOSE;
+	static final String OPEN = PolynomialGenerator.OPEN + " ";
 
 
 }
