@@ -39,7 +39,7 @@ public class PolynomialGenerator <T>
 			CommandSequence tokens, int position
 		)
 	{
-		int degree = Integer.parseInt (tokens.get (position).getTokenImage ());
+		int degree = tokens.get (position).getTokenValue ().intValue ();
 		this.parameterList.add (this.parameterName = parameterName); this.coefficientName = coefficientName;
 		this.poly0 = new StringBuffer (); this.poly1 = new StringBuffer (); this.poly2 = new StringBuffer ("2").append (TIMES);
 		this.establishInitialConditions (); this.defineFunctions (functionName, degree);
