@@ -3,6 +3,7 @@ package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.DataConversions;
+import net.myorb.math.expressions.commands.Tabulation;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
@@ -26,6 +27,7 @@ public class Solution <T> extends SolutionData
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
 		this.dataConversions = environment.getConversionManager ();
+		this.displayTable = new Tabulation <> (environment);
 		this.stream = environment.getOutStream ();
 	}
 	protected DataConversions <T> dataConversions;
@@ -255,6 +257,23 @@ public class Solution <T> extends SolutionData
 		solutionVectorFor (coefficients, solutionVector);
 		return valueManager.newDimensionedValue (solutionVector);
 	}
+
+
+	/**
+	 * display tabulation of solution data
+	 * @param documentTitle the title for the display
+	 * @param columnHeaders the names of symbols in columns
+	 * @param solutionValues the matrix of data points
+	 */
+	public void showTable
+		(
+			String documentTitle, List <String> columnHeaders,
+			List < ValueManager.DimensionedValue <T> > solutionValues
+		)
+	{
+		displayTable.format (documentTitle, columnHeaders, solutionValues);
+	}
+	protected Tabulation <T> displayTable;
 
 
 }
