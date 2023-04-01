@@ -10,7 +10,7 @@ import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * linear algebra solution for system of equations
@@ -18,6 +18,13 @@ import java.util.*;
  */
 public class MatrixSolution <T> extends SolutionData
 {
+
+
+	/**
+	 * map symbols to ordered index within solution
+	 */
+	class SymbolIndexMap extends HashMap <String, Integer>
+	{ private static final long serialVersionUID = 1113974645827170797L; }
 
 
 	public MatrixSolution
@@ -41,24 +48,51 @@ public class MatrixSolution <T> extends SolutionData
 	public Matrix <T> solve
 		(SystemOfEquations equations, SymbolValues symbolTable)
 	{
-		int N = this.mapReferences (equations);
-		this.prepareSolution (N); this.loadSolution (equations, N);
-		this.computedSolution = solutionApplication.decompositionSolution
-				(solutionMatrix, solutionVector);
-		this.postSymbols (symbolTable);
-		return computedSolution;
+		return computedColumnVectorSolution
+		(
+			equations,
+			new SymbolList (),
+			new SymbolIndexMap (),
+			symbolTable
+		);
+	}
+	Matrix <T> computedColumnVectorSolution
+		(
+			SystemOfEquations equations,
+			SymbolList symbolOrder, SymbolIndexMap indices,
+			SymbolValues symbolTable
+		)
+	{
+		int N = this.mapReferences
+		(
+			equations,
+			symbolOrder,
+			indices
+		);
+		return this.postSymbols
+		(
+			symbolOrder, symbolTable,
+			solve (equations, indices, N)
+		);
 	}
 
 
 	/**
-	 * @param N order of the solution matrix
+	 * solve system of equations
+	 * @param equations a System Of Equations to solve
+	 * @param indices index map built for solution symbols
+	 * @param N determined count of symbols from reference map
+	 * @return the computed solution from decomposition solution algorithm
 	 */
-	public void prepareSolution (int N)
+	public Matrix <T> solve (SystemOfEquations equations, SymbolIndexMap indices, int N)
 	{
-		this.solutionMatrix = new Matrix <> (N, N, manager);
-		this.solutionVector = new Matrix <> (N, 1, manager);
+		Matrix <T>
+			solutionMatrix = new Matrix <> (N, N, manager), solutionVector = new Matrix <> (N, 1, manager);
+		this.loadSolution ( equations, solutionMatrix, solutionVector, indices, N );
+		Matrix <T> computedSolution = solutionApplication.decompositionSolution
+				( solutionMatrix, solutionVector );
+		return computedSolution;
 	}
-	protected Matrix <T> solutionMatrix, solutionVector, computedSolution;
 
 
 	/**
@@ -73,9 +107,17 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * build matrix and vector for the solution
 	 * @param equations the equations being analyzed
+	 * @param solutionMatrix the matrix of collected coefficient scalars
+	 * @param solutionVector the collection of constant terms of equations
+	 * @param indices the index map built for all solution symbols
 	 * @param N the order of the polynomial
 	 */
-	public void loadSolution (SystemOfEquations equations, int N)
+	public void loadSolution
+		(
+			SystemOfEquations equations,
+			Matrix <T> solutionMatrix, Matrix <T> solutionVector,
+			SymbolIndexMap indices, int N
+		)
 	{
 		if ( N > equations.size () )
 		{ throw new RuntimeException ("Insufficient criteria for solution"); }
@@ -86,7 +128,8 @@ public class MatrixSolution <T> extends SolutionData
 			T value = loadEquation
 			(
 				(Sum) equations.get ( i - 1 ),
-				solutionMatrix.getRowAccess (i)
+				solutionMatrix.getRowAccess (i),
+				indices
 			);
 			solutionVector.set (i, 1, value);
 		}
@@ -101,9 +144,11 @@ public class MatrixSolution <T> extends SolutionData
 	 * translate an equation to a matrix row
 	 * @param equation the equation being analyzed
 	 * @param vector the row vector of the matrix for this equation
+	 * @param indices the index map built for all solution symbols
 	 * @return the constant value to use in the solution vector
 	 */
-	public T loadEquation (Sum equation, VectorAccess <T> vector)
+	public T loadEquation
+	(Sum equation, VectorAccess <T> vector, SymbolIndexMap indices)
 	{
 		Integer column; T value;
 		vector.fill (value = manager.getZero ());
@@ -112,7 +157,7 @@ public class MatrixSolution <T> extends SolutionData
 		{
 			T scalar = scalarFor (factor);
 
-			if ( ( column = columnFor (factor) ) == null )
+			if ( ( column = columnFor (factor, indices) ) == null )
 			{
 				T offset = manager.negate (scalar);
 				value = manager.add (value, offset);
@@ -136,24 +181,14 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * determine the matrix column referenced by a factor
 	 * @param factor the factor taken from an equation product
+	 * @param indices the index map built for all solution symbols
 	 * @return the index for recognized symbol or null for a constant
 	 */
-	Integer columnFor (Factor factor)
+	Integer columnFor (Factor factor, SymbolIndexMap indices)
 	{
 		SymbolicReferences symbolFound;
-		factor.identify (symbolFound = new SymbolicReferences ());
-		return indexOf (symbolFound);
-	}
-
-
-	/**
-	 * determine treatment for a symbol set
-	 * @param symbolFound the set of references found
-	 * @return the column number or null for a constant
-	 */
-	Integer indexOf (SymbolicReferences symbolFound)
-	{
-		return symbolIndex.get (symbolFound.getReferencedSymbol ());
+		factor.identify ( symbolFound = new SymbolicReferences () );
+		return indices.get ( symbolFound.getReferencedSymbol () );
 	}
 
 
@@ -186,36 +221,61 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * cross reference symbols to matrix columns
 	 * @param equations the equations being analyzed
+	 * @param symbolOrder list collecting ordered list of references
+	 * @param indices index map to build for symbols
 	 * @return the count of symbols
 	 */
-	int mapReferences (SystemOfEquations equations)
+	int mapReferences
+	(SystemOfEquations equations, SymbolList symbolOrder, SymbolIndexMap indices)
 	{
-		int N = 1;
+		this.mapEquationReferences (equations, symbolOrder);
+		int N = 0; for (String S : symbolOrder) indices.put (S, ++N);
+		stream.println (symbolOrder);
+		return N;
+	}
+
+
+	/**
+	 * identify equation symbol references
+	 * @param equations the equations being analyzed
+	 * @param symbolOrder resulting ordered list of references
+	 */
+	void mapEquationReferences
+		(SystemOfEquations equations, SymbolList symbolOrder)
+	{
 		SymbolicReferences symbolsSeen = new SymbolicReferences ();
 		for (Factor factor : equations) factor.identify (symbolsSeen);
 		symbolOrder.addAll (symbolsSeen); symbolOrder.sort (null);
-
-		for (String symbol : symbolOrder)
-		{ symbolIndex.put (symbol, N++); }
-		stream.println (symbolOrder);
-		return symbolOrder.size ();
 	}
-	protected Map <String, Integer> symbolIndex = new HashMap <> ();
-	protected List <String> symbolOrder = new ArrayList <> ();
 
 
 	/**
 	 * update symbol table with computed values
-	 * @param symbolTable the collection of symbols
+	 * @param symbolOrder ordered list of references
+	 * @param symbolTable the collection of symbols in the solution
+	 * @param computedSolution matrix holding solution
+	 * @return computedSolution matrix
 	 */
-	public void postSymbols (SymbolValues symbolTable)
+	public Matrix <T> postSymbols
+		(
+			SymbolList symbolOrder,
+			SymbolValues symbolTable,
+			Matrix <T> computedSolution
+		)
 	{
 		for (int i = 1; i <= computedSolution.rowCount (); i++)
 		{
-			T computedValue = computedSolution.get (i, 1);
-			Constant value = new Constant (manager.convertToDouble (computedValue));
-			symbolTable.add (symbolOrder.get (i - 1), value);
+			symbolTable.add
+			(
+				symbolOrder.get ( i - 1 ),
+				computedValue ( computedSolution.get (i, 1) )
+			);
 		}
+		return computedSolution;
+	}
+	Constant computedValue (T from)
+	{
+		return new Constant (manager.convertToDouble (from));
 	}
 
 
