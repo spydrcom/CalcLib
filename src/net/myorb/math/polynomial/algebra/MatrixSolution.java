@@ -2,7 +2,6 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.linalg.SolutionApplication;
 import net.myorb.math.linalg.SolutionPrimitives;
@@ -21,12 +20,12 @@ public class MatrixSolution <T> extends SolutionData
 {
 
 
-	public MatrixSolution (Environment <T> environment)
+	public MatrixSolution
+	(ExpressionSpaceManager <T> manager, java.io.PrintStream stream)
 	{
-		this.manager = environment.getSpaceManager ();
+		this.manager = manager; this.stream = stream;
 		this.solutionApplication = new SolutionApplication <T> (manager);
 		this.ops = new MatrixOperations <T> (manager);
-		this.stream = environment.getOutStream ();
 	}
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;

@@ -3,11 +3,12 @@ package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.DataConversions;
-
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.linalg.GaussSolution;
+import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.matrices.Matrix;
 
 import java.util.*;
@@ -22,27 +23,33 @@ public class Solution <T> extends SolutionData
 
 	public Solution (Environment <T> environment)
 	{
-		this.environment = environment;
+		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
 		this.dataConversions = environment.getConversionManager ();
 		this.stream = environment.getOutStream ();
 	}
-	protected Environment <T> environment;
-	protected ValueManager <T> valueManager;
 	protected DataConversions <T> dataConversions;
+	protected ExpressionSpaceManager <T> manager;
+	protected ValueManager <T> valueManager;
 	protected java.io.PrintStream stream;
 
 
+	// analysis and solution computation
+
+
 	/**
+	 * perform constant substitutions and solve
 	 * @param series the expanded series being analyzed
 	 * @param profile the profile object of the function which was expanded
 	 * @param symbolTable the symbol values from the invoking command
 	 */
-	public void analyze (SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
+	public void analyze
+	(SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
 	{
 		this.series = series; this.profile = profile;
 		this.symbolTable = symbolTable; this.analysis = series.analysis;
 		this.doSubstitution (); this.showAnalysis ();
+		this.establishSolutionAlgorithm ();
 		this.solve (equations);
 	}
 	protected Manipulations.Powers analysis;
@@ -57,12 +64,36 @@ public class Solution <T> extends SolutionData
 	 */
 	public void solve (SystemOfEquations equations)
 	{
-		MatrixSolution <T> MS = new MatrixSolution <> (environment);
-		MS.setPrimitives (new GaussSolution <T> (environment.getSpaceManager ()));
-		this.solution = MS.solve (equations, symbolTable);
+		MatrixSolution <T> computer = getSolutionComputer ();
+		this.solutionOfEquations = computer.solve (equations, symbolTable);
 		this.symbolTable.showSymbols (stream);
 	}
-	protected Matrix <T> solution;
+	protected Matrix <T> solutionOfEquations;
+
+
+	/**
+		Gauss Elimination chosen as default
+		but all Solution Primitive implementations successfully tested
+		Gauss Elimination tests showed significant improvement in time over others
+		round off error did also appear to be reduced in Gauss tests
+	 */
+	public void establishSolutionAlgorithm ()
+	{
+		this.solutionAlgorithm = new GaussSolution <T> (manager);
+	}
+	protected SolutionPrimitives <T> solutionAlgorithm;
+
+
+	/**
+	 * configure a solution object
+	 * @return configured Solution Computer
+	 */
+	public MatrixSolution <T> getSolutionComputer ()
+	{
+		MatrixSolution <T> solutionComputer = new MatrixSolution <> (manager, stream);
+		solutionComputer.setPrimitives (solutionAlgorithm);
+		return solutionComputer;
+	}
 
 
 	// primary substitution driver
