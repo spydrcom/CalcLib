@@ -3,10 +3,11 @@ package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.DataConversions;
-import net.myorb.math.expressions.commands.Tabulation;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.commands.Tabulation;
 
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.linalg.GaussSolution;
@@ -19,7 +20,7 @@ import java.util.*;
  * command implementation for Series Expansion Solve algorithm
  * @author Michael Druckman
  */
-public class Solution <T> extends SolutionData
+public class Solution <T> extends SubstitutionProcessing
 {
 
 
@@ -49,16 +50,14 @@ public class Solution <T> extends SolutionData
 	public void analyze
 	(SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
 	{
+		this.process
+			(series.analysis, symbolTable);
 		this.establishTitle (series, symbolTable);
 		this.series = series; this.profile = profile;
-		this.symbolTable = symbolTable; this.analysis = series.analysis;
-		this.doSubstitution (); this.showAnalysis ();
-		this.establishSolutionAlgorithm ();
+		this.showAnalysis (); this.establishSolutionAlgorithm ();
 		this.solve (equations);
 	}
-	protected Manipulations.Powers analysis;
 	protected SeriesExpansion <T> series;
-	protected SymbolValues symbolTable;
 	protected Subroutine <T> profile;
 
 
@@ -70,7 +69,7 @@ public class Solution <T> extends SolutionData
 	{
 		MatrixSolution <T> computer = getSolutionComputer ();
 		this.solutionOfEquations = computer.solve (equations, symbolTable);
-		this.showSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
+		this.compileSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
 		this.symbolTable.showSymbols (stream);
 	}
 	protected Matrix <T> solutionOfEquations;
@@ -98,97 +97,6 @@ public class Solution <T> extends SolutionData
 		MatrixSolution <T> solutionComputer = new MatrixSolution <> (manager, stream);
 		solutionComputer.setPrimitives (solutionAlgorithm);
 		return solutionComputer;
-	}
-
-
-	// primary substitution driver
-
-
-	/**
-	 * nodes of element tree are updated for constant symbols
-	 */
-	public void doSubstitution ()
-	{
-		for (Double power : analysis.getPowers ())
-		{
-			equations.add (doSubstitutionForTerm (analysis.getTermFor (power)));
-		}
-	}
-	protected MatrixSolution.SystemOfEquations equations = new MatrixSolution.SystemOfEquations ();
-
-
-	// tree traversal for substitution actions
-
-
-	/**
-	 * @param term a term to be updated
-	 * @return the updated node
-	 */
-	public Factor doSubstitutionForTerm (Factor term)
-	{
-		if (term instanceof Sum)
-		{
-			Factor subs;
-			Double cons = 0.0;
-			Sum result = new Sum ();
-			for (Factor factor : (Sum) term)
-			{
-				if ( (subs = doSubstitutionForProduct (factor)) instanceof Constant )
-				{ cons += ( (Constant) subs ).getValue (); }
-				else { add (subs, result); }
-			}
-			if (cons != 0.0) result.add (new Constant (cons));
-			return result;
-		}
-		return doSubstitutionForProduct (term);
-	}
-
-	/**
-	 * @param product a product to be updated
-	 * @return the updated node
-	 */
-	public Factor doSubstitutionForProduct (Factor product)
-	{
-		if (product instanceof Product)
-		{
-			Factor subs;
-			Double scalar = 1.0;
-			Product result = new Product ();
-			for (Factor factor : (Product) product)
-			{
-				if ( (subs = doSubstitutionForOperand (factor)) instanceof Constant )
-				{ scalar *= ( (Constant) subs ).getValue (); }
-				else { add (subs, result); }
-			}
-			if (scalar != 1.0) result.add (0, new Constant (scalar));
-			return reduceSingle (result);
-		}
-		return doSubstitutionForOperand (product);
-	}
-
-	/**
-	 * determine value of an operand
-	 * @param operand an operand to be evaluated
-	 * @return the node with updates where appropriate
-	 */
-	public Factor doSubstitutionForOperand (Factor operand)
-	{
-		if (operand instanceof Variable)
-		{
-			NameValuePair NVP;
-			Variable variable = (Variable) operand;
-			return ( NVP = symbolTable.get ( variable.toString () ) ) == null ?
-					variable : NVP.getConstantValue ();
-		}
-		if (operand instanceof Power)
-		{
-			Power p = (Power) operand;
-			Variable v = (Variable) p.base ();
-			NameValuePair nvp = symbolTable.get ( v.toString () );
-			if (nvp == null) throw new RuntimeException ("Non constant power base");
-			return new Constant (Math.pow (nvp.getNamedValue (), ((Constant) p.exponent ()).getValue ()));			
-		}
-		return operand;
 	}
 
 
@@ -264,19 +172,20 @@ public class Solution <T> extends SolutionData
 
 	// display of work-product matrix of solution
 
+
 	/**
-	 * display the work-product matrix
+	 * compile the work-product matrix
 	 * @param coefficients column headers with names of coefficients
 	 * @param solutionValues the scalar for the coefficient in each equation
 	 */
-	public void showSolutionTable
+	public void compileSolutionTable
 		(
 			SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
 		)
 	{
 		List <String> columnHeaders = new ArrayList <> ();
 		columnHeaders.addAll (coefficients); columnHeaders.add ("=");
-		showTable (documentTitle, columnHeaders, solutionValues);
+		showTable (documentTitle.toString (), columnHeaders, solutionValues);
 	}
 
 
@@ -286,8 +195,12 @@ public class Solution <T> extends SolutionData
 	 * @param symbolTable the table of symbols provided for the solution request
 	 */
 	public void establishTitle (SeriesExpansion <T> series, SymbolValues symbolTable)
-	{ this.documentTitle = series.getFunctionName () + " Solution " + symbolTable; }
-	protected String documentTitle;
+	{
+		this.documentTitle.append (series.getFunctionName ()).append (" - ");
+		this.documentTitle.append (series.getSolutionBeingBuilt ()).append (" Solution ");
+		this.documentTitle.append (symbolTable);
+	}
+	protected StringBuffer documentTitle = new StringBuffer ();
 
 
 	/**
