@@ -45,14 +45,23 @@ public class SeriesExpansion <T> extends ParameterManagement
 			String sourceFunctionName, String newFunctionName
 		)
 	{
-		CommandSequence seq =
-			expandSequence ( sourceFunctionName );
+		this.setSolutionBeingBuilt (newFunctionName);
+		CommandSequence seq = expandSequence ( sourceFunctionName );
+
 		DefinedFunction.defineUserFunction
 		(
-			newFunctionName, parameterList (),
-			seq, environment
+			newFunctionName, parameterList (), seq, environment
 		);
 	}
+
+
+	/**
+	 * @return name assigned to the solution
+	 */
+	public String getSolutionBeingBuilt () { return solutionBeingBuilt; }
+	public void setSolutionBeingBuilt (String solutionBeingBuilt)
+	{ this.solutionBeingBuilt = solutionBeingBuilt; }
+	protected String solutionBeingBuilt;
 
 
 	// expansion driver
@@ -133,6 +142,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	}
 
 
+	/**
+	 * @return the name of the core expanded function
+	 */
 	public String getFunctionName () { return functionName; }
 	public void setFunctionName (String functionName)
 	{ this.functionName = functionName; }
@@ -292,6 +304,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 		SeriesExpansion <T>
 			sourceSeries = seriesFor ( sourceFunctionName ),
 			expandedSeries = seriesFor ( expandedFunctionName );
+		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
 		this.solution.analyze ( expandedSeries, currentProfile, symbolTable );
 		this.describeSolution ( solutionFunctionName,  sourceSeries );
