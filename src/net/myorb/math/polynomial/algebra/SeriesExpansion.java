@@ -85,7 +85,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public StringBuffer expandedDescription (String functionName)
 	{
-		expandedRoot = reducedForm ( performExpansion (functionName) );
+		this.setFunctionName (functionName);
+		this.expandedRoot = reducedForm ( performExpansion (functionName) );
 		if (showFunctionExpanded) System.out.println (expandedRoot);
 		return new StringBuffer ( expandedRoot.toString () );
 	}
@@ -130,6 +131,12 @@ public class SeriesExpansion <T> extends ParameterManagement
 		catch (Exception e) { error ( functionName + " not recognized", e ); }
 		return null;
 	}
+
+
+	public String getFunctionName () { return functionName; }
+	public void setFunctionName (String functionName)
+	{ this.functionName = functionName; }
+	protected String functionName;
 
 
 	/**
