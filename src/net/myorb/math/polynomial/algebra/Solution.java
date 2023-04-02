@@ -8,8 +8,9 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
-import net.myorb.math.linalg.GaussSolution;
 import net.myorb.math.linalg.SolutionPrimitives;
+import net.myorb.math.linalg.GaussSolution;
+
 import net.myorb.math.matrices.Matrix;
 
 import java.util.*;
@@ -48,6 +49,7 @@ public class Solution <T> extends SolutionData
 	public void analyze
 	(SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
 	{
+		this.establishTitle (series, symbolTable);
 		this.series = series; this.profile = profile;
 		this.symbolTable = symbolTable; this.analysis = series.analysis;
 		this.doSubstitution (); this.showAnalysis ();
@@ -68,6 +70,7 @@ public class Solution <T> extends SolutionData
 	{
 		MatrixSolution <T> computer = getSolutionComputer ();
 		this.solutionOfEquations = computer.solve (equations, symbolTable);
+		this.showSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
 		this.symbolTable.showSymbols (stream);
 	}
 	protected Matrix <T> solutionOfEquations;
@@ -257,6 +260,34 @@ public class Solution <T> extends SolutionData
 		solutionVectorFor (coefficients, solutionVector);
 		return valueManager.newDimensionedValue (solutionVector);
 	}
+
+
+	// display of work-product matrix of solution
+
+	/**
+	 * display the work-product matrix
+	 * @param coefficients column headers with names of coefficients
+	 * @param solutionValues the scalar for the coefficient in each equation
+	 */
+	public void showSolutionTable
+		(
+			SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
+		)
+	{
+		List <String> columnHeaders = new ArrayList <> ();
+		columnHeaders.addAll (coefficients); columnHeaders.add ("=");
+		showTable (documentTitle, columnHeaders, solutionValues);
+	}
+
+
+	/**
+	 * format a title for this solution
+	 * @param series the expanded series constructed to solve this series
+	 * @param symbolTable the table of symbols provided for the solution request
+	 */
+	public void establishTitle (SeriesExpansion <T> series, SymbolValues symbolTable)
+	{ this.documentTitle = series.getFunctionName () + " Solution " + symbolTable; }
+	protected String documentTitle;
 
 
 	/**
