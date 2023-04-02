@@ -1,6 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.linalg.SolutionApplication;
@@ -10,7 +11,9 @@ import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * linear algebra solution for system of equations
@@ -20,10 +23,23 @@ public class MatrixSolution <T> extends SolutionData
 {
 
 
+	// allocation of dimensioned objects
+
+	public Matrix <T> MAT (int N) { return new Matrix <> (N, N, manager); }
+	public Matrix <T> VEC (int N) { return new Matrix <> (N, 1, manager); }
+
+
+	/**
+	 * the compiled solution matrix used for resolving the system of equations
+	 */
+	static class WorkProduct <V> extends ArrayList < ValueManager.DimensionedValue <V> >
+	{ private static final long serialVersionUID = 2356189952454085804L; }
+
+
 	/**
 	 * map symbols to ordered index within solution
 	 */
-	class SymbolIndexMap extends HashMap <String, Integer>
+	static class SymbolIndexMap extends HashMap <String, Integer>
 	{ private static final long serialVersionUID = 1113974645827170797L; }
 
 
@@ -56,7 +72,7 @@ public class MatrixSolution <T> extends SolutionData
 			symbolTable
 		);
 	}
-	Matrix <T> computedColumnVectorSolution
+	private Matrix <T> computedColumnVectorSolution
 		(
 			SystemOfEquations equations,
 			SymbolList symbolOrder, SymbolIndexMap indices,
@@ -64,11 +80,10 @@ public class MatrixSolution <T> extends SolutionData
 		)
 	{
 		int N = this.mapReferences
-		(
-			equations,
-			symbolOrder,
-			indices
-		);
+		( equations, symbolOrder, indices );
+
+		this.setColumnList (symbolOrder);
+
 		return this.postSymbols
 		(
 			symbolOrder, symbolTable,
@@ -86,13 +101,15 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public Matrix <T> solve (SystemOfEquations equations, SymbolIndexMap indices, int N)
 	{
-		Matrix <T>
-			solutionMatrix = new Matrix <> (N, N, manager), solutionVector = new Matrix <> (N, 1, manager);
+		Matrix <T> solutionMatrix = MAT (N); Matrix <T> solutionVector = VEC (N);
 		this.loadSolution ( equations, solutionMatrix, solutionVector, indices, N );
-		Matrix <T> computedSolution = solutionApplication.decompositionSolution
-				( solutionMatrix, solutionVector );
+		Matrix <T> computedSolution = this.solutionFor ( solutionMatrix, solutionVector );
+		this.buildAugmentedMatrix ( solutionMatrix, solutionVector );
 		return computedSolution;
 	}
+
+
+	// key algorithms for computation of the solution
 
 
 	/**
@@ -102,6 +119,52 @@ public class MatrixSolution <T> extends SolutionData
 	public void setPrimitives (SolutionPrimitives <T> primitives)
 	{ this.solutionApplication.setPrimitives (primitives); }
 	protected SolutionApplication <T> solutionApplication;
+
+	private Matrix <T> solutionFor (Matrix <T> solutionMatrix, Matrix <T> solutionVector)
+	{ return solutionApplication.decompositionSolution ( solutionMatrix, solutionVector ); }
+
+
+	/**
+	 * construct matrix which represents solution source
+	 * @return solution matrix augmented with solution column vector
+	 */
+	public void buildAugmentedMatrix
+		( Matrix <T> solutionMatrix, Matrix <T> solutionVector )
+	{
+		List <T> row = new ArrayList <> ();
+		this.augmentedMatrix = new WorkProduct <> ();
+
+		ValueManager <T> valueManager = new ValueManager <> ();
+
+		for (int r = 1; r <= solutionMatrix.rowCount (); r++)
+		{
+			getColumnElements ( row, solutionMatrix, r );
+			augmentedMatrix.add ( valueManager.newDimensionedValue (row) );
+		}
+
+		augmentedMatrix.add (valueManager.newDimensionedValue (getColumn (solutionVector, 1)));
+	}
+
+
+	/**
+	 * make the work-product available after use
+	 * @return the augmented matrix built for the solution
+	 */
+	public WorkProduct <T> getAugmentedMatrix () { return augmentedMatrix; }
+	protected WorkProduct <T> augmentedMatrix;
+
+	private void getColumnElements (List <T> into, Matrix <T> from, int columnNumber)
+	{ into.clear (); into.addAll ( getColumn (from, columnNumber) ); }
+
+	private List <T> getColumn (Matrix <T> from, int columnNumber)
+	{ return from.getCol (columnNumber).getElementsList (); }
+
+	/**
+	 * @return the list of symbols in the solution matrix
+	 */
+	public SymbolList getColumnList () { return columnList; }
+	public void setColumnList (SymbolList columnList) { this.columnList = columnList; }
+	protected SymbolList columnList;
 
 
 	/**
