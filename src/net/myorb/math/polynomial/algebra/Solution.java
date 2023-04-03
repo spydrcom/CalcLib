@@ -165,8 +165,28 @@ public class Solution <T> extends SubstitutionProcessing
 	public ValueManager.DimensionedValue <T> getCoefficientsVector (SymbolList coefficients)
 	{
 		List <T> solutionVector = new ArrayList <> ();
-		solutionVectorFor (coefficients, solutionVector);
-		return valueManager.newDimensionedValue (solutionVector);
+		solutionVectorFor ( coefficients, solutionVector );
+
+		return valueManager.newDimensionedValue
+		(
+			this.eliminateTrailingZeroes ( solutionVector )
+		);
+	}
+
+
+	/**
+	 * remove zero coefficients for highest powers
+	 * @param solutionVector the computed solution polynomial coefficients
+	 * @return the vector after trailing zero removal
+	 */
+	public List <T> eliminateTrailingZeroes (List <T> solutionVector)
+	{
+		for (int i = solutionVector.size () - 1; i > 0; i--)
+		{
+			if ( ! manager.isZero ( solutionVector.get (i) ) ) break;
+			solutionVector.remove (i);
+		}
+		return solutionVector;
 	}
 
 
