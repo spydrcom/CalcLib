@@ -126,7 +126,8 @@ public class MatrixSolution <T> extends SolutionData
 
 	/**
 	 * construct matrix which represents solution source
-	 * @return solution matrix augmented with solution column vector
+	 * @param solutionMatrix the matrix describing the system of equations
+	 * @param solutionVector the solution column vector
 	 */
 	public void buildAugmentedMatrix
 		( Matrix <T> solutionMatrix, Matrix <T> solutionVector )
