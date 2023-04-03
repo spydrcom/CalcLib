@@ -2,7 +2,6 @@
 package net.myorb.math.expressions;
 
 // CalcLib imports
-import net.myorb.math.Polynomial;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MmlDisplayFormatter;
 import net.myorb.math.expressions.symbols.DefinedTransform;
@@ -116,9 +115,7 @@ public class PrettyPrinter<T> extends RenderingDisplay
 	 */
 	public void formatPolynomial (String name)
 	{
-		Polynomial.Coefficients<T> poly = new Polynomial.Coefficients<T> ();
-		poly.addAll (formatter.arrayForName (name));
-		formatter.formatPolynomial (name, poly);
+		formatter.formatPolynomial ( name, formatter.getCoefficients (name) );
 	}
 
 
