@@ -5,6 +5,7 @@ import net.myorb.math.polynomial.algebra.Elements.SymbolList;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
 
 import net.myorb.math.expressions.SymbolMap;
+import net.myorb.math.expressions.PrettyFormatter;
 import net.myorb.math.expressions.commands.Tabulation;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
@@ -18,6 +19,10 @@ import net.myorb.math.expressions.ValueManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * command implementation for solution display requests
+ * @author Michael Druckman
+ */
 public class SolutionReports <T>
 {
 
@@ -25,9 +30,7 @@ public class SolutionReports <T>
 	public SolutionReports (Environment <T> environment)
 	{
 		this.manager = environment.getSpaceManager ();
-//		this.valueManager = environment.getValueManager ();
 		this.dataConversions = environment.getConversionManager ();
-//		this.displayTable = new Tabulation <> (environment);
 		this.symbols = environment.getSymbolMap ();
 		this.stream = environment.getOutStream ();
 		this.environment = environment;
@@ -36,7 +39,6 @@ public class SolutionReports <T>
 	protected Environment <T> environment;
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
-//	protected ValueManager <T> valueManager;
 	protected java.io.PrintStream stream;
 
 
@@ -84,7 +86,7 @@ public class SolutionReports <T>
 	public void showSolution (String solutionName)
 	{
 		stream.print (solutionName); stream.print ("\t");
-		stream.print (symbols.get (solutionName));
+		stream.print (new PrettyFormatter <T> (environment).getFunction (solutionName));
 		stream.println ();
 	}
 
