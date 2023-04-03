@@ -178,9 +178,40 @@ public class PrettyFormatter<T>
 		out.println (getFunction (poly).toString ());
 		out.println ();
 	}
-	Polynomial.PowerFunction<T> getFunction (Polynomial.Coefficients<T> poly)
+
+
+	/**
+	 * get the polynomial function for a coefficient array
+	 * @param poly a coefficient array
+	 * @return the power function
+	 */
+	public Polynomial.PowerFunction<T> getFunction (Polynomial.Coefficients<T> poly)
 	{
 		return new Polynomial<T> (spaceManager).getPolynomialFunction (poly);
+	}
+
+
+	/**
+	 * get a coefficient array given the symbol name
+	 * @param arrayName name of a coefficient array
+	 * @return the coefficient array
+	 */
+	public Polynomial.Coefficients<T> getCoefficients (String arrayName)
+	{
+		Polynomial.Coefficients<T> poly = new Polynomial.Coefficients<T> ();
+		poly.addAll (arrayForName (arrayName));
+		return poly;
+	}
+
+
+	/**
+	 * get the polynomial function for a coefficient array
+	 * @param arrayName name of a coefficient array
+	 * @return the power function
+	 */
+	public Polynomial.PowerFunction<T> getFunction (String arrayName)
+	{
+		return getFunction ( getCoefficients (arrayName) );
 	}
 
 
