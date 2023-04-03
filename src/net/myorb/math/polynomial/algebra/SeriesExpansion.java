@@ -28,8 +28,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 
 	public SeriesExpansion (Environment <T> environment)
 	{
-		this.solution  =  new Solution <T>
-		(this.environment = environment);
+		this.solution = new Solution <T> ( this.environment = environment );
+		this.setGeneratedSolutions ( new Solution.LinkedSolutions () );
 	}
 	protected Environment <T> environment;
 	protected Solution <T> solution;
@@ -56,12 +56,23 @@ public class SeriesExpansion <T> extends ParameterManagement
 
 
 	/**
+	 * identify a solution series
 	 * @return name assigned to the solution
 	 */
 	public String getSolutionBeingBuilt () { return solutionBeingBuilt; }
 	public void setSolutionBeingBuilt (String solutionBeingBuilt)
 	{ this.solutionBeingBuilt = solutionBeingBuilt; }
 	protected String solutionBeingBuilt;
+
+
+	/**
+	 * link solutions to the generating equation
+	 * @param generatedSolutions the map object for solution links
+	 */
+	public void setGeneratedSolutions
+	(Solution.LinkedSolutions generatedSolutions) { this.generatedSolutions = generatedSolutions; }
+	public Solution.LinkedSolutions getGeneratedSolutions () { return generatedSolutions; }
+	protected Solution.LinkedSolutions generatedSolutions;
 
 
 	// expansion driver
@@ -305,6 +316,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 			sourceSeries = seriesFor ( sourceFunctionName ),
 			expandedSeries = seriesFor ( expandedFunctionName );
 		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
+		sourceSeries.generatedSolutions.put (solutionFunctionName, expandedSeries);
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
 		this.solution.analyze ( expandedSeries, currentProfile, symbolTable );
 		this.describeSolution ( solutionFunctionName,  sourceSeries );
