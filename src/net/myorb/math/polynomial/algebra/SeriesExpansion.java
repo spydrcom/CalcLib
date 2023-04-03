@@ -376,5 +376,14 @@ public class SeriesExpansion <T> extends ParameterManagement
 	{ symbolTable.add (symbol, CommonCommandParser.unQuoted (token)); }
 
 
+	// SHOSOL command implementation
+
+
+	public static void showSolutions (CommandSequence tokens)
+	{
+		System.out.println (tokens);
+	}
+
+
 }
 
