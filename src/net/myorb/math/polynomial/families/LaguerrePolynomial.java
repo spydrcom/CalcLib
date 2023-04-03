@@ -8,6 +8,7 @@ import net.myorb.math.polynomial.InitialConditions;
 import net.myorb.math.polynomial.PolynomialFamilyManager;
 import net.myorb.math.polynomial.PolynomialSpaceManager;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.computational.Combinatorics;
 
 import net.myorb.math.SpaceManager;
@@ -45,7 +46,7 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	 */
 	public InitialConditions <T> getInitialConditions (int degree, int alpha)
 	{
-		return new LaguerreInitialConditions <T> (degree, alpha, manager);
+		return new LaguerreInitialConditions <T> (degree, alpha, (ExpressionSpaceManager <T>) manager);
 	}
 
 	/**
@@ -145,13 +146,13 @@ class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
 class LaguerreInitialConditions <T> implements InitialConditions <T>
 {
 
-	LaguerreInitialConditions (int degree, int alpha, SpaceManager<T> manager)
+	LaguerreInitialConditions (int degree, int alpha, ExpressionSpaceManager<T> manager)
 	{
 		double sign = degree % 2 == 1 ? -1 : 1;
 		Double l = Combinatorics.F ( (double) degree ) * sign;
 		Double c = Combinatorics.binomialCoefficientHW (degree + alpha, degree);
-		this.constant = manager.newScalar ( c.intValue () );
 		this.lead = manager.newScalar ( l.intValue () );
+		this.constant = manager.convertFromDouble (c);
 		this.manager = manager;
 	}
 	protected SpaceManager<T> manager;
