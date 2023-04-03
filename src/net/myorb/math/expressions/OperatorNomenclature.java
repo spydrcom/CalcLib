@@ -73,6 +73,7 @@ public class OperatorNomenclature
 	EXPAND_KEYWORD = "EXPAND",					// EXPAND function		perform series expansion on named polynomial function
 	SERVE_KEYWORD = "SERVE",					// SERVE service,port	request service start on port given
 	SOLVE_KEYWORD = "SOLVE",					// SOLVE function		find solution to differential equation
+	SHOSOL_KEYWORD = "SHOSOL",					// SHOSOL function		list solutions for a differential equation
 	VERIFY_KEYWORD = "VERIFY",					// VERIFY x				lookup symbol and verify present
 	HELP_KEYWORD = "HELP",						// HELP					list of operator descriptions
 	EDIT_KEYWORD = "EDIT",						// EDIT					edit selected snip of text
