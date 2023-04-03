@@ -24,6 +24,14 @@ public class Solution <T> extends SubstitutionProcessing
 {
 
 
+	/**
+	 * connect expanded series to the generated solutions
+	 */
+	public static class LinkedSolutions
+		extends HashMap <String, SeriesExpansion <?>>
+	{ private static final long serialVersionUID = 6759323443298420151L; }
+
+
 	public Solution (Environment <T> environment)
 	{
 		this.manager = environment.getSpaceManager ();
