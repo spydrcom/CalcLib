@@ -148,12 +148,14 @@ public class Solution <T> extends SubstitutionProcessing
 	 */
 	public void solutionVectorFor (SymbolList coefficients, List <T> solutionVector)
 	{
-		for (String C : coefficients)
+		for (String coefficientName : coefficients)
 		{
-			T environmentValue = dataConversions.fromDouble
-				(symbolTable.get (C).getNamedValue ());
-			solutionVector.add (environmentValue);
+			this.addCoefficientTo ( solutionVector, symbolTable.get ( coefficientName ) );
 		}
+	}
+	void addCoefficientTo (List <T> solutionVector, NameValuePair from)
+	{
+		solutionVector.add ( dataConversions.fromDouble ( from.getNamedValue () ) );
 	}
 
 
@@ -183,7 +185,8 @@ public class Solution <T> extends SubstitutionProcessing
 	{
 		for (int i = solutionVector.size () - 1; i > 0; i--)
 		{
-			if ( ! manager.isZero ( solutionVector.get (i) ) ) break;
+			T coefficient = solutionVector.get (i);
+			if ( ! manager.isZero ( coefficient ) ) break;
 			solutionVector.remove (i);
 		}
 		return solutionVector;
