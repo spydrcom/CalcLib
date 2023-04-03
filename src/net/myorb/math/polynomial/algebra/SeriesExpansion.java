@@ -1,6 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.ValueManager.DimensionedValue;
@@ -316,7 +317,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 			sourceSeries = seriesFor ( sourceFunctionName ),
 			expandedSeries = seriesFor ( expandedFunctionName );
 		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
-		sourceSeries.generatedSolutions.put (solutionFunctionName, expandedSeries);
+		expandedSeries.generatedSolutions.put (solutionFunctionName, sourceSeries);
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
 		this.solution.analyze ( expandedSeries, currentProfile, symbolTable );
 		this.describeSolution ( solutionFunctionName,  sourceSeries );
@@ -379,9 +380,71 @@ public class SeriesExpansion <T> extends ParameterManagement
 	// SHOSOL command implementation
 
 
-	public static void showSolutions (CommandSequence tokens)
+	/**
+	 * show solutions
+	 * @param tokens the command line source
+	 * @param environment the application environment
+	 */
+	public static void showSolutions (CommandSequence tokens, Environment <?> environment)
 	{
-		System.out.println (tokens);
+		String equationName = tokens.get (1).getTokenImage ();
+		Solution.LinkedSolutions solutions = getLinkedSolutions ( equationName, environment );
+		showSolutions ( fromSolutionSet (solutions), environment );
+	}
+
+
+	/**
+	 * get solutions linked to a differential equation
+	 * @param equationName the name of the differential equation
+	 * @param environment the application environment
+	 * @return the linked solutions
+	 */
+	public static Solution.LinkedSolutions getLinkedSolutions (String equationName, Environment <?> environment)
+	{
+		Subroutine <?> profile;
+		try { profile = DefinedFunction.asUDF ( environment.getSymbolMap ().get (equationName) ); }
+		catch (Exception e) { error ( equationName + " not recognized", e ); return null; }
+		return profile.getSeries ().getGeneratedSolutions ();
+	}
+
+
+	/**
+	 * identify linked solutions
+	 * @param solutions the solution map from a differential equation
+	 * @return the list of solution symbols
+	 */
+	public static SymbolList fromSolutionSet (Solution.LinkedSolutions solutions)
+	{
+		SymbolList list = new SymbolList ();
+		list.addAll (solutions.keySet ()); list.sort (null);
+		return list;
+	}
+
+
+	/**
+	 * display solution information
+	 * @param solutions the list of identifiers
+	 * @param environment the application environment
+	 */
+	public static void showSolutions (SymbolList solutions, Environment <?> environment)
+	{
+		SymbolMap symbols = environment.getSymbolMap ();
+		java.io.PrintStream out = environment.getOutStream ();
+		for (String name : solutions) showSolution (name, symbols, out);
+	}
+
+
+	/**
+	 * display a solution polynomial
+	 * @param solutionName the name of the solution
+	 * @param symbols the symbol map for the environment
+	 * @param out the system output stream object
+	 */
+	public static void showSolution (String solutionName, SymbolMap symbols, java.io.PrintStream out)
+	{
+		out.print (solutionName); out.print ("\t");
+		out.print (symbols.get (solutionName));
+		out.println ();
 	}
 
 
