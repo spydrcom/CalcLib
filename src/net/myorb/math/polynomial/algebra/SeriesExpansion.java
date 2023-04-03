@@ -1,7 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.ValueManager.DimensionedValue;
@@ -385,66 +384,38 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param tokens the command line source
 	 * @param environment the application environment
 	 */
-	public static void showSolutions (CommandSequence tokens, Environment <?> environment)
+	public static <T> void showSolutions (CommandSequence tokens, Environment <T> environment)
 	{
-		String equationName = tokens.get (1).getTokenImage ();
-		Solution.LinkedSolutions solutions = getLinkedSolutions ( equationName, environment );
-		showSolutions ( fromSolutionSet (solutions), environment );
+		SolutionReports <T> reports = new SolutionReports <T> (environment);
+		String equationName = getEquationRequest (tokens), solutionName = getSolutionRequest (tokens);
+		Solution.LinkedSolutions solutions = reports.getLinkedSolutions ( equationName );
+
+		if (solutionName == null)
+		{ reports.showSolutions ( SolutionReports.fromSolutionSet (solutions) ); }
+		else reports.showSolution ( solutionName, solutions );
 	}
 
-
 	/**
-	 * get solutions linked to a differential equation
-	 * @param equationName the name of the differential equation
-	 * @param environment the application environment
-	 * @return the linked solutions
+	 * equation name required
+	 * @param tokens the command line source
+	 * @return name taken from token
 	 */
-	public static Solution.LinkedSolutions getLinkedSolutions (String equationName, Environment <?> environment)
+	public static String getEquationRequest (CommandSequence tokens)
 	{
-		Subroutine <?> profile;
-		try { profile = DefinedFunction.asUDF ( environment.getSymbolMap ().get (equationName) ); }
-		catch (Exception e) { error ( equationName + " not recognized", e ); return null; }
-		return profile.getSeries ().getGeneratedSolutions ();
+		if (tokens.size () < 2)
+		{ throw new RuntimeException ("Equation name required"); }
+		else return tokens.get (1).getTokenImage ();
 	}
 
-
 	/**
-	 * identify linked solutions
-	 * @param solutions the solution map from a differential equation
-	 * @return the list of solution symbols
+	 * solution name optional
+	 * @param tokens the command line source
+	 * @return name taken from token or null if not specified
 	 */
-	public static SymbolList fromSolutionSet (Solution.LinkedSolutions solutions)
+	public static String getSolutionRequest (CommandSequence tokens)
 	{
-		SymbolList list = new SymbolList ();
-		list.addAll (solutions.keySet ()); list.sort (null);
-		return list;
-	}
-
-
-	/**
-	 * display solution information
-	 * @param solutions the list of identifiers
-	 * @param environment the application environment
-	 */
-	public static void showSolutions (SymbolList solutions, Environment <?> environment)
-	{
-		SymbolMap symbols = environment.getSymbolMap ();
-		java.io.PrintStream out = environment.getOutStream ();
-		for (String name : solutions) showSolution (name, symbols, out);
-	}
-
-
-	/**
-	 * display a solution polynomial
-	 * @param solutionName the name of the solution
-	 * @param symbols the symbol map for the environment
-	 * @param out the system output stream object
-	 */
-	public static void showSolution (String solutionName, SymbolMap symbols, java.io.PrintStream out)
-	{
-		out.print (solutionName); out.print ("\t");
-		out.print (symbols.get (solutionName));
-		out.println ();
+		if (tokens.size () < 3) return null;
+		else return tokens.get (2).getTokenImage ();
 	}
 
 
