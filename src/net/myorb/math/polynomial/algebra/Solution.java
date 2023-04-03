@@ -7,7 +7,6 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.math.expressions.commands.Tabulation;
 
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.linalg.GaussSolution;
@@ -37,12 +36,13 @@ public class Solution <T> extends SubstitutionProcessing
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
 		this.dataConversions = environment.getConversionManager ();
-		this.displayTable = new Tabulation <> (environment);
+		this.reports = new SolutionReports <T> (environment);
 		this.stream = environment.getOutStream ();
 	}
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected ValueManager <T> valueManager;
+	protected SolutionReports <T> reports;
 	protected java.io.PrintStream stream;
 
 
@@ -59,9 +59,9 @@ public class Solution <T> extends SubstitutionProcessing
 	(SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
 	{
 		this.process
-			(series.analysis, symbolTable);
-		this.establishTitle (series, symbolTable);
+			( series.analysis, symbolTable );
 		this.series = series; this.profile = profile;
+		reports.establishTitle ( series, symbolTable );
 		this.showAnalysis (); this.establishSolutionAlgorithm ();
 		this.solve (equations);
 	}
@@ -77,7 +77,7 @@ public class Solution <T> extends SubstitutionProcessing
 	{
 		MatrixSolution <T> computer = getSolutionComputer ();
 		this.solutionOfEquations = computer.solve (equations, symbolTable);
-		this.compileSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
+		reports.compileSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
 		this.symbolTable.showSymbols (stream);
 	}
 	protected Matrix <T> solutionOfEquations;
@@ -199,56 +199,6 @@ public class Solution <T> extends SubstitutionProcessing
 		}
 		return solutionVector;
 	}
-
-
-	// display of work-product matrix of solution
-
-
-	/**
-	 * compile the work-product matrix
-	 * @param coefficients column headers with names of coefficients
-	 * @param solutionValues the scalar for the coefficient in each equation
-	 */
-	public void compileSolutionTable
-		(
-			SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
-		)
-	{
-		List <String> columnHeaders = new ArrayList <> ();
-		columnHeaders.addAll (coefficients); columnHeaders.add ("=");
-		showTable (documentTitle.toString (), columnHeaders, solutionValues);
-	}
-
-
-	/**
-	 * format a title for this solution
-	 * @param series the expanded series constructed to solve this series
-	 * @param symbolTable the table of symbols provided for the solution request
-	 */
-	public void establishTitle (SeriesExpansion <T> series, SymbolValues symbolTable)
-	{
-		this.documentTitle.append (series.getFunctionName ()).append (" - ");
-		this.documentTitle.append (series.getSolutionBeingBuilt ()).append (" Solution ");
-		this.documentTitle.append (symbolTable);
-	}
-	protected StringBuffer documentTitle = new StringBuffer ();
-
-
-	/**
-	 * display tabulation of solution data
-	 * @param documentTitle the title for the display
-	 * @param columnHeaders the names of symbols in columns
-	 * @param solutionValues the matrix of data points
-	 */
-	public void showTable
-		(
-			String documentTitle, List <String> columnHeaders,
-			List < ValueManager.DimensionedValue <T> > solutionValues
-		)
-	{
-		displayTable.format (documentTitle, columnHeaders, solutionValues);
-	}
-	protected Tabulation <T> displayTable;
 
 
 }
