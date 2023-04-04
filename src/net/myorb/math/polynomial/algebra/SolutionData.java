@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.polynomial.InitialConditionsProcessor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,13 +40,62 @@ public class SolutionData extends Utilities
 	 * map name to pair
 	 */
 	public static class SymbolValues extends HashMap <String, NameValuePair>
+			implements InitialConditionsProcessor.SymbolTranslator
 	{
+		/**
+		 * @param stream stream to send symbol list to
+		 */
 		public void showSymbols (java.io.PrintStream stream)
 		{ stream.println ("==="); stream.println (this); stream.println ("==="); stream.println (); }
-		public void add (String name, String value) { this.put (name, new NameValuePair (name, value)); }
+
+		// computation of Initial Conditions by Processor object
+
+		/**
+		 * compute Initial Conditions using Processor object
+		 * @param processorName the name of the Processor object
+		 */
+		public void processIC (String processorName)
+		{
+			InitialConditionsProcessor.computeInitialConditions (processorName, this);
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator#valueFor(java.lang.String)
+		 */
+		public Double valueFor (String symbol)
+		{
+			NameValuePair content;
+			if ( (content = this.get (symbol)) == null )
+			{ throw new RuntimeException ("No value for symbol: " + symbol); }
+			return content.getNamedValue ();
+		}
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator#set(java.lang.String, java.lang.Double)
+		 */
+		public void set (String symbol, Double to)
+		{
+			add ( symbol, new Constant (to) );
+		}
+
+		// symbol mapping primitives
+
+		/**
+		 * add a name/value pair
+		 * @param name the name to post the pair as
+		 * @param value the value to assign to the name
+		 */
+		public void add (String name, String value)
+		{
+			if ( ! name.startsWith (INITIAL_CONDITIONS_PROCESSOR_REFERENCE) )
+			{ this.put (name, new NameValuePair (name, value)); }
+			else processIC (value);
+		}
 		public void add (String name, Constant value) { this.put (name, new NameValuePair (name, value)); }
+		public static final String INITIAL_CONDITIONS_PROCESSOR_REFERENCE = "#";
 		private static final long serialVersionUID = 70879534035012284L;
 	}
 
 
 }
+
