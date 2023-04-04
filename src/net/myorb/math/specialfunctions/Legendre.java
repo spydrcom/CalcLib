@@ -22,6 +22,21 @@ public class Legendre
 
 
 	/*
+
+			general Legendre equation reads
+			
+			( 1 - x^2 ) * f''(x) - 2 * x * f'(x) + [ lambda*(lambda+1) - mu^2/(1-x^2) ] f(x) = 0
+			
+			where the numbers lambda and mu may be complex,
+			and are called the degree and order of the relevant function, respectively.
+			The polynomial solutions when lambda is an integer (denoted n), and mu = 0 are the Legendre polynomials Pn; 
+			and when lambda is an integer (denoted n), and mu = m is also an integer with |m| < n are the associated 
+			Legendre polynomials. All other cases of lambda and mu can be discussed as one.
+			
+	 */
+
+
+	/*
 	 * Q0 and Q1 functions (used by seed generator)
 	 */
 
@@ -98,7 +113,10 @@ public class Legendre
 	 */
 	public static Double evaluateUsingBonnetsFormula (Double x, int l)
 	{
-		return ( (2*l-1) * x * evaluateUsingBonnetsFormula(x,l-1) - (l-1) * evaluateUsingBonnetsFormula(x,l-2) ) / l;
+		return l > 1
+		? ( (2*l-1) * x * evaluateUsingBonnetsFormula (x, l-1) -
+			(l-1) * evaluateUsingBonnetsFormula (x, l-2) ) / l
+		: l == 0 ? Q0 (x) : Q1 (x);
 	}
 
 
