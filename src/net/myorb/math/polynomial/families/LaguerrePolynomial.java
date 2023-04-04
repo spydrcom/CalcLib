@@ -4,6 +4,7 @@ package net.myorb.math.polynomial.families;
 import net.myorb.math.polynomial.InitialConditions;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
+import net.myorb.math.polynomial.NamingConventions;
 import net.myorb.math.polynomial.PolynomialFamilyManager;
 import net.myorb.math.polynomial.PolynomialFamily;
 
@@ -22,7 +23,8 @@ import net.myorb.math.Polynomial;
  * @author Michael Druckman
  */
 public class LaguerrePolynomial <T> extends Polynomial <T>
-			implements PolynomialFamily <T>, InitialConditionsProcessor.Implementation
+			implements PolynomialFamily <T>, NamingConventions,
+				InitialConditionsProcessor.Implementation
 {
 
 	public LaguerrePolynomial
@@ -86,6 +88,21 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	 * @see net.myorb.math.PolynomialFamily#getIdentifier(java.lang.String)
 	 */
 	public String getIdentifier (String kind) { return "L"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getPolynomialNameConvention()
+	 */
+	public String getPolynomialNameConvention () { return "L"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getCoefficientNameConvention()
+	 */
+	public String getCoefficientNameConvention () { return "l"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getParameterNameConvention()
+	 */
+	public String getParameterNameConvention () { return "x"; }
 
 	/**
 	 * unit test
