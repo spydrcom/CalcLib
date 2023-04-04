@@ -84,6 +84,25 @@ public class Legendre
 
 
 	/*
+	 * implementation of Bonnet's formula
+	 * 
+	 * Q[l](x) = (2*l-1)/l * x * Q[l-1](x) - (l-1)/l * Q[l-2](x)
+	 * 
+	 */
+
+	/**
+	 * compute using Bonnet
+	 * @param x parameter to Q[l]
+	 * @param l order of the function being evaluated
+	 * @return Q[l](x)
+	 */
+	public static Double evaluateUsingBonnetsFormula (Double x, int l)
+	{
+		return ( (2*l-1) * x * evaluateUsingBonnetsFormula(x,l-1) - (l-1) * evaluateUsingBonnetsFormula(x,l-2) ) / l;
+	}
+
+
+	/*
 	 * implementation of Neumann's formula
 	 * 
 	 * Q[l](x) = 1/2 * INTEGRAL [ -1 <= y <= 1 ] ( P[l](y) / (x - y) * dy )
