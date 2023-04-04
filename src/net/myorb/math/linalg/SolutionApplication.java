@@ -19,18 +19,23 @@ public class SolutionApplication <T>
 	/**
 	 * solve system of equations with SolutionPrimitives Decomposition
 	 * @param M matrix holding the equation parameters to be solved
-	 * @param V the requested result vector for the solution
+	 * @param V the requested result vector(s) for the solution
 	 * @return the computed solution
 	 */
 	public Matrix <T> decompositionSolution (Matrix <T> M, Matrix <T> V)
 	{
-		VectorAccess <T> result = solve
-		(
-			primitives.decompose (M),
-			V.getColAccess (1)
-		);
-		Matrix <T> computedSolution = new Matrix <> (result.size (), 1, manager);
-		ops.setCol (1, computedSolution, result);
+		VectorAccess <T> result;
+		int rows = M.rowCount (), cols = V.columnCount ();
+		Matrix <T> computedSolution = new Matrix <> (rows, cols, manager);
+		for (int c = 1; c <= cols; c++)
+		{
+			result = solve
+				(
+					primitives.decompose (M),
+					V.getColAccess (c)
+				);
+			ops.setCol (c, computedSolution, result);
+		}
 		return computedSolution;
 	}
 	@SuppressWarnings("unchecked") VectorAccess <T> solve
