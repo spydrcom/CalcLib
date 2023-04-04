@@ -20,6 +20,6 @@ public interface InitialConditions <T>
 	 * rate of change at 0
 	 * @return function derivative at 0
 	 */
-	T getLeadTerm ();
+	T getFirstDerivativeTerm ();
 
 }
