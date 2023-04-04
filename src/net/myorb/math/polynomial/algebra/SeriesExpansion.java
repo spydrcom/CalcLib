@@ -383,6 +383,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * show solutions
 	 * @param tokens the command line source
 	 * @param environment the application environment
+	 * @param <T> data type used in operations
 	 */
 	public static <T> void showSolutions (CommandSequence tokens, Environment <T> environment)
 	{
