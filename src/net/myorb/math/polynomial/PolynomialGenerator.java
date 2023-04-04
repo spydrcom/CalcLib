@@ -26,6 +26,45 @@ public class PolynomialGenerator <T>
 
 
 	/**
+	 * declare polynomial functions described by naming conventions
+	 * @param processorName the name of the naming conventions processor
+	 * @param tokens parameters listed on command line
+	 * @param position the starting parameter
+	 * @throws RuntimeException for errors
+	 */
+	public void declare
+		(
+			String processorName, CommandSequence tokens, int position
+		)
+	throws RuntimeException
+	{
+		
+		declare ( InitialConditionsProcessor.getNamingConventions (processorName), tokens, position );
+	}
+
+
+	/**
+	 * declare polynomial functions described by naming conventions
+	 * @param naming a name conventions provider for the polynomial family
+	 * @param tokens parameters listed on command line
+	 * @param position the starting parameter
+	 * @throws RuntimeException for errors
+	 */
+	public void declare
+		(
+			NamingConventions naming, CommandSequence tokens, int position
+		)
+	throws RuntimeException
+	{
+		declare
+		(
+			naming.getPolynomialNameConvention (), naming.getParameterNameConvention (),
+			naming.getCoefficientNameConvention (), tokens, position
+		);
+	}
+
+
+	/**
 	 * declare a function formatted as standard polynomial
 	 * @param functionName the name of the function being declared
 	 * @param parameterName the name of the parameter to use for the profile
