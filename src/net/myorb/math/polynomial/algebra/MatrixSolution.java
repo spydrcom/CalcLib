@@ -198,11 +198,14 @@ public class MatrixSolution <T> extends SolutionData
 			solutionVector.set (i, 1, value);
 		}
 
-//		work-product display
-//		stream.println ("===");
-//		ops.show (stream, solutionMatrix); stream.println ("===");
-//		ops.show (stream, solutionVector); stream.println ("==="); stream.println ();
+		if (showWorkProduct)			// for display to sysout
+		{
+			stream.println ("===");
+			ops.show (stream, solutionMatrix); stream.println ("===");
+			ops.show (stream, solutionVector); stream.println ("==="); stream.println ();
+		}
 	}
+	protected boolean showWorkProduct = false;
 
 
 	/**
@@ -295,7 +298,6 @@ public class MatrixSolution <T> extends SolutionData
 	{
 		this.mapEquationReferences (equations, symbolOrder);
 		int N = 0; for (String S : symbolOrder) indices.put (S, ++N);
-//		stream.println (symbolOrder);
 		return N;
 	}
 
