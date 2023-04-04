@@ -64,6 +64,7 @@ public class InitialConditionsProcessor
 	}
 
 	/**
+	 * find named processor and request symbol table update
 	 * @param processorName the name assigned to the Implementation
 	 * @param symbols the Symbol Translator object supplying and accepting algorithm data
 	 * @throws RuntimeException for any failure to find the processor
@@ -72,9 +73,31 @@ public class InitialConditionsProcessor
 		(String processorName, SymbolTranslator symbols)
 	throws RuntimeException
 	{
-		if ( processors != null && processors.containsKey (processorName) )
-		{ processors.get ( processorName ).computeCoefficients ( symbols ); }
-		else throw new RuntimeException ("Processor not found: " + processorName);
+		getProcessor ( processorName ).computeCoefficients ( symbols );
+	}
+
+	/**
+	 * check processor for support of NamingConventions interface
+	 * @param processorName the name assigned to the Implementation
+	 * @return the Implementation of NamingConventions
+	 */
+	public static NamingConventions getNamingConventions (String processorName)
+	{
+		Implementation processor = getProcessor ( processorName );
+		if ( processor instanceof NamingConventions ) return (NamingConventions) processor;
+		throw new RuntimeException ("no support for naming conventions: " + processorName);
+	}
+
+	/**
+	 * @param processorName the name assigned to the Implementation
+	 * @return functionality consistent with the Implementation interface
+	 * @throws RuntimeException for failure to find identified processor
+	 */
+	public static Implementation getProcessor (String processorName) throws RuntimeException
+	{
+		if ( processors == null || ! processors.containsKey (processorName) )
+		{ throw new RuntimeException ("Processor not found: " + processorName); }
+		return processors.get (processorName);
 	}
 
 }
