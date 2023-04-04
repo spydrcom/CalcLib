@@ -1,12 +1,14 @@
 
 package net.myorb.math.polynomial.families;
 
-import net.myorb.math.polynomial.PolynomialFamily;
-import net.myorb.math.polynomial.GeneralRecurrence;
 import net.myorb.math.polynomial.InitialConditions;
+import net.myorb.math.polynomial.InitialConditionsProcessor;
 
 import net.myorb.math.polynomial.PolynomialFamilyManager;
+import net.myorb.math.polynomial.PolynomialFamily;
+
 import net.myorb.math.polynomial.PolynomialSpaceManager;
+import net.myorb.math.polynomial.GeneralRecurrence;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.computational.Combinatorics;
@@ -20,7 +22,7 @@ import net.myorb.math.Polynomial;
  * @author Michael Druckman
  */
 public class LaguerrePolynomial <T> extends Polynomial <T>
-			implements PolynomialFamily <T>
+			implements PolynomialFamily <T>, InitialConditionsProcessor.Implementation
 {
 
 	public LaguerrePolynomial
@@ -30,12 +32,8 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.PolynomialFamily#init(net.myorb.math.SpaceManager)
 	 */
-	public void init (SpaceManager <T> manager)
-	{ this.manager = manager; init (); }
-	public void init ()
-	{
-		this.psm = new LaguerrePolynomialSpaceManager <T>(manager);
-	}
+	public void init (SpaceManager <T> manager)	{ this.manager = manager; init (); }
+	public void init () { this.psm = new LaguerrePolynomialSpaceManager <T> (manager); }
 	protected PolynomialSpaceManager<T> psm;
 
 	/**
@@ -47,6 +45,18 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	public InitialConditions <T> getInitialConditions (int degree, int alpha)
 	{
 		return new LaguerreInitialConditions <T> (degree, alpha, (ExpressionSpaceManager <T>) manager);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditionsProcessor.Implementation#computeCoefficients(net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator)
+	 */
+	public void computeCoefficients (InitialConditionsProcessor.SymbolTranslator coefficientManager)
+	{
+		Double  N = coefficientManager.valueFor ("n"),
+			alpha = coefficientManager.valueFor ("alpha") ;
+		LaguerreInitialConditions <T> LIC = (LaguerreInitialConditions <T>)
+			getInitialConditions (N.intValue (), alpha.intValue ());
+		LIC.setCoefficients (coefficientManager);
 	}
 
 	/**
@@ -90,6 +100,10 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 
 }
 
+/**
+ * Recurrence Formula specific to Laguerre
+ * @param <T> data type description
+ */
 class LaguerreRecurrenceFormula <T> extends GeneralRecurrence <T>
 {
 	// (n+1) * L[n+1](x) = ( (2n+1)*L[n](x) - x*L[n](x) - nL[n-1](x) )
@@ -117,6 +131,10 @@ class LaguerreRecurrenceFormula <T> extends GeneralRecurrence <T>
 	private static final long serialVersionUID = 1L;
 }
 
+/**
+ * Polynomial Space Manager specific to Laguerre
+ * @param <T> data type description
+ */
 class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
 {
 
@@ -143,25 +161,39 @@ class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
 
 }
 
+/**
+ * algorithms for computation of Initial Conditions for polynomial solutions
+ * @param <T> data type description
+ */
 class LaguerreInitialConditions <T> implements InitialConditions <T>
 {
 
 	LaguerreInitialConditions (int degree, int alpha, ExpressionSpaceManager<T> manager)
 	{
-		double sign = degree % 2 == 1 ? -1 : 1;
-		Double l = Combinatorics.F ( (double) degree ) * sign;
-		Double c = Combinatorics.binomialCoefficientHW (degree + alpha, degree);
-		this.lead = manager.newScalar ( l.intValue () );
-		this.constant = manager.convertFromDouble (c);
-		this.manager = manager;
+		int degreePlusAlpha = degree + alpha;
+		Double deriv = - Combinatorics.binomialCoefficientHW (degreePlusAlpha, degree - 1);
+		this.valueAtZero = Combinatorics.binomialCoefficientHW (degreePlusAlpha, degree);
+		this.constant = manager.convertFromDouble (valueAtZero);
+		this.derivative = manager.convertFromDouble (deriv);
 	}
-	protected SpaceManager<T> manager;
-	protected T constant, lead;
+	protected T constant, derivative;
+	protected Double valueAtZero;
+
+	/**
+	 * @param coefficientManager set initial conditions for polynomial solution
+	 */
+	public void setCoefficients (InitialConditionsProcessor.SymbolTranslator coefficientManager)
+	{
+		coefficientManager.set ("l_0", valueAtZero);
+		// setting l_1 causes solution to degenerate even when computed correctly and set here
+		// coefficientManager.set ("l_1", manager.convertToDouble (getFirstDerivativeTerm ()));
+		// results of solution are correct without setting this ???
+	}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.InitialConditions#getLeadTerm()
+	 * @see net.myorb.math.polynomial.InitialConditions#getFirstDerivativeTerm()
 	 */
-	public T getLeadTerm () { return manager.invert (lead); }
+	public T getFirstDerivativeTerm () { return derivative; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.InitialConditions#getConstantTerm()
