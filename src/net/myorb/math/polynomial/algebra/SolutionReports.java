@@ -1,9 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.polynomial.algebra.Elements.SymbolList;
-import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
-
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.PrettyFormatter;
 import net.myorb.math.expressions.commands.Tabulation;
@@ -29,9 +26,9 @@ public class SolutionReports <T>
 
 	public SolutionReports (Environment <T> environment)
 	{
+		this.symbols = environment.getSymbolMap ();
 		this.manager = environment.getSpaceManager ();
 		this.dataConversions = environment.getConversionManager ();
-		this.symbols = environment.getSymbolMap ();
 		this.stream = environment.getOutStream ();
 		this.environment = environment;
 	}
@@ -61,9 +58,10 @@ public class SolutionReports <T>
 	 * @param solutions the solution map from a differential equation
 	 * @return the list of solution symbols
 	 */
-	public static SymbolList fromSolutionSet (Solution.LinkedSolutions solutions)
+	public static Elements.SymbolList fromSolutionSet
+		(Solution.LinkedSolutions solutions)
 	{
-		SymbolList list = new SymbolList ();
+		Elements.SymbolList list = new Elements.SymbolList ();
 		list.addAll (solutions.keySet ()); list.sort (null);
 		return list;
 	}
@@ -73,7 +71,7 @@ public class SolutionReports <T>
 	 * display solution information
 	 * @param solutions the list of identifiers
 	 */
-	public void showSolutions (SymbolList solutions)
+	public void showSolutions (Elements.SymbolList solutions)
 	{
 		for (String name : solutions) showSolution (name);
 	}
@@ -116,7 +114,7 @@ public class SolutionReports <T>
 	 */
 	public void compileSolutionTable
 		(
-			SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
+			Elements.SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
 		)
 	{
 		List <String> columnHeaders = new ArrayList <> ();
@@ -130,7 +128,7 @@ public class SolutionReports <T>
 	 * @param series the expanded series constructed to solve this series
 	 * @param symbolTable the table of symbols provided for the solution request
 	 */
-	public void establishTitle (SeriesExpansion <T> series, SymbolValues symbolTable)
+	public void establishTitle (SeriesExpansion <T> series, SolutionData.SymbolValues symbolTable)
 	{
 		this.documentTitle.append (series.getFunctionName ()).append (" - ");
 		this.documentTitle.append (series.getSolutionBeingBuilt ()).append (" Solution ");
