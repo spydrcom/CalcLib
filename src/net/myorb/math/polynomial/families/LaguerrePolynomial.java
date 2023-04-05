@@ -12,7 +12,6 @@ import net.myorb.math.polynomial.PolynomialSpaceManager;
 import net.myorb.math.polynomial.GeneralRecurrence;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.computational.Combinatorics;
 import net.myorb.math.specialfunctions.Gamma;
 
 import net.myorb.math.SpaceManager;
@@ -189,13 +188,13 @@ class LaguerreInitialConditions <T> implements InitialConditions <T>
 	LaguerreInitialConditions (int degree, double alpha, ExpressionSpaceManager<T> manager)
 	{
 		Gamma gamma = new Gamma ();
-		double degreePlusAlpha = degree + alpha;
-		double GammaAPlus1 = gamma.eval (alpha + 1);
-		double gammaNplusA1 = gamma.eval (degreePlusAlpha + 1);
-		this.valueAtZero = gammaNplusA1 / (GammaAPlus1 * Combinatorics.F (degree));
-		Double deriv = gammaNplusA1 / (gamma.eval ((double) degree) * gamma.eval (alpha + 2));
+		double gammaN = gamma.eval ( (double) degree );
+		double gammaNplusA1 = gamma.eval (degree + alpha + 1);
+		double GammaAPlus1 = gamma.eval (alpha + 1), GammaAPlus2 = alpha * GammaAPlus1;
+		this.valueAtZero = gammaNplusA1 / ( degree * gammaN * GammaAPlus1 );
+		double deriv =  -  gammaNplusA1 / ( gammaN * GammaAPlus2 );
 		this.constant = manager.convertFromDouble (valueAtZero);
-		this.derivative = manager.convertFromDouble (-deriv);
+		this.derivative = manager.convertFromDouble (deriv);
 	}
 	protected T constant, derivative;
 	protected Double valueAtZero;
