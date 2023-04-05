@@ -13,6 +13,7 @@ import net.myorb.math.polynomial.GeneralRecurrence;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.computational.Combinatorics;
+import net.myorb.math.specialfunctions.Gamma;
 
 import net.myorb.math.SpaceManager;
 import net.myorb.math.Polynomial;
@@ -44,7 +45,7 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	 * @param alpha the value of alpha for the solution
 	 * @return the Initial Conditions object
 	 */
-	public InitialConditions <T> getInitialConditions (int degree, int alpha)
+	public InitialConditions <T> getInitialConditions (int degree, double alpha)
 	{
 		return new LaguerreInitialConditions <T> (degree, alpha, (ExpressionSpaceManager <T>) manager);
 	}
@@ -57,7 +58,7 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 		Double  N = coefficientManager.valueFor ("n"),
 			alpha = coefficientManager.valueFor ("alpha") ;
 		LaguerreInitialConditions <T> LIC = (LaguerreInitialConditions <T>)
-			getInitialConditions (N.intValue (), alpha.intValue ());
+			getInitialConditions (N.intValue (), alpha);
 		LIC.setCoefficients (coefficientManager);
 	}
 
@@ -185,13 +186,16 @@ class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
 class LaguerreInitialConditions <T> implements InitialConditions <T>
 {
 
-	LaguerreInitialConditions (int degree, int alpha, ExpressionSpaceManager<T> manager)
+	LaguerreInitialConditions (int degree, double alpha, ExpressionSpaceManager<T> manager)
 	{
-		int degreePlusAlpha = degree + alpha;
-		Double deriv = - Combinatorics.binomialCoefficientHW (degreePlusAlpha, degree - 1);
-		this.valueAtZero = Combinatorics.binomialCoefficientHW (degreePlusAlpha, degree);
+		Gamma gamma = new Gamma ();
+		double degreePlusAlpha = degree + alpha;
+		double GammaAPlus1 = gamma.eval (alpha + 1);
+		double gammaNplusA1 = gamma.eval (degreePlusAlpha + 1);
+		this.valueAtZero = gammaNplusA1 / (GammaAPlus1 * Combinatorics.F (degree));
+		Double deriv = gammaNplusA1 / (gamma.eval ((double) degree) * gamma.eval (alpha + 2));
 		this.constant = manager.convertFromDouble (valueAtZero);
-		this.derivative = manager.convertFromDouble (deriv);
+		this.derivative = manager.convertFromDouble (-deriv);
 	}
 	protected T constant, derivative;
 	protected Double valueAtZero;
