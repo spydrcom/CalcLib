@@ -187,17 +187,44 @@ class LaguerreInitialConditions <T> implements InitialConditions <T>
 
 	LaguerreInitialConditions (int degree, double alpha, ExpressionSpaceManager<T> manager)
 	{
-		Gamma gamma = new Gamma ();
-		double gammaN = gamma.eval ( (double) degree );
-		double gammaNplusA1 = gamma.eval (degree + alpha + 1);
-		double GammaAPlus1 = gamma.eval (alpha + 1), GammaAPlus2 = alpha * GammaAPlus1;
+		this.initGamma (); this.initAlpha (alpha); this.initDegree (degree);
+		this.derivative = manager.convertFromDouble ( -  gammaNplusA1 / ( gammaN * GammaAPlus2 ) );
 		this.valueAtZero = gammaNplusA1 / ( degree * gammaN * GammaAPlus1 );
-		double deriv =  -  gammaNplusA1 / ( gammaN * GammaAPlus2 );
-		this.constant = manager.convertFromDouble (valueAtZero);
-		this.derivative = manager.convertFromDouble (deriv);
+		this.constant = manager.convertFromDouble ( this.valueAtZero );
 	}
 	protected T constant, derivative;
 	protected Double valueAtZero;
+
+	/**
+	 * get access to Gamma function
+	 */
+	protected void initGamma () { this.gamma = new Gamma (); }
+	protected double GAMMA (double x) { return gamma.eval (x); }
+	protected Gamma gamma;
+
+	/**
+	 * compute GAMMA (alpha + c)
+	 * @param alpha real value for alpha
+	 */
+	protected void initAlpha (double alpha)
+	{
+		this.alphaPlus1 = alpha + 1;
+		this.GammaAPlus1 = GAMMA (alphaPlus1);
+		this.GammaAPlus2 = alphaPlus1 * GammaAPlus1;
+	}
+	protected double alphaPlus1, GammaAPlus1, GammaAPlus2;
+
+	/**
+	 * compute GAMMA (N + c)
+	 * @param degree the degree of the solution polynomial
+	 */
+	protected void initDegree (double degree)
+	{
+		this.gammaNplusA1 =
+			GAMMA ( degree + alphaPlus1 );
+		this.gammaN = GAMMA ( degree );
+	}
+	protected double gammaNplusA1, gammaN;
 
 	/**
 	 * @param coefficientManager set initial conditions for polynomial solution
