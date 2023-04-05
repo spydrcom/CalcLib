@@ -121,11 +121,19 @@ public class IterationTools <T> implements Environment.AccessAcceptance <T>
 	public DerivativeComputer <T> getSqrtDerivativeComputer () { return (n) -> sqrtPrime (n); }						// converges for |x| < 1
 	public DerivativeComputer <T> getLogDerivativeComputer () { return (n) -> logPrime (n); }						// converges for |x| < 1
 
+	public DerivativeComputer <T> getLegendreDerivativeComputer () { return (n) -> legendreMuPrime (n); }			// converges for |x| < 1
+
 
 	T geoPrime (int n)
 	{
 		// 1 / (1 - x)
 		return combo.factorial (n);
+	}
+
+	T legendreMuPrime (int n)
+	{
+		// 1 / (1 - x^2)
+		return productOf ( combo.factorial (n), coshPrime (n) );
 	}
 
 	T binPrime (int n, T alpha)
