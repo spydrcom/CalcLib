@@ -4,7 +4,9 @@ package net.myorb.math.polynomial.families;
 import net.myorb.math.polynomial.*;
 import net.myorb.math.polynomial.families.legendre.*;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.SpaceManager;
+
 import net.myorb.math.Polynomial;
 
 import java.util.List;
@@ -15,7 +17,8 @@ import java.util.List;
  * @author Michael Druckman
  */
 public class LegendrePolynomial<T> extends Polynomial<T>
-			implements PolynomialFamily<T>
+			implements PolynomialFamily<T>, NamingConventions,
+				InitialConditionsProcessor.Calculator
 {
 
 	public LegendrePolynomial
@@ -148,6 +151,44 @@ public class LegendrePolynomial<T> extends Polynomial<T>
 		else if (kind.toUpperCase ().startsWith ("J")) return "J";
 		return kind.toUpperCase ().startsWith ("F")? "P": "Q";
 	}
+
+	/**
+	 * compute Initial Conditions for solution
+	 * @param degree the degree of the solution polynomial
+	 * @param mu the value of mu for the solution
+	 * @return the Initial Conditions object
+	 */
+	public InitialConditions <T> getInitialConditions (int degree, double mu)
+	{
+		return new LegendreInitialConditions <T> (degree, mu, (ExpressionSpaceManager <T>) manager);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditionsProcessor.Implementation#computeCoefficients(net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator)
+	 */
+	public void computeCoefficients (InitialConditionsProcessor.SymbolTranslator coefficientManager)
+	{
+		Double	 N = coefficientManager.valueFor ("n"),
+				mu = coefficientManager.valueFor ("mu") ;
+		LegendreInitialConditions <T> LIC = (LegendreInitialConditions <T>)
+				getInitialConditions (N.intValue (), mu);
+		LIC.computeCoefficients (coefficientManager);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getPolynomialNameConvention()
+	 */
+	public String getPolynomialNameConvention () { return "P"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getCoefficientNameConvention()
+	 */
+	public String getCoefficientNameConvention () { return "p"; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.NamingConventions#getParameterNameConvention()
+	 */
+	public String getParameterNameConvention () { return "x"; }
 
 	/**
 	 * unit test
