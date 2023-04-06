@@ -237,6 +237,21 @@ public abstract class Elements
 		public Factor exponent () { return this.get (1); }
 		public Factor base () { return this.get (0); }
 
+		/**
+		 * @return product wrapper for power object
+		 */
+		public Factor powerProduct ()
+		{
+			Factor product = new Product (Constant.ONE);
+			Utilities.add (this, product);
+			return product;
+		}
+
+		/**
+		 * @param variable symbol to use as base
+		 * @param order the exponent value for the term
+		 * @return the constructed Power Factor
+		 */
 		public static Factor reference (Variable variable, Double order)
 		{
 			Factors power = new Power ();
