@@ -96,15 +96,44 @@ public class SolutionReports <T>
 	 */
 	public void showSolution (String solutionName, Solution.LinkedSolutions solutions)
 	{
-		SeriesExpansion <?> series;
-		if ( ( series = solutions.get (solutionName) ) == null )
+		Solution <?> solution;
+		if ( ( solution = solutions.get (solutionName) ) == null )
 		{ throw new RuntimeException ( "Solution not found: " + solutionName ); }
-		showSolution (series);
+		showSolution (solution);
 	}
-	public void showSolution (SeriesExpansion <?> series) {}
+	public void showSolution (Solution <?> solution)
+	{
+		solution.showCollectedSolutionTableContent ();
+	}
 
 
 	// display of work-product matrix of solution
+
+
+	/**
+	 * display collected content
+	 */
+	public void showCollectedSolutionTableContent ()
+	{
+		this.compileSolutionTable (coefficients, solutionValues);
+	}
+
+
+	/**
+	 * collect data for report
+	 * @param coefficients column headers with names of coefficients
+	 * @param solutionValues the scalar for the coefficient in each equation
+	 */
+	public void collectSolutionTableContent
+		(
+			Elements.SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
+		)
+	{
+		this.solutionValues  = solutionValues;
+		this.coefficients = coefficients;
+	}
+	protected MatrixSolution.WorkProduct <T> solutionValues;
+	protected Elements.SymbolList coefficients;
 
 
 	/**
