@@ -72,6 +72,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	public void setGeneratedSolutions
 	(Solution.LinkedSolutions generatedSolutions) { this.generatedSolutions = generatedSolutions; }
 	public Solution.LinkedSolutions getGeneratedSolutions () { return generatedSolutions; }
+	public Solution <T> getSolution () {  return solution;  }
 	protected Solution.LinkedSolutions generatedSolutions;
 
 
@@ -316,9 +317,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 			sourceSeries = seriesFor ( sourceFunctionName ),
 			expandedSeries = seriesFor ( expandedFunctionName );
 		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
-		expandedSeries.generatedSolutions.put (solutionFunctionName, sourceSeries);
+		expandedSeries.generatedSolutions.put (solutionFunctionName, this.solution);
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
-		this.solution.analyze ( expandedSeries, currentProfile, symbolTable );
+		this.solution.analyze ( expandedSeries, this.currentProfile, this.symbolTable );
 		this.describeSolution ( solutionFunctionName,  sourceSeries );
 	}
 
@@ -335,7 +336,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 			solution.getCoefficientsVector ( getCoefficientsFrom (sourceSeries.expandedRoot) );
 		this.environment.getSymbolMap ().add ( new AssignedVariableStorage (solutionFunctionName, vector) );
 		this.environment.getOutStream ().println ( solutionFunctionName + " = " + vector );
+		if (SHOW) this.solution.showCollectedSolutionTableContent ();
 	}
+	protected boolean SHOW = false;
 
 
 	/**
