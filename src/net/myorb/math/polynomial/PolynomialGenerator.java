@@ -1,13 +1,17 @@
 
 package net.myorb.math.polynomial;
 
-import net.myorb.math.expressions.OperatorNomenclature;
+import net.myorb.math.polynomial.families.*;
+import net.myorb.math.polynomial.algebra.SeriesExpansion;
+
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
+import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.OperatorNomenclature;
+
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.symbols.DefinedFunction;
-import net.myorb.math.polynomial.algebra.SeriesExpansion;
 
 /**
  * generator for polynomial functions
@@ -20,9 +24,23 @@ public class PolynomialGenerator <T>
 
 	public PolynomialGenerator (Environment <T> environment)
 	{
+		this.addInitialConditionsProcessors
+				( environment.getSpaceManager () );
 		this.environment = environment;
 	}
 	protected Environment <T> environment;
+
+
+	/**
+	 * initialize management for Initial Conditions processors
+	 * @param manager space manager for data type
+	 */
+	public void addInitialConditionsProcessors (ExpressionSpaceManager <T> manager)
+	{
+		if ( InitialConditionsProcessor.hasProcessorFor ("Laguerre") ) return;
+		InitialConditionsProcessor.addProcessor (new LaguerrePolynomial <T> (manager));
+		InitialConditionsProcessor.addProcessor (new LegendrePolynomial <T> (manager));
+	}
 
 
 	/**
