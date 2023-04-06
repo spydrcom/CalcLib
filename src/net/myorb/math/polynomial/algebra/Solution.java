@@ -8,9 +8,6 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
-import net.myorb.math.polynomial.families.LaguerrePolynomial;
-import net.myorb.math.polynomial.InitialConditionsProcessor;
-
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.linalg.GaussSolution;
 
@@ -41,7 +38,6 @@ public class Solution <T> extends SubstitutionProcessing
 		this.dataConversions = environment.getConversionManager ();
 		this.reports = new SolutionReports <T> (environment);
 		this.stream = environment.getOutStream ();
-		this.addInitialConditionsProcessors ();
 	}
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
@@ -213,22 +209,6 @@ public class Solution <T> extends SubstitutionProcessing
 		}
 		return solutionVector;
 	}
-
-
-	// special processing initialization
-
-
-	/**
-	 * initialize management for 
-	 * addInitial conditions processors
-	 */
-	public void addInitialConditionsProcessors ()
-	{
-		if (LaguerrePolynomialManager != null) return;
-		this.LaguerrePolynomialManager = new LaguerrePolynomial <T> (manager);
-		InitialConditionsProcessor.addProcessor ("Laguerre", this.LaguerrePolynomialManager);
-	}
-	protected LaguerrePolynomial <T> LaguerrePolynomialManager = null;
 
 
 }
