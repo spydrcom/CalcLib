@@ -24,7 +24,7 @@ import net.myorb.math.Polynomial;
  */
 public class LaguerrePolynomial <T> extends Polynomial <T>
 			implements PolynomialFamily <T>, NamingConventions,
-				InitialConditionsProcessor.Implementation
+				InitialConditionsProcessor.Calculator
 {
 
 	public LaguerrePolynomial
@@ -50,7 +50,7 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.InitialConditionsProcessor.Implementation#computeCoefficients(net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator)
+	 * @see net.myorb.math.polynomial.InitialConditionsProcessor.Calculator#computeCoefficients(net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator)
 	 */
 	public void computeCoefficients (InitialConditionsProcessor.SymbolTranslator coefficientManager)
 	{
