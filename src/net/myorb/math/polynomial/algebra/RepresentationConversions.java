@@ -1,6 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.data.notations.json.JsonPrettyPrinter;
 import net.myorb.data.notations.json.JsonSemantics;
 import net.myorb.data.notations.json.JsonLowLevel;
 
@@ -29,14 +30,22 @@ public class RepresentationConversions extends Utilities
 	public static Factor translate
 	(JsonLowLevel.JsonValue tree, SeriesExpansion <?> root)
 	{
-		Elements.Sum equation;
+		Elements.Sum equation; Factor elementTree;
 		recognize (tree, equation = new Equation (), root);
-		return Manipulations.reduceAndCollectTerms
+		elementTree = Manipulations.reduceAndCollectTerms
 		(
 			reduceTermsOf (equation),
 			root.getPolynomialVariable (),
 			root
 		);
+		//trace ( tree, elementTree );
+		return elementTree;
+	}
+	static void trace (JsonLowLevel.JsonValue tree, Factor elementTree)
+	{
+		try { JsonPrettyPrinter.sendTo (tree, System.out); }
+		catch (Exception e) { e.printStackTrace (); }
+		System.out.println (elementTree);
 	}
 
 	/**
@@ -187,6 +196,7 @@ public class RepresentationConversions extends Utilities
 		Factor parent = identifyOperation (object);
 		recognize ( object.getMemberCalled ("Left"), parent, root );
 		recognize ( object.getMemberCalled ("Right"), rightParentFor (parent), root );
+		if (parent instanceof Power) return ( (Power) parent ).powerProduct ();
 		return parent;
 	}
 
