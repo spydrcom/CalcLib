@@ -35,7 +35,7 @@ public class InitialConditionsProcessor
 	/**
 	 * the defining functionality for a processor object
 	 */
-	public interface Implementation
+	public interface Calculator
 	{
 		/**
 		 * given values set in the symbol table
@@ -48,7 +48,7 @@ public class InitialConditionsProcessor
 	/**
 	 * map names of processors to the appropriate processor object
 	 */
-	public static class ProcessorMap extends java.util.HashMap <String, Implementation>
+	public static class ProcessorMap extends java.util.HashMap <String, Calculator>
 	{ private static final long serialVersionUID = 22081841563337176L; }
 	private static ProcessorMap processors = null;
 	
@@ -57,10 +57,19 @@ public class InitialConditionsProcessor
 	 * @param processorName the name of the processor
 	 * @param implementation the object implementing the algorithm
 	 */
-	public static void addProcessor (String processorName, Implementation implementation)
+	public static void addProcessor (String processorName, Calculator implementation)
 	{
 		if (processors == null) processors = new ProcessorMap ();
 		processors.put (processorName, implementation);
+	}
+
+	/**
+	 * allow for Polynomial Family support for Initial Conditions
+	 * @param family a PolynomialFamily object that supports Calculator interface
+	 */
+	public static void addProcessor (PolynomialFamily <?> family)
+	{
+		addProcessor ( family.getName (), (Calculator) family );
 	}
 
 	/**
@@ -83,21 +92,32 @@ public class InitialConditionsProcessor
 	 */
 	public static NamingConventions getNamingConventions (String processorName)
 	{
-		Implementation processor = getProcessor ( processorName );
+		Calculator processor = getProcessor ( processorName );
 		if ( processor instanceof NamingConventions ) return (NamingConventions) processor;
 		throw new RuntimeException ("no support for naming conventions: " + processorName);
 	}
 
 	/**
+	 * get access to the named Calculator
 	 * @param processorName the name assigned to the Implementation
 	 * @return functionality consistent with the Implementation interface
 	 * @throws RuntimeException for failure to find identified processor
 	 */
-	public static Implementation getProcessor (String processorName) throws RuntimeException
+	public static Calculator getProcessor (String processorName) throws RuntimeException
 	{
-		if ( processors == null || ! processors.containsKey (processorName) )
+		if ( ! hasProcessorFor (processorName) )
 		{ throw new RuntimeException ("Processor not found: " + processorName); }
 		return processors.get (processorName);
+	}
+
+	/**
+	 * determine if named processor has been posted
+	 * @param processorName  the name assigned to the Implementation 
+	 * @return TRUE if processor is available
+	 */
+	public static boolean hasProcessorFor (String processorName)
+	{
+		return processors != null && processors.containsKey (processorName);
 	}
 
 }
