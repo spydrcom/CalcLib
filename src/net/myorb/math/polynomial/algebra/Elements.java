@@ -1,7 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.polynomial.PolynomialGenerator;
+import net.myorb.math.polynomial.OP;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -107,7 +107,7 @@ public abstract class Elements
 	 */
 	public static class Sum extends Factors
 	{
-		public String toString () { return bracketedImage (this, " + "); }
+		public String toString () { return bracketedImage (this, OP.PLUS); }
 		private static final long serialVersionUID = -5102897249367062053L;
 		public OpTypes getType () { return OpTypes.Summation; }
 	}
@@ -117,7 +117,7 @@ public abstract class Elements
 	 */
 	public static class Difference extends Sum
 	{
-		public String toString () { return bracketedImage (this, " - "); }
+		public String toString () { return bracketedImage (this, OP.MINUS); }
 		private static final long serialVersionUID = -5098433414832709926L;
 	}
 
@@ -138,7 +138,8 @@ public abstract class Elements
 	 */
 	public static class Product extends Factors
 	{
-		public String toString () { return image (this, "*"); }
+		public String toString ()
+		{ return image (this, OP.TIMES); }
 		public OpTypes getType () { return OpTypes.Multiplication; }
 		private static final long serialVersionUID = 5153646408526934363L;
 		public Product (Factor factor) { Utilities.add (factor, this); }
@@ -263,7 +264,7 @@ public abstract class Elements
 		{ return ( (Reference) base () ).refersTo (symbol); }
 
 		private static final long serialVersionUID = -7726638099953294189L;
-		public String toString () { return base () + "^" + exponent (); }
+		public String toString () { return base () + OP.POW + exponent (); }
 
 		public OpTypes getType () { return OpTypes.Operand; }
 		public Factor exponent () { return this.get (1); }
@@ -324,14 +325,13 @@ public abstract class Elements
 			for (int i = 1; i < factorCount; i++)
 			{
 				if ( (next = Utilities.reducedForm (factors.get (i))) instanceof Negated )
-				{ buf.append (MINUS).append ( ( (Negated) next ).getFactor () ); }
+				{ buf.append (OP.MINUS).append ( ( (Negated) next ).getFactor () ); }
 				else buf.append (op).append (next);
 			}
 			return buf.toString ();
 		}
 		return "";
 	}
-	static final String MINUS = PolynomialGenerator.MINUS;
 
 	/**
 	 * parenthetical version
@@ -340,11 +340,9 @@ public abstract class Elements
 	 * @return the formatted display
 	 */
 	public static String bracketedImage (Factors factors, String op)
-	{
-		return OPEN + image (factors, op) + CLOSE;
-	}
-	static final String CLOSE = " " + PolynomialGenerator.CLOSE;
-	static final String OPEN = PolynomialGenerator.OPEN + " ";
+	{ return OPEN + image (factors, op) + CLOSE; }
+	static final String CLOSE = " " + OP.CLOSE;
+	static final String OPEN = OP.OPEN + " ";
 
 
 }
