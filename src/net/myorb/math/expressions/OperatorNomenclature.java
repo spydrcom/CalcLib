@@ -169,6 +169,8 @@ public class OperatorNomenclature
 		final String
 	CONV_FUNCTION = "CONV",						// CONV (A1,A2)			multiplication of polynomials
 	DECONV_FUNCTION = "DECONV",					// DECONV (A1, A2)		division of polynomials from coefficients
+	POLYADD_FUNCTION = "POLYADD",				// POLYADD (A1, A2)		sum of polynomials from coefficient vectors
+	POLYMUL_FUNCTION = "POLYMUL",				// POLYMUL (A1, A2)		product of polynomials from coefficient vectors
 	POLYINT_FUNCTION = "POLYINT",				// POLYINT (1, 2, 3)	integral of polynomial from coefficients
 	POLYDER_FUNCTION = "POLYDER",				// POLYDER (1, 2, 3)	derivative of polynomial from coefficients
 	CHEBDER_FUNCTION = "CHEBDER",				// CHEBDER (1, 2, 3)	derivative of Chebyshev T polynomial from coefficients
