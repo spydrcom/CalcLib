@@ -274,6 +274,36 @@ public class PolynomialPrimitives<T> extends VectorPrimitives<T>
 
 
 	/**
+	 * implement operator - POLYMUL
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getPolyMulAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return poly.product (parameters); }
+		};
+	}
+
+
+	/**
+	 * implement operator - POLYADD
+	 * @param symbol the symbol associated with this object
+	 * @return operation implementation object
+	 */
+	public AbstractParameterizedFunction getPolyAddAlgorithm (String symbol)
+	{
+		return new AbstractParameterizedFunction (symbol)
+		{
+			public ValueManager.GenericValue execute (ValueManager.GenericValue parameters)
+			{ return poly.sum (parameters); }
+		};
+	}
+
+
+	/**
 	 * implement operator - CHEBDER
 	 * @param symbol the symbol associated with this object
 	 * @return operation implementation object
