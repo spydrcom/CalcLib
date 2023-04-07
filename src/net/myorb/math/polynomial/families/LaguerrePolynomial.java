@@ -58,7 +58,7 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 			alpha = coefficientManager.valueFor ("alpha") ;
 		LaguerreInitialConditions <T> LIC = (LaguerreInitialConditions <T>)
 			getInitialConditions (N.intValue (), alpha);
-		LIC.setCoefficients (coefficientManager);
+		LIC.computeCoefficients (coefficientManager);
 	}
 
 	/**
@@ -182,7 +182,7 @@ class LaguerrePolynomialSpaceManager <T> extends PolynomialSpaceManager <T>
  * algorithms for computation of Initial Conditions for polynomial solutions
  * @param <T> data type description
  */
-class LaguerreInitialConditions <T> implements InitialConditions <T>
+class LaguerreInitialConditions <T> implements InitialConditions <T>, InitialConditionsProcessor.Calculator
 {
 
 	LaguerreInitialConditions (int degree, double alpha, ExpressionSpaceManager<T> manager)
@@ -226,10 +226,11 @@ class LaguerreInitialConditions <T> implements InitialConditions <T>
 	}
 	protected double gammaNplusA1, gammaN;
 
-	/**
-	 * @param coefficientManager set initial conditions for polynomial solution
+	/* (non-Javadoc)
+	 * @see net.myorb.math.polynomial.InitialConditionsProcessor.Calculator#computeCoefficients(net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator)
 	 */
-	public void setCoefficients (InitialConditionsProcessor.SymbolTranslator coefficientManager)
+	public void computeCoefficients
+	(InitialConditionsProcessor.SymbolTranslator coefficientManager)
 	{
 		coefficientManager.set ("l_0", valueAtZero);
 		// setting l_1 causes solution to degenerate even when computed correctly and set here
