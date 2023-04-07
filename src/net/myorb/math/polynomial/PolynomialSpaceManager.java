@@ -23,8 +23,7 @@ public class PolynomialSpaceManager<T> extends OrdinaryPolynomialCalculus<T>
 	 * build a management object based on type manager for real/imag fields
 	 * @param manager the manager for the type being manipulated
 	 */
-	public PolynomialSpaceManager
-		(SpaceManager<T> manager)
+	public PolynomialSpaceManager (SpaceManager<T> manager)
 	{
 		super (manager);
 		NEGATIVE_ONE = discrete (-1);
