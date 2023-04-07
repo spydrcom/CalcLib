@@ -111,6 +111,35 @@ public class BuiltInPolynomialFunctions <T> extends CommonBuiltInFunctions
 
 
 	/**
+	 * compute the sum of two arrays
+	 * @param addends the parameter arrays to add
+	 * @return the sum array
+	 */
+	public ValueManager.GenericValue sum (ValueManager.GenericValue addends)
+	{
+		List<ValueManager.GenericValue> values = ( (ValueManager.ValueList) addends ).getValues ();
+		Polynomial.Coefficients<T> left = getCoefficients (values.get (0)), right = getCoefficients (values.get (1));
+		Polynomial.Coefficients<T> result =  polynomialSpaceManager.add (left, right);
+		return coefficientsArray (result);
+	}
+
+
+	/**
+	 * compute the product of two arrays
+	 * @param factors the parameter arrays to multiply
+	 * @return the product array
+	 */
+	public ValueManager.GenericValue product
+		(ValueManager.GenericValue factors)
+	{
+		List<ValueManager.GenericValue> values = ( (ValueManager.ValueList) factors ).getValues ();
+		Polynomial.Coefficients<T> left = getCoefficients (values.get (0)), right = getCoefficients (values.get (1));
+		Polynomial.Coefficients<T> result =  polynomialSpaceManager.multiply (left, right);
+		return coefficientsArray (result);
+	}
+
+
+	/**
 	 * compute an array of Chebyshev points
 	 * @param numberOfPoints the count of values to be produced
 	 * @return the list of Chebyshev points
