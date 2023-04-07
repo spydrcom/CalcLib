@@ -9,8 +9,6 @@ import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 
-import net.myorb.math.expressions.OperatorNomenclature;
-
 /**
  * generator for polynomial functions
  * @param <T> the data type to operate on
@@ -83,7 +81,7 @@ public class PolynomialGenerator <T>
 	{
 		int degree = tokens.get (position).getTokenValue ().intValue ();
 		this.parameterList.add (this.parameterName = parameterName); this.coefficientName = coefficientName;
-		this.poly0 = new StringBuffer (); this.poly1 = new StringBuffer (); this.poly2 = new StringBuffer ("2").append (TIMES);
+		this.poly0 = new StringBuffer (); this.poly1 = new StringBuffer (); this.poly2 = new StringBuffer ("2").append (OP.TIMES);
 		this.establishInitialConditions (); this.defineFunctions (functionName, degree);
 	}
 	protected StringBuffer poly0, poly1, poly2;
@@ -95,14 +93,9 @@ public class PolynomialGenerator <T>
 	 */
 	public void establishInitialConditions ()
 	{
-		this.addCoef (0, poly0).append (PLUS); this.addCoef (1, poly1).append (PLUS); this.addCoef (2, poly2).append (PLUS);
+		this.addCoef (0, poly0).append (OP.PLUS); this.addCoef (1, poly1).append (OP.PLUS); this.addCoef (2, poly2).append (OP.PLUS);
 		this.addProduct (1, 1, poly0); this.addProduct (2, 2, poly1); this.addProduct (6, 3, poly2);
 	}
-	public static final String SUB = OperatorNomenclature.SUBSCRIPT_RENDER_TICK;
-	public static final String PLUS = " "+OperatorNomenclature.ADDITION_OPERATOR+" ";		// terms format with extra spacing
-	public static final String MINUS = " "+OperatorNomenclature.SUBTRACTION_OPERATOR+" ";	// this seems to improve readability
-	public static final String TIMES = OperatorNomenclature.MULTIPLICATION_OPERATOR;
-	public static final String TO = OperatorNomenclature.POW_OPERATOR;
 
 
 	/**
@@ -115,11 +108,9 @@ public class PolynomialGenerator <T>
 	{
 		for (int i = 2; i <= degree; i++)
 		{ int i1 = i + 1, i2 = i + 2; addTerm (i, 1, i, poly0); addTerm (i, i1, i1, poly1); addTerm (i, i1*i2, i2, poly2); }
-		define (functionName, poly0); define (functionName+FIRST, poly1); define (functionName+SECOND, poly2);
+		define (functionName, poly0); define (functionName+OP.FIRST, poly1); define (functionName+OP.SECOND, poly2);
 		new SeriesExpansion <T> (environment).expandSequence (functionName);
 	}
-	public static final String FIRST = OperatorNomenclature.PRIME_OPERATOR;
-	public static final String SECOND = OperatorNomenclature.DPRIME_OPERATOR;
 
 
 	// formatting for terms and coefficient products
@@ -135,10 +126,10 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addTerm (int power, int multiple, int n, StringBuffer buffer)
 	{
-		buffer.append (PLUS).append (OPEN);
+		buffer.append (OP.PLUS).append (OP.OPEN);
 		addCoefWithMultiplier (multiple, n, buffer);
-		buffer.append (parameterName).append (TO).append (power);
-		return buffer.append (CLOSE);
+		buffer.append (parameterName).append (OP.POW).append (power);
+		return buffer.append (OP.CLOSE);
 	}
 	protected String parameterName;
 
@@ -151,12 +142,10 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addProduct (int multiple, int n, StringBuffer buffer)
 	{
-		buffer.append (OPEN);
+		buffer.append (OP.OPEN);
 		addCoefWithMultiplier (multiple, n, buffer).append (parameterName);
-		return buffer.append (CLOSE);
+		return buffer.append (OP.CLOSE);
 	}
-	public static final String OPEN = OperatorNomenclature.START_OF_GROUP_DELIMITER;
-	public static final String CLOSE = OperatorNomenclature.END_OF_GROUP_DELIMITER;
 
 	/**
 	 * append buffer with multiple of coefficient
@@ -167,8 +156,8 @@ public class PolynomialGenerator <T>
 	 */
 	StringBuffer addCoefWithMultiplier (int multiple, int n, StringBuffer buffer)
 	{
-		if (multiple != 1) buffer.append (multiple).append (TIMES);
-		addCoef (n, buffer).append (TIMES);
+		if (multiple != 1) buffer.append (multiple).append (OP.TIMES);
+		addCoef (n, buffer).append (OP.TIMES);
 		return buffer;
 	}
 
@@ -182,7 +171,7 @@ public class PolynomialGenerator <T>
 	{
 		buffer.append (coefficientName);
 		// underscore render only works for single digit
-		if (n < 10) { buffer.append (SUB); }
+		if (n < 10) { buffer.append (OP.SUB); }
 		buffer.append (n);
 		return buffer;
 	}
