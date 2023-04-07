@@ -1,9 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.data.notations.json.JsonPrettyPrinter;
-import net.myorb.data.notations.json.JsonSemantics;
-import net.myorb.data.notations.json.JsonLowLevel;
+import net.myorb.data.notations.json.*;
 
 /**
  * conversions between representations of polynomials

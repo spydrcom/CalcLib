@@ -352,9 +352,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public SeriesExpansion <T> seriesFor (String functionName)
 	{
-		currentProfile = getProfile (functionName);
-		SeriesExpansion <T> linkedSeries = currentProfile.getSeries ();
-		if (linkedSeries == null) throw new RuntimeException ("No linked series");
+		SeriesExpansion <T> linkedSeries;
+		this.currentProfile = getProfile (functionName);
+		errorForNull ( linkedSeries = currentProfile.getSeries (), "No linked series" );
 		return linkedSeries;
 	}
 	protected Subroutine <T> currentProfile;
@@ -380,7 +380,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @see net.myorb.data.abstractions.ConfigurationParser.Interpreter#process(java.lang.String, net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor)
 	 */
 	public void process (String symbol, CommonCommandParser.TokenDescriptor token)
-	{ symbolTable.add (symbol, CommonCommandParser.unQuoted (token)); }
+	{ symbolTable.add ( symbol, CommonCommandParser.unQuoted (token) ); }
 
 
 	// SHOSOL command implementation
@@ -410,9 +410,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public static String getEquationRequest (CommandSequence tokens)
 	{
-		if (tokens.size () < 2)
-		{ throw new RuntimeException ("Equation name required"); }
-		else return tokens.get (1).getTokenImage ();
+		String equationName;
+		errorForNull ( equationName = getSolutionRequest (tokens, 1), "Equation name required" );
+		return equationName;
 	}
 
 	/**
@@ -421,9 +421,19 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @return name taken from token or null if not specified
 	 */
 	public static String getSolutionRequest (CommandSequence tokens)
+	{ return getSolutionRequest (tokens, 2); }
+
+	/**
+	 * check for operand specified in command
+	 * @param tokens the token supplied in the command
+	 * @param operand the index of the operand to check
+	 * @return operand if present otherwise null
+	 */
+	public static String getSolutionRequest
+			(CommandSequence tokens, int operand)
 	{
-		if (tokens.size () < 3) return null;
-		else return tokens.get (2).getTokenImage ();
+		if ( tokens.size () < operand+1 ) return null;
+		else return tokens.get ( operand ).getTokenImage ();
 	}
 
 

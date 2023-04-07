@@ -46,9 +46,9 @@ public class SolutionReports <T>
 	 */
 	public Solution.LinkedSolutions getLinkedSolutions (String equationName)
 	{
-		Subroutine <?> profile;
+		Subroutine <?> profile = null;
 		try { profile = DefinedFunction.asUDF ( symbols.get (equationName) ); }
-		catch (Exception e) { throw new RuntimeException ( equationName + " not recognized", e ); }
+		catch (Exception e) { Utilities.error ( equationName + " not recognized", e ); }
 		return profile.getSeries ().getGeneratedSolutions ();
 	}
 
@@ -96,9 +96,8 @@ public class SolutionReports <T>
 	 */
 	public void showSolution (String solutionName, Solution.LinkedSolutions solutions)
 	{
-		Solution <?> solution;
-		if ( ( solution = solutions.get (solutionName) ) == null )
-		{ throw new RuntimeException ( "Solution not found: " + solutionName ); }
+		Solution <?> solution = solutions.get (solutionName);
+		Utilities.errorForNull ( solution, "Solution not found: " + solutionName );
 		showSolution (solution);
 	}
 	public void showSolution (Solution <?> solution)

@@ -78,8 +78,7 @@ public class Solution <T> extends SubstitutionProcessing
 	{
 		MatrixSolution <T> computer = getSolutionComputer ();
 		this.solutionOfEquations = computer.solve (equations, symbolTable);
-		// reports.compileSolutionTable (computer.getColumnList (), computer.getAugmentedMatrix ());
-		reports.collectSolutionTableContent (computer.getColumnList (), computer.getAugmentedMatrix ());
+		reports.collectSolutionTableContent ( computer.getColumnList (), computer.getAugmentedMatrix () );
 		this.symbolTable.showSymbols (stream);
 	}
 	protected Matrix <T> solutionOfEquations;

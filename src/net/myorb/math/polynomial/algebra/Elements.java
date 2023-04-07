@@ -44,10 +44,39 @@ public abstract class Elements
 
 	// atomic Factor description base
 
+	/**
+	 * provide response to query of referenced symbols
+	 */
 	public static interface References
-	{ void identify (SymbolicReferences symbols); }
-	public static interface Reference { boolean refersTo (String symbol); }
-	public static interface Factor extends References { OpTypes getType (); }
+	{
+		/**
+		 * @param symbols a set that will be set to referenced symbols
+		 */
+		void identify (SymbolicReferences symbols);
+	}
+
+	/**
+	 * provide response to query of specific symbol reference
+	 */
+	public static interface Reference
+	{
+		/**
+		 * @param symbol identifier to check
+		 * @return TRUE when symbol is referenced by node
+		 */
+		boolean refersTo (String symbol);
+	}
+
+	/**
+	 * provide response to query of node type
+	 */
+	public static interface Factor extends References
+	{
+		/**
+		 * @return type of implementing node
+		 */
+		OpTypes getType ();
+	}
 
 
 	// binary operation factors
@@ -64,6 +93,9 @@ public abstract class Elements
 		public boolean isSingleton () { return this.size () == 1; }
 		private static final long serialVersionUID = 35114701359602093L;
 
+		/* (non-Javadoc)
+		 * @see net.myorb.math.polynomial.algebra.Elements.References#identify(net.myorb.math.polynomial.algebra.Elements.SymbolicReferences)
+		 */
 		public void identify (SymbolicReferences symbols)
 		{
 			for (Factor factor : this) factor.identify (symbols);
@@ -238,17 +270,20 @@ public abstract class Elements
 		public Factor base () { return this.get (0); }
 
 		/**
+		 * establish convention of scalar product with power
 		 * @return product wrapper for power object
 		 */
 		public Factor powerProduct ()
 		{
+			// ONE will fold into scalar multiplied with other factors
 			Factor product = new Product (Constant.ONE);
 			Utilities.add (this, product);
 			return product;
 		}
 
 		/**
-		 * @param variable symbol to use as base
+		 * build a power expression with base and order
+		 * @param variable symbol to use as base of power expression
 		 * @param order the exponent value for the term
 		 * @return the constructed Power Factor
 		 */

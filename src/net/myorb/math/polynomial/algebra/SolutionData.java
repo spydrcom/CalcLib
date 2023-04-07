@@ -64,9 +64,8 @@ public class SolutionData extends Utilities
 		 */
 		public Double valueFor (String symbol)
 		{
-			NameValuePair content;
-			if ( (content = this.get (symbol)) == null )
-			{ throw new RuntimeException ("No value for symbol: " + symbol); }
+			NameValuePair content = this.get (symbol);
+			errorForNull ( content, "No value for symbol: " + symbol );
 			return content.getNamedValue ();
 		}
 

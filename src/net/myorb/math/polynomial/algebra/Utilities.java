@@ -355,6 +355,16 @@ public class Utilities extends Elements
 	(String message, Exception source) throws RuntimeException
 	{ throw new RuntimeException (message, source); }
 
+	/**
+	 * check object for null and throw Exception
+	 * @param toCheck the object being evaluated for error
+	 * @param message the text of a message for the condition
+	 * @throws RuntimeException formatted with message
+	 */
+	public static void errorForNull
+	(Object toCheck, String message) throws RuntimeException
+	{ if ( toCheck == null ) throw new RuntimeException (message); }
+
 
 }
 
