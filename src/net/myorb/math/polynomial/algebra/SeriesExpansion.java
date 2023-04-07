@@ -1,9 +1,13 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.polynomial.families.*;
+import net.myorb.math.polynomial.InitialConditionsProcessor;
+
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.ValueManager.DimensionedValue;
+import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -420,6 +424,21 @@ public class SeriesExpansion <T> extends ParameterManagement
 	{
 		if (tokens.size () < 3) return null;
 		else return tokens.get (2).getTokenImage ();
+	}
+
+
+	// initialization of Initial Conditions Processors library
+
+
+	/**
+	 * initialize management for Initial Conditions processors
+	 * @param manager space manager for data type
+	 */
+	public static <T> void addInitialConditionsProcessors (ExpressionSpaceManager <T> manager)
+	{
+		if ( InitialConditionsProcessor.hasProcessorFor ("Laguerre") ) return;
+		InitialConditionsProcessor.addProcessor (new LaguerrePolynomial <T> (manager));
+		InitialConditionsProcessor.addProcessor (new LegendrePolynomial <T> (manager));
 	}
 
 

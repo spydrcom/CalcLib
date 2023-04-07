@@ -33,11 +33,12 @@ public class Solution <T> extends SubstitutionProcessing
 
 	public Solution (Environment <T> environment)
 	{
+		this.stream = environment.getOutStream ();
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
-		this.dataConversions = environment.getConversionManager ();
 		this.reports = new SolutionReports <T> (environment);
-		this.stream = environment.getOutStream ();
+		this.dataConversions = environment.getConversionManager ();
+		SeriesExpansion.addInitialConditionsProcessors (manager);
 	}
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
