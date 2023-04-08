@@ -443,6 +443,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	/**
 	 * initialize management for Initial Conditions processors
 	 * @param manager space manager for data type
+	 * @param <T> data type used
 	 */
 	public static <T> void addInitialConditionsProcessors (ExpressionSpaceManager <T> manager)
 	{
