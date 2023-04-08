@@ -1,6 +1,9 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
+import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
+
 import net.myorb.math.polynomial.OP;
 
 import java.util.ArrayList;
@@ -280,6 +283,20 @@ public abstract class Elements
 			Factor product = new Product (Constant.ONE);
 			Utilities.add (this, product);
 			return product;
+		}
+
+		/**
+		 * compute value of a constant power expression
+		 * @param symbolTable symbols recognized as constnat
+		 * @return the computed value
+		 */
+		public double evaluate (SymbolValues symbolTable)
+		{
+			Variable v = (Variable) base ();
+			NameValuePair nvp = symbolTable.get ( v.toString () );
+			Utilities.errorForNull ( nvp, "Non constant power base" );
+			double exponent = ( (Constant) exponent () ).getValue ();
+			return Math.pow ( nvp.getNamedValue (), exponent );
 		}
 
 		/**

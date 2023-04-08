@@ -109,11 +109,7 @@ public class SubstitutionProcessing extends SolutionData
 		}
 		if (operand instanceof Power)
 		{
-			Power p = (Power) operand;
-			Variable v = (Variable) p.base ();
-			NameValuePair nvp = symbolTable.get ( v.toString () );
-			Utilities.errorForNull ( nvp, "Non constant power base" );
-			return new Constant (Math.pow (nvp.getNamedValue (), ((Constant) p.exponent ()).getValue ()));			
+			return new Constant ( ( (Power) operand ).evaluate (symbolTable) );
 		}
 		return operand;
 	}
