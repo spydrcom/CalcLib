@@ -5,8 +5,6 @@ import net.myorb.math.polynomial.families.*;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
 import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.commands.CommandSequence;
-import net.myorb.math.expressions.ValueManager.DimensionedValue;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Subroutine;
@@ -14,6 +12,9 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+
+import net.myorb.math.expressions.ValueManager.DimensionedValue;
+import net.myorb.math.expressions.commands.CommandSequence;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
