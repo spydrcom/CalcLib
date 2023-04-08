@@ -446,7 +446,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public static <T> void addInitialConditionsProcessors (ExpressionSpaceManager <T> manager)
 	{
-		if ( InitialConditionsProcessor.hasProcessorFor ("Laguerre") ) return;
+		String expectedFamily = LaguerrePolynomial.getFamilyName ();
+		if ( InitialConditionsProcessor.hasProcessorFor (expectedFamily) ) return;
 		InitialConditionsProcessor.addProcessor (new LaguerrePolynomial <T> (manager));
 		InitialConditionsProcessor.addProcessor (new LegendrePolynomial <T> (manager));
 	}

@@ -74,7 +74,9 @@ public class LaguerrePolynomial <T> extends Polynomial <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.PolynomialFamily#getName()
 	 */
-	public String getName () { return "Laguerre"; }
+	public String getName () { return FAMILY_NAME; }
+	public static String getFamilyName () { return FAMILY_NAME; }
+	public static final String FAMILY_NAME = "Laguerre";
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.PolynomialFamily#getFunctions(java.lang.String, int)

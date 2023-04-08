@@ -127,23 +127,19 @@ public class Solution <T> extends SubstitutionProcessing
 	public void showAnalysis ()
 	{
 		Set <String> refs;
-
-		stream.println (); stream.println ("===");
-
+		formatSectionBreak ("", stream);
 		stream.print (series.expandedRoot);
 
-		stream.println (); stream.println ("===");
-
+		formatSectionBreak ("", stream);
 		for (Double power : analysis.getPowers ())
 		{
 			refs = references (analysis.getTermFor (power));
-			stream.print (Constant.asInteger (power.toString ()));
+			stream.print ( Constant.asInteger (power.toString ()) );
 			stream.print ("\t"); stream.print (refs);
 			stream.println ();
 		}
 
-		stream.println (); stream.println ("===");
-
+		formatSectionBreak ("", stream);
 		for (int n = 0; n < equations.size (); n++)
 		{
 			stream.print (n);

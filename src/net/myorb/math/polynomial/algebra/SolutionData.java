@@ -46,7 +46,7 @@ public class SolutionData extends Utilities
 		 * @param stream stream to send symbol list to
 		 */
 		public void showSymbols (java.io.PrintStream stream)
-		{ stream.println ("==="); stream.println (this); stream.println ("==="); stream.println (); }
+		{ formatSectionBreak ("", stream); formatSectionBreak (this, stream); stream.println (); }
 
 		// computation of Initial Conditions by Processor object
 

@@ -93,10 +93,17 @@ public class Manipulations extends Utilities
 		if (factors == null) return term;
 		return reduce (factors);
 	}
+
+
+	/**
+	 * reduce the factors of a product
+	 * @param factors the factors of a product
+	 * @return the product with the scalars folded
+	 */
 	public static Factor reduce (Factors factors)
 	{
 		double scalar = 1.0;
-		Symbols Symbols = new Symbols ();
+		Symbols symbols = new Symbols ();
 		for (Factor factor : factors)
 		{
 			if (factor instanceof Constant)
@@ -105,14 +112,14 @@ public class Manipulations extends Utilities
 			}
 			else if (factor instanceof Variable)
 			{
-				Symbols.include ( (Variable) factor );
+				symbols.include ( (Variable) factor );
 			}
 			else if (factor instanceof Power)
 			{
-				Symbols.include ( (Power) factor );
+				symbols.include ( (Power) factor );
 			}
 		}
-		return Symbols.getTerm (scalar);
+		return symbols.getTerm (scalar);
 	}
 
 

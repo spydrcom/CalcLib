@@ -366,5 +366,16 @@ public class Utilities extends Elements
 	{ if ( toCheck == null ) throw new RuntimeException (message); }
 
 
+	// output formatting
+
+	/**
+	 * @param sectionContent data to be displayed
+	 * @param stream output section of system output
+	 */
+	public static void formatSectionBreak
+	(Object sectionContent, java.io.PrintStream stream)
+	{ stream.println (sectionContent); stream.println ("==="); }
+
+
 }
 

@@ -4,6 +4,8 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
 
+import net.myorb.data.abstractions.SpaceConversion;
+
 import net.myorb.math.polynomial.OP;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public abstract class Elements
 	/**
 	 * type of element nodes
 	 */
-	public enum OpTypes {Summation, Multiplication, Operand}
+	public enum OpTypes {Summation, Negation, Multiplication, Operand}
 
 
 	/**
@@ -30,8 +32,9 @@ public abstract class Elements
 	{
 		/**
 		 * @return expected single symbol referenced
+		 * @throws RuntimeException when more than one symbol referenced
 		 */
-		public String getReferencedSymbol ()
+		public String getReferencedSymbol () throws RuntimeException
 		{
 			if (isEmpty ()) return null;
 			if (size () > 1) throw new RuntimeException ("Term not reduced");
@@ -41,6 +44,9 @@ public abstract class Elements
 		protected static final String [] EMPTY = new String [] {};
 	}
 
+	/**
+	 * enumerated list of symbol names
+	 */
 	public static class SymbolList extends ArrayList <String>
 	{ private static final long serialVersionUID = -1596326735237091669L; }
 
@@ -129,7 +135,7 @@ public abstract class Elements
 	 */
 	public static class Negated implements Factor
 	{
-		public OpTypes getType () { return null; }
+		public OpTypes getType () { return OpTypes.Negation; }
 		public Negated (Factor factor) { this.child = factor; }
 		public void identify (SymbolicReferences symbols) { child.identify (symbols); }
 		public Factor getFactor () { return child; }
@@ -221,6 +227,17 @@ public abstract class Elements
 		 * @return the negated value Constant
 		 */
 		public static Constant negated (Factor constant) { return ( (Constant) constant ).negated (); }
+
+		/**
+		 * construct Constant converted from object
+		 * @param value the value represented in an alien format
+		 * @param using a conversion object for the alien format
+		 * @return a Constant set to the value
+		 * @param <T> data type used
+		 */
+		public static <T> Constant
+			convertedFrom (T value, SpaceConversion <T> using)
+		{ return new Constant ( using.convertToDouble (value) ); }
 
 		/**
 		 * check the sign of a constant

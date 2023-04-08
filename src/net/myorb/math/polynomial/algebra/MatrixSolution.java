@@ -67,9 +67,9 @@ public class MatrixSolution <T> extends SolutionData
 		return computedColumnVectorSolution
 		(
 			equations,
-			new SymbolList (),
-			new SymbolIndexMap (),
-			symbolTable
+			new SymbolList (),			// symbols assigned to matrix columns
+			new SymbolIndexMap (),		// reference back to matrix column index
+			symbolTable					// symbol value assignments
 		);
 	}
 	private Matrix <T> computedColumnVectorSolution
@@ -154,9 +154,19 @@ public class MatrixSolution <T> extends SolutionData
 	public WorkProduct <T> getAugmentedMatrix () { return augmentedMatrix; }
 	protected WorkProduct <T> augmentedMatrix;
 
+	/**
+	 * @param into the list object to hold the column values
+	 * @param from the matrix holding the column of interest
+	 * @param columnNumber the index of the column
+	 */
 	private void getColumnElements (List <T> into, Matrix <T> from, int columnNumber)
 	{ into.clear (); into.addAll ( getColumn (from, columnNumber) ); }
 
+	/**
+	 * @param from source matrix holding the column of interest
+	 * @param columnNumber the index of the column
+	 * @return the list of values
+	 */
 	private List <T> getColumn (Matrix <T> from, int columnNumber)
 	{ return from.getCol (columnNumber).getElementsList (); }
 
@@ -198,7 +208,7 @@ public class MatrixSolution <T> extends SolutionData
 			solutionVector.set (i, 1, value);
 		}
 
-		if (showWorkProduct)			// for display to sysout
+		if (showWorkProduct)			// for display to system output
 		{
 			stream.println ("===");
 			ops.show (stream, solutionMatrix); stream.println ("===");
@@ -335,14 +345,15 @@ public class MatrixSolution <T> extends SolutionData
 			symbolTable.add
 			(
 				symbolOrder.get ( i - 1 ),
-				computedValue ( computedSolution.get (i, 1) )
+
+				Constant.convertedFrom
+				(
+					computedSolution.get (i, 1),
+					manager
+				)
 			);
 		}
 		return computedSolution;
-	}
-	Constant computedValue (T from)
-	{
-		return new Constant (manager.convertToDouble (from));
 	}
 
 
