@@ -1,6 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.expressions.ValueManager.DimensionedValue;
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
 /**
@@ -48,5 +49,13 @@ public interface SymbolicReferenceDetails <T>
 	 * @return access to the function profile
 	 */
 	FunctionProfile <T> getProfile (String functionName);
+
+	/**
+	 * post a solution vector to symbol table
+	 * @param vector the DimensionedValue holding the solution
+	 * @param as the name to give the vector
+	 * @return access too the vector
+	 */
+	DimensionedValue <T> post (DimensionedValue <T> vector, String as);
 
 }

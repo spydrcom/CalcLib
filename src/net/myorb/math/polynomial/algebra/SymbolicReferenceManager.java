@@ -2,10 +2,10 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.expressions.SymbolMap;
-
+import net.myorb.math.expressions.ValueManager.DimensionedValue;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-
+import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.symbols.DefinedFunction;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
@@ -45,6 +45,18 @@ public class SymbolicReferenceManager <T> implements SymbolicReferenceDetails <T
 	public Solution.LinkedSolutions getLinkedSolutions (String equationName)
 	{
 		return getProfile (equationName).getSeries ().getGeneratedSolutions ();
+	}
+
+	/**
+	 * post a solution vector to symbol table
+	 * @param vector the DimensionedValue holding the solution
+	 * @param as the name to give the vector
+	 * @return access too the vector
+	 */
+	public DimensionedValue <T> post (DimensionedValue <T> vector, String as)
+	{
+		this.symbols.add ( new AssignedVariableStorage (as, vector) );
+		return vector;
 	}
 
 }

@@ -11,12 +11,8 @@ import net.myorb.math.polynomial.algebra.SymbolicReferenceManager;
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
-
-import net.myorb.math.expressions.symbols.AssignedVariableStorage;
 import net.myorb.math.expressions.symbols.DefinedFunction;
-
-import net.myorb.math.expressions.ValueManager.DimensionedValue;
+import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.commands.CommandSequence;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
@@ -293,26 +289,26 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * find simultaneous equation solution 
 	 *  for coefficients of expanded polynomial series
 	 * @param expandedFunctionName name of an expanded series function
-	 * @param sourceFunctionName name of the polynomial solution to analyze
-	 * @param solutionFunctionName name for solution being built
+	 * @param sourceFunction name of the polynomial solution to analyze
+	 * @param solutionFunction name for solution being built
 	 * @param tokens parameters listed on command line
 	 * @param position the starting parameter
 	 */
 	public void solve
 		(
 			String expandedFunctionName,
-			String sourceFunctionName, String solutionFunctionName,
+			String sourceFunction, String solutionFunction,
 			CommandSequence tokens, int position
 		)
 	{
 		SeriesExpansion <T>
-			sourceSeries = seriesFor ( sourceFunctionName ),
+			sourceSeries = seriesFor ( sourceFunction ),
 			expandedSeries = seriesFor ( expandedFunctionName );
-		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
-		expandedSeries.generatedSolutions.put (solutionFunctionName, this.solution);
+		expandedSeries.setSolutionBeingBuilt ( solutionFunction );
+		expandedSeries.generatedSolutions.put (solutionFunction, this.solution);
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
 		this.solution.analyze ( expandedSeries, this.symbolTable );
-		this.describeSolution ( solutionFunctionName,  sourceSeries );
+		this.describeSolution ( solutionFunction,  sourceSeries );
 	}
 
 
@@ -324,10 +320,18 @@ public class SeriesExpansion <T> extends ParameterManagement
 	public void describeSolution
 		(String solutionFunctionName, SeriesExpansion <T> sourceSeries)
 	{
-		DimensionedValue <T> vector =
-			solution.getCoefficientsVector ( getCoefficientsFrom (sourceSeries.expandedRoot) );
-		this.environment.getSymbolMap ().add ( new AssignedVariableStorage (solutionFunctionName, vector) );
-		this.environment.getOutStream ().println ( solutionFunctionName + " = " + vector );
+		StringBuffer display = new StringBuffer ();
+		display.append (solutionFunctionName).append (" = ")
+			.append
+			(
+				this.symbolManager.post
+				(
+					solution.getCoefficientsVector
+						( getCoefficientsFrom (sourceSeries.expandedRoot) ),
+					solutionFunctionName
+				)
+			);
+		this.environment.getOutStream ().println ( display );
 		if (SHOW) this.solution.showCollectedSolutionTableContent ();
 	}
 	protected boolean SHOW = false;
