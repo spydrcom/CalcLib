@@ -6,7 +6,6 @@ import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.linalg.SolutionPrimitives;
 import net.myorb.math.linalg.GaussSolution;
@@ -53,21 +52,19 @@ public class Solution <T> extends SubstitutionProcessing
 	/**
 	 * perform constant substitutions and solve
 	 * @param series the expanded series being analyzed
-	 * @param profile the profile object of the function which was expanded
 	 * @param symbolTable the symbol values from the invoking command
 	 */
 	public void analyze
-	(SeriesExpansion <T> series, Subroutine <T> profile, SymbolValues symbolTable)
+	(SeriesExpansion <T> series, SymbolValues symbolTable)
 	{
 		this.process
 			( series.analysis, symbolTable );
-		this.series = series; this.profile = profile;
+		this.series = series;
 		reports.establishTitle ( series, symbolTable );
 		this.showAnalysis (); this.establishSolutionAlgorithm ();
 		this.solve (equations);
 	}
 	protected SeriesExpansion <T> series;
-	protected Subroutine <T> profile;
 
 
 	/**
