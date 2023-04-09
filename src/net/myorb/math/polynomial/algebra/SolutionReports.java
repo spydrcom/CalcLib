@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * command implementation for solution display requests
+ * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
 public class SolutionReports <T>

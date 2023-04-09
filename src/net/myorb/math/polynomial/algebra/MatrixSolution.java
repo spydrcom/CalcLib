@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * linear algebra solution for system of equations
+ * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
 public class MatrixSolution <T> extends SolutionData
