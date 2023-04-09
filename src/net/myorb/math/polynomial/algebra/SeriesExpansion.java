@@ -4,10 +4,13 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.polynomial.families.*;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
+import net.myorb.math.polynomial.algebra.SymbolicReferenceDetails;
+import net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile;
+import net.myorb.math.polynomial.algebra.SymbolicReferenceManager;
+
 import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
-import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.symbols.AssignedVariableStorage;
@@ -24,6 +27,7 @@ import net.myorb.data.abstractions.ConfigurationParser;
 
 /**
  * command implementation for Series Expansion algorithm
+ * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
 public class SeriesExpansion <T> extends ParameterManagement
@@ -34,8 +38,10 @@ public class SeriesExpansion <T> extends ParameterManagement
 	public SeriesExpansion (Environment <T> environment)
 	{
 		this.solution = new Solution <T> ( this.environment = environment );
+		this.symbolManager = new SymbolicReferenceManager <T> ( environment );
 		this.setGeneratedSolutions ( new Solution.LinkedSolutions () );
 	}
+	protected SymbolicReferenceDetails <T> symbolManager;
 	protected Environment <T> environment;
 	protected Solution <T> solution;
 
@@ -126,8 +132,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public Elements.Factor performExpansion (String functionName)
 	{
-		Subroutine <T> profile;
-		( profile = getProfile (functionName) ).setSeries (this);
+		FunctionProfile <T> profile;
+		( profile = symbolManager.getProfile (functionName) ).setSeries (this);
 		return RepresentationConversions.organizeTerms ( expandSymbol ( profile ) );
 	}
 
@@ -137,26 +143,13 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param profile the profile of a UDF in the symbol table
 	 * @return the root Factor node for describing this symbol
 	 */
-	public Elements.Factor expandSymbol (Subroutine <T> profile)
+	public Elements.Factor expandSymbol (FunctionProfile <T> profile)
 	{
 		return expandSymbol ( getExpressionTreeFrom (profile), this );
 	}
 
 
 	// symbol table queries and expression tree links
-
-
-	/**
-	 * get profile for function
-	 * @param functionName the name of the function
-	 * @return the profile object or null for error
-	 */
-	public Subroutine <T> getProfile (String functionName)
-	{
-		try { return DefinedFunction.asUDF ( lookup (functionName) ); }
-		catch (Exception e) { error ( functionName + " not recognized", e ); }
-		return null;
-	}
 
 
 	/**
@@ -173,9 +166,9 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param profile the profile of a UDF in the symbol table
 	 * @return the expression tree found linked to the profile
 	 */
-	public JsonValue getExpressionTreeFrom (Subroutine <T> profile)
+	public JsonValue getExpressionTreeFrom (FunctionProfile <T> profile)
 	{
-		setPolynomialVariable ( profile.getParameterNames () );
+		setPolynomialVariable ( profile.getParameterName () );
 		return getExpressionTree ( profile );
 	}
 
@@ -185,7 +178,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param symbol the Subroutine object found in the symbol table
 	 * @return the expression tree found linked to the Subroutine
 	 */
-	public JsonValue getExpressionTree (Subroutine <T> symbol)
+	public JsonValue getExpressionTree (FunctionProfile <T> symbol)
 	{
 		JsonValue root = null;
 		try { root = symbol.getExpressionTree (); }
@@ -202,7 +195,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public JsonValue getExpressionTreeFrom (String functionName, Elements.Factor parameter)
 	{
-		JsonValue tree = getExpressionTreeFrom ( getProfile (functionName) );
+		JsonValue tree = getExpressionTreeFrom ( symbolManager.getProfile (functionName) );
 		prepareParameterSubstitution (parameter);
 		return tree;
 	}
@@ -290,12 +283,6 @@ public class SeriesExpansion <T> extends ParameterManagement
 	}
 
 
-	/**
-	 * find function in the symbol table
-	 * @param functionName the name of the function
-	 * @return the symbol if found otherwise null
-	 */
-	protected Object lookup (String functionName) { return environment.getSymbolMap ().get (functionName); }
 	protected boolean showFunctionJson = false, showFunctionExpanded = false;
 
 
@@ -324,7 +311,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 		expandedSeries.setSolutionBeingBuilt ( solutionFunctionName );
 		expandedSeries.generatedSolutions.put (solutionFunctionName, this.solution);
 		this.parse ( tokens, position ); expandedSeries.showAnalysis ( expandedFunctionName );
-		this.solution.analyze ( expandedSeries, this.currentProfile, this.symbolTable );
+		this.solution.analyze ( expandedSeries, this.symbolTable );
 		this.describeSolution ( solutionFunctionName,  sourceSeries );
 	}
 
@@ -353,12 +340,11 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public SeriesExpansion <T> seriesFor (String functionName)
 	{
-		SeriesExpansion <T> linkedSeries;
-		this.currentProfile = getProfile (functionName);
-		errorForNull ( linkedSeries = currentProfile.getSeries (), "No linked series" );
+		SeriesExpansion <T> linkedSeries =
+			symbolManager.getProfile (functionName).getSeries ();
+		errorForNull ( linkedSeries, "No linked series" );
 		return linkedSeries;
 	}
-	protected Subroutine <T> currentProfile;
 
 
 	// command line token parser
