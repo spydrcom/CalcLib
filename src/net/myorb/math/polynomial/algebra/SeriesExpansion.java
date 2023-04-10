@@ -380,14 +380,12 @@ public class SeriesExpansion <T> extends ParameterManagement
 	/**
 	 * show solutions
 	 * @param tokens the command line source
-	 * @param environment the application environment
-	 * @param <T> data type used in operations
 	 */
-	public static <T> void showSolutions (CommandSequence tokens, Environment <T> environment)
+	public void showSolutions (CommandSequence tokens)
 	{
-		SolutionReports <T> reports = new SolutionReports <T> (environment);
-		String equationName = getEquationRequest (tokens), solutionName = getSolutionRequest (tokens);
-		Solution.LinkedSolutions solutions = reports.getLinkedSolutions ( equationName );
+		SolutionReports <T> reports = new SolutionReports <T> ( environment );
+		String equationName = getEquationRequest ( tokens ), solutionName = getSolutionRequest ( tokens );
+		Solution.LinkedSolutions solutions = symbolManager.getLinkedSolutions ( equationName );
 
 		if (solutionName == null)
 		{ reports.showSolutions ( SolutionReports.fromSolutionSet (solutions) ); }
