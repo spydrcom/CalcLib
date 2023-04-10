@@ -7,8 +7,6 @@ import net.myorb.math.expressions.commands.Tabulation;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.math.expressions.symbols.DefinedFunction;
 
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ValueManager;
@@ -38,20 +36,6 @@ public class SolutionReports <T>
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;
-
-
-	/**
-	 * get solutions linked to a differential equation
-	 * @param equationName the name of the differential equation
-	 * @return the linked solutions
-	 */
-	public Solution.LinkedSolutions getLinkedSolutions (String equationName)
-	{
-		Subroutine <?> profile = null;
-		try { profile = DefinedFunction.asUDF ( symbols.get (equationName) ); }
-		catch (Exception e) { Utilities.error ( equationName + " not recognized", e ); }
-		return profile.getSeries ().getGeneratedSolutions ();
-	}
 
 
 	/**

@@ -54,8 +54,15 @@ public interface SymbolicReferenceDetails <T>
 	 * post a solution vector to symbol table
 	 * @param vector the DimensionedValue holding the solution
 	 * @param as the name to give the vector
-	 * @return access too the vector
+	 * @return access to the vector
 	 */
 	DimensionedValue <T> post (DimensionedValue <T> vector, String as);
+
+	/**
+	 * get solutions linked to a differential equation
+	 * @param equationName the name of the differential equation
+	 * @return the linked solutions
+	 */
+	Solution.LinkedSolutions getLinkedSolutions (String equationName);
 
 }
