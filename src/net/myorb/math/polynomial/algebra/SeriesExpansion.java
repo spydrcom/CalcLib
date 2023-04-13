@@ -319,7 +319,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	/**
 	 * post solution to symbol table
 	 * @param solutionFunctionName the name requested for the solution
-	 * @param sourceName name of the polynomial solution to analyze
+	 * @param sourceFunction name of the polynomial solution to analyze
 	 */
 	public void describeSolution
 		(String solutionFunctionName, String sourceFunction)
