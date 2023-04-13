@@ -33,8 +33,14 @@ public interface SymbolicReferenceDetails <T>
 
 		/**
 		 * @param series the series to be associated with the function
+		 * @param tree the element tree for the series
 		 */
-		void setSeries (SeriesExpansion <T> series);
+		void setSeries (SeriesExpansion <T> series, Elements.Factor tree);
+
+		/**
+		 * @return the root node of the element tree for the series
+		 */
+		Elements.Factor getSeriesRoot ();
 
 		/**
 		 * @return the series associated with the function
@@ -54,7 +60,7 @@ public interface SymbolicReferenceDetails <T>
 	 * post a solution vector to symbol table
 	 * @param vector the DimensionedValue holding the solution
 	 * @param as the name to give the vector
-	 * @return access to the vector
+	 * @return access too the vector
 	 */
 	DimensionedValue <T> post (DimensionedValue <T> vector, String as);
 
