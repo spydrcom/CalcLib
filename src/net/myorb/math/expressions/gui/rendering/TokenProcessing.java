@@ -110,9 +110,10 @@ public class TokenProcessing extends SubExpressionContexts
 	 */
 	public boolean processDelimiter ()
 	{
+		int P;
 		boolean save = false;
 
-		switch (getPrec ())
+		switch (P = getPrec ())
 		{
 			case SymbolMap.STORAGE_PRECEDENCE:
 			{
@@ -145,7 +146,7 @@ public class TokenProcessing extends SubExpressionContexts
 			}
 			break;
 	
-			default:  throw new RuntimeException ("Delimiter error");
+			default:  throw new RuntimeException ("Delimiter error, precedence="+P);
 		}
 
 		return save;
