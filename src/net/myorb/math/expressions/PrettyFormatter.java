@@ -271,6 +271,8 @@ public class PrettyFormatter<T>
 		(String functionName, Rendering <T> renderer, SeriesExpansion <T> processor)
 	throws Exception
 	{
+//		System.out.println (processor.expandSequence ( functionName ));
+
 		renderer.render
 		(
 			processor.expandSequence ( functionName ),
