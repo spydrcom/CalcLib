@@ -1,8 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.expressions.evaluationstates.Subroutine;
-
 import java.util.ArrayList;
 
 /**
@@ -21,16 +19,6 @@ public class ParameterManagement extends Utilities
 		(String polynomialVariable) { this.polynomialVariable =  polynomialVariable; }
 	public String getPolynomialVariable () { return polynomialVariable; }
 	protected String polynomialVariable = null;
-
-
-	/**
-	 * verify polynomial variable description from profile
-	 * @param profile the Subroutine ParameterList description
-	 */
-	public void setPolynomialVariable (Subroutine.ParameterList profile)
-	{
-		setPolynomialVariable (profile.get (0));
-	}
 
 
 	/**

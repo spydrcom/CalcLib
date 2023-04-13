@@ -17,6 +17,7 @@ public class RepresentationConversions extends Utilities
 	public enum NodeTypes {Identifier, Value, BinaryOP, UnaryOP}
 
 
+
 	// translation from JSON representation
 
 	/**
@@ -29,14 +30,14 @@ public class RepresentationConversions extends Utilities
 	(JsonLowLevel.JsonValue tree, SeriesExpansion <?> root)
 	{
 		Elements.Sum equation; Factor elementTree;
-		recognize (tree, equation = new Equation (), root);
+		recognize (tree, equation = new Equation (root.converter), root);
 		elementTree = Manipulations.reduceAndCollectTerms
 		(
 			reduceTermsOf (equation),
 			root.getPolynomialVariable (),
 			root
 		);
-		//trace ( tree, elementTree );
+		if (SHOW) trace ( tree, elementTree );
 		return elementTree;
 	}
 	static void trace (JsonLowLevel.JsonValue tree, Factor elementTree)
@@ -45,6 +46,7 @@ public class RepresentationConversions extends Utilities
 		catch (Exception e) { e.printStackTrace (); }
 		System.out.println (elementTree);
 	}
+	protected static boolean SHOW = false;
 
 	/**
 	 * apply summation algorithm to a set of terms
@@ -53,7 +55,7 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Elements.Sum reduceTermsOf (Elements.Sum equation)
 	{
-		Elements.Sum reduced = new Elements.Sum ();
+		Elements.Sum reduced = new Elements.Sum (equation.converter);
 		for (Factor factor : equation)
 		{
 			reduced = (Elements.Sum) Operations.sumOf
@@ -101,7 +103,6 @@ public class RepresentationConversions extends Utilities
 	}
 
 
-
 	// algorithms applied by node type
 
 
@@ -118,16 +119,16 @@ public class RepresentationConversions extends Utilities
 		{
 			case Identifier:	processIdentifier
 									(member ("Name", node), parent, root);			break;
+			case Value: 		add (parse (node.toString (), root), parent);		break;
 			case BinaryOP:		add (translateOperation (node, root), parent);		break;
 			case UnaryOP:		add (translateInvocation (node, root), parent);		break;
-			case Value: 		add (new Constant (node.toString ()), parent);		break;
 			default:			throw new RuntimeException ("Unrecognized node");
 		}
 	}
 	static String member (String called, JsonLowLevel.JsonValue in)
-	{
-		return ( (JsonSemantics.JsonObject) in ).getMemberString (called);
-	}
+	{ return ( (JsonSemantics.JsonObject) in ).getMemberString (called); }
+	static Constant parse (String text, SeriesExpansion <?> root)
+	{ return root.getConstantFromNodeImage (text); }
 
 
 	/**
@@ -139,9 +140,9 @@ public class RepresentationConversions extends Utilities
 	public static void processIdentifier
 		(String symbolReferenced, Factor parent, SeriesExpansion <?> root)
 	{
-		Factor ref = root.referencesFormalParameter (symbolReferenced) ?
-			reduceSingle ( root.getActualParameter () ) :
-			new Variable (symbolReferenced);
+		Factor ref = ! root.referencesFormalParameter (symbolReferenced) ?
+			new Variable (root.converter, symbolReferenced) :
+			reduceSingle ( root.getActualParameter () );
 		add (ref, parent);
 	}
 
@@ -156,8 +157,9 @@ public class RepresentationConversions extends Utilities
 	(JsonLowLevel.JsonValue node, SeriesExpansion <?> root)
 	{
 		root.prepareParameterSubstitution (null);
-		Factor parent = new Sum (), parameter = new Sum ();
+		Arithmetic.Conversions <?> converter = root.converter;
 		JsonSemantics.JsonObject object = (JsonSemantics.JsonObject) node;
+		Factor parent = new Sum (converter), parameter = new Sum (converter);
 		recognize ( object.getMemberCalled ("Parameter"), parameter, root );
 		parent = root.expandSymbol (member ("OpName", object), parameter, root);
 		return parent;
@@ -182,19 +184,18 @@ public class RepresentationConversions extends Utilities
 
 	/**
 	 * translation of expression tree node to element node
-	 * @param node the JSON node to translate
+	 * @param node the JSON node to translate into elements
+	 * @param root expansion tree root for the series
 	 * @return the translated element factor
-	 * @param root expansion tree root
 	 */
 	public static Factor translateOperation
 	(JsonLowLevel.JsonValue node, SeriesExpansion <?> root)
 	{
 		JsonSemantics.JsonObject object =
 			(JsonSemantics.JsonObject) node;
-		Factor parent = identifyOperation (object);
+		Factor parent = identifyOperation (object, root);
 		recognize ( object.getMemberCalled ("Left"), parent, root );
 		recognize ( object.getMemberCalled ("Right"), rightParentFor (parent), root );
-		if (parent instanceof Power) return ( (Power) parent ).powerProduct ();
 		return parent;
 	}
 
@@ -217,8 +218,9 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Factor subtractionChild (Factor parent)
 	{
-		Product newChild =
-			new Product (Constant.NEG_ONE);
+		Arithmetic.Conversions <?> converter = parent.getConverter ();
+		Constant negativeOne = new Constant (converter, converter.getNegOne ());
+		Product newChild = new Product (converter, negativeOne);
 		add (newChild, parent);
 		return newChild;
 	}
@@ -227,18 +229,20 @@ public class RepresentationConversions extends Utilities
 	/**
 	 * identify operation specified in node
 	 * @param node the node to be verified and analyzed
+	 * @param root the expansion tree root for the series
 	 * @return the object appropriate to specified operation
 	 */
-	public static Factor identifyOperation (JsonSemantics.JsonObject node)
+	public static Factor identifyOperation
+	(JsonSemantics.JsonObject node, SeriesExpansion <?> root)
 	{
 		switch ( member ("OpName", node).charAt (0) )
 		{
-			case '+': return new Sum ();
-			case '-': return new Difference ();
-			case '*': return new Product ();
-			case '^': return new Power ();
+			case '+': return new Sum (root.converter);
+			case '-': return new Difference (root.converter);
+			case '*': return new Product (root.converter);
+			case '^': return new Power (root.converter);
 		}
-		throw new RuntimeException ("Unrecognized operation");		
+		throw new RuntimeException ("Unrecognized operation");
 	}
 
 
@@ -267,7 +271,8 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Factor organizeTerms (Sum root)
 	{
-		Sum positive = new Sum (), negative = new Sum ();
+		Sum positive = new Sum (root.converter),
+				negative = new Sum (root.converter);
 		for (Factor factor : root)
 		{
 			if (factor instanceof Product)
@@ -300,7 +305,7 @@ public class RepresentationConversions extends Utilities
 			}
 			else if ( first instanceof Sum )
 			{
-				factors = new Product ();
+				factors = new Product (product.converter);
 				factors.add ( organizeTerms (first) );
 				dup = true;
 			}
@@ -321,8 +326,8 @@ public class RepresentationConversions extends Utilities
 		(Factor constant, Product product)
 	{
 		Constant C; Product result = null;
-		if ( ( C = Constant.negated (constant) ).isPositive () )
-		{ addConstant ( C, result = new Product (), product ); }
+		if ( ( C = Constant.negated (constant) ).getValue ().isPositive () )
+		{ addConstant ( C, result = new Product (product.converter), product ); }
 		return result;
 	}
 
@@ -335,7 +340,7 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static void addConstant (Constant C, Product factors, Product source)
 	{
-		if ( C.getValue () != 1 || source.isSingleton () )
+		if ( C.getValue ().isNotOne () || source.isSingleton () )
 		{
 			// scalar 1 would be redundant in multiple factor product
 			// when the value of the product is constant ONE then value must be present
@@ -345,7 +350,7 @@ public class RepresentationConversions extends Utilities
 
 
 	/**
-	 * construct a sum with Negate flags on subtracted terms 
+	 * construct a sum with Negate flags on subtracted terms
 	 * @param positive the terms seen as included with addition
 	 * @param negative the terms seen as included with subtraction
 	 * @return the new version of the sum
@@ -356,7 +361,7 @@ public class RepresentationConversions extends Utilities
 		Sum result = positive;
 		if ( ! negative.isEmpty () )
 		{
-			add ( positive, result = new Sum () );
+			add ( positive, result = new Sum (positive.converter) );
 			for (Factor term : negative) negate (term, result);
 		}
 		return result;

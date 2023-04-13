@@ -12,8 +12,6 @@ import net.myorb.math.linalg.GaussSolution;
 
 import net.myorb.math.matrices.Matrix;
 
-import java.util.*;
-
 /**
  * command implementation for Series Expansion Solve algorithm
  * @author Michael Druckman
@@ -23,10 +21,15 @@ public class Solution <T> extends SubstitutionProcessing
 
 
 	/**
+	 * list of Coefficient values
+	 */
+	public class CoefficientsList extends ItemList <T>
+	{ private static final long serialVersionUID = -2142755952487792561L; }
+
+	/**
 	 * connect expanded series to the generated solutions
 	 */
-	public static class LinkedSolutions
-		extends HashMap <String, Solution <?>>
+	public static class LinkedSolutions extends TextMap <Solution <?>>
 	{ private static final long serialVersionUID = 6759323443298420151L; }
 
 
@@ -35,10 +38,12 @@ public class Solution <T> extends SubstitutionProcessing
 		this.stream = environment.getOutStream ();
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
+		this.converter = Arithmetic.getConverter (manager);
 		this.reports = new SolutionReports <T> (environment);
 		this.dataConversions = environment.getConversionManager ();
 		SeriesExpansion.addInitialConditionsProcessors (manager);
 	}
+	protected Arithmetic.Conversions <T> converter;
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected ValueManager <T> valueManager;
@@ -57,10 +62,8 @@ public class Solution <T> extends SubstitutionProcessing
 	public void analyze
 	(SeriesExpansion <T> series, SymbolValues symbolTable)
 	{
-		this.process
-			( series.analysis, symbolTable );
-		this.series = series;
-		reports.establishTitle ( series, symbolTable );
+		this.process ( series.analysis, symbolTable );
+		this.reports.establishTitle ( this.series = series, symbolTable );
 		this.showAnalysis (); this.establishSolutionAlgorithm ();
 		this.solve (equations);
 	}
@@ -75,8 +78,12 @@ public class Solution <T> extends SubstitutionProcessing
 	{
 		MatrixSolution <T> computer = getSolutionComputer ();
 		this.solutionOfEquations = computer.solve (equations, symbolTable);
-		reports.collectSolutionTableContent ( computer.getColumnList (), computer.getAugmentedMatrix () );
-		this.symbolTable.showSymbols (stream);
+		this.reports.collectSolutionTableContent
+			(
+				computer.getColumnList (),
+				computer.getAugmentedMatrix ()
+			);
+		this.symbolTable.showSymbols (this.stream);
 	}
 	protected Matrix <T> solutionOfEquations;
 
@@ -123,17 +130,14 @@ public class Solution <T> extends SubstitutionProcessing
 	 */
 	public void showAnalysis ()
 	{
-		Set <String> refs;
 		formatSectionBreak ("", stream);
-		stream.print (series.expandedRoot);
+		stream.print (series.profile.getSeriesRoot ());
 
 		formatSectionBreak ("", stream);
-		for (Double power : analysis.getPowers ())
+		for (Integer power : analysis.getPowers ())
 		{
-			refs = references (analysis.getTermFor (power));
-			stream.print ( Constant.asInteger (power.toString ()) );
-			stream.print ("\t"); stream.print (refs);
-			stream.println ();
+			stream.print ( power.toString () ); stream.print ("\t");
+			stream.println (formatRefs (power));
 		}
 
 		formatSectionBreak ("", stream);
@@ -147,6 +151,10 @@ public class Solution <T> extends SubstitutionProcessing
 
 		symbolTable.showSymbols (stream);
 	}
+	SymbolicReferences formatRefs (Integer power)
+	{
+		return references (analysis.getTermFor (power));
+	}
 
 
 	// solution vector processing
@@ -157,16 +165,17 @@ public class Solution <T> extends SubstitutionProcessing
 	 * @param coefficients the values of the solution coefficients
 	 * @param solutionVector list collecting vector elements
 	 */
-	public void solutionVectorFor (SymbolList coefficients, List <T> solutionVector)
+	public void solutionVectorFor (SymbolList coefficients, CoefficientsList solutionVector)
 	{
 		for (String coefficientName : coefficients)
 		{
-			this.addCoefficientTo ( solutionVector, symbolTable.get ( coefficientName ) );
+			try { this.addCoefficientTo ( solutionVector, symbolTable.get ( coefficientName ) ); }
+			catch (Exception e) { throw new RuntimeException ("Coefficient error: " + coefficientName, e); }
 		}
 	}
-	void addCoefficientTo (List <T> solutionVector, NameValuePair from)
+	void addCoefficientTo (CoefficientsList solutionVector, NameValuePair from)
 	{
-		solutionVector.add ( dataConversions.fromDouble ( from.getNamedValue () ) );
+		solutionVector.add ( this.converter.convertedFrom ( from.getNamedValue () ) );
 	}
 
 
@@ -177,7 +186,7 @@ public class Solution <T> extends SubstitutionProcessing
 	 */
 	public ValueManager.DimensionedValue <T> getCoefficientsVector (SymbolList coefficients)
 	{
-		List <T> solutionVector = new ArrayList <> ();
+		CoefficientsList solutionVector = new CoefficientsList ();
 		solutionVectorFor ( coefficients, solutionVector );
 
 		return valueManager.newDimensionedValue
@@ -192,7 +201,7 @@ public class Solution <T> extends SubstitutionProcessing
 	 * @param solutionVector the computed solution polynomial coefficients
 	 * @return the vector after trailing zero removal
 	 */
-	public List <T> eliminateTrailingZeroes (List <T> solutionVector)
+	public java.util.List <T> eliminateTrailingZeroes (CoefficientsList solutionVector)
 	{
 		for (int i = solutionVector.size () - 1; i > 0; i--)
 		{

@@ -9,6 +9,14 @@ public class Utilities extends Elements
 {
 
 
+	/**
+	 * map symbols to specified object type
+	 * @param <TO> the object type
+	 */
+	public static class TextMap <TO> extends java.util.HashMap <String, TO>
+	{ private static final long serialVersionUID = 6105899668221996472L; }
+
+
 	// node linkage
 
 	/**
@@ -41,14 +49,16 @@ public class Utilities extends Elements
 
 	/**
 	 * construct a reference to a variable
+	 * @param C the assigned Arithmetic converter
 	 * @param variable the identifier referenced
 	 * @param order the polynomial term order
 	 * @return the appropriate reference to
 	 */
-	public static Factor powerFactor (String variable, Double order)
+	public static Factor powerFactor
+		(Arithmetic.Conversions <?> C, String variable, Arithmetic.Scalar order)
 	{
-		Variable symbol = new Variable (variable);
-		if (order != 1) return Power.reference (symbol, order);
+		Variable symbol = new Variable (C, variable);
+		if (order.isNotOne ()) return Power.reference (symbol, order);
 		return symbol;
 	}
 
@@ -83,7 +93,7 @@ public class Utilities extends Elements
 
 	/**
 	 * get scalar if present
-	 * @param factor a multi-child factor 
+	 * @param factor a multi-child factor
 	 * @return leading constant from child list if present
 	 */
 	public static Constant getScalarFrom (Factor factor)
@@ -185,7 +195,7 @@ public class Utilities extends Elements
 	 */
 	public static Elements.Factor reducedSum (Elements.Sum sum)
 	{
-		Elements.Sum reduced = new Elements.Sum ();
+		Elements.Sum reduced = new Elements.Sum (sum.converter);
 		for (Elements.Factor term : sum)
 		{
 			if ( isNegative (term) )
@@ -204,7 +214,7 @@ public class Utilities extends Elements
 	 */
 	public static Elements.Factor negate (Elements.Factor factor)
 	{
-		return new Elements.Negated ( negated (factor, -1.0) );
+		return new Elements.Negated ( negated (factor, factor.getConverter ().getNegOne ()) );
 	}
 
 	/**
@@ -213,7 +223,7 @@ public class Utilities extends Elements
 	 * @param ignoring the value that should be ignored if seen
 	 * @return the negated form of the expression
 	 */
-	public static Elements.Factor negated (Elements.Factor factor, Double ignoring)
+	public static Elements.Factor negated (Elements.Factor factor, Arithmetic.Scalar ignoring)
 	{
 		Constant C;
 		if ( ( C = getConstant (factor) ) != null ) return C.negated ();
@@ -254,7 +264,7 @@ public class Utilities extends Elements
 	public static boolean isNegative (Elements.Factor factor)
 	{
 		Constant C = checkForScalar (factor);
-		return C != null && C.isNegative ();
+		return C != null && C.getValue ().isNegative ();
 	}
 
 	/**
@@ -288,9 +298,9 @@ public class Utilities extends Elements
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		( Constant C, Double ignoring, Factors originalProduct )
+		( Constant C, Arithmetic.Scalar ignoring, Factors originalProduct )
 	{
-		Product product = new Product ();
+		Product product = new Product (originalProduct.converter);
 		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }
 		duplicate ( 1, originalProduct, product );
 		return product;

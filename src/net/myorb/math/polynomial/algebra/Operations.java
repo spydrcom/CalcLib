@@ -17,7 +17,7 @@ public class Operations extends Utilities
 	 */
 	public static Factor sumOf (Factor left, Factor right)
 	{
-		return binary (left, right, new Sum ());
+		return binary (left, right, new Sum (left.getConverter ()));
 	}
 
 
@@ -51,7 +51,8 @@ public class Operations extends Utilities
 	 */
 	public static Factor sumTimesSum (Factor left, Factor right)
 	{
-		Sum result = new Sum ();
+		Sum result =
+			new Sum (left.getConverter ());
 		for ( Factor leftTerm : (Factors) left )
 		{ add ( sumTimesFactor (right, leftTerm), result ); }
 		return result;
@@ -66,7 +67,8 @@ public class Operations extends Utilities
 	 */
 	public static Factor sumTimesFactor (Factor sum, Factor factor)
 	{
-		Sum result = new Sum ();
+		Sum result =
+			new Sum (sum.getConverter ());
 		for ( Factor term : (Factors) sum )
 		{ add ( simpleProduct (factor, term), result ); }
 		return result;
@@ -81,7 +83,7 @@ public class Operations extends Utilities
 	 */
 	public static Factor simpleProduct (Factor left, Factor right)
 	{
-		return binary (left, right, new Product ());
+		return binary (left, right, new Product (left.getConverter ()));
 	}
 
 
@@ -108,7 +110,8 @@ public class Operations extends Utilities
 	 */
 	public static Factor negative (Factor factor)
 	{
-		return productOf (Constant.NEG_ONE, factor);
+		Arithmetic.Conversions <?> C = factor.getConverter ();
+		return productOf ( new Constant ( C, C.getNegOne () ), factor );
 	}
 
 
