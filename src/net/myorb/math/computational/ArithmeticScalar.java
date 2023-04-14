@@ -2,7 +2,6 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
-import net.myorb.math.expressions.ExpressionSpaceManager;
 
 /**
  * implementation of the Scalar object generic type
@@ -12,19 +11,11 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 public class ArithmeticScalar <T> extends Core <T> implements ArithmeticFundamentals.Scalar
 {
 
-	public ArithmeticScalar (int value, ExpressionSpaceManager <T> manager)
-	{ this (manager.newScalar (value), manager); }
-
-	public ArithmeticScalar (T value, ExpressionSpaceManager <T> manager)
-	{ super (manager); this.value = value; }
-	protected T value;
 
 	public ArithmeticScalar
-		(
-			T value, ExpressionSpaceManager <T> manager,
-			ArithmeticFundamentals.ScalarFactory <T> factory
-		)
-	{ super (manager, factory); this.value = value; }
+	(T value, ArithmeticFundamentals.Conversions <T> conversions)
+	{ super (conversions); this.value = value; }
+	protected T value;
 
 
 	// value assignment
@@ -63,9 +54,7 @@ public class ArithmeticScalar <T> extends Core <T> implements ArithmeticFundamen
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int
-		compareTo (Scalar value)
-	{ throw new RuntimeException ("Comparison not implemented"); }
+	public int compareTo (Scalar value) { return conversions.compare (this, value); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Scalar#EQ(net.myorb.math.computational.ArithmeticFundamentals.Scalar)
@@ -75,12 +64,12 @@ public class ArithmeticScalar <T> extends Core <T> implements ArithmeticFundamen
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Scalar#isPositive()
 	 */
-	public boolean isPositive () { return this.compareTo (ZERO) > 0; }
+	public boolean isPositive () { return this.compareTo (newValue (ZERO)) > 0; }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Scalar#isNegative()
 	 */
-	public boolean isNegative () { return this.compareTo (ZERO) < 0; }
+	public boolean isNegative () { return this.compareTo (newValue (ZERO)) < 0; }
 
 
 	// value conversion

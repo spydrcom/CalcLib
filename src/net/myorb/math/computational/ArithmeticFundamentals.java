@@ -13,11 +13,6 @@ import net.myorb.data.abstractions.SpaceConversion;
 public class ArithmeticFundamentals
 {
 
-	public interface ScalarFactory <T>
-	{
-		ArithmeticScalar <T> newValue (T value);
-	}
-
 	public interface Scalar extends Comparable <Scalar>
 	{
 
@@ -42,6 +37,7 @@ public class ArithmeticFundamentals
 	{
 		Scalar toScalar (T value);
 		T convertedFrom (Scalar value);
+		ExpressionSpaceManager <T> getManager ();
 
 		Scalar fromInt (Integer D);
 		Scalar fromDouble (Double D);
@@ -51,10 +47,9 @@ public class ArithmeticFundamentals
 		Scalar getNegOne ();
 		Scalar getZero ();
 	}
-	public static <T> Conversions <T>
-		getConverter ( ExpressionSpaceManager <T> manager ) { return new Converter <> (manager); }
-	public static <T> Conversions <T> getConverter ( ExpressionSpaceManager <T> manager, ScalarFactory <T> factory )
-	{ return new Converter <> (manager, factory); }
+	public static <T> Conversions <T> getConverter
+		( ExpressionSpaceManager <T> manager )
+	{ return new Converter <> (manager); }
 
 	public static void timesEquals (Scalar value, Scalar operand)
 	{
@@ -74,33 +69,24 @@ public class ArithmeticFundamentals
  */
 abstract class Core <T>
 {
-	Core (ExpressionSpaceManager <T> manager) { this (manager, null); }
 
-	Core (ExpressionSpaceManager <T> manager, ArithmeticFundamentals.ScalarFactory <T> factory)
-	{ this.manager = manager; this.useFactory (factory == null ? new DefaultFactory <> (manager) : factory); }
+	Core (ArithmeticFundamentals.Conversions <T> conversions)
+	{ this (conversions.getManager ()); this.conversions = conversions; }
+	protected ArithmeticFundamentals.Conversions <T> conversions;
 
-	@SuppressWarnings("unchecked") T getValue (ArithmeticFundamentals.Scalar S) { return ( (ArithmeticScalar <T>) S ).value; }
-	ArithmeticScalar <T> newValue (T value) { return factory.newValue (value); }
+	Core (ExpressionSpaceManager <T> manager)
+	{ this.manager = manager; this.ZERO = manager.getZero (); }
+	public ExpressionSpaceManager <T> getManager () { return manager; }
 	protected ExpressionSpaceManager <T> manager;
+	protected T ZERO;
 
-	public void useFactory (ArithmeticFundamentals.ScalarFactory <T> factory)
-	{ this.factory = factory; this.ZERO = factory.newValue (manager.getZero ()); }
-	protected ArithmeticFundamentals.ScalarFactory <T> factory;
-	protected ArithmeticFundamentals.Scalar ZERO;
-}
+	@SuppressWarnings("unchecked")
+	T getValue (ArithmeticFundamentals.Scalar S)
+	{ return ( (ArithmeticScalar <T>) S ).value; }
 
-/**
- * default implementation of ScalarFactory
- * - this will establish no algorithm for object comparisons
- * - ArithmeticFundamentals.Scalar should be extended with comparisons implemented
- * - this would be the new target for a ScalarFactory implementation
- * @param <T> data type used in Arithmetic operations
- */
-class DefaultFactory <T> implements ArithmeticFundamentals.ScalarFactory <T>
-{
-	DefaultFactory (ExpressionSpaceManager <T> manager) { this.manager = manager; }
-	public ArithmeticScalar <T> newValue (T value) { return new ArithmeticScalar <T> (value, manager); }
-	ExpressionSpaceManager <T> manager;
+	ArithmeticScalar <T> newValue (T value)
+	{ return new ArithmeticScalar <> (value, conversions); }
+
 }
 
 /**
@@ -110,12 +96,17 @@ class DefaultFactory <T> implements ArithmeticFundamentals.ScalarFactory <T>
 class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversions <T>
 {
 
-	Converter (ExpressionSpaceManager <T> manager) { super (manager); }
-	Converter (ExpressionSpaceManager <T> manager, ArithmeticFundamentals.ScalarFactory <T> factory) { super (manager, factory); }
+	Converter (ExpressionSpaceManager <T> manager) { super (manager); this.conversions = this; }
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#toScalar(java.lang.Object)
+	 */
 	public ArithmeticFundamentals.Scalar toScalar (T value) { return newValue (value); }
 	public T convertedFrom (ArithmeticFundamentals.Scalar value) { return getValue (value); }
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#fromInt(java.lang.Integer)
+	 */
 	public ArithmeticFundamentals.Scalar fromInt (Integer I) { return newValue (manager.newScalar (I)); }
 	public ArithmeticFundamentals.Scalar fromDouble (Double D) { return newValue (manager.convertFromDouble (D)); }
 	public ArithmeticFundamentals.Scalar fromText (String expression) { return toScalar (manager.evaluate (expression)); }
@@ -123,7 +114,12 @@ class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversio
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public int compare (Scalar left, Scalar right) { return left.compareTo (right); }
+	public int compare (Scalar left, Scalar right)
+	{
+		if ( manager.lessThan ( getValue (left), getValue (right) ) ) return -1;
+		else if ( getValue (left).equals ( getValue (right) ) ) return 0;
+		else return 1;
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.SpaceConversion#convertFromDouble(java.lang.Double)
@@ -136,11 +132,11 @@ class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversio
 	public Double convertToDouble (ArithmeticFundamentals.Scalar value) { return manager.convertToDouble (getValue (value)); }
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.complex.algebra.Arithmetic.Conversions#getOne()
+	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#getZero()
 	 */
-	public ArithmeticFundamentals.Scalar getOne () { return fromInt (1); }
+	public ArithmeticFundamentals.Scalar getZero () { return toScalar (ZERO); }
 	public ArithmeticFundamentals.Scalar getNegOne () { return fromInt (-1); }
-	public ArithmeticFundamentals.Scalar getZero () { return ZERO; }
+	public ArithmeticFundamentals.Scalar getOne () { return fromInt (1); }
 
 }
 
