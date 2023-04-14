@@ -41,6 +41,18 @@ public class DifferentialEquationsManager <T>
 
 
 	/**
+	 * describe a Differential Equation
+	 */
+	public interface DifferentialEquationSource
+	{
+		/**
+		 * @return the text of the equation
+		 */
+		String getDeclarationText ();
+	}
+
+
+	/**
 	 * provide call-back to command
 	 */
 	public interface FollowUp
