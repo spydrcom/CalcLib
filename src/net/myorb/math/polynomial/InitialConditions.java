@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial;
 
+import net.myorb.math.expressions.DifferentialEquationsManager;
+
 /**
  * for polynomials that are solutions to differential equations
  * - the solutions require values for the function Y intercept and rate of change at 0
@@ -8,6 +10,7 @@ package net.myorb.math.polynomial;
  * @author Michael Druckman
  */
 public interface InitialConditions <T>
+	extends DifferentialEquationsManager.DifferentialEquationSource
 {
 
 	/**
