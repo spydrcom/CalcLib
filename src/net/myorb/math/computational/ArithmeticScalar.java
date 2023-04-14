@@ -80,6 +80,16 @@ public class ArithmeticScalar <T> extends Core <T> implements ArithmeticFundamen
 	public Double toDouble () { return manager.convertToDouble (value); }
 
 	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.ArithmeticFundamentals.Scalar#isEqualTo(java.lang.Double)
+	 */
+	public boolean isEqualTo (Double value) { return toDouble () == value; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.computational.ArithmeticFundamentals.Scalar#isNot(java.lang.Double)
+	 */
+	public boolean isNot (Double value) { return ! isEqualTo (value); }
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString () { return manager.format (value); }

@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 import net.myorb.math.polynomial.families.*;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
@@ -444,7 +446,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public void establishSolutions (Environment <T> environment)
 	{
-		this.converter = Arithmetic.getConverter ( environment.getSpaceManager () );
+		this.converter = ArithmeticFundamentals.getConverter ( environment.getSpaceManager () );
 		this.symbolTable = new Solution.SymbolValues (this.converter);
 		this.solution = new Solution <T> ( environment );
 	}
@@ -458,8 +460,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 */
 	public Constant getConstantFromNodeImage ( String nodeText )
 	{ return new Constant ( converter, converter.fromText (nodeText) ); }
-	public Arithmetic.Conversions <?> getConverter () { return converter; }
-	protected Arithmetic.Conversions <?> converter;
+	public ArithmeticFundamentals.Conversions <?> getConverter () { return converter; }
+	protected ArithmeticFundamentals.Conversions <?> converter;
 
 
 	// initialization of Initial Conditions Processors library

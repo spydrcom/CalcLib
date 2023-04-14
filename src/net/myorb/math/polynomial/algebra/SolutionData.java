@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class SolutionData extends Utilities
 		{this.nameOfSymbol = name; this.namedValue = value; }
 		public String getNameOfValue () { return nameOfSymbol; }
 		public Constant getConstantValue () { return namedValue; }
-		public Arithmetic.Scalar getNamedValue () { return namedValue.getValue (); }
+		public ArithmeticFundamentals.Scalar getNamedValue () { return namedValue.getValue (); }
 		public String toString () { return namedValue.toString (); }
 		private String nameOfSymbol; private Constant namedValue;
 	}
@@ -44,8 +46,8 @@ public class SolutionData extends Utilities
 	{
 
 		SymbolValues
-		(Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Arithmetic.Conversions <?> converter;
+		(ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
+		public ArithmeticFundamentals.Conversions <?> converter;
 
 		/**
 		 * @param stream stream to send symbol list to

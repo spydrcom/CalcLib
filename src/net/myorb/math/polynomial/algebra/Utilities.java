@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 /**
  * support and helper methods for algebra algorithms
  * @author Michael Druckman
@@ -55,10 +57,10 @@ public class Utilities extends Elements
 	 * @return the appropriate reference to
 	 */
 	public static Factor powerFactor
-		(Arithmetic.Conversions <?> C, String variable, Arithmetic.Scalar order)
+		(ArithmeticFundamentals.Conversions <?> C, String variable, ArithmeticFundamentals.Scalar order)
 	{
 		Variable symbol = new Variable (C, variable);
-		if (order.isNotOne ()) return Power.reference (symbol, order);
+		if (order.isNot (1.0)) return Power.reference (symbol, order);
 		return symbol;
 	}
 
@@ -223,7 +225,7 @@ public class Utilities extends Elements
 	 * @param ignoring the value that should be ignored if seen
 	 * @return the negated form of the expression
 	 */
-	public static Elements.Factor negated (Elements.Factor factor, Arithmetic.Scalar ignoring)
+	public static Elements.Factor negated (Elements.Factor factor, ArithmeticFundamentals.Scalar ignoring)
 	{
 		Constant C;
 		if ( ( C = getConstant (factor) ) != null ) return C.negated ();
@@ -298,7 +300,7 @@ public class Utilities extends Elements
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		( Constant C, Arithmetic.Scalar ignoring, Factors originalProduct )
+		( Constant C, ArithmeticFundamentals.Scalar ignoring, Factors originalProduct )
 	{
 		Product product = new Product (originalProduct.converter);
 		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }

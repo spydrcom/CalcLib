@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 import net.myorb.data.notations.json.*;
 
 /**
@@ -157,7 +159,7 @@ public class RepresentationConversions extends Utilities
 	(JsonLowLevel.JsonValue node, SeriesExpansion <?> root)
 	{
 		root.prepareParameterSubstitution (null);
-		Arithmetic.Conversions <?> converter = root.converter;
+		ArithmeticFundamentals.Conversions <?> converter = root.converter;
 		JsonSemantics.JsonObject object = (JsonSemantics.JsonObject) node;
 		Factor parent = new Sum (converter), parameter = new Sum (converter);
 		recognize ( object.getMemberCalled ("Parameter"), parameter, root );
@@ -218,7 +220,7 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Factor subtractionChild (Factor parent)
 	{
-		Arithmetic.Conversions <?> converter = parent.getConverter ();
+		ArithmeticFundamentals.Conversions <?> converter = parent.getConverter ();
 		Constant negativeOne = new Constant (converter, converter.getNegOne ());
 		Product newChild = new Product (converter, negativeOne);
 		add (newChild, parent);
@@ -340,7 +342,7 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static void addConstant (Constant C, Product factors, Product source)
 	{
-		if ( C.getValue ().isNotOne () || source.isSingleton () )
+		if ( C.getValue ().isNot (1.0) || source.isSingleton () )
 		{
 			// scalar 1 would be redundant in multiple factor product
 			// when the value of the product is constant ONE then value must be present

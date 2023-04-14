@@ -20,6 +20,8 @@ public class ArithmeticFundamentals
 
 		void set (Scalar newValue);
 
+		boolean isEqualTo (Double value);
+		boolean isNot (Double value);
 		boolean EQ (Scalar with);
 
 		boolean isPositive ();
