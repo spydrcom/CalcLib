@@ -26,11 +26,11 @@ public class SolutionData extends Utilities
 	 */
 	public static class NameValuePair
 	{
-		public NameValuePair (String name, Constant value)
-		{this.nameOfSymbol = name; this.namedValue = value; }
 		public String getNameOfValue () { return nameOfSymbol; }
 		public Constant getConstantValue () { return namedValue; }
-		public Arithmetic.Scalar getNamedValue () { return namedValue.getValue (); }
+		public NameValuePair (String name, Constant value) {this.nameOfSymbol = name; this.namedValue = value; }
+		public NameValuePair (String name, String value) { this (name, new Constant (value)); }
+		public double getNamedValue () { return namedValue.getValue (); }
 		public String toString () { return namedValue.toString (); }
 		private String nameOfSymbol; private Constant namedValue;
 	}
@@ -42,11 +42,6 @@ public class SolutionData extends Utilities
 	public static class SymbolValues extends HashMap <String, NameValuePair>
 			implements InitialConditionsProcessor.SymbolTranslator
 	{
-
-		SymbolValues
-		(Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Arithmetic.Conversions <?> converter;
-
 		/**
 		 * @param stream stream to send symbol list to
 		 */
@@ -71,7 +66,7 @@ public class SolutionData extends Utilities
 		{
 			NameValuePair content = this.get (symbol);
 			errorForNull ( content, "No value for symbol: " + symbol );
-			return content.getNamedValue ().toDouble ();
+			return content.getNamedValue ();
 		}
 
 		/* (non-Javadoc)
@@ -79,33 +74,10 @@ public class SolutionData extends Utilities
 		 */
 		public void set (String symbol, Double to)
 		{
-			add ( symbol, new Constant ( converter, converter.convertFromDouble (to) ) );
+			add ( symbol, new Constant (to) );
 		}
 
 		// symbol mapping primitives
-
-		/**
-		 * assign constant to symbol
-		 * @param name the name for the symbol
-		 * @param value the value for the symbol
-		 * @return the NameValuePair constructed
-		 */
-		public NameValuePair pair (String name, String value)
-		{ return new NameValuePair ( name, toConstant (value) ); }
-
-		/**
-		 * parse an expression and evaluate to resolve to  constant
-		 * @param value the text of the expression
-		 * @return the value as a Constant
-		 */
-		public Constant toConstant (String value) { return new Constant ( converter, converter.fromText (value) ); }
-
-		/**
-		 * add a Name/Value pair to a symbol
-		 * @param name the name for the symbol
-		 * @param value the value to assign to the name
-		 */
-		public void add (String name, Constant value) { this.put (name, new NameValuePair (name, value)); }
 
 		/**
 		 * add a name/value pair
@@ -115,12 +87,12 @@ public class SolutionData extends Utilities
 		public void add (String name, String value)
 		{
 			if ( ! name.startsWith (INITIAL_CONDITIONS_PROCESSOR_REFERENCE) )
-			{ this.put (name, this.pair ( name, value ) ); }
+			{ this.put (name, new NameValuePair (name, value)); }
 			else processIC (value);
 		}
+		public void add (String name, Constant value) { this.put (name, new NameValuePair (name, value)); }
 		public static final String INITIAL_CONDITIONS_PROCESSOR_REFERENCE = "#";
 		private static final long serialVersionUID = 70879534035012284L;
-
 	}
 
 

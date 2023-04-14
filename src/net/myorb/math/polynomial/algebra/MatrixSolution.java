@@ -11,6 +11,10 @@ import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * linear algebra solution for system of equations
  * @param <T> type on which operations are to be executed
@@ -27,28 +31,26 @@ public class MatrixSolution <T> extends SolutionData
 
 
 	/**
-	 * map symbols to ordered index within solution
+	 * the compiled solution matrix used for resolving the system of equations
 	 */
-	static class SymbolIndexMap extends TextMap <Integer>
-	{ private static final long serialVersionUID = 1113974645827170797L; }
+	static class WorkProduct <V> extends ArrayList < ValueManager.DimensionedValue <V> >
+	{ private static final long serialVersionUID = 2356189952454085804L; }
 
 
 	/**
-	 * the compiled solution matrix used for resolving the system of equations
+	 * map symbols to ordered index within solution
 	 */
-	static class WorkProduct <V> extends ItemList < ValueManager.DimensionedValue <V> >
-	{ private static final long serialVersionUID = 2356189952454085804L; }
+	static class SymbolIndexMap extends HashMap <String, Integer>
+	{ private static final long serialVersionUID = 1113974645827170797L; }
 
 
 	public MatrixSolution
 	(ExpressionSpaceManager <T> manager, java.io.PrintStream stream)
 	{
 		this.manager = manager; this.stream = stream;
-		this.converter = Arithmetic.getConverter (manager);
 		this.solutionApplication = new SolutionApplication <T> (manager);
 		this.ops = new MatrixOperations <T> (manager);
 	}
-	protected Arithmetic.Conversions <T> converter;
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;
 	protected MatrixOperations <T> ops;
@@ -131,7 +133,7 @@ public class MatrixSolution <T> extends SolutionData
 	public void buildAugmentedMatrix
 		( Matrix <T> solutionMatrix, Matrix <T> solutionVector )
 	{
-		ItemList <T> row = new ItemList <> ();
+		List <T> row = new ArrayList <> ();
 		this.augmentedMatrix = new WorkProduct <> ();
 
 		ValueManager <T> valueManager = new ValueManager <> ();
@@ -158,7 +160,7 @@ public class MatrixSolution <T> extends SolutionData
 	 * @param from the matrix holding the column of interest
 	 * @param columnNumber the index of the column
 	 */
-	private void getColumnElements (ItemList <T> into, Matrix <T> from, int columnNumber)
+	private void getColumnElements (List <T> into, Matrix <T> from, int columnNumber)
 	{ into.clear (); into.addAll ( getColumn (from, columnNumber) ); }
 
 	/**
@@ -166,8 +168,8 @@ public class MatrixSolution <T> extends SolutionData
 	 * @param columnNumber the index of the column
 	 * @return the list of values
 	 */
-	private ItemList <T> getColumn (Matrix <T> from, int columnNumber)
-	{ return new ItemList <T> (from.getCol (columnNumber).getElementsList ()); }
+	private List <T> getColumn (Matrix <T> from, int columnNumber)
+	{ return from.getCol (columnNumber).getElementsList (); }
 
 	/**
 	 * @return the list of symbols in the solution matrix
@@ -195,7 +197,7 @@ public class MatrixSolution <T> extends SolutionData
 		if ( N > equations.size () )
 		{ throw new RuntimeException ("Insufficient criteria for solution"); }
 		solutionVector.getColAccess (1).fill ( manager.getZero () );
-
+		
 		for (int i = 1; i <= N; i++)
 		{
 			T value = loadEquation
@@ -276,7 +278,7 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	T scalarFor (Factor factor)
 	{
-		Arithmetic.Scalar value = converter.getOne ();
+		double value = 1.0;
 		if (factor instanceof Constant)
 		{
 			value = Constant.getValueFrom (factor);
@@ -291,7 +293,7 @@ public class MatrixSolution <T> extends SolutionData
 				}
 			}
 		}
-		return this.converter.convertedFrom (value);
+		return manager.convertFromDouble (value);
 	}
 
 
@@ -345,14 +347,10 @@ public class MatrixSolution <T> extends SolutionData
 			(
 				symbolOrder.get ( i - 1 ),
 
-				new Constant
+				Constant.convertedFrom
 				(
-					this.converter,
-
-					this.converter.toScalar
-					(
-						computedSolution.get (i, 1)
-					)
+					computedSolution.get (i, 1),
+					manager
 				)
 			);
 		}

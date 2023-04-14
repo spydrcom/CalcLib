@@ -3,7 +3,13 @@ package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
+
+import net.myorb.data.abstractions.SpaceConversion;
+
 import net.myorb.math.polynomial.OP;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * representations of polynomial expressions
@@ -11,24 +17,6 @@ import net.myorb.math.polynomial.OP;
  */
 public abstract class Elements
 {
-
-
-	/**
-	 * list of items of specified object type
-	 * @param <T> type of items
-	 */
-	public static class ItemList <T> extends java.util.ArrayList <T>
-	{
-		public ItemList () {}
-		public ItemList (java.util.List <T> items) { this.addAll (items); }
-		private static final long serialVersionUID = -4619972438389917002L;
-	}
-
-	/**
-	 * lists of symbols
-	 */
-	public static class TextItems extends ItemList <String>
-	{ private static final long serialVersionUID = -58202141273735090L; }
 
 
 	/**
@@ -40,7 +28,7 @@ public abstract class Elements
 	/**
 	 * enumeration sets of Symbolic References
 	 */
-	public static class SymbolicReferences extends java.util.HashSet <String>
+	public static class SymbolicReferences extends HashSet <String>
 	{
 		/**
 		 * @return expected single symbol referenced
@@ -59,7 +47,7 @@ public abstract class Elements
 	/**
 	 * enumerated list of symbol names
 	 */
-	public static class SymbolList extends TextItems
+	public static class SymbolList extends ArrayList <String>
 	{ private static final long serialVersionUID = -1596326735237091669L; }
 
 
@@ -94,12 +82,6 @@ public abstract class Elements
 	public static interface Factor extends References
 	{
 		/**
-		 * Factor objects must carry support for node Arithmetic
-		 * @return the assigned Arithmetic converter
-		 */
-		Arithmetic.Conversions <?> getConverter ();
-
-		/**
 		 * @return type of implementing node
 		 */
 		OpTypes getType ();
@@ -111,22 +93,22 @@ public abstract class Elements
 	/**
 	 * child nodes of multi-factor operations
 	 */
-	public abstract static class Factors extends ItemList <Factor> implements Factor
+	public abstract static class Factors
+			extends ArrayList <Factor> implements Factor
 	{
-		public Factors (Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Arithmetic.Conversions <?> getConverter () { return converter; }
-		public Arithmetic.Conversions <?> converter;
+		public static Factor firstOf (Factor factors)
+		{ return ( (Factors) factors ).getFirstChild (); }
+		public Factor getFirstChild () { return this.get (0); }
+		public boolean isSingleton () { return this.size () == 1; }
+		private static final long serialVersionUID = 35114701359602093L;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.polynomial.algebra.Elements.References#identify(net.myorb.math.polynomial.algebra.Elements.SymbolicReferences)
 		 */
-		public void identify (SymbolicReferences symbols) { for (Factor factor : this) factor.identify (symbols); }
-
-		public static Factor firstOf (Factor factors) { return ( (Factors) factors ).getFirstChild (); }
-		public boolean isSingleton () { return this.size () == 1; }
-		public Factor getFirstChild () { return this.get (0); }
-
-		private static final long serialVersionUID = 35114701359602093L;
+		public void identify (SymbolicReferences symbols)
+		{
+			for (Factor factor : this) factor.identify (symbols);
+		}
 	}
 
 	/**
@@ -134,7 +116,6 @@ public abstract class Elements
 	 */
 	public static class Sum extends Factors
 	{
-		public Sum (Arithmetic.Conversions <?> converter) { super (converter); }
 		public String toString () { return bracketedImage (this, OP.PLUS); }
 		private static final long serialVersionUID = -5102897249367062053L;
 		public OpTypes getType () { return OpTypes.Summation; }
@@ -145,7 +126,6 @@ public abstract class Elements
 	 */
 	public static class Difference extends Sum
 	{
-		public Difference (Arithmetic.Conversions <?> converter) { super (converter); }
 		public String toString () { return bracketedImage (this, OP.MINUS); }
 		private static final long serialVersionUID = -5098433414832709926L;
 	}
@@ -155,10 +135,6 @@ public abstract class Elements
 	 */
 	public static class Negated implements Factor
 	{
-		public Arithmetic.Conversions <?> converter;
-		public Negated (Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Arithmetic.Conversions <?> getConverter () { return converter; }
-
 		public OpTypes getType () { return OpTypes.Negation; }
 		public Negated (Factor factor) { this.child = factor; }
 		public void identify (SymbolicReferences symbols) { child.identify (symbols); }
@@ -175,9 +151,8 @@ public abstract class Elements
 		{ return image (this, OP.TIMES); }
 		public OpTypes getType () { return OpTypes.Multiplication; }
 		private static final long serialVersionUID = 5153646408526934363L;
-		public Product (Arithmetic.Conversions <?> converter) { super (converter); }
-		public Product (Arithmetic.Conversions <?> converter, Factor factor)
-		{ super (converter); Utilities.add (factor, this); }
+		public Product (Factor factor) { Utilities.add (factor, this); }
+		public Product () {}
 	}
 
 
@@ -188,10 +163,6 @@ public abstract class Elements
 	 */
 	public static class Constant implements Factor
 	{
-
-		public Arithmetic.Conversions <?> converter;
-		public Constant (Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Arithmetic.Conversions <?> getConverter () { return converter; }
 
 		// factor abstraction compliance
 
@@ -215,18 +186,20 @@ public abstract class Elements
 		 */
 		public String formatImage (String text)
 		{ return ! representsInteger (text) ? text : asInteger (text); }
-		private static String asInteger (String text) { return text.substring (0, text.length () - 2); }
+		public static String asInteger (String text) { return text.substring (0, text.length () - 2); }
 		public static boolean representsInteger (String text) { return text.endsWith (".0"); }
 
 		// constructors
 
 		/**
-		 * accept a scalar as value representation for a Constant
-		 * @param converter the conversions manager for the values
+		 * @param value source from string
+		 */
+		public Constant (String value) { this.value = Double.parseDouble (value); }
+
+		/**
 		 * @param value source from double value
 		 */
-		public Constant (Arithmetic.Conversions <?> converter, Arithmetic.Scalar value)
-		{ this (converter); this.value = value; }
+		public Constant (Double value) { this.value = value; }
 
 		// value processing
 
@@ -235,10 +208,10 @@ public abstract class Elements
 		 * @param filter the value that should be ignored if seen
 		 * @return TRUE when constant not the filtered value
 		 */
-		public boolean otherThan (Arithmetic.Scalar filter)
+		public boolean otherThan (Double filter)
 		{
 			if ( filter == null ) return true;
-			if ( value.EQ (filter) ) return false;
+			if ( value == filter.doubleValue () ) return false;
 			return true;
 		}
 
@@ -246,7 +219,7 @@ public abstract class Elements
 		 * build negative valued constant
 		 * @return a constant with negative value of THIS
 		 */
-		public Constant negated () { return new Constant ( converter, value.negated () ); }
+		public Constant negated () { return new Constant ( - value ); }
 
 		/**
 		 * get negated value of constant factor
@@ -256,12 +229,32 @@ public abstract class Elements
 		public static Constant negated (Factor constant) { return ( (Constant) constant ).negated (); }
 
 		/**
+		 * construct Constant converted from object
+		 * @param value the value represented in an alien format
+		 * @param using a conversion object for the alien format
+		 * @return a Constant set to the value
+		 * @param <T> data type used
+		 */
+		public static <T> Constant
+			convertedFrom (T value, SpaceConversion <T> using)
+		{ return new Constant ( using.convertToDouble (value) ); }
+
+		/**
+		 * check the sign of a constant
+		 * @return TRUE when value is negative
+		 */
+		public boolean isNegative () { return value < 0; }
+		public boolean isPositive () { return value > 0; }
+
+		/**
 		 * @return value of constant as double float
 		 */
-		public Arithmetic.Scalar getValue () { return value; }
-		public static Arithmetic.Scalar getValueFrom (Factor factor)
+		public double getValue () { return value; }
+		public static Constant ONE = new Constant (1.0);
+		public static Constant NEG_ONE = new Constant (-1.0);
+		public static double getValueFrom (Factor factor)
 		{ return ( (Constant) factor ).getValue (); }
-		private Arithmetic.Scalar value;
+		private Double value;
 
 	}
 
@@ -270,18 +263,14 @@ public abstract class Elements
 	 */
 	public static class Variable implements Factor, Reference
 	{
-		public Arithmetic.Conversions <?> converter;
-		public Arithmetic.Conversions <?> getConverter () { return converter; }
-		public Variable (Arithmetic.Conversions <?> converter) { this.converter = converter; }
-		public Variable (Arithmetic.Conversions <?> converter, String identifier)
-		{ this (converter); this.identifier = identifier; }
-
 		public void identify
 		(SymbolicReferences symbols) { symbols.add (identifier); }
 		public OpTypes getType () { return OpTypes.Operand; }
 		public String toString () { return identifier; }
 		public boolean refersTo (String symbol)
 		{ return identifier.equals (symbol); }
+		public Variable (String identifier)
+		{ this.identifier = identifier; }
 		private String identifier;
 	}
 
@@ -290,10 +279,7 @@ public abstract class Elements
 	 */
 	public static class Power extends Factors implements Reference
 	{
-		public Power
-		(Arithmetic.Conversions <?> converter)
-		{ super (converter); }
-
+		public Power () {}
 		public boolean refersTo (String symbol)
 		{ return ( (Reference) base () ).refersTo (symbol); }
 
@@ -307,29 +293,27 @@ public abstract class Elements
 		/**
 		 * establish convention of scalar product with power
 		 * @return product wrapper for power object
-		 * @param <T> data type
 		 */
-		public <T> Factor powerProduct ()
+		public Factor powerProduct ()
 		{
 			// ONE will fold into scalar multiplied with other factors
-			Constant ONE = new Constant (converter, converter.getOne ());
-			Factor product = new Product (converter, ONE);
+			Factor product = new Product (Constant.ONE);
 			Utilities.add (this, product);
 			return product;
 		}
 
 		/**
 		 * compute value of a constant power expression
-		 * @param symbolTable symbols recognized as constant
+		 * @param symbolTable symbols recognized as constnat
 		 * @return the computed value
 		 */
-		public Arithmetic.Scalar evaluate (SymbolValues symbolTable)
+		public double evaluate (SymbolValues symbolTable)
 		{
 			Variable v = (Variable) base ();
 			NameValuePair nvp = symbolTable.get ( v.toString () );
 			Utilities.errorForNull ( nvp, "Non constant power base" );
-			Arithmetic.Scalar exponent = ( (Constant) exponent () ).getValue ();
-			return nvp.getNamedValue ().pow ( exponent );
+			double exponent = ( (Constant) exponent () ).getValue ();
+			return Math.pow ( nvp.getNamedValue (), exponent );
 		}
 
 		/**
@@ -338,11 +322,10 @@ public abstract class Elements
 		 * @param order the exponent value for the term
 		 * @return the constructed Power Factor
 		 */
-		public static Factor reference
-		(Variable variable, Arithmetic.Scalar order)
+		public static Factor reference (Variable variable, Double order)
 		{
-			Factors power = new Power (variable.converter);
-			Constant exp = new Constant (variable.converter, order);
+			Factors power = new Power ();
+			Constant exp = new Constant (order);
 			power.add (variable); power.add (exp);
 			return power;
 		}
@@ -355,10 +338,7 @@ public abstract class Elements
 	 * a sub-class of Sum providing a root node of equations
 	 */
 	public static class Equation extends Sum
-	{
-		public Equation (Arithmetic.Conversions <?> converter) { super (converter); }
-		private static final long serialVersionUID = 8507384482661667874L;
-	}
+	{ private static final long serialVersionUID = 8507384482661667874L; }
 
 
 	// display formatter

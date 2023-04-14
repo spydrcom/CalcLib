@@ -18,12 +18,10 @@ public class SubstitutionProcessing extends SolutionData
 	public void process
 	(Manipulations.Powers analysis, SymbolValues symbolTable)
 	{
-		this.converter = symbolTable.converter;
 		this.symbolTable = symbolTable;
 		this.analysis = analysis;
 		this.doSubstitution ();
 	}
-	protected Arithmetic.Conversions <?> converter;
 	protected Manipulations.Powers analysis;
 	protected SymbolValues symbolTable;
 
@@ -36,7 +34,7 @@ public class SubstitutionProcessing extends SolutionData
 	 */
 	public void doSubstitution ()
 	{
-		for (Integer power : analysis.getPowers ())
+		for (Double power : analysis.getPowers ())
 		{
 			equations.add (doSubstitutionForTerm (analysis.getTermFor (power)));
 		}
@@ -56,16 +54,15 @@ public class SubstitutionProcessing extends SolutionData
 		if (term instanceof Sum)
 		{
 			Factor subs;
-			Sum result = new Sum (converter);
-			Arithmetic.Scalar cons = converter.getZero ();
+			Double cons = 0.0;
+			Sum result = new Sum ();
 			for (Factor factor : (Sum) term)
 			{
 				if ( (subs = doSubstitutionForProduct (factor)) instanceof Constant )
-				{ Arithmetic.plusEquals (cons, ( (Constant) subs ).getValue ()); }
+				{ cons += ( (Constant) subs ).getValue (); }
 				else { add (subs, result); }
 			}
-			if (cons.isNotZero ())
-			{ result.add ( new Constant (converter, cons) ); }
+			if (cons != 0.0) result.add (new Constant (cons));
 			return result;
 		}
 		return doSubstitutionForProduct (term);
@@ -81,16 +78,15 @@ public class SubstitutionProcessing extends SolutionData
 		if (product instanceof Product)
 		{
 			Factor subs;
-			Product result = new Product (converter);
-			Arithmetic.Scalar scalar = converter.getOne ();
+			Double scalar = 1.0;
+			Product result = new Product ();
 			for (Factor factor : (Product) product)
 			{
 				if ( (subs = doSubstitutionForOperand (factor)) instanceof Constant )
-				{ Arithmetic.timesEquals ( scalar, ( (Constant) subs ).getValue () ); }
+				{ scalar *= ( (Constant) subs ).getValue (); }
 				else { add (subs, result); }
 			}
-			if (scalar.isNotOne ())
-			{ result.add (0, new Constant (converter, scalar)); }
+			if (scalar != 1.0) result.add (0, new Constant (scalar));
 			return reduceSingle (result);
 		}
 		return doSubstitutionForOperand (product);
@@ -113,7 +109,7 @@ public class SubstitutionProcessing extends SolutionData
 		}
 		if (operand instanceof Power)
 		{
-			return new Constant (converter, ( (Power) operand ).evaluate (symbolTable) );
+			return new Constant ( ( (Power) operand ).evaluate (symbolTable) );
 		}
 		return operand;
 	}

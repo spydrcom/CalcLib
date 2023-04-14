@@ -8,6 +8,7 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ValueManager;
 
 import java.util.ArrayList;
@@ -26,11 +27,13 @@ public class SolutionReports <T>
 	{
 		this.symbols = environment.getSymbolMap ();
 		this.manager = environment.getSpaceManager ();
+		this.dataConversions = environment.getConversionManager ();
 		this.stream = environment.getOutStream ();
 		this.environment = environment;
 	}
 	protected SymbolMap symbols;
 	protected Environment <T> environment;
+	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;
 

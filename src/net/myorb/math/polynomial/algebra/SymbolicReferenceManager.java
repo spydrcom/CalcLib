@@ -69,36 +69,37 @@ class FunctionProfileSpecifics <T>
 		(Subroutine <T> S) { this.S = S; }
 	protected Subroutine <T> S;
 
-	/**
-	 * @return name associated with the series
-	 */
-	public String getFunctionName () { return getSeries ().functionName; }
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#getParameterName()
 	 */
-	public String getParameterName () { return S.getParameterNames ().get (0); }
+	public String getParameterName ()
+	{
+		return S.getParameterNames ().get (0);
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#getExpressionTree()
 	 */
-	public JsonValue getExpressionTree () throws Exception { return S.getExpressionTree (); }
+	public JsonValue getExpressionTree () throws Exception
+	{
+		return S.getExpressionTree ();
+	}
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#setSeries(net.myorb.math.polynomial.algebra.SeriesExpansion, net.myorb.math.polynomial.algebra.Elements.Factor)
+	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#setSeries(net.myorb.math.polynomial.algebra.SeriesExpansion)
 	 */
-	public void setSeries (SeriesExpansion <T> series, Elements.Factor tree)
-	{ S.setSeries (series); series.setAssociatedElementTree (tree); }
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#getSeriesRoot()
-	 */
-	public Elements.Factor getSeriesRoot () { return getSeries ().getAssociatedElementTree (); }
+	public void setSeries (SeriesExpansion <T> series)
+	{
+		S.setSeries (series);
+	}
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.algebra.SymbolicReferenceDetails.FunctionProfile#getSeries()
 	 */
-	public SeriesExpansion <T> getSeries () { return S.getSeries (); }
+	public SeriesExpansion <T> getSeries ()
+	{
+		return S.getSeries ();
+	}
 
 }
 
