@@ -240,6 +240,15 @@ class LaguerreInitialConditions <T> implements InitialConditions <T>, InitialCon
 		// results of solution are correct without setting this ???
 	}
 
+	// implementation of DifferentialEquationSource
+
+	public String getDeclarationText ()
+	{
+		return "x * L'' ( x ) + (alpha + 1 - x) * L' ( x ) + n * L ( x )";
+	}
+
+	// implementation of InitialConditions interface
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.polynomial.InitialConditions#getFirstDerivativeTerm()
 	 */
