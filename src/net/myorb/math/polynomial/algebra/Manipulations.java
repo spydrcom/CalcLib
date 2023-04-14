@@ -67,7 +67,7 @@ public class Manipulations extends Utilities
 		 * @param scalar the constant portion of the product
 		 * @return a factor describing a term
 		 */
-		Factor getTerm (Arithmetic.Scalar scalar)
+		Factor getTerm (Arithmetic.LocalScalar scalar)
 		{
 			if ( ! scalar.isNotZero () ) return null;
 
@@ -115,7 +115,7 @@ public class Manipulations extends Utilities
 		Arithmetic.Conversions <?>
 			converter = factors.converter;
 		Symbols symbols = new Symbols (converter);
-		Arithmetic.Scalar scalar = converter.getOne ();
+		Arithmetic.LocalScalar scalar = converter.getOne ();
 		for (Factor factor : factors)
 		{
 			if (factor instanceof Constant)
@@ -165,9 +165,9 @@ public class Manipulations extends Utilities
 		 */
 		class ScaledFactor
 		{
-			ScaledFactor (Product factors, Arithmetic.Scalar scalar)
+			ScaledFactor (Product factors, Arithmetic.LocalScalar scalar)
 			{ this.factors = factors; this.scalar = scalar; }
-			Product factors; Arithmetic.Scalar scalar;
+			Product factors; Arithmetic.LocalScalar scalar;
 		}
 
 		/**
@@ -182,7 +182,7 @@ public class Manipulations extends Utilities
 			 * @param factors the product absent the scalar factor
 			 * @param scalar the value of the scalar
 			 */
-			void addTerm (Product factors, Arithmetic.Scalar scalar)
+			void addTerm (Product factors, Arithmetic.LocalScalar scalar)
 			{
 				ScaledFactor factor;
 				String image = factors.toString ();
@@ -209,7 +209,7 @@ public class Manipulations extends Utilities
 			void addProduct (Product product)
 			{
 				Product termFactors = new Product (converter);
-				Arithmetic.Scalar scalar = converter.getOne ();
+				Arithmetic.LocalScalar scalar = converter.getOne ();
 				for ( Factor factor : product )
 				{
 					if (factor instanceof Constant)
@@ -225,7 +225,7 @@ public class Manipulations extends Utilities
 			 */
 			Factor getReducedSeries ()
 			{
-				Arithmetic.Scalar scalar;
+				Arithmetic.LocalScalar scalar;
 				Sum result = new Sum (converter);
 				for (String factorImage : this.keySet () )
 				{
@@ -244,7 +244,7 @@ public class Manipulations extends Utilities
 			 * @param scalar the scalar multiple for this product
 			 * @return the full product description
 			 */
-			Product termFor (ScaledFactor factor, Arithmetic.Scalar scalar)
+			Product termFor (ScaledFactor factor, Arithmetic.LocalScalar scalar)
 			{
 				Product term = new Product (converter), factors = factor.factors;
 				if ( scalar.isNotOne () ) add ( new Constant (converter, scalar), term );
@@ -499,7 +499,7 @@ public class Manipulations extends Utilities
 	{
 		Arithmetic.Conversions <?> C;
 		Sum reduced = new Sum ( C = terms.converter );
-		Arithmetic.Scalar constant = C.getZero ();
+		Arithmetic.LocalScalar constant = C.getZero ();
 
 		for (Factor term : terms)
 		{

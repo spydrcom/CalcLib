@@ -55,7 +55,7 @@ public class Utilities extends Elements
 	 * @return the appropriate reference to
 	 */
 	public static Factor powerFactor
-		(Arithmetic.Conversions <?> C, String variable, Arithmetic.Scalar order)
+		(Arithmetic.Conversions <?> C, String variable, Arithmetic.LocalScalar order)
 	{
 		Variable symbol = new Variable (C, variable);
 		if (order.isNotOne ()) return Power.reference (symbol, order);
@@ -223,7 +223,7 @@ public class Utilities extends Elements
 	 * @param ignoring the value that should be ignored if seen
 	 * @return the negated form of the expression
 	 */
-	public static Elements.Factor negated (Elements.Factor factor, Arithmetic.Scalar ignoring)
+	public static Elements.Factor negated (Elements.Factor factor, Arithmetic.LocalScalar ignoring)
 	{
 		Constant C;
 		if ( ( C = getConstant (factor) ) != null ) return C.negated ();
@@ -298,7 +298,7 @@ public class Utilities extends Elements
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		( Constant C, Arithmetic.Scalar ignoring, Factors originalProduct )
+		( Constant C, Arithmetic.LocalScalar ignoring, Factors originalProduct )
 	{
 		Product product = new Product (originalProduct.converter);
 		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }

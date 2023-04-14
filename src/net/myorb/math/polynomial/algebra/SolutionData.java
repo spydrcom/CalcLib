@@ -30,7 +30,7 @@ public class SolutionData extends Utilities
 		{this.nameOfSymbol = name; this.namedValue = value; }
 		public String getNameOfValue () { return nameOfSymbol; }
 		public Constant getConstantValue () { return namedValue; }
-		public Arithmetic.Scalar getNamedValue () { return namedValue.getValue (); }
+		public Arithmetic.LocalScalar getNamedValue () { return namedValue.getValue (); }
 		public String toString () { return namedValue.toString (); }
 		private String nameOfSymbol; private Constant namedValue;
 	}

@@ -225,7 +225,7 @@ public abstract class Elements
 		 * @param converter the conversions manager for the values
 		 * @param value source from double value
 		 */
-		public Constant (Arithmetic.Conversions <?> converter, Arithmetic.Scalar value)
+		public Constant (Arithmetic.Conversions <?> converter, Arithmetic.LocalScalar value)
 		{ this (converter); this.value = value; }
 
 		// value processing
@@ -235,7 +235,7 @@ public abstract class Elements
 		 * @param filter the value that should be ignored if seen
 		 * @return TRUE when constant not the filtered value
 		 */
-		public boolean otherThan (Arithmetic.Scalar filter)
+		public boolean otherThan (Arithmetic.LocalScalar filter)
 		{
 			if ( filter == null ) return true;
 			if ( value.EQ (filter) ) return false;
@@ -258,10 +258,10 @@ public abstract class Elements
 		/**
 		 * @return value of constant as double float
 		 */
-		public Arithmetic.Scalar getValue () { return value; }
-		public static Arithmetic.Scalar getValueFrom (Factor factor)
+		public Arithmetic.LocalScalar getValue () { return value; }
+		public static Arithmetic.LocalScalar getValueFrom (Factor factor)
 		{ return ( (Constant) factor ).getValue (); }
-		private Arithmetic.Scalar value;
+		private Arithmetic.LocalScalar value;
 
 	}
 
@@ -323,13 +323,13 @@ public abstract class Elements
 		 * @param symbolTable symbols recognized as constant
 		 * @return the computed value
 		 */
-		public Arithmetic.Scalar evaluate (SymbolValues symbolTable)
+		public Arithmetic.LocalScalar evaluate (SymbolValues symbolTable)
 		{
 			Variable v = (Variable) base ();
 			NameValuePair nvp = symbolTable.get ( v.toString () );
 			Utilities.errorForNull ( nvp, "Non constant power base" );
 			Arithmetic.Scalar exponent = ( (Constant) exponent () ).getValue ();
-			return nvp.getNamedValue ().pow ( exponent );
+			return nvp.getNamedValue ().pow ( exponent.toDouble ().intValue () );
 		}
 
 		/**

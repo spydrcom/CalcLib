@@ -57,7 +57,7 @@ public class SubstitutionProcessing extends SolutionData
 		{
 			Factor subs;
 			Sum result = new Sum (converter);
-			Arithmetic.Scalar cons = converter.getZero ();
+			Arithmetic.LocalScalar cons = converter.getZero ();
 			for (Factor factor : (Sum) term)
 			{
 				if ( (subs = doSubstitutionForProduct (factor)) instanceof Constant )
@@ -82,7 +82,7 @@ public class SubstitutionProcessing extends SolutionData
 		{
 			Factor subs;
 			Product result = new Product (converter);
-			Arithmetic.Scalar scalar = converter.getOne ();
+			Arithmetic.LocalScalar scalar = converter.getOne ();
 			for (Factor factor : (Product) product)
 			{
 				if ( (subs = doSubstitutionForOperand (factor)) instanceof Constant )
