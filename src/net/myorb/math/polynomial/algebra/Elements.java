@@ -20,7 +20,7 @@ public abstract class Elements
 	public static class ItemList <T> extends java.util.ArrayList <T>
 	{
 		public ItemList () {}
-		public ItemList (java.util.List <T> items) { this.addAll (items); }
+		public ItemList (java.util.Collection <T> items) { this.addAll (items); }
 		private static final long serialVersionUID = -4619972438389917002L;
 	}
 
