@@ -87,6 +87,12 @@ public class LegendreInitialConditions <T>
 	}
 	protected Double valueAtZero, derivativeValueAtZero;
 
+	// implementation of DifferentialEquationSource
+
+	public String getDeclarationText ()
+	{
+		return "(1 - x^2) * P'' ( x ) - 2 * x * P' ( x ) + n * ( n + 1 ) * mu^2 / (1 - x^2) * P ( x )";
+	}
 
 	// implementation of InitialConditionsProcessor.Calculator interface 
 
