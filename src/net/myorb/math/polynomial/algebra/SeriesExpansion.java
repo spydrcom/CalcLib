@@ -1,8 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
-
 import net.myorb.math.polynomial.families.*;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
@@ -10,8 +8,10 @@ import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.symbols.DefinedFunction;
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.commands.CommandSequence;
+import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.computational.ArithmeticFundamentals;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.notations.json.JsonPrettyPrinter;
@@ -191,7 +191,7 @@ public class SeriesExpansion <T> extends ParameterManagement
 		(String functionName, Elements.Factor parameter)
 	{
 		JsonValue tree = getExpressionTreeFrom
-				( symbolManager.getProfile (functionName) );
+			( symbolManager.getProfile (functionName) );
 		prepareParameterSubstitution (parameter);
 		return tree;
 	}
