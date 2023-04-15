@@ -10,15 +10,12 @@ import net.myorb.math.expressions.evaluationstates.Environment;
 
 import net.myorb.math.expressions.ValueManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * command implementation for solution display requests
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class SolutionReports <T>
+public class SolutionReports <T> extends Utilities
 {
 
 
@@ -124,10 +121,11 @@ public class SolutionReports <T>
 	 */
 	public void compileSolutionTable
 		(
-			Elements.SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
+			Elements.SymbolList coefficients,
+			MatrixSolution.WorkProduct <T> solutionValues
 		)
 	{
-		List <String> columnHeaders = new ArrayList <> ();
+		TextItems columnHeaders = new TextItems ();
 		columnHeaders.addAll (coefficients); columnHeaders.add ("=");
 		showTable (columnHeaders, solutionValues);
 	}
@@ -154,11 +152,15 @@ public class SolutionReports <T>
 	 */
 	public void showTable
 		(
-			List <String> columnHeaders,
-			List < ValueManager.DimensionedValue <T> > solutionValues
+			TextItems columnHeaders,
+			ItemList < ValueManager.DimensionedValue <T> > solutionValues
 		)
 	{
-		new Tabulation <> (environment).format (documentTitle.toString (), columnHeaders, solutionValues);
+		new Tabulation <> (environment).format
+		(
+			documentTitle.toString (),
+			columnHeaders, solutionValues
+		);
 	}
 
 
