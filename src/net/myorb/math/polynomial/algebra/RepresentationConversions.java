@@ -159,12 +159,10 @@ public class RepresentationConversions extends Utilities
 	(JsonLowLevel.JsonValue node, SeriesExpansion <?> root)
 	{
 		root.prepareParameterSubstitution (null);
-		ArithmeticFundamentals.Conversions <?> converter = root.converter;
+		Factor parameter = new Sum (root.converter);
 		JsonSemantics.JsonObject object = (JsonSemantics.JsonObject) node;
-		Factor parent = new Sum (converter), parameter = new Sum (converter);
 		recognize ( object.getMemberCalled ("Parameter"), parameter, root );
-		parent = root.expandSymbol (member ("OpName", object), parameter, root);
-		return parent;
+		return root.expandSymbol (member ("OpName", object), parameter, root);
 	}
 
 
@@ -296,14 +294,14 @@ public class RepresentationConversions extends Utilities
 	{
 		if ( ! product.isEmpty () )
 		{
-			Product factors = product, subtractionProduct;
+			Product factors = product, S;
 			boolean dup = false; Sum choice = positive;
 			Factor first = product.getFirstChild ();
 
 			if ( first instanceof Constant )
 			{
-				if ( ( subtractionProduct = getSubtractionFactor ( first, product ) ) != null )
-				{ factors = subtractionProduct; choice = negative; dup = true; }
+				if ( ( S = getSubtractionFactor ( first, product ) ) != null )
+				{ factors = S; choice = negative; dup = true; }
 			}
 			else if ( first instanceof Sum )
 			{
