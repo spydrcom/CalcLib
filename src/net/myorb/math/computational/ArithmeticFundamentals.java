@@ -16,10 +16,13 @@ public class ArithmeticFundamentals
 	public interface Scalar extends Comparable <Scalar>
 	{
 
+		int intValue ();
 		Double toDouble ();
 
 		void set (Scalar newValue);
 
+		boolean isEqualTo (Double value);
+		boolean isNot (Double value);
 		boolean EQ (Scalar with);
 
 		boolean isPositive ();
@@ -117,7 +120,7 @@ class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversio
 	public int compare (Scalar left, Scalar right)
 	{
 		if ( manager.lessThan ( getValue (left), getValue (right) ) ) return -1;
-		else if ( getValue (left).equals ( getValue (right) ) ) return 0;
+		else if ( left.toDouble ().doubleValue () == right.toDouble ().doubleValue () ) return 0;
 		else return 1;
 	}
 

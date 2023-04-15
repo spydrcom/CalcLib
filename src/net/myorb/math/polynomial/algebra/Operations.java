@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 /**
  * implementations of operations on polynomials
  * @author Michael Druckman
@@ -110,7 +112,7 @@ public class Operations extends Utilities
 	 */
 	public static Factor negative (Factor factor)
 	{
-		Arithmetic.Conversions <?> C = factor.getConverter ();
+		ArithmeticFundamentals.Conversions <?> C = factor.getConverter ();
 		return productOf ( new Constant ( C, C.getNegOne () ), factor );
 	}
 

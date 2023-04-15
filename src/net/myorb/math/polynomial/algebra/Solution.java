@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals;
+
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ExpressionSpaceManager;
@@ -38,12 +40,12 @@ public class Solution <T> extends SubstitutionProcessing
 		this.stream = environment.getOutStream ();
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
-		this.converter = Arithmetic.getConverter (manager);
+		this.converter = ArithmeticFundamentals.getConverter (manager);
 		this.reports = new SolutionReports <T> (environment);
 		this.dataConversions = environment.getConversionManager ();
 		SeriesExpansion.addInitialConditionsProcessors (manager);
 	}
-	protected Arithmetic.Conversions <T> converter;
+	protected ArithmeticFundamentals.Conversions <T> converter;
 	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected ValueManager <T> valueManager;
