@@ -66,7 +66,7 @@ public class SubstitutionProcessing extends SolutionData
 				{ ArithmeticFundamentals.plusEquals (cons, ( (Constant) subs ).getValue ()); }
 				else { add (subs, result); }
 			}
-			if (cons.isNot (0.0))
+			if ( cons.isNot (0.0) )
 			{ result.add ( new Constant (converter, cons) ); }
 			return result;
 		}
@@ -91,7 +91,7 @@ public class SubstitutionProcessing extends SolutionData
 				{ ArithmeticFundamentals.timesEquals ( scalar, ( (Constant) subs ).getValue () ); }
 				else { add (subs, result); }
 			}
-			if (scalar.isNot (1.0))
+			if ( scalar.isNot (1.0) )
 			{ result.add (0, new Constant (converter, scalar)); }
 			return reduceSingle (result);
 		}
