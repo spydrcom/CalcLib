@@ -4,7 +4,6 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.computational.ArithmeticFundamentals;
 
 import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.DataConversions;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -31,7 +30,7 @@ public class Solution <T> extends SubstitutionProcessing
 	/**
 	 * connect expanded series to the generated solutions
 	 */
-	public static class LinkedSolutions extends TextMap <Solution <?>>
+	public static class LinkedSolutions extends SymbolicMap <Solution <?>>
 	{ private static final long serialVersionUID = 6759323443298420151L; }
 
 
@@ -40,13 +39,11 @@ public class Solution <T> extends SubstitutionProcessing
 		this.stream = environment.getOutStream ();
 		this.manager = environment.getSpaceManager ();
 		this.valueManager = environment.getValueManager ();
-		this.converter = ArithmeticFundamentals.getConverter (manager);
 		this.reports = new SolutionReports <T> (environment);
-		this.dataConversions = environment.getConversionManager ();
+		this.converter = ArithmeticFundamentals.getConverter (manager);
 		SeriesExpansion.addInitialConditionsProcessors (manager);
 	}
 	protected ArithmeticFundamentals.Conversions <T> converter;
-	protected DataConversions <T> dataConversions;
 	protected ExpressionSpaceManager <T> manager;
 	protected ValueManager <T> valueManager;
 	protected SolutionReports <T> reports;
@@ -62,7 +59,7 @@ public class Solution <T> extends SubstitutionProcessing
 	 * @param symbolTable the symbol values from the invoking command
 	 */
 	public void analyze
-	(SeriesExpansion <T> series, SymbolValues symbolTable)
+		(SeriesExpansion <T> series, SymbolValues symbolTable)
 	{
 		this.process ( series.analysis, symbolTable );
 		this.reports.establishTitle ( this.series = series, symbolTable );
@@ -203,7 +200,7 @@ public class Solution <T> extends SubstitutionProcessing
 	 * @param solutionVector the computed solution polynomial coefficients
 	 * @return the vector after trailing zero removal
 	 */
-	public java.util.List <T> eliminateTrailingZeroes (CoefficientsList solutionVector)
+	public ItemList <T> eliminateTrailingZeroes (CoefficientsList solutionVector)
 	{
 		for (int i = solutionVector.size () - 1; i > 0; i--)
 		{
