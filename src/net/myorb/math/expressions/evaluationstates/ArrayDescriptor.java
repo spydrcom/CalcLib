@@ -2,7 +2,7 @@
 package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.expressions.*;
-
+import net.myorb.data.abstractions.CommonDataStructures;
 import net.myorb.data.abstractions.CommonCommandParser.TokenDescriptor;
 
 import java.util.ArrayList;
@@ -162,9 +162,10 @@ public class ArrayDescriptor <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.evaluationstates.Arrays.Descriptor#columnTitles()
 	 */
-	public List < String > columnTitles ()
+	public CommonDataStructures.TextItems columnTitles ()
 	{
-		List < String > titles = new ArrayList <> ();
+		CommonDataStructures.TextItems titles =
+				new CommonDataStructures.TextItems ();
 		String text = TokenParser.toPrettyText (getExpression ());
 		String expressionList = text.substring (1, text.length() - 2);
 		for (String title : expressionList.split (",")) titles.add (title);

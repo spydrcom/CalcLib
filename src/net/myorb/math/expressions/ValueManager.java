@@ -17,6 +17,8 @@ import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.data.abstractions.ErrorHandling;
 
+import net.myorb.data.abstractions.CommonDataStructures;
+
 import java.util.List;
 
 /**
@@ -183,6 +185,14 @@ public class ValueManager <T>
 		 */
 		RawValueList<T> getValues ();
 	}
+
+	/**
+	 * convenient 2 dimensional representation
+	 * @param <T> type on which operations are to be executed
+	 */
+	public static class TableOfValues <T>
+		extends CommonDataStructures.ItemList < DimensionedValue <T> >
+	{ private static final long serialVersionUID = -7732589488604095969L; }
 
 
 	/**

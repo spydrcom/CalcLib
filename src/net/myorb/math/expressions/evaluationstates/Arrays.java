@@ -3,6 +3,8 @@ package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.expressions.*;
 
+import net.myorb.data.abstractions.CommonDataStructures;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +101,7 @@ public class Arrays<T> extends OperatorNomenclature
 		 * format text titles columns of displays related to this array
 		 * @return the formatted text titles
 		 */
-		List < String > columnTitles ();
+		CommonDataStructures.TextItems columnTitles ();
 
 		/**
 		 * format a text title for displays related to this array

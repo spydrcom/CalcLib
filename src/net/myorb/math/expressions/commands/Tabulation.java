@@ -11,15 +11,14 @@ import net.myorb.gui.components.SimpleScreenIO.WidgetFrame;
 import net.myorb.gui.components.RenderingDisplay;
 import net.myorb.data.abstractions.HtmlTable;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.myorb.data.abstractions.CommonDataStructures;
 
 /**
  * formatter for displays of tables of data
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class Tabulation <T>
+public class Tabulation <T> extends CommonDataStructures
 {
 
 
@@ -51,17 +50,18 @@ public class Tabulation <T>
 		(
 			Arrays.Descriptor <T> domainDescriptor,
 			ValueManager.GenericValue array,
-			List < String > titles
+			TextItems titles
 		)
 	{
-		List < ValueManager.DimensionedValue <T> > table =
+		ValueManager.TableOfValues <T> table =
 			tableOf ( (ValueManager.ValueList) array );
 		format (domainDescriptor.formatTitle (), titles, table);
 	}
-	@SuppressWarnings("unchecked") List < ValueManager.DimensionedValue <T> >
+	@SuppressWarnings("unchecked") ValueManager.TableOfValues <T>
 				tableOf (ValueManager.ValueList values)
 	{
-		List < ValueManager.DimensionedValue <T> > table = new ArrayList <> ();
+		ValueManager.TableOfValues <T> table =
+				new ValueManager.TableOfValues <T> ();
 		for ( ValueManager.GenericValue  v  :  values.getValues () )
 		{ table.add ( (ValueManager.DimensionedValue <T>) v ); }
 		return table;
@@ -76,8 +76,8 @@ public class Tabulation <T>
 	 */
 	public void format
 		(
-			String documentTitle, List < String > titles,
-			List < ValueManager.DimensionedValue <T> > table
+			String documentTitle, TextItems titles,
+			ValueManager.TableOfValues <T> table
 		)
 	{
 		String [] rowCells = new String [titles.size ()];

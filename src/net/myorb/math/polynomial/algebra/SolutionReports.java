@@ -8,8 +8,6 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.math.expressions.ValueManager;
-
 /**
  * command implementation for solution display requests
  * @param <T> type on which operations are to be executed
@@ -153,7 +151,7 @@ public class SolutionReports <T> extends Utilities
 	public void showTable
 		(
 			TextItems columnHeaders,
-			ItemList < ValueManager.DimensionedValue <T> > solutionValues
+			MatrixSolution.WorkProduct <T> solutionValues
 		)
 	{
 		new Tabulation <> (environment).format

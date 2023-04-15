@@ -38,7 +38,7 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * the compiled solution matrix used for resolving the system of equations
 	 */
-	static class WorkProduct <V> extends ItemList < ValueManager.DimensionedValue <V> >
+	static class WorkProduct <V> extends ValueManager.TableOfValues <V>
 	{ private static final long serialVersionUID = 2356189952454085804L; }
 
 
