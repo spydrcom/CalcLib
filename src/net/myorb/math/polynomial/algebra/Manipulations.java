@@ -114,15 +114,16 @@ public class Manipulations extends Utilities
 	 */
 	public static Factor reduce (Factors factors)
 	{
-		ArithmeticFundamentals.Conversions <?>
-			converter = factors.converter;
-		Symbols symbols = new Symbols (converter);
-		ArithmeticFundamentals.Scalar scalar = converter.getOne ();
+		ArithmeticFundamentals.Scalar
+			scalar = factors.converter.getOne ();
+		Symbols symbols = new Symbols (factors.converter);
+
 		for (Factor factor : factors)
 		{
 			if (factor instanceof Constant)
 			{
-				ArithmeticFundamentals.timesEquals (scalar, Constant.getValueFrom (factor));
+				//  constant  folding  opportunity
+				Operations.multiplicativeFolding ( scalar, factor );
 			}
 			else if (factor instanceof Variable)
 			{
@@ -133,6 +134,7 @@ public class Manipulations extends Utilities
 				symbols.include ( (Power) factor );
 			}
 		}
+
 		return symbols.getTerm (scalar);
 	}
 
@@ -218,8 +220,9 @@ public class Manipulations extends Utilities
 				for ( Factor factor : product )
 				{
 					if (factor instanceof Constant)
-					{ ArithmeticFundamentals.timesEquals (scalar, Constant.getValueFrom (factor)); }
-					else add ( factor, termFactors );
+					//  constant  folding  opportunity
+					{ Operations.multiplicativeFolding ( scalar, factor ); }
+					else { add ( factor, termFactors ); }
 				}
 				addTerm ( termFactors, scalar );
 			}
@@ -521,13 +524,9 @@ public class Manipulations extends Utilities
 			}
 
 			if (term instanceof Constant)
-			{
-				ArithmeticFundamentals.plusEquals (constant, Constant.getValueFrom (term));
-			}
-			else
-			{
-				add (term, reduced);
-			}
+			// constant folding opportunity
+			{ Operations.additiveFolding ( constant, term ); }
+			else { add (term, reduced); }
 		}
 
 		if ( constant.isNot (0.0) )
