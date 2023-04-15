@@ -7,30 +7,14 @@ import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
 import net.myorb.math.polynomial.OP;
 
+import net.myorb.data.abstractions.CommonDataStructures;
+
 /**
  * representations of polynomial expressions
  * @author Michael Druckman
  */
-public abstract class Elements
+public abstract class Elements extends CommonDataStructures
 {
-
-
-	/**
-	 * list of items of specified object type
-	 * @param <T> type of items
-	 */
-	public static class ItemList <T> extends java.util.ArrayList <T>
-	{
-		public ItemList () {}
-		public ItemList (java.util.List <T> items) { this.addAll (items); }
-		private static final long serialVersionUID = -4619972438389917002L;
-	}
-
-	/**
-	 * lists of symbols
-	 */
-	public static class TextItems extends ItemList <String>
-	{ private static final long serialVersionUID = -58202141273735090L; }
 
 
 	/**
@@ -42,7 +26,7 @@ public abstract class Elements
 	/**
 	 * enumeration sets of Symbolic References
 	 */
-	public static class SymbolicReferences extends java.util.HashSet <String>
+	public static class SymbolicReferences extends PrimitiveSet <String>
 	{
 		/**
 		 * @return expected single symbol referenced
@@ -227,7 +211,11 @@ public abstract class Elements
 		 * @param converter the conversions manager for the values
 		 * @param value source from double value
 		 */
-		public Constant (ArithmeticFundamentals.Conversions <?> converter, ArithmeticFundamentals.Scalar value)
+		public Constant
+			(
+				ArithmeticFundamentals.Conversions <?> converter,
+				ArithmeticFundamentals.Scalar value
+			)
 		{ this (converter); this.value = value; }
 
 		// value processing
