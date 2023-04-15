@@ -1,12 +1,9 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
-
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import net.myorb.math.computational.ArithmeticFundamentals;
 
 /**
  * data structures used in solution processing
@@ -19,7 +16,7 @@ public class SolutionData extends Utilities
 	/**
 	 * a set of equation to solve with linear algebra
 	 */
-	public static class SystemOfEquations extends ArrayList <Factor>
+	public static class SystemOfEquations extends ItemList <Factor>
 	{ private static final long serialVersionUID = 2065886325470713453L; }
 
 
@@ -28,20 +25,25 @@ public class SolutionData extends Utilities
 	 */
 	public static class NameValuePair
 	{
+
 		public NameValuePair (String name, Constant value)
 		{this.nameOfSymbol = name; this.namedValue = value; }
 		public String getNameOfValue () { return nameOfSymbol; }
+		private String nameOfSymbol;
+
 		public Constant getConstantValue () { return namedValue; }
-		public ArithmeticFundamentals.Scalar getNamedValue () { return namedValue.getValue (); }
 		public String toString () { return namedValue.toString (); }
-		private String nameOfSymbol; private Constant namedValue;
+		public ArithmeticFundamentals.Scalar getNamedValue ()
+		{ return namedValue.getValue (); }
+		private Constant namedValue;
+
 	}
 
 
 	/**
 	 * map name to pair
 	 */
-	public static class SymbolValues extends HashMap <String, NameValuePair>
+	public static class SymbolValues extends SymbolicMap <NameValuePair>
 			implements InitialConditionsProcessor.SymbolTranslator
 	{
 
