@@ -102,7 +102,8 @@ public class SolutionReports <T> extends Utilities
 	 */
 	public void collectSolutionTableContent
 		(
-			Elements.SymbolList coefficients, MatrixSolution.WorkProduct <T> solutionValues
+			Elements.SymbolList coefficients,
+			MatrixSolution.WorkProduct <T> solutionValues
 		)
 	{
 		this.solutionValues  = solutionValues;
