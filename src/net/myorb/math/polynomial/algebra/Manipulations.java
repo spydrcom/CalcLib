@@ -22,7 +22,7 @@ public class Manipulations extends Utilities
 	/**
 	 * collect symbols in a product
 	 */
-	public static class Symbols extends TextMap <Integer>
+	public static class Symbols extends SymbolicMap <Integer>
 	{
 
 		Symbols
@@ -60,7 +60,7 @@ public class Manipulations extends Utilities
 			include
 			(
 				power.base ().toString (),
-				Constant.getValueFrom ( power.exponent () ).toDouble ().intValue ()
+				Constant.getValueFrom ( power.exponent () ).intValue ()
 			);
 		}
 
@@ -176,7 +176,7 @@ public class Manipulations extends Utilities
 		/**
 		 * map a factor image to the related scalar
 		 */
-		class TermFactors extends TextMap <ScaledFactor>
+		class TermFactors extends SymbolicMap <ScaledFactor>
 		{
 
 			/**
@@ -200,9 +200,11 @@ public class Manipulations extends Utilities
 			 */
 			void addFactor (Factor factor)
 			{
-				if ( factor instanceof Product ) addProduct ( (Product) factor );
-				else if ( factor instanceof Constant ) addTerm ( new Product (converter), Constant.getValueFrom (factor) );
-				else addTerm ( new Product (converter, factor), converter.getOne () );
+				if ( factor instanceof Product )
+				{ addProduct ( (Product) factor ); }
+				else if ( factor instanceof Constant )
+				{ addTerm ( new Product (converter), Constant.getValueFrom (factor) ); }
+				else { addTerm ( new Product (converter, factor), converter.getOne () ); }
 			}
 
 			/**
@@ -216,7 +218,7 @@ public class Manipulations extends Utilities
 				for ( Factor factor : product )
 				{
 					if (factor instanceof Constant)
-					{ scalar = Constant.getValueFrom (factor); }
+					{ ArithmeticFundamentals.timesEquals (scalar, Constant.getValueFrom (factor)); }
 					else add ( factor, termFactors );
 				}
 				addTerm ( termFactors, scalar );
@@ -358,7 +360,7 @@ public class Manipulations extends Utilities
 		}
 		Number exponentFor ( Power p )
 		{
-			return valueOf ( p.exponent () ).intValue ();
+			return valueOf ( p.exponent () ).toNumber ();
 		}
 		ArithmeticFundamentals.Scalar valueOf ( Factor factor )
 		{
