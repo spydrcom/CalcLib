@@ -3,13 +3,15 @@ package net.myorb.math.computational.sampling;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
+import net.myorb.data.abstractions.CommonDataStructures;
+
 import net.myorb.math.Function;
 
-public class SegmentAnalysis <T>
+public class SegmentAnalysis <T> extends CommonDataStructures
 {
 
 
-	public class SampleSet <SampleType> extends java.util.ArrayList <SampleType>
+	public class SampleSet <SampleType> extends ItemList <SampleType>
 	{ private static final long serialVersionUID = 4668063682466361795L; }
 
 
