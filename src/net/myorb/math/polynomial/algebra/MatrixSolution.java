@@ -31,7 +31,7 @@ public class MatrixSolution <T> extends SolutionData
 	/**
 	 * map symbols to ordered index within solution
 	 */
-	static class SymbolIndexMap extends TextMap <Integer>
+	static class SymbolIndexMap extends SymbolicMap <Integer>
 	{ private static final long serialVersionUID = 1113974645827170797L; }
 
 
