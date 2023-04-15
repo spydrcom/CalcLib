@@ -307,31 +307,17 @@ public abstract class Elements
 		public Factor base () { return this.get (0); }
 
 		/**
-		 * establish convention of scalar product with power
-		 * @return product wrapper for power object
-		 * @param <T> data type
-		 */
-		public <T> Factor powerProduct ()
-		{
-			// ONE will fold into scalar multiplied with other factors
-			Constant ONE = new Constant (converter, converter.getOne ());
-			Factor product = new Product (converter, ONE);
-			Utilities.add (this, product);
-			return product;
-		}
-
-		/**
 		 * compute value of a constant power expression
 		 * @param symbolTable symbols recognized as constant
 		 * @return the computed value
 		 */
 		public ArithmeticFundamentals.Scalar evaluate (SymbolValues symbolTable)
 		{
-			Variable v = (Variable) base ();
-			NameValuePair nvp = symbolTable.get ( v.toString () );
-			Utilities.errorForNull ( nvp, "Non constant power base" );
+			Variable V = (Variable) base (); String name;
+			NameValuePair nvp = symbolTable.get ( name = V.toString () );
+			Utilities.errorForNull ( nvp, "Non constant power base, expected value for " + name );
 			ArithmeticFundamentals.Scalar exponent = ( (Constant) exponent () ).getValue ();
-			return nvp.getNamedValue ().pow ( exponent.toDouble ().intValue () );
+			return nvp.getNamedValue ().pow ( exponent.intValue () );
 		}
 
 		/**
