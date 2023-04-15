@@ -117,5 +117,46 @@ public class Operations extends Utilities
 	}
 
 
+	// constant folding with additive or multiplicative operators
+
+
+	/**
+	 * fold factor into scalar
+	 * - multiply constant factor into scalar
+	 * @param scalar the scalar being modified
+	 * @param factor the constant factor
+	 */
+	public static void multiplicativeFolding
+		(
+			ArithmeticFundamentals.Scalar scalar,
+			Factor factor
+		)
+	{
+		ArithmeticFundamentals.timesEquals
+		(
+			scalar, Constant.getValueFrom (factor)
+		);
+	}
+
+
+	/**
+	 * fold addend into scalar
+	 * - multiply constant factor into scalar
+	 * @param scalar the scalar being modified
+	 * @param addend the constant factor
+	 */
+	public static void additiveFolding
+		(
+			ArithmeticFundamentals.Scalar scalar,
+			Factor addend
+		)
+	{
+		ArithmeticFundamentals.plusEquals
+		(
+			scalar, Constant.getValueFrom (addend)
+		);
+	}
+
+
 }
 
