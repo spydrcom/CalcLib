@@ -71,7 +71,7 @@ public class Manipulations extends Utilities
 		 */
 		Factor getTerm (ArithmeticFundamentals.Scalar scalar)
 		{
-			if ( ! scalar.isNot (0.0) ) return null;
+			if ( scalar.isEqualTo (0.0) ) return null;
 
 			Product result = new Product (converter);
 
@@ -169,7 +169,8 @@ public class Manipulations extends Utilities
 		{
 			ScaledFactor (Product factors, ArithmeticFundamentals.Scalar scalar)
 			{ this.factors = factors; this.scalar = scalar; }
-			Product factors; ArithmeticFundamentals.Scalar scalar;
+			ArithmeticFundamentals.Scalar scalar;
+			Product factors;
 		}
 
 		/**
@@ -232,7 +233,7 @@ public class Manipulations extends Utilities
 				for (String factorImage : this.keySet () )
 				{
 					ScaledFactor factor = this.get (factorImage);
-					if ( ! (scalar = factor.scalar).isNot (0.0) ) continue;
+					if ( (scalar = factor.scalar).isEqualTo (0.0) ) continue;
 					add ( termFor ( factor, scalar ), result );
 				}
 				if ( result.isEmpty () ) return null;
@@ -336,26 +337,32 @@ public class Manipulations extends Utilities
 		 */
 		boolean includeForMatchWith (Factor term, Factor base)
 		{
-			if (base instanceof Variable)
+			Number exponent =
+				base instanceof Variable ?
+				includeAsVariable ( (Variable) base ) :
+				base instanceof Power ? includeAsPower ( (Power) base ) : null;
+			if ( exponent != null )
 			{
-				if (matchesVariable (base))
-				{
-					includeInPowerSum (term, 1); return true;
-				}
-			}
-			else if (base instanceof Power)
-			{
-				Power p = (Power) base;
-				if (matchesVariable (p.base ()))
-				{
-					Double E =
-						Constant.getValueFrom
-							( p.exponent () ).toDouble ();
-					includeInPowerSum ( term, E.intValue () );
-					return true;
-				}
+				includeInPowerSum ( term, exponent.intValue () );
+				return true;
 			}
 			return false;
+		}
+		Number includeAsVariable ( Variable v )
+		{
+			return matchesVariable (v) ? 1 : null;
+		}
+		Number includeAsPower ( Power p )
+		{
+			return matchesVariable ( p.base () ) ? exponentFor (p) : null;
+		}
+		Number exponentFor ( Power p )
+		{
+			return valueOf ( p.exponent () ).intValue ();
+		}
+		ArithmeticFundamentals.Scalar valueOf ( Factor factor )
+		{
+			return Constant.getValueFrom ( factor );
 		}
 
 		/**
