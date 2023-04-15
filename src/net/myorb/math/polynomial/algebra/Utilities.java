@@ -11,14 +11,6 @@ public class Utilities extends Elements
 {
 
 
-	/**
-	 * map symbols to specified object type
-	 * @param <TO> the object type
-	 */
-	public static class TextMap <TO> extends java.util.HashMap <String, TO>
-	{ private static final long serialVersionUID = 6105899668221996472L; }
-
-
 	// node linkage
 
 	/**
@@ -57,7 +49,10 @@ public class Utilities extends Elements
 	 * @return the appropriate reference to
 	 */
 	public static Factor powerFactor
-		(ArithmeticFundamentals.Conversions <?> C, String variable, ArithmeticFundamentals.Scalar order)
+		(
+			ArithmeticFundamentals.Conversions <?> C, 
+			String variable, ArithmeticFundamentals.Scalar order
+		)
 	{
 		Variable symbol = new Variable (C, variable);
 		if (order.isNot (1.0)) return Power.reference (symbol, order);
