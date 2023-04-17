@@ -6,18 +6,17 @@ import net.myorb.math.matrices.VectorOperations;
 import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.Matrix;
 
-import net.myorb.math.GeneratingFunctions;
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.SymbolMap.ConstantType;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+import net.myorb.math.GeneratingFunctions;
 
 import net.myorb.data.notations.json.JsonLowLevel.JsonValue;
 
+import net.myorb.data.abstractions.CommonDataStructures;
 import net.myorb.data.abstractions.SimpleUtilities;
 import net.myorb.data.abstractions.ErrorHandling;
-
-import net.myorb.data.abstractions.CommonDataStructures;
 
 import java.util.List;
 

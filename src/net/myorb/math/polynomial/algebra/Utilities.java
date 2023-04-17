@@ -1,7 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
 
 /**
  * support and helper methods for algebra algorithms
@@ -50,8 +51,8 @@ public class Utilities extends Elements
 	 */
 	public static Factor powerFactor
 		(
-			ArithmeticFundamentals.Conversions <?> C, 
-			String variable, ArithmeticFundamentals.Scalar order
+			Conversions <?> C, 
+			String variable, Scalar order
 		)
 	{
 		Variable symbol = new Variable (C, variable);
@@ -61,6 +62,16 @@ public class Utilities extends Elements
 
 
 	// processing for constants
+
+	/**
+	 * treat a Factor as a Constant
+	 * @param factor the Constant Factor
+	 * @return the Scalar value
+	 */
+	public static Scalar valueOf ( Factor factor )
+	{
+		return Constant.getValueFrom ( factor );
+	}
 
 	/**
 	 * check for Constant
@@ -220,7 +231,7 @@ public class Utilities extends Elements
 	 * @param ignoring the value that should be ignored if seen
 	 * @return the negated form of the expression
 	 */
-	public static Elements.Factor negated (Elements.Factor factor, ArithmeticFundamentals.Scalar ignoring)
+	public static Elements.Factor negated (Elements.Factor factor, Scalar ignoring)
 	{
 		Constant C;
 		if ( ( C = getConstant (factor) ) != null ) return C.negated ();
@@ -295,11 +306,59 @@ public class Utilities extends Elements
 	 * @return the modified product
 	 */
 	public static Elements.Factor qualified
-		( Constant C, ArithmeticFundamentals.Scalar ignoring, Factors originalProduct )
+		( Constant C, Scalar ignoring, Factors originalProduct )
 	{
-		Product product = new Product (originalProduct.converter);
+		Product product = new Product (C.converter);
 		if ( C.otherThan ( ignoring ) ) { negateConstant ( C, product ); }
 		duplicate ( 1, originalProduct, product );
+		return product;
+	}
+
+	/**
+	 * eliminate 1 as a factor scalar
+	 * @param factor the factors of the term
+	 * @return an appropriate product object
+	 */
+	public static Product checkMultiplier (Factor factor)
+	{
+		Conversions<?> C = factor.getConverter();
+		if (factor instanceof Constant)
+		{
+			Scalar S = Constant.getValueFrom (factor);
+			if ( S.isEqualTo (1.0) ) return new Product ( C );
+		}
+		return new Product ( C, factor );
+	}
+
+	/**
+	 * format multiplier for term
+	 * - optimize removal of unit scalar as appropriate
+	 * @param factor the factors without the scalar factor
+	 * @param cons the constant multiple for this product
+	 * @return the full product description
+	 */
+	public static Product checkMultiplier
+		(Factor factor, Constant cons)
+	{
+		Product product = checkMultiplier (cons);
+		add (factor, product);
+		return product;
+	}
+
+	/**
+	 * format multiplier for term
+	 * - optimize removal of unit scalar as appropriate
+	 * @param factor the factors without the scalar factor
+	 * @param scalar the scalar multiple for this product
+	 * @return the full product description
+	 */
+	public static Product checkMultiplier
+		(Factor factor, Scalar S)
+	{
+		Conversions<?> C = factor.getConverter ();
+		if ( S.isEqualTo (1.0) ) { return new Product ( C, factor ); }
+		Product product = new Product ( C, new Constant (C, S) );
+		add (factor, product);
 		return product;
 	}
 

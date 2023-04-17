@@ -2,6 +2,8 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 /**
  * applications of algebraic rules to equations
@@ -26,8 +28,8 @@ public class Manipulations extends Utilities
 	{
 
 		Symbols
-		(ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		ArithmeticFundamentals.Conversions <?> converter;
+		(Conversions <?> converter) { this.converter = converter; }
+		Conversions <?> converter;
 
 		/**
 		 * represent a variable
@@ -69,7 +71,7 @@ public class Manipulations extends Utilities
 		 * @param scalar the constant portion of the product
 		 * @return a factor describing a term
 		 */
-		Factor getTerm (ArithmeticFundamentals.Scalar scalar)
+		Factor getTerm (Scalar scalar)
 		{
 			if ( scalar.isEqualTo (0.0) ) return null;
 
@@ -87,7 +89,7 @@ public class Manipulations extends Utilities
 
 			return result;
 		}
-		ArithmeticFundamentals.Scalar exponentFor (String id) { return converter.fromInt (this.get (id)); }
+		Scalar exponentFor (String id) { return converter.fromInt (this.get (id)); }
 
 		private static final long serialVersionUID = -9070913436157833971L;
 
@@ -114,15 +116,16 @@ public class Manipulations extends Utilities
 	 */
 	public static Factor reduce (Factors factors)
 	{
-		ArithmeticFundamentals.Scalar
-			scalar = factors.converter.getOne ();
+		trace (factors);
+		Scalar scalar = factors.converter.getOne ();
+		if (factors instanceof Power) { return factors; }
 		Symbols symbols = new Symbols (factors.converter);
 
 		for (Factor factor : factors)
 		{
 			if (factor instanceof Constant)
 			{
-				//  constant  folding  opportunity
+				// multiplicative constant folding opportunity
 				Operations.multiplicativeFolding ( scalar, factor );
 			}
 			else if (factor instanceof Variable)
@@ -135,7 +138,7 @@ public class Manipulations extends Utilities
 			}
 		}
 
-		return symbols.getTerm (scalar);
+		return trace (symbols.getTerm (scalar));
 	}
 
 
@@ -169,10 +172,9 @@ public class Manipulations extends Utilities
 		 */
 		class ScaledFactor
 		{
-			ScaledFactor (Product factors, ArithmeticFundamentals.Scalar scalar)
+			ScaledFactor (Product factors, Scalar scalar)
 			{ this.factors = factors; this.scalar = scalar; }
-			ArithmeticFundamentals.Scalar scalar;
-			Product factors;
+			Scalar scalar; Product factors;
 		}
 
 		/**
@@ -187,13 +189,14 @@ public class Manipulations extends Utilities
 			 * @param factors the product absent the scalar factor
 			 * @param scalar the value of the scalar
 			 */
-			void addTerm (Product factors, ArithmeticFundamentals.Scalar scalar)
+			void addTerm (Product factors, Scalar scalar)
 			{
 				ScaledFactor factor;
 				String image = factors.toString ();
 				if ( ( factor = this.get (image) ) == null )
 				{ this.put ( image, new ScaledFactor (factors, scalar) ); }
-				else factor.scalar = factor.scalar.plus (scalar);
+				// additive folding of exponents found to both refer to same factors
+				else ArithmeticFundamentals.plusEquals (factor.scalar, scalar);
 			}
 
 			/**
@@ -215,12 +218,12 @@ public class Manipulations extends Utilities
 			 */
 			void addProduct (Product product)
 			{
+				Scalar scalar = converter.getOne ();
 				Product termFactors = new Product (converter);
-				ArithmeticFundamentals.Scalar scalar = converter.getOne ();
 				for ( Factor factor : product )
 				{
 					if (factor instanceof Constant)
-					//  constant  folding  opportunity
+					// multiplicative constant folding opportunity
 					{ Operations.multiplicativeFolding ( scalar, factor ); }
 					else { add ( factor, termFactors ); }
 				}
@@ -233,31 +236,25 @@ public class Manipulations extends Utilities
 			 */
 			Factor getReducedSeries ()
 			{
-				ArithmeticFundamentals.Scalar scalar;
-				Sum result = new Sum (converter);
-				for (String factorImage : this.keySet () )
-				{
-					ScaledFactor factor = this.get (factorImage);
-					if ( (scalar = factor.scalar).isEqualTo (0.0) ) continue;
-					add ( termFor ( factor, scalar ), result );
-				}
+				Sum result;
+				processAnalyzedProducts (result = new Sum (converter));
 				if ( result.isEmpty () ) return null;
 				return reduceSingle (result);
 			}
-
+			
 			/**
-			 * format multiplier for term
-			 * - optimize removal of unit scalar as appropriate
-			 * @param factor the factors without the scalar factor
-			 * @param scalar the scalar multiple for this product
-			 * @return the full product description
+			 * build new sum of analyzed terms
+			 * @param series the new Sum of captured products
 			 */
-			Product termFor (ScaledFactor factor, ArithmeticFundamentals.Scalar scalar)
+			void processAnalyzedProducts (Sum series)
 			{
-				Product term = new Product (converter), factors = factor.factors;
-				if ( scalar.isNot (1.0) ) add ( new Constant (converter, scalar), term );
-				add ( factors, term );
-				return term;
+				Scalar scalar; ScaledFactor product;
+				for (String factorImage : this.keySet () )
+				{
+					product = this.get (factorImage);
+					if ( ! (scalar = product.scalar).isEqualTo (0.0) )
+					{ add ( checkMultiplier ( product.factors, scalar ), series ); }
+				}
 			}
 
 			private static final long serialVersionUID = 6359843120046263025L;
@@ -269,8 +266,7 @@ public class Manipulations extends Utilities
 		 */
 		FactorAnalysis (Factor factor)
 		{ this.factor = factor; this.converter = factor.getConverter (); }
-		ArithmeticFundamentals.Conversions <?> converter;
-		Factor factor;
+		Conversions <?> converter; Factor factor;
 
 
 		/**
@@ -308,7 +304,7 @@ public class Manipulations extends Utilities
 
 		Powers (String variable, SeriesExpansion <?> root)
 		{ this.variable = variable; this.C = root.converter; }
-		ArithmeticFundamentals.Conversions <?> C; String variable;
+		Conversions <?> C; String variable;
 
 		/**
 		 * @param id symbol to check
@@ -353,21 +349,28 @@ public class Manipulations extends Utilities
 			}
 			return false;
 		}
-		Number includeAsVariable ( Variable v )
-		{
-			return matchesVariable (v) ? 1 : null;
-		}
+
+		/**
+		 * check variable for match with parameter
+		 * @param v the variable to be checked
+		 * @return power of 1 for X term
+		 */
+		Number includeAsVariable ( Variable v ) { return matchesVariable (v) ? 1 : null; }
+
+		/**
+		 * @param p a power object
+		 * @return the exponent of the power object as a Number
+		 */
+		Number exponentFor ( Power p ) { return valueOf ( p.exponent () ).toNumber (); }
+
+		/**
+		 * check power object for match with parameter
+		 * @param p the power object to be evaluated for match with parameter
+		 * @return NULL if not match otherwise exponent value
+		 */
 		Number includeAsPower ( Power p )
 		{
 			return matchesVariable ( p.base () ) ? exponentFor (p) : null;
-		}
-		Number exponentFor ( Power p )
-		{
-			return valueOf ( p.exponent () ).toNumber ();
-		}
-		ArithmeticFundamentals.Scalar valueOf ( Factor factor )
-		{
-			return Constant.getValueFrom ( factor );
 		}
 
 		/**
@@ -377,9 +380,9 @@ public class Manipulations extends Utilities
 		 */
 		void includeInIdentifiedPower (Factor term, Factors product)
 		{
-			for (Factor factor : product)
-			{ if (includeForMatchWith (term, factor)) return; }
-			includeInPowerSum (term, 0);
+			for ( Factor factor : product )
+			{ if ( includeForMatchWith (term, factor) ) return; }
+			includeInPowerSum ( term, 0 );
 		}
 
 		/**
@@ -388,11 +391,26 @@ public class Manipulations extends Utilities
 		 */
 		void include (Factor term)
 		{
-			if (   isMultiFactored  (term)   )
-			{ includeInIdentifiedPower (term, (Factors) term); }
-			else if (term instanceof Constant) { includeInPowerSum (term, 0); }
+			if ( term instanceof Power )
+			{ includePower ( (Power) term ); }
+			else if ( isMultiFactored  (term) )
+			{ includeInIdentifiedPower ( term, (Factors) term ); }
+			else if ( term instanceof Constant ) { includeInPowerSum (term, 0); }
 			else if ( ! includeForMatchWith (term, term) )
 			{ includeInPowerSum (term, 0); }
+		}
+
+		/**
+		 * treatment of power factor
+		 * - if base is constant then treat as constant term
+		 * @param P the power object to process
+		 */
+		void includePower (Power P)
+		{
+			Number E = 0; Factor factor;
+			if ( matchesVariable (factor = P) )
+			{  factor = P.base ();  E = exponentFor (P);  }
+			includeInPowerSum ( factor, E.intValue () );
 		}
 
 		/**
@@ -447,7 +465,7 @@ public class Manipulations extends Utilities
 		Factor appendPowerOfVariable (Factor termFactors, Integer E)
 		{
 			if ( termFactors == null ) return null;
-			Product term = new Product ( C, termFactors );
+			Product term = checkMultiplier ( termFactors );
 			add ( powerFactor ( C, variable, C.fromInt (E) ), term );
 			return term;
 		}
@@ -464,6 +482,14 @@ public class Manipulations extends Utilities
 			{ add ( termFor (term), factors ); }
 			return reduceSingle (factors);
 		}
+
+		/**
+		 * process multi-factored term
+		 * - single factor indicates just power factor
+		 * - 1 is entered into sum to hold place of power
+		 * @param term the term being analyzed and manipulated
+		 * @return factor resulting for analysis
+		 */
 		Factor termFor (Factor term)
 		{
 			if ( isMultiFactored (term) )
@@ -477,6 +503,8 @@ public class Manipulations extends Utilities
 		}
 
 		/**
+		 * reduce the rebuilt series
+		 * - of all power terms analyzed
 		 * @return the completed series
 		 */
 		public Sum getSeries ()
@@ -486,12 +514,23 @@ public class Manipulations extends Utilities
 			{ add ( distribute (e), result ); }
 			return reducedSumOf (result);
 		}
+
+		/**
+		 * a sum of terms is collected for each power
+		 * - this will respond with the equation of terms
+		 * @param E the exponent value to evaluate terms for
+		 * @return the sum of terms found multiplied by this power
+		 */
 		public Sum getTermFor (Integer E)
 		{
 			Sum result = new Sum (C);
 			add ( distribute (E, get (E), false), result );
 			return reducedSumOf (result);
 		}
+
+		/**
+		 * @return sorted list of compiled powers
+		 */
 		public Integer [] getPowers ()
 		{
 			Integer [] exponents =
@@ -511,9 +550,9 @@ public class Manipulations extends Utilities
 	 */
 	public static Sum reducedSumOf (Sum terms)
 	{
-		ArithmeticFundamentals.Conversions <?> C;
-		Sum reduced = new Sum ( C = terms.converter );
-		ArithmeticFundamentals.Scalar constant = C.getZero ();
+		Conversions <?> C = terms.converter;
+		Scalar constant = C.getZero ();
+		Sum reduced = new Sum ( C );
 
 		for (Factor term : terms)
 		{
@@ -524,14 +563,14 @@ public class Manipulations extends Utilities
 			}
 
 			if (term instanceof Constant)
-			// constant folding opportunity
+			// additive constant folding opportunity
 			{ Operations.additiveFolding ( constant, term ); }
 			else { add (term, reduced); }
 		}
 
 		if ( constant.isNot (0.0) )
 		{
-			add ( new Constant (C, constant), reduced );
+			reduced.add (0, new Constant (C, constant));
 		}
 
 		return reduced;
@@ -548,8 +587,10 @@ public class Manipulations extends Utilities
 	public static Sum collectTerms
 		(Sum series, String variable, SeriesExpansion <?> root)
 	{
-		Powers powers = new Powers (variable, root);
-		for ( Factor term : series ) powers.include (term);
+		Powers powers = new Powers
+			(variable, root);
+		for ( Factor term : series )
+		{  powers.include (term);  }
 		root.linkAnalysis ( powers );
 		return powers.getSeries ();
 	}
@@ -566,8 +607,25 @@ public class Manipulations extends Utilities
 	public static Sum reduceAndCollectTerms
 		(Sum series, String variable, SeriesExpansion <?> root)
 	{
-		return collectTerms ( reduceTerms (series), variable, root );
+		if (TRACE)
+			System.out.println ("original: " + series);
+		Sum reduced = (Sum) trace ( reduceTerms (series) );
+		return (Sum) trace ( collectTerms ( reduced, variable, root ) );
 	}
+
+
+	/**
+	 * print line debugging on option
+	 * @param factor the expanded sequence being analyzed
+	 * @return the parameter factor for chaining
+	 */
+	public static Factor trace (Factor factor)
+	{
+		if ( TRACE )
+		{ System.out.println (factor); }
+		return factor;
+	}
+	static boolean TRACE = false;
 
 
 }

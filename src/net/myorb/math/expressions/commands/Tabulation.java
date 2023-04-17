@@ -58,7 +58,7 @@ public class Tabulation <T> extends CommonDataStructures
 		format (domainDescriptor.formatTitle (), titles, table);
 	}
 	@SuppressWarnings("unchecked") ValueManager.TableOfValues <T>
-				tableOf (ValueManager.ValueList values)
+			tableOf (ValueManager.ValueList values)
 	{
 		ValueManager.TableOfValues <T> table =
 				new ValueManager.TableOfValues <T> ();
