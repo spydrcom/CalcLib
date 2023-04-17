@@ -1,7 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
@@ -83,7 +84,7 @@ public abstract class Elements extends CommonDataStructures
 		 * Factor objects must carry support for node Arithmetic
 		 * @return the assigned Arithmetic converter
 		 */
-		ArithmeticFundamentals.Conversions <?> getConverter ();
+		Conversions <?> getConverter ();
 
 		/**
 		 * @return type of implementing node
@@ -99,9 +100,9 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public abstract static class Factors extends ItemList <Factor> implements Factor
 	{
-		public Factors (ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		public ArithmeticFundamentals.Conversions <?> getConverter () { return converter; }
-		public ArithmeticFundamentals.Conversions <?> converter;
+		public Factors (Conversions <?> converter) { this.converter = converter; }
+		public Conversions <?> getConverter () { return converter; }
+		public Conversions <?> converter;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.polynomial.algebra.Elements.References#identify(net.myorb.math.polynomial.algebra.Elements.SymbolicReferences)
@@ -120,7 +121,7 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public static class Sum extends Factors
 	{
-		public Sum (ArithmeticFundamentals.Conversions <?> converter) { super (converter); }
+		public Sum (Conversions <?> converter) { super (converter); }
 		public String toString () { return bracketedImage (this, OP.PLUS); }
 		private static final long serialVersionUID = -5102897249367062053L;
 		public OpTypes getType () { return OpTypes.Summation; }
@@ -131,7 +132,7 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public static class Difference extends Sum
 	{
-		public Difference (ArithmeticFundamentals.Conversions <?> converter) { super (converter); }
+		public Difference (Conversions <?> converter) { super (converter); }
 		public String toString () { return bracketedImage (this, OP.MINUS); }
 		private static final long serialVersionUID = -5098433414832709926L;
 	}
@@ -141,9 +142,9 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public static class Negated implements Factor
 	{
-		public ArithmeticFundamentals.Conversions <?> converter;
-		public Negated (ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		public ArithmeticFundamentals.Conversions <?> getConverter () { return converter; }
+		public Conversions <?> converter;
+		public Negated (Conversions <?> converter) { this.converter = converter; }
+		public Conversions <?> getConverter () { return converter; }
 
 		public OpTypes getType () { return OpTypes.Negation; }
 		public Negated (Factor factor) { this.child = factor; }
@@ -161,8 +162,8 @@ public abstract class Elements extends CommonDataStructures
 		{ return image (this, OP.TIMES); }
 		public OpTypes getType () { return OpTypes.Multiplication; }
 		private static final long serialVersionUID = 5153646408526934363L;
-		public Product (ArithmeticFundamentals.Conversions <?> converter) { super (converter); }
-		public Product (ArithmeticFundamentals.Conversions <?> converter, Factor factor)
+		public Product (Conversions <?> converter) { super (converter); }
+		public Product (Conversions <?> converter, Factor factor)
 		{ super (converter); Utilities.add (factor, this); }
 	}
 
@@ -175,9 +176,9 @@ public abstract class Elements extends CommonDataStructures
 	public static class Constant implements Factor
 	{
 
-		public ArithmeticFundamentals.Conversions <?> converter;
-		public Constant (ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		public ArithmeticFundamentals.Conversions <?> getConverter () { return converter; }
+		public Conversions <?> converter;
+		public Constant (Conversions <?> converter) { this.converter = converter; }
+		public Conversions <?> getConverter () { return converter; }
 
 		// factor abstraction compliance
 
@@ -213,8 +214,8 @@ public abstract class Elements extends CommonDataStructures
 		 */
 		public Constant
 			(
-				ArithmeticFundamentals.Conversions <?> converter,
-				ArithmeticFundamentals.Scalar value
+				Conversions <?> converter,
+				Scalar value
 			)
 		{ this (converter); this.value = value; }
 
@@ -225,7 +226,7 @@ public abstract class Elements extends CommonDataStructures
 		 * @param filter the value that should be ignored if seen
 		 * @return TRUE when constant not the filtered value
 		 */
-		public boolean otherThan (ArithmeticFundamentals.Scalar filter)
+		public boolean otherThan (Scalar filter)
 		{
 			if ( filter == null ) return true;
 			if ( value.EQ (filter) ) return false;
@@ -248,10 +249,10 @@ public abstract class Elements extends CommonDataStructures
 		/**
 		 * @return value of constant as double float
 		 */
-		public ArithmeticFundamentals.Scalar getValue () { return value; }
-		public static ArithmeticFundamentals.Scalar getValueFrom (Factor factor)
+		public Scalar getValue () { return value; }
+		public static Scalar getValueFrom (Factor factor)
 		{ return ( (Constant) factor ).getValue (); }
-		private ArithmeticFundamentals.Scalar value;
+		private Scalar value;
 
 	}
 
@@ -260,10 +261,10 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public static class Variable implements Factor, Reference
 	{
-		public ArithmeticFundamentals.Conversions <?> converter;
-		public ArithmeticFundamentals.Conversions <?> getConverter () { return converter; }
-		public Variable (ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		public Variable (ArithmeticFundamentals.Conversions <?> converter, String identifier)
+		public Conversions <?> converter;
+		public Conversions <?> getConverter () { return converter; }
+		public Variable (Conversions <?> converter) { this.converter = converter; }
+		public Variable (Conversions <?> converter, String identifier)
 		{ this (converter); this.identifier = identifier; }
 
 		public void identify
@@ -281,7 +282,7 @@ public abstract class Elements extends CommonDataStructures
 	public static class Power extends Factors implements Reference
 	{
 		public Power
-		(ArithmeticFundamentals.Conversions <?> converter)
+		(Conversions <?> converter)
 		{ super (converter); }
 
 		public boolean refersTo (String symbol)
@@ -299,12 +300,12 @@ public abstract class Elements extends CommonDataStructures
 		 * @param symbolTable symbols recognized as constant
 		 * @return the computed value
 		 */
-		public ArithmeticFundamentals.Scalar evaluate (SymbolValues symbolTable)
+		public Scalar evaluate (SymbolValues symbolTable)
 		{
 			Variable V = (Variable) base (); String name;
 			NameValuePair nvp = symbolTable.get ( name = V.toString () );
 			Utilities.errorForNull ( nvp, "Non constant power base, expected value for " + name );
-			ArithmeticFundamentals.Scalar exponent = ( (Constant) exponent () ).getValue ();
+			Scalar exponent = ( (Constant) exponent () ).getValue ();
 			return nvp.getNamedValue ().pow ( exponent.intValue () );
 		}
 
@@ -314,8 +315,7 @@ public abstract class Elements extends CommonDataStructures
 		 * @param order the exponent value for the term
 		 * @return the constructed Power Factor
 		 */
-		public static Factor reference
-		(Variable variable, ArithmeticFundamentals.Scalar order)
+		public static Factor reference (Variable variable, Scalar order)
 		{
 			Factors power = new Power (variable.converter);
 			Constant exp = new Constant (variable.converter, order);
@@ -332,7 +332,7 @@ public abstract class Elements extends CommonDataStructures
 	 */
 	public static class Equation extends Sum
 	{
-		public Equation (ArithmeticFundamentals.Conversions <?> converter) { super (converter); }
+		public Equation (Conversions <?> converter) { super (converter); }
 		private static final long serialVersionUID = 8507384482661667874L;
 	}
 
