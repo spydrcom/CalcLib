@@ -2,6 +2,7 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
@@ -43,7 +44,7 @@ public class Solution <T> extends SubstitutionProcessing
 		this.converter = ArithmeticFundamentals.getConverter (manager);
 		SeriesExpansion.addInitialConditionsProcessors (manager);
 	}
-	protected ArithmeticFundamentals.Conversions <T> converter;
+	protected Conversions <T> converter;
 	protected ExpressionSpaceManager <T> manager;
 	protected ValueManager <T> valueManager;
 	protected SolutionReports <T> reports;

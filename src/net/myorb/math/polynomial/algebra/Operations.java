@@ -1,6 +1,8 @@
 
 package net.myorb.math.polynomial.algebra;
 
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 import net.myorb.math.computational.ArithmeticFundamentals;
 
 /**
@@ -112,8 +114,9 @@ public class Operations extends Utilities
 	 */
 	public static Factor negative (Factor factor)
 	{
-		ArithmeticFundamentals.Conversions <?> C = factor.getConverter ();
-		return productOf ( new Constant ( C, C.getNegOne () ), factor );
+		Conversions <?> C = factor.getConverter ();
+		Constant multiplier = new Constant ( C, C.getNegOne () );
+		return productOf ( multiplier, factor );
 	}
 
 
@@ -128,8 +131,7 @@ public class Operations extends Utilities
 	 */
 	public static void multiplicativeFolding
 		(
-			ArithmeticFundamentals.Scalar scalar,
-			Factor factor
+			Scalar scalar, Factor factor
 		)
 	{
 		ArithmeticFundamentals.timesEquals
@@ -147,8 +149,7 @@ public class Operations extends Utilities
 	 */
 	public static void additiveFolding
 		(
-			ArithmeticFundamentals.Scalar scalar,
-			Factor addend
+			Scalar scalar, Factor addend
 		)
 	{
 		ArithmeticFundamentals.plusEquals

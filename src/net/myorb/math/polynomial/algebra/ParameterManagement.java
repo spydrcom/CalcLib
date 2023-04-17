@@ -1,8 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import java.util.ArrayList;
-
 /**
  * management of parameter profiles and parameter substitution
  * @author Michael Druckman
@@ -25,10 +23,9 @@ public class ParameterManagement extends Utilities
 	 * verify polynomial variable description
 	 * @return the parameter read from the function profile
 	 */
-	public ArrayList <String> parameterList ()
+	public TextItems parameterList ()
 	{
-		ArrayList <String>
-			parameterNameList = new ArrayList <> ();
+		TextItems parameterNameList = new TextItems ();
 		try { parameterNameList.add ( getPolynomialVariable () ); }
 		catch (Exception e) { error ( "Error in function profile", e ); }
 		return parameterNameList;

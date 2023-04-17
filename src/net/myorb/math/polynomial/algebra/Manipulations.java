@@ -117,9 +117,9 @@ public class Manipulations extends Utilities
 	public static Factor reduce (Factors factors)
 	{
 		trace (factors);
-		Scalar scalar = factors.converter.getOne ();
 		if (factors instanceof Power) { return factors; }
 		Symbols symbols = new Symbols (factors.converter);
+		Scalar scalar = factors.converter.getOne ();
 
 		for (Factor factor : factors)
 		{
@@ -205,10 +205,8 @@ public class Manipulations extends Utilities
 			 */
 			void addFactor (Factor factor)
 			{
-				if ( factor instanceof Product )
-				{ addProduct ( (Product) factor ); }
-				else if ( factor instanceof Constant )
-				{ addTerm ( new Product (converter), Constant.getValueFrom (factor) ); }
+				if ( factor instanceof Product ) { addProduct ( (Product) factor ); }
+				else if ( factor instanceof Constant ) { addTerm ( new Product (converter), valueOf (factor) ); }
 				else { addTerm ( new Product (converter, factor), converter.getOne () ); }
 			}
 

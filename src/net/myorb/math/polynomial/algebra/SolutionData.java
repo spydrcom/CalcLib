@@ -3,7 +3,8 @@ package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 /**
  * data structures used in solution processing
@@ -33,8 +34,7 @@ public class SolutionData extends Utilities
 
 		public Constant getConstantValue () { return namedValue; }
 		public String toString () { return namedValue.toString (); }
-		public ArithmeticFundamentals.Scalar getNamedValue ()
-		{ return namedValue.getValue (); }
+		public Scalar getNamedValue () { return namedValue.getValue (); }
 		private Constant namedValue;
 
 	}
@@ -48,8 +48,8 @@ public class SolutionData extends Utilities
 	{
 
 		SymbolValues
-		(ArithmeticFundamentals.Conversions <?> converter) { this.converter = converter; }
-		public ArithmeticFundamentals.Conversions <?> converter;
+		(Conversions <?> converter) { this.converter = converter; }
+		public Conversions <?> converter;
 
 		/**
 		 * @param stream stream to send symbol list to

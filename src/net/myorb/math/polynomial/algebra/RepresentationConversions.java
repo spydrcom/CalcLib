@@ -1,7 +1,7 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 import net.myorb.data.notations.json.*;
 
@@ -218,7 +218,7 @@ public class RepresentationConversions extends Utilities
 	 */
 	public static Factor subtractionChild (Factor parent)
 	{
-		ArithmeticFundamentals.Conversions <?> converter = parent.getConverter ();
+		Conversions <?> converter = parent.getConverter ();
 		Constant negativeOne = new Constant (converter, converter.getNegOne ());
 		Product newChild = new Product (converter, negativeOne);
 		add (newChild, parent);

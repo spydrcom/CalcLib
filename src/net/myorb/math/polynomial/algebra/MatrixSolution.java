@@ -2,6 +2,8 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
@@ -50,7 +52,7 @@ public class MatrixSolution <T> extends SolutionData
 		this.solutionApplication = new SolutionApplication <T> (manager);
 		this.ops = new MatrixOperations <T> (manager);
 	}
-	protected ArithmeticFundamentals.Conversions <T> converter;
+	protected Conversions <T> converter;
 	protected ExpressionSpaceManager <T> manager;
 	protected java.io.PrintStream stream;
 	protected MatrixOperations <T> ops;
@@ -278,7 +280,7 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	T scalarFor (Factor factor)
 	{
-		ArithmeticFundamentals.Scalar value = converter.getOne ();
+		Scalar value = converter.getOne ();
 		if (factor instanceof Constant)
 		{
 			value = Constant.getValueFrom (factor);
