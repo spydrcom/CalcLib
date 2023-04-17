@@ -321,11 +321,11 @@ public class Utilities extends Elements
 	 */
 	public static Product checkMultiplier (Factor factor)
 	{
-		Conversions<?> C = factor.getConverter();
+		Conversions<?> C = factor.getConverter ();
 		if (factor instanceof Constant)
 		{
-			Scalar S = Constant.getValueFrom (factor);
-			if ( S.isEqualTo (1.0) ) return new Product ( C );
+			if ( valueOf (factor).isEqualTo (1.0) )
+			{ return new Product ( C ); }
 		}
 		return new Product ( C, factor );
 	}
@@ -334,22 +334,20 @@ public class Utilities extends Elements
 	 * format multiplier for term
 	 * - optimize removal of unit scalar as appropriate
 	 * @param factor the factors without the scalar factor
-	 * @param cons the constant multiple for this product
+	 * @param C the constant multiple for this product
 	 * @return the full product description
 	 */
 	public static Product checkMultiplier
-		(Factor factor, Constant cons)
+		(Factor factor, Constant C)
 	{
-		Product product = checkMultiplier (cons);
-		add (factor, product);
-		return product;
+		return checkMultiplier (factor, C.getValue ());
 	}
 
 	/**
 	 * format multiplier for term
 	 * - optimize removal of unit scalar as appropriate
 	 * @param factor the factors without the scalar factor
-	 * @param scalar the scalar multiple for this product
+	 * @param S the scalar multiple for this product
 	 * @return the full product description
 	 */
 	public static Product checkMultiplier
@@ -357,7 +355,7 @@ public class Utilities extends Elements
 	{
 		Conversions<?> C = factor.getConverter ();
 		if ( S.isEqualTo (1.0) ) { return new Product ( C, factor ); }
-		Product product = new Product ( C, new Constant (C, S) );
+		Product product = new Product ( C, new Constant ( C, S ) );
 		add (factor, product);
 		return product;
 	}
@@ -386,7 +384,8 @@ public class Utilities extends Elements
 	 */
 	public static SymbolicReferences references (Factor factor)
 	{
-		SymbolicReferences symbols = new SymbolicReferences ();
+		SymbolicReferences symbols =
+			new SymbolicReferences ();
 		factor.identify (symbols);
 		return symbols;
 	}
