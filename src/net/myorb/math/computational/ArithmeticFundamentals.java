@@ -2,6 +2,7 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.data.abstractions.SpaceConversion;
@@ -210,9 +211,9 @@ public class ArithmeticFundamentals
 abstract class Core <T>
 {
 
-	Core (ArithmeticFundamentals.Conversions <T> conversions)
+	Core (Conversions <T> conversions)
 	{ this (conversions.getManager ()); this.conversions = conversions; }
-	protected ArithmeticFundamentals.Conversions <T> conversions;
+	protected Conversions <T> conversions;
 
 	Core (ExpressionSpaceManager <T> manager)
 	{ this.manager = manager; this.ZERO = manager.getZero (); }
@@ -226,16 +227,14 @@ abstract class Core <T>
 	 * @return the generic value
 	 */
 	@SuppressWarnings("unchecked")
-	T getValue (ArithmeticFundamentals.Scalar S)
-	{ return ( (ArithmeticScalar <T>) S ).value; }
+	T getValue (Scalar S) { return ( (ArithmeticScalar <T>) S ).value; }
 
 	/**
 	 * wrap generic value as scalar
 	 * @param value the generic value
 	 * @return Scalar representation
 	 */
-	ArithmeticScalar <T> newValue (T value)
-	{ return new ArithmeticScalar <> (value, conversions); }
+	ArithmeticScalar <T> newValue (T value) { return new ArithmeticScalar <> (value, conversions); }
 
 }
 
@@ -243,7 +242,7 @@ abstract class Core <T>
  * implementation of Conversions interface
  * @param <T> data type used in Arithmetic operations
  */
-class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversions <T>
+class Converter <T> extends Core <T> implements Conversions <T>
 {
 
 	Converter (ExpressionSpaceManager <T> manager) { super (manager); this.conversions = this; }
@@ -251,15 +250,15 @@ class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversio
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#toScalar(java.lang.Object)
 	 */
-	public ArithmeticFundamentals.Scalar toScalar (T value) { return newValue (value); }
-	public T convertedFrom (ArithmeticFundamentals.Scalar value) { return getValue (value); }
+	public Scalar toScalar (T value) { return newValue (value); }
+	public T convertedFrom (Scalar value) { return getValue (value); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#fromInt(java.lang.Integer)
 	 */
-	public ArithmeticFundamentals.Scalar fromInt (Integer I) { return newValue (manager.newScalar (I)); }
-	public ArithmeticFundamentals.Scalar fromDouble (Double D) { return newValue (manager.convertFromDouble (D)); }
-	public ArithmeticFundamentals.Scalar fromText (String expression) { return toScalar (manager.evaluate (expression)); }
+	public Scalar fromInt (Integer I) { return newValue (manager.newScalar (I)); }
+	public Scalar fromDouble (Double D) { return newValue (manager.convertFromDouble (D)); }
+	public Scalar fromText (String expression) { return toScalar (manager.evaluate (expression)); }
 
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -274,24 +273,24 @@ class Converter <T> extends Core <T> implements ArithmeticFundamentals.Conversio
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.SpaceConversion#convertFromDouble(java.lang.Double)
 	 */
-	public ArithmeticFundamentals.Scalar convertFromDouble (Double value) { return newValue (manager.convertFromDouble (value)); }
+	public Scalar convertFromDouble (Double value) { return newValue (manager.convertFromDouble (value)); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.data.abstractions.SpaceConversion#convertToDouble(java.lang.Object)
 	 */
-	public Double convertToDouble (ArithmeticFundamentals.Scalar value) { return manager.convertToDouble (getValue (value)); }
+	public Double convertToDouble (Scalar value) { return manager.convertToDouble (getValue (value)); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#toNumber(net.myorb.math.computational.ArithmeticFundamentals.Scalar)
 	 */
-	public Number toNumber (ArithmeticFundamentals.Scalar value) { return manager.toNumber (getValue (value)); }
+	public Number toNumber (Scalar value) { return manager.toNumber (getValue (value)); }
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.computational.ArithmeticFundamentals.Conversions#getZero()
 	 */
-	public ArithmeticFundamentals.Scalar getZero () { return toScalar (ZERO); }
-	public ArithmeticFundamentals.Scalar getNegOne () { return fromInt (-1); }
-	public ArithmeticFundamentals.Scalar getOne () { return fromInt (1); }
+	public Scalar getZero () { return toScalar (ZERO); }
+	public Scalar getNegOne () { return fromInt (-1); }
+	public Scalar getOne () { return fromInt (1); }
 
 }
 
