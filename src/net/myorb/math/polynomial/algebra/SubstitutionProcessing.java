@@ -2,6 +2,8 @@
 package net.myorb.math.polynomial.algebra;
 
 import net.myorb.math.computational.ArithmeticFundamentals;
+import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
+import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
 /**
  * implementation of Substitution Processing layer
@@ -25,7 +27,7 @@ public class SubstitutionProcessing extends SolutionData
 		this.analysis = analysis;
 		this.doSubstitution ();
 	}
-	protected ArithmeticFundamentals.Conversions <?> converter;
+	protected Conversions <?> converter;
 	protected Manipulations.Powers analysis;
 	protected SymbolValues symbolTable;
 
@@ -59,11 +61,11 @@ public class SubstitutionProcessing extends SolutionData
 		{
 			Factor subs;
 			Sum result = new Sum (converter);
-			ArithmeticFundamentals.Scalar cons = converter.getZero ();
+			Scalar cons = converter.getZero ();
 			for (Factor factor : (Sum) term)
 			{
 				if ( (subs = doSubstitutionForProduct (factor)) instanceof Constant )
-				{ ArithmeticFundamentals.plusEquals (cons, ( (Constant) subs ).getValue ()); }
+				{ ArithmeticFundamentals.plusEquals (cons, valueOf ( subs ) ); }
 				else { add (subs, result); }
 			}
 			if ( cons.isNot (0.0) )
@@ -83,12 +85,12 @@ public class SubstitutionProcessing extends SolutionData
 		if (product instanceof Product)
 		{
 			Factor subs;
+			Scalar scalar = converter.getOne ();
 			Product result = new Product (converter);
-			ArithmeticFundamentals.Scalar scalar = converter.getOne ();
 			for (Factor factor : (Product) product)
 			{
 				if ( (subs = doSubstitutionForOperand (factor)) instanceof Constant )
-				{ ArithmeticFundamentals.timesEquals ( scalar, ( (Constant) subs ).getValue () ); }
+				{ ArithmeticFundamentals.timesEquals ( scalar, valueOf ( subs ) ); }
 				else { add (subs, result); }
 			}
 			if ( scalar.isNot (1.0) )
