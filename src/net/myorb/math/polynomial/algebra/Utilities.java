@@ -111,6 +111,19 @@ public class Utilities extends Elements
 	}
 
 
+	/**
+	 * insert constant into first spot in Factors list
+	 * @param value the Scalar value to be inserted into Factors list
+	 * @param into the Factors list the constant will be placed in
+	 * @param ignoring a value that should be excluded when seen
+	 */
+	public static void insert (Scalar value, Factors into, double ignoring)
+	{
+		// exclusions are expected for 1 in Products and 0 for Sums
+		if ( value.isNot ( ignoring ) ) into.add ( 0, new Constant ( into.converter, value ) );
+	}
+
+
 	// complexity management
 
 	/**
@@ -384,8 +397,8 @@ public class Utilities extends Elements
 	 */
 	public static SymbolicReferences references (Factor factor)
 	{
-		SymbolicReferences symbols =
-			new SymbolicReferences ();
+		SymbolicReferences
+			symbols = new SymbolicReferences ();
 		factor.identify (symbols);
 		return symbols;
 	}
