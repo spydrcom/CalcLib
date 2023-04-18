@@ -4,7 +4,6 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
 import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
-import net.myorb.math.polynomial.algebra.SolutionData.NameValuePair;
 import net.myorb.math.polynomial.algebra.SolutionData.SymbolValues;
 import net.myorb.math.polynomial.OP;
 
@@ -303,10 +302,10 @@ public abstract class Elements extends CommonDataStructures
 		public Scalar evaluate (SymbolValues symbolTable)
 		{
 			Variable V = (Variable) base (); String name;
-			NameValuePair nvp = symbolTable.get ( name = V.toString () );
+			NamedValue <Constant> nvp = symbolTable.get ( name = V.toString () );
 			Utilities.errorForNull ( nvp, "Non constant power base, expected value for " + name );
-			Scalar exponent = ( (Constant) exponent () ).getValue ();
-			return nvp.getNamedValue ().pow ( exponent.intValue () );
+			int exponent = ( (Constant) exponent () ).getValue ().intValue ();
+			return nvp.getIdentifiedContent ().getValue ().pow ( exponent );
 		}
 
 		/**
