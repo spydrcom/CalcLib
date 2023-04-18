@@ -1,7 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
 import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
 import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
@@ -40,9 +39,12 @@ public class SubstitutionProcessing extends SolutionData
 	 */
 	public void doSubstitution ()
 	{
+		Factor equation;
 		for (Integer power : analysis.getPowers ())
 		{
-			equations.add (doSubstitutionForTerm (analysis.getTermFor (power)));
+			Sum term = analysis.getTermFor (power);
+			if ( ( equation = doSubstitutionForTerm ( term ) ) != null )
+			{ equations.add (equation); }
 		}
 	}
 	protected MatrixSolution.SystemOfEquations equations = new MatrixSolution.SystemOfEquations ();
@@ -59,20 +61,39 @@ public class SubstitutionProcessing extends SolutionData
 	{
 		if (term instanceof Sum)
 		{
-			Factor subs;
 			Sum result = new Sum (converter);
-			Scalar cons = converter.getZero ();
-			for (Factor factor : (Sum) term)
-			{
-				if ( (subs = doSubstitutionForProduct (factor)) instanceof Constant )
-				{ ArithmeticFundamentals.plusEquals (cons, valueOf ( subs ) ); }
-				else { add (subs, result); }
-			}
-			if ( cons.isNot (0.0) )
-			{ result.add ( new Constant (converter, cons) ); }
+			Scalar constantTerm = converter.getZero ();
+
+			doSubstitutionsForTerm ( term, constantTerm, result );
+
+			if ( ! nullTermCheck ( result, constantTerm ) )		// 0 is ignored as factor to avoid superfluous content
+			{ insert ( constantTerm, result, 0.0 ); }			// constant should by convention be first term in series
+			else { result = null; }								// flag condition which indicates constant zero term
 			return result;
 		}
+
 		return doSubstitutionForProduct (term);
+	}
+	void doSubstitutionsForTerm
+	(Factor term, Scalar constantTerm, Sum result)
+	{
+		Factor reducedProduct;
+		for (Factor factor : (Sum) term)
+		{
+			if ( ( reducedProduct = doSubstitutionForProduct (factor) ) != null )
+			{
+				if ( isConstant ( reducedProduct ) )
+				{ Operations.additiveFolding ( constantTerm, reducedProduct ); }
+				else { add ( reducedProduct, result ); }
+			}
+		}
+	}
+	boolean nullTermCheck (Sum evaluatedSeries, Scalar constantTerm)
+	{
+		// check for opportunity to completely eliminate degenerate equation
+		return evaluatedSeries.isEmpty () && constantTerm.isEqualTo ( 0.0 );
+		// constantTerm better be zero if series reduced to empty
+		// may want to check for invalid degenerate case here
 	}
 
 
@@ -84,20 +105,28 @@ public class SubstitutionProcessing extends SolutionData
 	{
 		if (product instanceof Product)
 		{
-			Factor subs;
 			Scalar scalar = converter.getOne ();
 			Product result = new Product (converter);
-			for (Factor factor : (Product) product)
-			{
-				if ( (subs = doSubstitutionForOperand (factor)) instanceof Constant )
-				{ ArithmeticFundamentals.timesEquals ( scalar, valueOf ( subs ) ); }
-				else { add (subs, result); }
-			}
-			if ( scalar.isNot (1.0) )
-			{ result.add (0, new Constant (converter, scalar)); }
-			return reduceSingle (result);
+
+			doSubstitutionsForProduct ( product, scalar, result );
+
+			if ( scalar.isEqualTo ( 0.0 ) ) return null;		// multiplier is zero so raise NULL condition
+			else insert ( scalar, result, 1.0 );				// constant should by convention be first factor
+			return reduceSingle (result);						// 1 is ignored as factor to avoid superfluous content
 		}
+
 		return doSubstitutionForOperand (product);
+	}
+	void doSubstitutionsForProduct
+	(Factor product, Scalar scalar, Product result)
+	{
+		Factor reducedOperand;
+		for (Factor factor : (Product) product)
+		{
+			if ( isConstant ( ( reducedOperand = doSubstitutionForOperand (factor) ) ) )
+			{ Operations.multiplicativeFolding ( scalar, reducedOperand ); }
+			else { add (reducedOperand, result); }
+		}
 	}
 
 
@@ -110,10 +139,10 @@ public class SubstitutionProcessing extends SolutionData
 	{
 		if (operand instanceof Variable)
 		{
-			NameValuePair NVP;
+			NamedValue < Constant > NVP;
 			Variable variable = (Variable) operand;
 			return ( NVP = symbolTable.get ( variable.toString () ) ) == null ?
-					variable : NVP.getConstantValue ();
+					variable : NVP.getIdentifiedContent ();
 		}
 		if (operand instanceof Power)
 		{
