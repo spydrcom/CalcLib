@@ -173,9 +173,9 @@ public class Solution <T> extends SubstitutionProcessing
 			catch (Exception e) { throw new RuntimeException ("Coefficient error: " + coefficientName, e); }
 		}
 	}
-	void addCoefficientTo (CoefficientsList solutionVector, NameValuePair from)
+	void addCoefficientTo (CoefficientsList solutionVector, NamedValue <Constant> from)
 	{
-		solutionVector.add ( this.converter.convertedFrom ( from.getNamedValue () ) );
+		solutionVector.add ( this.converter.convertedFrom ( from.getIdentifiedContent ().getValue () ) );
 	}
 
 
