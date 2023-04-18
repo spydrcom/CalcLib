@@ -24,12 +24,6 @@ public class MatrixSolution <T> extends SolutionData
 {
 
 
-	// allocation of dimensioned objects
-
-	public Matrix <T> MAT (int N) { return new Matrix <> (N, N, manager); }
-	public Matrix <T> VEC (int N) { return new Matrix <> (N, 1, manager); }
-
-
 	/**
 	 * map symbols to ordered index within solution
 	 */
@@ -104,7 +98,9 @@ public class MatrixSolution <T> extends SolutionData
 	 */
 	public Matrix <T> solve (SystemOfEquations equations, SymbolIndexMap indices, int N)
 	{
-		Matrix <T> solutionMatrix = MAT (N); Matrix <T> solutionVector = VEC (N);
+		Matrix <T>
+			solutionMatrix = Matrix.square (N, manager),
+			solutionVector = Matrix.column (N, manager);
 		this.loadSolution ( equations, solutionMatrix, solutionVector, indices, N );
 		Matrix <T> computedSolution = this.solutionFor ( solutionMatrix, solutionVector );
 		this.buildAugmentedMatrix ( solutionMatrix, solutionVector );
@@ -154,7 +150,8 @@ public class MatrixSolution <T> extends SolutionData
 	 * make the work-product available after use
 	 * @return the augmented matrix built for the solution
 	 */
-	public WorkProduct <T> getAugmentedMatrix () { return augmentedMatrix; }
+	public WorkProduct <T>
+		getAugmentedMatrix () { return augmentedMatrix; }
 	protected WorkProduct <T> augmentedMatrix;
 
 	/**
@@ -171,7 +168,7 @@ public class MatrixSolution <T> extends SolutionData
 	 * @return the list of values
 	 */
 	private ItemList <T> getColumn (Matrix <T> from, int columnNumber)
-	{ return new ItemList <T> (from.getCol (columnNumber).getElementsList ()); }
+	{ return new ItemList <T> ( from.getCol (columnNumber).getElementsList () ); }
 
 	/**
 	 * @return the list of symbols in the solution matrix
@@ -247,7 +244,7 @@ public class MatrixSolution <T> extends SolutionData
 			{
 				if (column < 1 || column > vector.size ())
 				{
-					stream.println ("Factor in error: " + factor);
+					stream.println ("*** Factor in error: " + factor);
 					continue;
 				}
 				T cell = manager.add (vector.get (column), scalar);
@@ -345,18 +342,13 @@ public class MatrixSolution <T> extends SolutionData
 	{
 		for (int i = 1; i <= computedSolution.rowCount (); i++)
 		{
-			symbolTable.add
+			symbolTable.include
 			(
 				symbolOrder.get ( i - 1 ),
 
-				new Constant
+				this.converter.toScalar
 				(
-					this.converter,
-
-					this.converter.toScalar
-					(
-						computedSolution.get (i, 1)
-					)
+					computedSolution.get (i, 1)
 				)
 			);
 		}
