@@ -17,6 +17,30 @@ import java.util.List;
 public class Matrix<T> extends ListOperations<T> implements MatrixAccess<T>
 {
 
+
+	/**
+	 * construct a square matrix
+	 * @param N the edge size of the matrix
+	 * @param manager a manger for the data type
+	 * @return the new square matrix
+	 * @param <T> data type
+	 */
+	public static <T> Matrix <T>
+		square (int N, SpaceManager <T> manager)
+	{ return new Matrix <> (N, N, manager); }
+
+	/**
+	 * construct a column matrix
+	 * @param N the count of rows in the column
+	 * @param manager a manger for the data type
+	 * @return the new column matrix
+	 * @param <T> data type
+	 */
+	public static <T> Matrix <T>
+		column (int N, SpaceManager <T> manager)
+	{ return new Matrix <> (N, 1, manager); }
+
+
 	/**
 	 * construct a new matrix
 	 * @param rows the count of rows in the the matrix
