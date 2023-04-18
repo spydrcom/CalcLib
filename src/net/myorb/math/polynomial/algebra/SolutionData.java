@@ -17,45 +17,63 @@ public class SolutionData extends Utilities
 	/**
 	 * a set of equation to solve with linear algebra
 	 */
-	public static class SystemOfEquations extends ItemList <Factor>
+	public static class SystemOfEquations extends ItemList < Factor >
 	{ private static final long serialVersionUID = 2065886325470713453L; }
 
 
 	/**
-	 * text value name with Constant value
+	 * symbol table for constants
 	 */
-	public static class NameValuePair
+	public static class NamedConstant extends IdentifiedValue < Constant >
 	{
 
-		public NameValuePair (String name, Constant value)
-		{this.nameOfSymbol = name; this.namedValue = value; }
-		public String getNameOfValue () { return nameOfSymbol; }
-		private String nameOfSymbol;
+		NamedConstant
+		(Conversions <?> converter) { this.converter = converter; }
+		public Conversions <?> converter;
 
-		public Constant getConstantValue () { return namedValue; }
-		public String toString () { return namedValue.toString (); }
-		public Scalar getNamedValue () { return namedValue.getValue (); }
-		private Constant namedValue;
+		/**
+		 * parse an expression
+		 *  and evaluate to resolve to constant
+		 * @param name the identifier for the evaluated constant
+		 * @param value the text of the expression
+		 */
+		public void include (String name, String value)
+		{
+			include (name, converter.fromText (value) );
+		}
 
+		/**
+		 * use constant taken from double value
+		 * @param name the identifier for the evaluated constant
+		 * @param value the value to use for this identifier
+		 */
+		public void include (String name, Double value)
+		{
+			include (name, converter.convertFromDouble (value) );
+		}
+
+		/**
+		 * use constant taken from Scalar value
+		 * @param name the identifier for the evaluated constant
+		 * @param value the value to use for this identifier
+		 */
+		public void include (String name, Scalar value)
+		{
+			include (name, new Constant ( converter, value) );			
+		}
+
+		private static final long serialVersionUID = 2336556298313040835L;
 	}
 
 
 	/**
 	 * map name to pair
 	 */
-	public static class SymbolValues extends SymbolicMap <NameValuePair>
+	public static class SymbolValues extends NamedConstant
 			implements InitialConditionsProcessor.SymbolTranslator
 	{
 
-		SymbolValues
-		(Conversions <?> converter) { this.converter = converter; }
-		public Conversions <?> converter;
-
-		/**
-		 * @param stream stream to send symbol list to
-		 */
-		public void showSymbols (java.io.PrintStream stream)
-		{ formatSectionBreak ("", stream); formatSectionBreak (this, stream); stream.println (); }
+		SymbolValues (Conversions <?> converter) { super (converter); }
 
 		// computation of Initial Conditions by Processor object
 
@@ -68,48 +86,24 @@ public class SolutionData extends Utilities
 			InitialConditionsProcessor.computeInitialConditions (processorName, this);
 		}
 
+		// implementation of SymbolTranslator
+
 		/* (non-Javadoc)
 		 * @see net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator#valueFor(java.lang.String)
 		 */
 		public Double valueFor (String symbol)
 		{
-			NameValuePair content = this.get (symbol);
+			NamedValue <Constant> content = this.get (symbol);
 			errorForNull ( content, "No value for symbol: " + symbol );
-			return content.getNamedValue ().toDouble ();
+			return content.getIdentifiedContent ().getValue ().toDouble ();
 		}
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.polynomial.InitialConditionsProcessor.SymbolTranslator#set(java.lang.String, java.lang.Double)
 		 */
-		public void set (String symbol, Double to)
-		{
-			add ( symbol, new Constant ( converter, converter.convertFromDouble (to) ) );
-		}
+		public void set (String symbol, Double to) { include (symbol, to); }
 
 		// symbol mapping primitives
-
-		/**
-		 * assign constant to symbol
-		 * @param name the name for the symbol
-		 * @param value the value for the symbol
-		 * @return the NameValuePair constructed
-		 */
-		public NameValuePair pair (String name, String value)
-		{ return new NameValuePair ( name, toConstant (value) ); }
-
-		/**
-		 * parse an expression and evaluate to resolve to  constant
-		 * @param value the text of the expression
-		 * @return the value as a Constant
-		 */
-		public Constant toConstant (String value) { return new Constant ( converter, converter.fromText (value) ); }
-
-		/**
-		 * add a Name/Value pair to a symbol
-		 * @param name the name for the symbol
-		 * @param value the value to assign to the name
-		 */
-		public void add (String name, Constant value) { this.put (name, new NameValuePair (name, value)); }
 
 		/**
 		 * add a name/value pair
@@ -119,10 +113,18 @@ public class SolutionData extends Utilities
 		public void add (String name, String value)
 		{
 			if ( ! name.startsWith (INITIAL_CONDITIONS_PROCESSOR_REFERENCE) )
-			{ this.put (name, this.pair ( name, value ) ); }
-			else processIC (value);
+			{ include ( name, value ); } else { processIC ( value ); }
 		}
 		public static final String INITIAL_CONDITIONS_PROCESSOR_REFERENCE = "#";
+
+		// trace formatter
+
+		/**
+		 * @param stream stream to send symbol list to
+		 */
+		public void showSymbols (java.io.PrintStream stream)
+		{ formatSectionBreak ("", stream); formatSectionBreak (this, stream); stream.println (); }
+
 		private static final long serialVersionUID = 70879534035012284L;
 
 	}
