@@ -134,11 +134,13 @@ public class Operations extends Utilities
 			Scalar scalar, Factor factor
 		)
 	{
-		ArithmeticFundamentals.timesEquals
+		multiplicativeFolding
 		(
 			scalar, Constant.getValueFrom (factor)
 		);
 	}
+	public static void multiplicativeFolding ( Scalar scalar, Scalar factor )
+	{ ArithmeticFundamentals.timesEquals ( scalar, factor ); }
 
 
 	/**
@@ -152,11 +154,13 @@ public class Operations extends Utilities
 			Scalar scalar, Factor addend
 		)
 	{
-		ArithmeticFundamentals.plusEquals
+		additiveFolding
 		(
 			scalar, Constant.getValueFrom (addend)
 		);
 	}
+	public static void additiveFolding ( Scalar scalar, Scalar addend )
+	{ ArithmeticFundamentals.plusEquals ( scalar, addend ); }
 
 
 }
