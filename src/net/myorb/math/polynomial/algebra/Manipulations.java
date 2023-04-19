@@ -16,7 +16,7 @@ public class Manipulations extends Utilities
 	 * a map for term order to specified object
 	 * @param <TO> the target of the map
 	 */
-	public static class ExponentMap <TO> extends java.util.HashMap <Integer, TO>
+	public static class ExponentMap <TO> extends OrderedMap <Integer, TO>
 	{ private static final long serialVersionUID = 8879561776409176307L; }
 
 
@@ -528,12 +528,9 @@ public class Manipulations extends Utilities
 		/**
 		 * @return sorted list of compiled powers
 		 */
-		public Integer [] getPowers ()
+		public ItemList < Integer > getPowers ()
 		{
-			Integer [] exponents =
-				keySet ().toArray (new Integer[]{});
-			java.util.Arrays.sort (exponents);
-			return exponents;
+			return getOrderedValues ();
 		}
 
 		private static final long serialVersionUID = 2421713129615367536L;
@@ -584,12 +581,15 @@ public class Manipulations extends Utilities
 	public static Sum collectTerms
 		(Sum series, String variable, SeriesExpansion <?> root)
 	{
-		Powers powers = new Powers
-			(variable, root);
-		for ( Factor term : series )
-		{  powers.include (term);  }
-		root.linkAnalysis ( powers );
+		Powers powers = new Powers (variable, root);
+		root.linkAnalysis ( collectedTerms (series, powers) );
 		return powers.getSeries ();
+	}
+	static Powers collectedTerms (Sum series, Powers powers)
+	{
+		for ( Factor term : series )
+		{ powers.include (term); }
+		return powers;
 	}
 
 
