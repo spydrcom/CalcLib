@@ -1,7 +1,6 @@
 
 package net.myorb.math.polynomial.algebra;
 
-import net.myorb.math.computational.ArithmeticFundamentals;
 import net.myorb.math.computational.ArithmeticFundamentals.Scalar;
 import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
 
@@ -196,7 +195,7 @@ public class Manipulations extends Utilities
 				if ( ( factor = this.get (image) ) == null )
 				{ this.put ( image, new ScaledFactor (factors, scalar) ); }
 				// additive folding of exponents found to both refer to same factors
-				else ArithmeticFundamentals.plusEquals (factor.scalar, scalar);
+				else Operations.additiveFolding ( factor.scalar, scalar );
 			}
 
 			/**

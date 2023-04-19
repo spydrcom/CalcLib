@@ -54,6 +54,7 @@ public class SubstitutionProcessing extends SolutionData
 
 
 	/**
+	 * process constants found as terms in a sum
 	 * @param term a term to be updated
 	 * @return the updated node
 	 */
@@ -64,7 +65,10 @@ public class SubstitutionProcessing extends SolutionData
 			Sum result = new Sum (converter);
 			Scalar constantTerm = converter.getZero ();
 
-			doSubstitutionsForTerm ( term, constantTerm, result );
+			doSubstitutionsForTerms
+			(
+				(Sum) term, constantTerm, result
+			);
 
 			if ( ! nullTermCheck ( result, constantTerm ) )		// 0 is ignored as factor to avoid superfluous content
 			{ insert ( constantTerm, result, 0.0 ); }			// constant should by convention be first term in series
@@ -74,11 +78,11 @@ public class SubstitutionProcessing extends SolutionData
 
 		return doSubstitutionForProduct (term);
 	}
-	void doSubstitutionsForTerm
-	(Factor term, Scalar constantTerm, Sum result)
+	void doSubstitutionsForTerms
+	(Sum terms, Scalar constantTerm, Sum result)
 	{
 		Factor reducedProduct;
-		for (Factor factor : (Sum) term)
+		for (Factor factor : terms)
 		{
 			if ( ( reducedProduct = doSubstitutionForProduct (factor) ) != null )
 			{
@@ -98,6 +102,7 @@ public class SubstitutionProcessing extends SolutionData
 
 
 	/**
+	 * process constants found as factors in a product
 	 * @param product a product to be updated
 	 * @return the updated node
 	 */
@@ -108,7 +113,10 @@ public class SubstitutionProcessing extends SolutionData
 			Scalar scalar = converter.getOne ();
 			Product result = new Product (converter);
 
-			doSubstitutionsForProduct ( product, scalar, result );
+			doSubstitutionsForProducts
+			(
+				(Product) product, scalar, result
+			);
 
 			if ( scalar.isEqualTo ( 0.0 ) ) return null;		// multiplier is zero so raise NULL condition
 			else insert ( scalar, result, 1.0 );				// constant should by convention be first factor
@@ -117,11 +125,11 @@ public class SubstitutionProcessing extends SolutionData
 
 		return doSubstitutionForOperand (product);
 	}
-	void doSubstitutionsForProduct
-	(Factor product, Scalar scalar, Product result)
+	void doSubstitutionsForProducts
+	(Product factors, Scalar scalar, Product result)
 	{
 		Factor reducedOperand;
-		for (Factor factor : (Product) product)
+		for (Factor factor : factors)
 		{
 			if ( isConstant ( ( reducedOperand = doSubstitutionForOperand (factor) ) ) )
 			{ Operations.multiplicativeFolding ( scalar, reducedOperand ); }
