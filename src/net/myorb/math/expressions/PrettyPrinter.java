@@ -2,9 +2,11 @@
 package net.myorb.math.expressions;
 
 // CalcLib imports
+import net.myorb.math.polynomial.algebra.SeriesExpansion;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MmlDisplayFormatter;
 import net.myorb.math.expressions.symbols.DefinedTransform;
+import net.myorb.math.expressions.commands.Rendering;
 
 // IOlib imports
 import net.myorb.data.abstractions.SimplePropertiesManager;
@@ -116,6 +118,21 @@ public class PrettyPrinter<T> extends RenderingDisplay
 	public void formatPolynomial (String name)
 	{
 		formatter.formatPolynomial ( name, formatter.getCoefficients (name) );
+	}
+
+
+	/**
+	 * process a RENDERS command
+	 * @param name the name of the function holding the series
+	 * @param series the series associated with a posted function
+	 * @param renderer the rendering object to use
+	 */
+	public void formatSeries
+		(String name, SeriesExpansion <T> series, Rendering <T> renderer)
+	{
+		if ( series == null )
+		{ throw new RuntimeException ("No series associated with " + name); }
+		formatter.renderExpandedSeries (name, renderer);
 	}
 
 
