@@ -28,6 +28,7 @@ public class OperatorNomenclature
 	PRETTYPRINT_KEYWORD = "PRETTYPRINT",		// PRETTYPRINT symbol	format and display (pretty print) the value of a symbol
 	RENDER_KEYWORD = "RENDER",					// RENDER equation		format and display (pretty print) an equation using MathML
 	RENDER_FUNCTION_KEYWORD = "RENDERF",		// RENDERF function		format and display (pretty print) the function using MathML
+	RENDER_SERIES_KEYWORD = "RENDERS",			// RENDERS function		format and display (pretty print) the attached series using MathML
 	RENDER_DIFFEQ_KEYWORD = "RENDERD",			// RENDERD function		format and display (pretty print) the function as DE using MathML
 	POLYPRINT_KEYWORD = "POLYPRINT",			// POLYPRINT symbol		format and display (pretty print) the represented polynomial
 	SCRIPTPRINT_KEYWORD = "SCRIPTPRINT",		// SCRIPTPRINT file		display the contents of a script file to the console
