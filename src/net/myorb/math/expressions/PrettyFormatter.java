@@ -10,12 +10,14 @@ import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.Matrix;
 
 // CalcLib expressions
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MathML;
+import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.commands.Rendering;
 
 // IOlib abstractions
 import net.myorb.data.abstractions.Function;
+import net.myorb.data.abstractions.CommonDataStructures.ItemList;
 
 // JRE imports
 import java.io.PrintStream;
@@ -264,20 +266,53 @@ public class PrettyFormatter<T>
 	 */
 	public void renderExpandedSeries (String functionName, Rendering <T> renderer)
 	{
-		try { renderExpandedSeries (functionName, renderer, new SeriesExpansion <T> (environment)); }
+		String title = "Expanded series from " + functionName;
+		try { renderExpandedSeries (title, functionName, renderer, new SeriesExpansion <T> (environment)); }
 		catch (Exception e) { throw new RuntimeException ( "Render failed", e ); }
 	}
 	public void renderExpandedSeries
-		(String functionName, Rendering <T> renderer, SeriesExpansion <T> processor)
+		(
+			String title, String functionName,
+			Rendering <T> renderer, SeriesExpansion <T> processor
+		)
 	throws Exception
 	{
-//		System.out.println (processor.expandSequence ( functionName ));
-
+		renderExpandedSeriesMultipleLine
+		(
+			processor.expandedSeries (functionName),
+			renderer, title, processor
+		);
+	}
+	public void renderExpandedSeriesMultipleLine
+		(
+			ItemList < CommandSequence > terms,
+			Rendering <T> renderer, String title,
+			SeriesExpansion <T> processor
+		)
+	throws Exception
+	{
+		for (CommandSequence term : terms)
+		{
+			renderer.render
+			(
+				term, processor.parameterList (),
+				title
+			);
+		}
+	}
+	public void renderExpandedSeriesSingleLine
+		(
+			String title, String functionName,
+			Rendering <T> renderer, SeriesExpansion <T> processor
+		)
+	throws Exception
+	{
 		renderer.render
 		(
 			processor.expandSequence ( functionName ),
-			processor.parameterList (), "Expanded series from " + functionName
+			processor.parameterList (), title
 		);
+		System.out.println (processor.expandSequence ( functionName ));
 	}
 
 
