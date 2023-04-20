@@ -37,7 +37,7 @@ public class MathML extends TokenProcessing
 	 */
 	public String renderSegment (List<TokenParser.TokenDescriptor> tokens) throws Exception
 	{
-		String tokenImage;
+		String tokenImage; TokenParser.TokenType tokenType;
 		TokenSequence seq = new TokenSequence (tokens);
 		initializeContexts ();
 
@@ -45,18 +45,26 @@ public class MathML extends TokenProcessing
 		{
 			tokenImage = seq.next (); lookAhead (seq);
 			if (arrayFoundAndRangeProcessed (seq)) continue;
-
-			TokenParser.TokenType tokenType = checkContext (seq);
-			if (tokenType == TokenParser.TokenType.OPR) processOperatorOrDelimiter (tokenImage);								// <mo> operation
-			else if (tokenType == TokenParser.TokenType.IDN) pushLeaf (idFor (tokenImage), ATOMIC_LEAF_PRECEDENCE);				// <mi> identifier
-			else pushLeaf (nodeFormater.formatNumericReference (tokenImage), ATOMIC_LEAF_PRECEDENCE);							// <mn> number
-
+			renderSegmentPortion (tokenImage, tokenType = checkContext (seq), tokens);
 			lastTokenWas (tokenType, tokenImage);
 			dump ();
 		}
 
 		while (getLastPrec () > 0 && stillAbleToPop ()) {}
 		return bracket (getLastLeaf ());
+	}
+	void renderSegmentPortion
+		(
+			String tokenImage, TokenParser.TokenType tokenType,
+			List<TokenParser.TokenDescriptor> tokens
+		)
+	{
+		try
+		{
+			if (tokenType == TokenParser.TokenType.OPR) processOperatorOrDelimiter (tokenImage);								// <mo> operation
+			else if (tokenType == TokenParser.TokenType.IDN) pushLeaf (idFor (tokenImage), ATOMIC_LEAF_PRECEDENCE);				// <mi> identifier
+			else pushLeaf (nodeFormater.formatNumericReference (tokenImage), ATOMIC_LEAF_PRECEDENCE);							// <mn> number
+		} catch (Exception e) { segmentError (tokenImage, tokens, e); }
 	}
 
 
