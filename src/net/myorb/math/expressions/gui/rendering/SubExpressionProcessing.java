@@ -4,6 +4,7 @@ package net.myorb.math.expressions.gui.rendering;
 import net.myorb.math.expressions.symbols.AbstractVectorReduction;
 
 import net.myorb.math.expressions.GreekSymbols;
+import net.myorb.math.expressions.TokenParser;
 import net.myorb.math.expressions.SymbolMap;
 
 import java.util.ArrayList;
@@ -299,6 +300,29 @@ public class SubExpressionProcessing
 		System.out.println ("opStack   = " + opStack);
 		System.out.println ("+++");
 	}
+
+
+	/**
+	 * recognition of syntax flaw in token stream
+	 * @param tokenImage the token being processed when error found
+	 * @param tokens the full token stream providing context
+	 * @param sourceOfError the Exception being processed
+	 */
+	public static void segmentError
+		(
+			String tokenImage,
+			List < TokenParser.TokenDescriptor > tokens,
+			Exception sourceOfError
+		)
+	{
+		System.err.println (tokens);
+
+		throw new RuntimeException
+		(
+			SEGMENT_ERROR_MESSAGE + tokenImage, sourceOfError
+		);
+	}
+	static final String SEGMENT_ERROR_MESSAGE = "Error processing segment in render at ";
 
 
 }
