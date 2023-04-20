@@ -1,12 +1,11 @@
 
 package net.myorb.math.expressions.commands;
 
-import net.myorb.math.expressions.OperatorNomenclature;
-import net.myorb.math.expressions.DifferentialEquationsManager;
-
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.symbols.AbstractFunction;
+import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.expressions.DifferentialEquationsManager;
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.PrettyPrinter;
 import net.myorb.math.expressions.TokenParser;
 
@@ -32,6 +31,23 @@ public class Rendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * lookup function in symbol table
+	 * @param tokens the source from the command line
+	 * @return the function if found in the symbol table
+	 * @throws RuntimeException when function not found
+	 */
+	public AbstractFunction <T>
+		identify (CommandSequence tokens)
+	throws RuntimeException
+	{
+		String functionName = Utilities.getSequenceFollowing (1, tokens);
+		AbstractFunction <T> f = AbstractFunction.cast ( formatter.getSymbolMap ().get (functionName) );
+		if (f == null) { throw new RuntimeException ("No such function: " + functionName); }
+		return f;
+	}
+
+
+	/**
 	 * command line tokens are rendered as expression/equation
 	 * @param sequence the list of tokens from the command
 	 */
@@ -45,15 +61,25 @@ public class Rendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * render an expanded series posted to the symbol table
+	 * @param sequence the list of tokens from the command
+	 */
+	public void RenderSeries (CommandSequence sequence)
+	{
+		AbstractFunction <T> F = identify (sequence);
+		new PrettyPrinter <T> (environment).formatSeries
+		(F.getName (), F.getSeries (), this);
+	}
+
+
+	/**
 	 * render an entry from the functions list
 	 * @param sequence the list of tokens from the command
 	 */
 	public void RenderFunction (CommandSequence sequence)
 	{
-		TokenParser.TokenSequence tokens;
-		String functionName = Utilities.getSequenceFollowing (1, sequence);
-		AbstractFunction<T> f = AbstractFunction.cast (formatter.getSymbolMap ().get (functionName));
-		if (f == null) { throw new RuntimeException ("No such function: " + functionName); }
+		TokenParser.TokenSequence tokens; AbstractFunction<T> f;
+		String functionName = ( f = identify (sequence) ).getName ();
 		if ( ! OperatorNomenclature.isIndexReference (functionName) )
 		{   tokens = getProfileTokens (functionName, f);   }
 		else tokens = getLambdaTokens (functionName, f);
