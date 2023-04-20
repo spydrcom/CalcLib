@@ -145,6 +145,11 @@ public abstract class Elements extends CommonDataStructures
 		public Negated (Conversions <?> converter) { this.converter = converter; }
 		public Conversions <?> getConverter () { return converter; }
 
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString () { return "-" + child.toString (); }
+
 		public OpTypes getType () { return OpTypes.Negation; }
 		public Negated (Factor factor) { this.child = factor; }
 		public void identify (SymbolicReferences symbols) { child.identify (symbols); }
