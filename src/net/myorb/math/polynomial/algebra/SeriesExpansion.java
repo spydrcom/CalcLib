@@ -4,12 +4,11 @@ package net.myorb.math.polynomial.algebra;
 import net.myorb.math.polynomial.families.*;
 import net.myorb.math.polynomial.InitialConditionsProcessor;
 
-import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-
 import net.myorb.math.expressions.symbols.DefinedFunction;
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.evaluationstates.Environment;
+import net.myorb.math.expressions.gui.rendering.SeriesFormatter;
+import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.math.computational.ArithmeticFundamentals;
 import net.myorb.math.computational.ArithmeticFundamentals.Conversions;
@@ -51,11 +50,12 @@ public class SeriesExpansion <T> extends ParameterManagement
 		)
 	{
 		this.setSolutionBeingBuilt (newFunctionName);
-		CommandSequence seq = expandSequence ( sourceFunctionName );
 
 		DefinedFunction.defineUserFunction
 		(
-			newFunctionName, parameterList (), seq, environment
+			newFunctionName, parameterList (),
+			SeriesFormatter.expandSequence ( sourceFunctionName, this ),
+			environment
 		);
 	}
 
@@ -85,73 +85,14 @@ public class SeriesExpansion <T> extends ParameterManagement
 
 
 	/**
-	 * produce expanded version of function sequence
-	 * @param functionName the name of the function in the symbol table
-	 * @return the expanded sequence
-	 */
-	public CommandSequence expandSequence (String functionName)
-	{
-		return parseSequence
-		(
-			expandedDescription (functionName).toString ()
-		);
-	}
-
-
-	/**
-	 * parse content into command sequence
-	 * @param source the text of command segment to parse
-	 * @return the parsed sequence
-	 */
-	public CommandSequence parseSequence (String source)
-	{
-		return new CommandSequence
-		(
-			TokenParser.parse
-			(
-				new StringBuffer (source)
-			)
-		);
-	}
-
-
-	/**
-	 * buffer the text of expanded version of equation
-	 * @param functionName the name of the function in the symbol table
-	 * @return buffer holding text of expanded equation
-	 */
-	public String expandedDescription (String functionName)
-	{
-		return expandedTree (functionName).toString ();
-	}
-
-
-	/**
-	 * expand a series and return description as sequence of terms
-	 * @param functionName the name of the function in the symbol table
-	 * @return a list of descriptions of the terms of the equation
-	 */
-	public ItemList < CommandSequence > expandedSeries (String functionName)
-	{
-		Elements.Factor expanded =
-				expandedTree (functionName);
-		ItemList < CommandSequence > terms = new ItemList <> ();
-
-		for (Factor factor : (Sum) expanded)
-		{ terms.add (parseSequence (factor.toString ())); }
-		return terms;
-	}
-
-
-	/**
 	 * build a tree representation for a function
 	 * @param functionName the name of the function in the symbol table
 	 * @return the Element tree root for the series
 	 */
 	public Elements.Factor expandedTree (String functionName)
 	{
-		this.setFunctionName (functionName);
-		Elements.Factor expandedRoot = reducedForm ( performExpansion (functionName) );
+		setFunctionName (functionName);
+		Factor expandedRoot = reducedForm ( performExpansion (functionName) );
 		if (showFunctionExpanded) System.out.println (expandedRoot);
 		return expandedRoot;
 	}
