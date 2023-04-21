@@ -2,12 +2,14 @@
 package net.myorb.math.polynomial;
 
 import net.myorb.math.polynomial.algebra.SeriesExpansion;
+import net.myorb.math.expressions.gui.rendering.SeriesFormatter;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.expressions.commands.CommandSequence;
 import net.myorb.math.expressions.symbols.DefinedFunction;
+
 
 /**
  * generator for polynomial functions
@@ -109,7 +111,7 @@ public class PolynomialGenerator <T>
 		for (int i = 2; i <= degree; i++)
 		{ int i1 = i + 1, i2 = i + 2; addTerm (i, 1, i, poly0); addTerm (i, i1, i1, poly1); addTerm (i, i1*i2, i2, poly2); }
 		define (functionName, poly0); define (functionName+OP.FIRST, poly1); define (functionName+OP.SECOND, poly2);
-		new SeriesExpansion <T> (environment).expandSequence (functionName);
+		SeriesFormatter.expandSequence ( functionName, new SeriesExpansion <T> (environment) );
 	}
 
 
