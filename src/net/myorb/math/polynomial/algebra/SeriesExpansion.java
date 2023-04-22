@@ -118,7 +118,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param profile the profile of a UDF in the symbol table
 	 * @return the root Factor node for describing this symbol
 	 */
-	public Elements.Factor expandSymbol (SymbolicReferenceDetails.FunctionProfile <T> profile)
+	public Elements.Factor expandSymbol
+		(SymbolicReferenceDetails.FunctionProfile <T> profile)
 	{
 		return expandSymbol ( getExpressionTreeFrom (profile), this );
 	}
@@ -141,7 +142,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param profile the profile of a UDF in the symbol table
 	 * @return the expression tree found linked to the profile
 	 */
-	public JsonValue getExpressionTreeFrom (SymbolicReferenceDetails.FunctionProfile <T> profile)
+	public JsonValue getExpressionTreeFrom
+		(SymbolicReferenceDetails.FunctionProfile <T> profile)
 	{
 		setPolynomialVariable ( profile.getParameterName () );
 		return getExpressionTree ( profile );
@@ -153,7 +155,8 @@ public class SeriesExpansion <T> extends ParameterManagement
 	 * @param symbol the Subroutine object found in the symbol table
 	 * @return the expression tree found linked to the Subroutine
 	 */
-	public JsonValue getExpressionTree (SymbolicReferenceDetails.FunctionProfile <T> symbol)
+	public JsonValue getExpressionTree
+		(SymbolicReferenceDetails.FunctionProfile <T> symbol)
 	{
 		JsonValue root = null;
 		try { root = symbol.getExpressionTree (); }
