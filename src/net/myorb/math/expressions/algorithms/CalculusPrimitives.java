@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.computational.CalculusMarkers;
+import net.myorb.math.computational.MultivariateCalculus;
 import net.myorb.math.computational.CalculusMarkers.CalculusMarkerTypes;
 
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
@@ -10,6 +11,7 @@ import net.myorb.math.expressions.symbols.AbstractCalculusOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
 import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ValueManager;
 
@@ -103,6 +105,98 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			{
 				return "<mrow><mi>" + ConventionalNotations.DELTA_XML_ESCAPE + "</mi><mo/>" + operand + "</mrow>";
 			}
+
+		};
+	}
+
+
+	/**
+	 * implement function - GRAD
+	 * @param symbol the name of the operator
+	 * @param precedence the precedence to be applied
+	 * @return the operator object
+	 */
+	public AbstractUnaryOperator getGradAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue
+			execute (ValueManager.GenericValue parameter)
+			{ return calculus.grad ( calculus.contextFrom (parameter) ); }
+			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay
+			(String operator, String operand, NodeFormatting using)
+			{ return calculus.markupForDisplay ( "", operand, using ); }
+
+		};
+	}
+
+
+	/**
+	 * implement function - DIV
+	 * @param symbol the name of the operator
+	 * @param precedence the precedence to be applied
+	 * @return the operator object
+	 */
+	public AbstractUnaryOperator getDivAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue
+				execute (ValueManager.GenericValue parameter)
+			{ return calculus.div ( calculus.contextFrom (parameter) ); }
+			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay
+			(String operator, String operand, NodeFormatting using)
+			{ return calculus.markupForDisplay ( DOT, operand, using ); }
+			static final String DOT = "\u00B7";
+
+		};
+	}
+
+
+	/**
+	 * implement function - CURL
+	 * @param symbol the name of the operator
+	 * @param precedence the precedence to be applied
+	 * @return the operator object
+	 */
+	public AbstractUnaryOperator getCurlAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractUnaryOperator (symbol, precedence)
+		{
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+			 */
+			public ValueManager.GenericValue
+				execute (ValueManager.GenericValue parameter)
+			{ return calculus.curl ( calculus.contextFrom (parameter) ); }
+			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay
+			(String operator, String operand, NodeFormatting using)
+			{ return calculus.markupForDisplay ( CROSS, operand, using ); }
+			static final String CROSS = "\u00D7";
 
 		};
 	}
