@@ -153,6 +153,12 @@ public class ValueManager <T>
 	}
 
 	/**
+	 * Multivariate Calculus Operation context
+	 */
+	public interface VectorOperation <T> extends GenericValue {}
+
+
+	/**
 	 * a holding place for an unrecognized symbol
 	 */
 	public interface UndefinedValue extends GenericValue {}
