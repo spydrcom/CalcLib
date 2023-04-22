@@ -3,16 +3,20 @@ package net.myorb.math.expressions.algorithms;
 
 import net.myorb.math.expressions.evaluationstates.Arrays;
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+
+import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
+import net.myorb.math.expressions.symbols.IterationConsumer;
+
 import net.myorb.math.expressions.symbols.AbstractBinaryOperator;
 import net.myorb.math.expressions.symbols.AbstractParameterizedFunction;
 import net.myorb.math.expressions.symbols.AbstractVectorReduction;
 import net.myorb.math.expressions.symbols.AbstractVectorConsumer;
-import net.myorb.math.expressions.symbols.IterationConsumerImplementations;
-import net.myorb.math.expressions.symbols.IterationConsumer;
-import net.myorb.math.computational.Statistics;
-import net.myorb.math.expressions.*;
+
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.*;
+
+import net.myorb.math.computational.Statistics;
 import net.myorb.math.matrices.*;
 
 import java.util.ArrayList;
