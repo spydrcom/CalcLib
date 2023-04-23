@@ -2,14 +2,20 @@
 package net.myorb.math.computational;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
-
+import net.myorb.math.expressions.symbols.AbstractFunction;
+import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
+import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
+import net.myorb.math.expressions.SymbolMap.Operation;
+import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.gui.rendering.MathMarkupNodes;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
 import net.myorb.math.expressions.ValueManager.RawValueList;
+import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager.Metadata;
 import net.myorb.math.expressions.ValueManager;
 
@@ -27,10 +33,39 @@ public class MultivariateCalculus <T>
 
 
 	/**
+	 * abstract base class for operator implementation objects
+	 */
+	public static abstract class VectorOperator extends AbstractUnaryOperator
+			implements CalculusMarkers.CalculusMetadata
+	{
+		public VectorOperator
+		(
+			String name, int precedence,
+			CalculusMarkers.CalculusMarkerTypes type
+		)
+		{ super (name, precedence); this.type = type; }
+
+		/* (non-Javadoc)
+		 * @see net.myorb.math.computational.CalculusMarkers.CalculusMetadata#typeOfOperation()
+		 */
+		public CalculusMarkers.CalculusMarkerTypes typeOfOperation () { return type; }
+		CalculusMarkers.CalculusMarkerTypes type;
+	}
+
+
+	/**
 	 * meta-data collected when the operation was invoked
 	 * @param <T> the data type
 	 */
-	public static class OperationMetadata <T> implements Metadata
+	public static class OperationMetadata implements Metadata
+	{
+		public OperationMetadata
+		(Operation op, Operation target)
+		{ this.op = op; this.target = target; }
+		Operation op, target;
+		int parameters = 1;
+	}
+	public static class TargetMetadata <T> implements Metadata
 	{
 		Subroutine <T> symbolDescription;
 		Function <T> function;
@@ -40,19 +75,19 @@ public class MultivariateCalculus <T>
 	 * the context passed from the equation processing
 	 * @param <T> the data type
 	 */
-	public static class OperationContext <T> implements ValueManager.VectorOperation <T>
+	public static class OperationContext implements ValueManager.VectorOperation
 	{
 
 		public OperationContext
-			(String name, OperationMetadata <T> metadata)
+			(String name, OperationMetadata metadata)
 		{ this.setName (name); this.setMetadata (metadata); }
-		String name; OperationMetadata <T> metadata;
+		String name; OperationMetadata metadata;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.ValueManager.GenericValue#setMetadata(net.myorb.math.expressions.ValueManager.Metadata)
 		 */
-		@SuppressWarnings("unchecked") public void setMetadata
-		(Metadata metadata) { this.metadata = (OperationMetadata <T>) metadata; }
+		public void setMetadata
+		(Metadata metadata) { this.metadata = (OperationMetadata) metadata; }
 		public void setName (String name) { this.name = name; }
 
 		/* (non-Javadoc)
@@ -63,13 +98,49 @@ public class MultivariateCalculus <T>
 		
 	}
 
+	public static Operation processVectorOperation (VectorOperator VO, Operation function)
+	{
+		return new MultivariateOperator ()
+		{
+			OperationContext context = new OperationContext (function.getName (), new OperationMetadata (VO, function));
+
+			public String markupForDisplay
+			(String operator, String parameters, NodeFormatting using)
+			{ return null; }
+
+			public String getParameterList() { return null; }
+
+			public String formatPretty () { return null; }
+
+			public GenericValue execute (GenericValue parameter)
+			{
+				System.out.println (parameter);
+				System.out.println ("VEC OP "+context.metadata.op.getName());
+				System.out.println ("TARGET "+context.metadata.target.getName());
+				System.out.println ("TYPE "+context.metadata.target.getClass().getCanonicalName());
+				System.out.println ("BODY "+context.metadata.target);
+				return ( (AbstractFunction) context.metadata.target ).execute (parameter);
+			}
+
+			public int getPrecedence() { return 99; }
+
+			public String getName() { return "MV_CALCULUS"; }
+
+			public SymbolType getSymbolType () { return SymbolType.PARAMETERIZED; }
+			
+		};
+	}
+
 
 	public MultivariateCalculus (Environment <T> environment)
 	{
 		this.valueManager = environment.getValueManager ();
+		if (valueManager instanceof ExpressionComponentSpaceManager)
+		{ this.compManager = (ExpressionComponentSpaceManager <T>) manager; }
 		this.manager = environment.getSpaceManager ();
 		this.environment = environment;
 	}
+	protected ExpressionComponentSpaceManager <T> compManager = null;
 	protected ExpressionSpaceManager <T> manager = null;
 	protected ValueManager <T> valueManager = null;
 	protected Environment <T> environment = null;
@@ -96,14 +167,14 @@ public class MultivariateCalculus <T>
 	 * @param context the meta-data holding the context
 	 * @return the matrix of partial derivatives
 	 */
-	public ValueManager.GenericValue grad (OperationContext <T> context)
+	public ValueManager.GenericValue grad (OperationContext context)
 	{
 		return valueManager.newMatrix (partialDerivativeComputations (context));
 	}
 
-	Matrix <T> partialDerivativeComputations (OperationContext <T> context)
+	Matrix <T> partialDerivativeComputations (OperationContext context)
 	{
-		Matrix <T> M; int N = context.metadata.symbolDescription.parameterCount ();
+		Matrix <T> M; int N = context.metadata.parameters;
 		partialDerivativeComputations (context, M = new Matrix <T> (N, N, manager), N);
 		return M;
 	}
@@ -115,7 +186,7 @@ public class MultivariateCalculus <T>
 	 * @param N the number of variables in the function
 	 */
 	void partialDerivativeComputations
-		(OperationContext <T> context, Matrix <T> results, int N)
+		(OperationContext context, Matrix <T> results, int N)
 	{
 		
 	}
@@ -126,7 +197,7 @@ public class MultivariateCalculus <T>
 	 * @param context the meta-data holding the context
 	 * @return the scalar value computed as divergence
 	 */
-	public ValueManager.GenericValue div (OperationContext <T> context)
+	public ValueManager.GenericValue div (OperationContext context)
 	{
 		T divergence =
 			computeDivergence (partialDerivativeComputations (context));
@@ -164,7 +235,7 @@ public class MultivariateCalculus <T>
 	 * @param context the meta-data holding the context
 	 * @return the scalar value computed as divergence
 	 */
-	public ValueManager.GenericValue curl (OperationContext <T> context)
+	public ValueManager.GenericValue curl (OperationContext context)
 	{
 		int N;
 		Matrix <T> M = partialDerivativeComputations (context);
@@ -217,16 +288,6 @@ public class MultivariateCalculus <T>
 		vector.add (Z); vector.add (Z); vector.add (Z);
 		return vector;
 	}
-
-
-	/**
-	 * convert meta-data to a context structure
-	 * @param parameter the GenericValue holding the meta-data from the expression
-	 * @return the context structure
-	 */
-	@SuppressWarnings("unchecked") public OperationContext <T>
-		contextFrom (ValueManager.GenericValue parameter)
-	{ return ( OperationContext <T> ) parameter ; }
 
 
 }
