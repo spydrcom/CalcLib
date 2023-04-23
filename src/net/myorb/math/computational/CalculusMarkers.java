@@ -20,6 +20,7 @@ public class CalculusMarkers
 		INTERVAL,										// interval calculation between domain points
 		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,		// Curtis-Clenshaw and Double Exponential quadrature forms
 		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,	// Trapezoidal rule evaluation and post-sum adjust
+		VECTOR_GRAD, VECTOR_DIV, VECTOR_CURL,			// grad, curl, and div vector operator references
 		DERIVATIVE										// simple function derivative approximation
 	}
 
@@ -44,6 +45,32 @@ public class CalculusMarkers
 		public CalculusMarkerTypes typeOfOperation ()
 		{
 			return CalculusMarkerTypes.INTERVAL;
+		}
+	}
+
+
+	/**
+	 * markers for vector operators
+	 */
+	public static class VectorGradMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.VECTOR_GRAD;
+		}
+	}
+	public static class VectorDivMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.VECTOR_DIV;
+		}
+	}
+	public static class VectorCurlMarker implements CalculusMetadata
+	{
+		public CalculusMarkerTypes typeOfOperation ()
+		{
+			return CalculusMarkerTypes.VECTOR_CURL;
 		}
 	}
 
