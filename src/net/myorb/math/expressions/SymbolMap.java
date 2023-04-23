@@ -242,6 +242,7 @@ public class SymbolMap extends HashMap <String, Object>
 		String markupForDisplay (String operator, String operand, NodeFormatting using);
 	}
 	public interface CalculusOperator extends UnaryOperator {}
+	public interface VectorOperator extends UnaryOperator {}
 
 	/**
 	 * one level of the value stack will be popped, the operator will be executed,
@@ -322,6 +323,7 @@ public class SymbolMap extends HashMap <String, Object>
 		 */
 		String formatPretty ();
 	}
+	public interface MultivariateOperator extends ParameterizedFunction {}
 
 
 	/**
