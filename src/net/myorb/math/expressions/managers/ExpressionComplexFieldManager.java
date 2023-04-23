@@ -177,7 +177,7 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#magnitude(java.lang.Object)
 	 */
-	public double magnitude (ComplexValue<Double> value)
+	public double magnitude (ComplexValue <Double> value)
 	{
 		return value.magnitude ();
 	}
@@ -185,14 +185,14 @@ public class ExpressionComplexFieldManager extends ComplexFieldManager<Double>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ExpressionComponentSpaceManager#construct(double[])
 	 */
-	public ComplexValue<Double> construct (double... components)
+	public ComplexValue <Double> construct (double... components)
 	{
+		check ( components.length );
 		double real = components[0], imaginary = 0.0;
-		if (components.length < 1 || components.length > 2)
-		{ throw new RuntimeException (CONSTRUCTION_ERROR); }
 		if (components.length > 1) { imaginary = components[1]; }
-		return new ComplexValue<Double> (real, imaginary, this.manager);
+		return new ComplexValue <Double> (real, imaginary, this.manager);
 	}
+	void check (int N) { if (N < 1 || N > 2) { throw new RuntimeException (CONSTRUCTION_ERROR); } }
 	static String CONSTRUCTION_ERROR = "Complex values can be constructed from one or two values only";
 
 	/* (non-Javadoc)
