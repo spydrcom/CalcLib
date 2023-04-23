@@ -155,7 +155,7 @@ public class ValueManager <T>
 	/**
 	 * Multivariate Calculus Operation context
 	 */
-	public interface VectorOperation <T> extends GenericValue {}
+	public interface VectorOperation extends GenericValue {}
 
 
 	/**
