@@ -118,16 +118,16 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getGradAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, GRAD)
 		{
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
 			 */
 			public ValueManager.GenericValue
-			execute (ValueManager.GenericValue parameter)
-			{ return calculus.grad ( calculus.contextFrom (parameter) ); }
+			execute (ValueManager.GenericValue parameter) { return calculus.grad ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+			
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
@@ -138,6 +138,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 
 		};
 	}
+	static final CalculusMarkers.CalculusMarkerTypes GRAD = CalculusMarkers.CalculusMarkerTypes.VECTOR_GRAD;
 
 
 	/**
@@ -148,15 +149,14 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getDivAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, DIV)
 		{
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
 			 */
 			public ValueManager.GenericValue
-				execute (ValueManager.GenericValue parameter)
-			{ return calculus.div ( calculus.contextFrom (parameter) ); }
+				execute (ValueManager.GenericValue parameter) { return calculus.div ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
 
 			/* (non-Javadoc)
@@ -169,6 +169,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 
 		};
 	}
+	static final CalculusMarkers.CalculusMarkerTypes DIV = CalculusMarkers.CalculusMarkerTypes.VECTOR_DIV;
 
 
 	/**
@@ -179,15 +180,14 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getCurlAlgorithm (String symbol, int precedence)
 	{
-		return new AbstractUnaryOperator (symbol, precedence)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, CURL)
 		{
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
 			 */
 			public ValueManager.GenericValue
-				execute (ValueManager.GenericValue parameter)
-			{ return calculus.curl ( calculus.contextFrom (parameter) ); }
+				execute (ValueManager.GenericValue parameter) { return calculus.curl ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
 
 			/* (non-Javadoc)
@@ -200,6 +200,8 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 
 		};
 	}
+	static final CalculusMarkers.CalculusMarkerTypes CURL = CalculusMarkers.CalculusMarkerTypes.VECTOR_CURL;
+
 
 
 	/**
