@@ -2,6 +2,7 @@
 package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.ExtendedPowerLibrary;
+import net.myorb.math.computational.MultivariateCalculus;
 import net.myorb.math.computational.FunctionRoots;
 
 import net.myorb.math.expressions.commands.CommandDictionary;
@@ -452,8 +453,31 @@ public class Primitives<T>
 	 */
 	protected void pushOpStack (SymbolMap.Operation op)
 	{
-		operationStack.add (tos);
-		tos = op;
+		if (tos instanceof MultivariateCalculus.VectorOperator)
+		{
+			processVectorOperator (op);
+		}
+		else
+		{
+			operationStack.add (tos);
+			tos = op;
+		}
+	}
+
+
+	/**
+	 * capture vector operation processor on operation stack
+	 * - replacing vector operation reference made in previous call
+	 * @param targetFunctionForOperation the target for the operation
+	 */
+	protected void processVectorOperator
+		(SymbolMap.Operation targetFunctionForOperation)
+	{
+		tos = MultivariateCalculus.processVectorOperation
+		(
+			(MultivariateCalculus.VectorOperator) tos,
+			targetFunctionForOperation
+		);
 	}
 
 

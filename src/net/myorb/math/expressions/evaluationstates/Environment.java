@@ -3,6 +3,7 @@ package net.myorb.math.expressions.evaluationstates;
 
 import net.myorb.math.expressions.algorithms.CyclicAndPowerLibrary;
 import net.myorb.gui.editor.SnipToolPropertyAccess;
+
 import net.myorb.math.expressions.*;
 import net.myorb.math.*;
 
