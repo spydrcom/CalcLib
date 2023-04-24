@@ -127,7 +127,8 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			public ValueManager.GenericValue
 			execute (ValueManager.GenericValue parameter) { return calculus.grad ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
-			
+			public Environment <T> getEnvironment () { return environment; }
+
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
@@ -158,6 +159,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			public ValueManager.GenericValue
 				execute (ValueManager.GenericValue parameter) { return calculus.div ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+			public Environment <T> getEnvironment () { return environment; }
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
@@ -189,6 +191,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			public ValueManager.GenericValue
 				execute (ValueManager.GenericValue parameter) { return calculus.curl ( null ); }
 			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
+			public Environment <T> getEnvironment () { return environment; }
 
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
