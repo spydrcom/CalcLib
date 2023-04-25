@@ -41,17 +41,15 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 
 
 	/**
-	 * identify the mechanisms used to treat the point as a generic value
-	 */
-	public enum Packaging { COMPONENT, DIMENSIONED, ELEMENTS, INDIVIDUAL }
-
-
-	/**
 	 * Coordinates are treated as a list of real values
 	 */
 	public static class Coordinates extends ItemList <Double>
 	{
-		Packaging packaging;
+		/**
+		 * identify the mechanisms used to treat the point as a generic value
+		 */
+		public enum Packaging { COMPONENT, DIMENSIONED, ELEMENTS, INDIVIDUAL }
+		protected Packaging packaging;
 		
 		/**
 		 * @return a real value array of the coordinate list
@@ -203,7 +201,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		{
 			Coordinates computed =
 				processVectorElementList ( processList (V) );
-			computed.packaging = Packaging.DIMENSIONED;
+			computed.packaging = Coordinates.Packaging.DIMENSIONED;
 			return computed;
 		}
 
@@ -234,7 +232,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			else throw new RuntimeException (UNRECOGNIZED);
 		}
 
-		computed.packaging = Packaging.INDIVIDUAL;
+		computed.packaging = Coordinates.Packaging.INDIVIDUAL;
 		return computed;
 	}
 
@@ -250,7 +248,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		Coordinates computed = new Coordinates ();
 		for (int n = 0; n < dataTypeDimensions; n++)
 		{ computed.add ( manager.convertToDouble (values.get (n)) ); }
-		computed.packaging = Packaging.ELEMENTS;
+		computed.packaging = Coordinates.Packaging.ELEMENTS;
 		return computed;
 	}
 
@@ -266,7 +264,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		Coordinates computed = new Coordinates ();
 		for (int n = 0; n < dataTypeDimensions; n++)
 		{ computed.add (compManager.component (value, n)); }
-		computed.packaging = Packaging.COMPONENT;
+		computed.packaging = Coordinates.Packaging.COMPONENT;
 		return computed;
 	}
 
