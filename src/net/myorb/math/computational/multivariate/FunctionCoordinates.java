@@ -80,9 +80,9 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			case COMPONENT:
 				return representComponents (coordinates);
 			case DIMENSIONED:
-				break;
+				return representDimensioned (coordinates);
 			case ELEMENTS:
-				break;
+				return representElements (coordinates);
 			case INDIVIDUAL:
 				break;
 			default:
@@ -101,6 +101,35 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	{
 		T parameter = compManager.construct ( coordinates.toVector () );
 		return valueManager.newDimensionedValue ( new ItemList <T> (parameter) );
+	}
+
+
+	/**
+	 * build a generic representation of arrayed elements
+	 * @param coordinates the Coordinates representation of the vector
+	 * @return the constructed GenericValue representation
+	 */
+	public ValueManager.GenericValue representElements (Coordinates coordinates)
+	{
+		ValueManager.RawValueList <T> values =
+			new ValueManager.RawValueList <T> ();
+		for (int n = 0; n < coordinates.size (); n++)
+		{ values.add (manager.convertFromDouble (coordinates.get (n))); }
+		return valueManager.newDimensionedValue (values);
+	}
+
+
+	/**
+	 * build a generic representation of a dimensioned vector
+	 * @param coordinates the Coordinates representation of the vector
+	 * @return the constructed GenericValue representation
+	 */
+	public ValueManager.GenericValue representDimensioned (Coordinates coordinates)
+	{
+		ValueManager.GenericValueList list =
+			new ValueManager.GenericValueList ();
+		list.add ( representElements (coordinates) );
+		return valueManager.newValueList (list);
 	}
 
 
