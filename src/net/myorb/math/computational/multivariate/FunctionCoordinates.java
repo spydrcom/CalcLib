@@ -18,7 +18,7 @@ import java.util.List;
  * @param <T> manager for data type
  * @author Michael Druckman
  */
-public class FunctionCoordinates <T>
+public class FunctionCoordinates <T> extends CommonDataStructures
 {
 
 
@@ -41,12 +41,66 @@ public class FunctionCoordinates <T>
 
 
 	/**
+	 * identify the mechanisms used to treat the point as a generic value
+	 */
+	public enum Packaging { COMPONENT, DIMENSIONED, ELEMENTS, INDIVIDUAL }
+
+
+	/**
 	 * Coordinates are treated as a list of real values
 	 */
-	public class Coordinates extends CommonDataStructures.ItemList <Double>
+	public static class Coordinates extends ItemList <Double>
 	{
+		Packaging packaging;
+		
+		/**
+		 * @return a real value array of the coordinate list
+		 */
+		public double [] toVector ()
+		{
+			double [] array = new double [size ()];
+			for (int n = 0; n < array.length; n++) array[n] = get (n);
+			return array;
+		}
+
 		//TODO: additional context required to allow points to become parameters
 		private static final long serialVersionUID = 6909479746233500672L;
+	}
+
+
+	/**
+	 * translate coordinates to a generic value
+	 * @param coordinates the coordinate computed as an evaluation point
+	 * @return the vector as a generic value
+	 */
+	public ValueManager.GenericValue represent (Coordinates coordinates)
+	{
+		switch (coordinates.packaging)
+		{
+			case COMPONENT:
+				return representComponents (coordinates);
+			case DIMENSIONED:
+				break;
+			case ELEMENTS:
+				break;
+			case INDIVIDUAL:
+				break;
+			default:
+				break;
+		}
+		throw new RuntimeException ("Unable to represent coordinates");
+	}
+
+
+	/**
+	 * build a generic representation of a component based vector
+	 * @param coordinates the Coordinates representation of the vector
+	 * @return the constructed GenericValue representation
+	 */
+	public ValueManager.GenericValue representComponents (Coordinates coordinates)
+	{
+		T parameter = compManager.construct ( coordinates.toVector () );
+		return valueManager.newDimensionedValue ( new ItemList <T> (parameter) );
 	}
 
 
@@ -118,7 +172,10 @@ public class FunctionCoordinates <T>
 		// - where the first value is a vector
 		if ( V instanceof ValueManager.DimensionedValue )
 		{
-			return processVectorElementList ( processList (V) );
+			Coordinates computed =
+				processVectorElementList ( processList (V) );
+			computed.packaging = Packaging.DIMENSIONED;
+			return computed;
 		}
 
 		return processIndividualElements (values);
@@ -148,6 +205,7 @@ public class FunctionCoordinates <T>
 			else throw new RuntimeException (UNRECOGNIZED);
 		}
 
+		computed.packaging = Packaging.INDIVIDUAL;
 		return computed;
 	}
 
@@ -163,6 +221,7 @@ public class FunctionCoordinates <T>
 		Coordinates computed = new Coordinates ();
 		for (int n = 0; n < dataTypeDimensions; n++)
 		{ computed.add ( manager.convertToDouble (values.get (n)) ); }
+		computed.packaging = Packaging.ELEMENTS;
 		return computed;
 	}
 
@@ -178,6 +237,7 @@ public class FunctionCoordinates <T>
 		Coordinates computed = new Coordinates ();
 		for (int n = 0; n < dataTypeDimensions; n++)
 		{ computed.add (compManager.component (value, n)); }
+		computed.packaging = Packaging.COMPONENT;
 		return computed;
 	}
 
@@ -189,35 +249,4 @@ public class FunctionCoordinates <T>
 
 
 }
-
-
-//(2, 2, 3)
-//DATA net.myorb.math.expressions.DimensionedValueStorage
-//RawValueList<T> getValues ();
-//VEC OP grad
-//TARGET F
-//TYPE net.myorb.math.expressions.symbols.DefinedFunction
-//BODY ( x ^ 2 + y - z , x - y , z - x ^ 2 ) 
-
-
-//vector value
-
-//[(2, 2, 3)]
-//DATA net.myorb.math.expressions.ValueListStorage
-//ValueManager.GenericValueList getValues ()
-//VEC OP grad
-//TARGET H
-//TYPE net.myorb.math.expressions.symbols.DefinedFunction
-//BODY ( ( V # 0 ) ^ 2 + V # 1 - V # 2 , V # 0 - V # 1 , V # 2 - ( V # 0 ) ^ 2 ) 
-
-
-//complex value
-
-//((3 + 4*i))
-//DATA net.myorb.math.expressions.DimensionedValueStorage
-//RawValueList<T> getValues ();
-//VEC OP grad
-//TARGET K
-//TYPE net.myorb.math.expressions.symbols.DefinedFunction
-//BODY 1 - c ^ 2 
 
