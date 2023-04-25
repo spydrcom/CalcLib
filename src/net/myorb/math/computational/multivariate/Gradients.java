@@ -52,6 +52,7 @@ public class Gradients <T>
 		{ this.op = (MultivariateCalculus.VectorOperator) op; this.target = target; }
 		public MultivariateCalculus.VectorOperator getOperation () { return this.op; }
 		public Operation getTarget () { return this.target; }
+		FunctionCoordinates.Coordinates evaluationPoint;
 		MultivariateCalculus.VectorOperator op;
 		Operation target = null;
 		int parameters = 1;
@@ -96,15 +97,39 @@ public class Gradients <T>
 		
 		public void dump (GenericValue parameter)
 		{
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			FunctionCoordinates <?> FC = new FunctionCoordinates
-					(metadata.op.getEnvironment ());
-			System.out.println ("POINT "+FC.evaluate(parameter));
-			System.out.println ("VEC OP "+metadata.op.getName());
-			System.out.println ("TARGET "+metadata.target.getName());
-			System.out.println ("TYPE "+metadata.target.getClass().getCanonicalName());
-			System.out.println ("BODY "+metadata.target);
+			FunctionCoordinates <?> FC = getFunctionCoordinates ();
+			System.out.println ("POINT " + FC.evaluate (parameter));
+			System.out.println ("VEC OP " + metadata.op.getName ());
+			System.out.println ("TARGET " + metadata.target.getName ());
+			System.out.println ("TYPE " + metadata.target.getClass ().getCanonicalName ());
+			System.out.println ("BODY " + metadata.target);
 		}
+
+
+		// coordinates conversions
+
+		public GenericValue toGenericValue
+		(FunctionCoordinates.Coordinates coordinates)
+		{ return getFunctionCoordinates ().represent (coordinates); }
+		public FunctionCoordinates.Coordinates toVector (GenericValue parameter)
+		{ return getFunctionCoordinates ().evaluate (parameter); }
+
+		@SuppressWarnings({"rawtypes","unchecked"})
+		FunctionCoordinates getFunctionCoordinates ()
+		{ return new FunctionCoordinates (metadata.op.getEnvironment ()); }
+
+
+		// processing for evaluation point
+
+		public GenericValue getEvaluationPoint ()
+		{ return toGenericValue (metadata.evaluationPoint); }
+
+		public void setEvaluationPoint (GenericValue point)
+		{ setEvaluationPoint (toVector (point)); }
+
+		public void setEvaluationPoint
+		(FunctionCoordinates.Coordinates evaluationPoint)
+		{ metadata.evaluationPoint = evaluationPoint; }
 
 	}
 
