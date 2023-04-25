@@ -85,7 +85,7 @@ public class Gradients <T>
 		public OperationContext
 			(String name, OperationMetadata metadata)
 		{ this.setName (name); this.setMetadata (metadata); }
-		String name; OperationMetadata metadata;
+		protected String name; protected OperationMetadata metadata;
 
 		/* (non-Javadoc)
 		 * @see net.myorb.math.expressions.ValueManager.GenericValue#setMetadata(net.myorb.math.expressions.ValueManager.Metadata)
@@ -163,10 +163,42 @@ public class Gradients <T>
 	 * @param function the target function for the Operation to evaluate
 	 * @return the Operation object that will drive the algorithm
 	 */
-	public static Operation processVectorOperation (VectorOperator VO, Operation function)
+	public static Operation processVectorOperation
+		(VectorOperator VO, Operation function)
 	{
-		return new VectorOperationProcessor (VO, function);
+		return new VectorOperationProcessor
+		(
+			VO, function, new Gradients <> (VO.getEnvironment ())
+		);
 	}
+
+	/**
+	 * perform processing steps
+	 * @param context the collected Operation Context
+	 * @return the calculated result of the Operation
+	 */
+	public GenericValue executeFrom (OperationContext context)
+	{
+		if (REGRESSION) return regressionTest (context);
+		VectorOperations <T> op = new VectorOperations <> (environment);
+		
+		switch (context.metadata.op.typeOfOperation ())
+		{
+			case VECTOR_DIV:	return  op.div (context);
+			case VECTOR_CURL:	return op.curl (context);
+			case VECTOR_GRAD:	return op.grad (context);
+			default:			break;
+		}
+
+		throw new RuntimeException ("Internal error, unreconized operation");
+	}
+	GenericValue regressionTest (OperationContext context)
+	{
+		GenericValue P = context.getEvaluationPoint ();
+		System.out.println ( "Parameter Point " + P );
+		return context.getFunction ().execute (P);
+	}
+	static boolean REGRESSION = false;
 
 }
 
@@ -177,26 +209,30 @@ public class Gradients <T>
 class VectorOperationProcessor implements MultivariateOperator
 {
 
-	VectorOperationProcessor (VectorOperator VO, Operation function)
+	VectorOperationProcessor
+		(
+			VectorOperator VO, Operation function,
+			Gradients <?> gradients
+		)
 	{
 		context = new OperationContext
 			(
 				function.getName (), new OperationMetadata (VO, function)
 			);
+		this.gradients = gradients;
 	}
-	OperationContext context;
+	protected OperationContext context; protected Gradients <?> gradients;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
 	 */
 	public GenericValue execute (GenericValue parameter)
 	{
-		context.dump (parameter);
+		if (TRACE) context.dump (parameter);
 		context.setEvaluationPoint (parameter);
-		GenericValue P = context.getEvaluationPoint ();
-		System.out.println ( "Parameter Point " + P );
-		return context.getFunction ().execute (P);
+		return gradients.executeFrom (context);
 	}
+	static boolean TRACE = false;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.Operation#getPrecedence()
@@ -208,6 +244,8 @@ class VectorOperationProcessor implements MultivariateOperator
 	 */
 	public String getName () { return context.getFunction ().getName (); }
 	public SymbolType getSymbolType () { return SymbolType.PARAMETERIZED; }
+
+	// satisfaction of interface, unused in Vector Operation Processing
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.SymbolMap.ParameterizedFunction#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
