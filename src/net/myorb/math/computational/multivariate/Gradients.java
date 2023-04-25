@@ -1,14 +1,24 @@
 
 package net.myorb.math.computational.multivariate;
 
+import net.myorb.math.computational.MultivariateCalculus;
+import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
+
+import net.myorb.math.computational.multivariate.Gradients.OperationContext;
+import net.myorb.math.computational.multivariate.Gradients.OperationMetadata;
+
+import net.myorb.math.expressions.symbols.AbstractFunction;
+import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
+import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.SymbolMap.Operation;
+
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.ValueManager.Metadata;
-import net.myorb.math.expressions.symbols.AbstractFunction;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
+import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
@@ -16,7 +26,6 @@ import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.matrices.Matrix;
 
 import net.myorb.math.Function;
-import net.myorb.math.computational.MultivariateCalculus;
 
 /**
  * implementations of algorithms specific to Multivariate derivative calculus
@@ -148,6 +157,70 @@ public class Gradients <T>
 		
 	}
 
+	/**
+	 * Vector Operation processor
+	 * @param VO the VectorOperator to ultimately be executed
+	 * @param function the target function for the Operation to evaluate
+	 * @return the Operation object that will drive the algorithm
+	 */
+	public static Operation processVectorOperation (VectorOperator VO, Operation function)
+	{
+		return new VectorOperationProcessor (VO, function);
+	}
+
+}
+
+
+/**
+ * implementation of Vector Operation processor
+ */
+class VectorOperationProcessor implements MultivariateOperator
+{
+
+	VectorOperationProcessor (VectorOperator VO, Operation function)
+	{
+		context = new OperationContext
+			(
+				function.getName (), new OperationMetadata (VO, function)
+			);
+	}
+	OperationContext context;
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
+	 */
+	public GenericValue execute (GenericValue parameter)
+	{
+		context.dump (parameter);
+		context.setEvaluationPoint (parameter);
+		GenericValue P = context.getEvaluationPoint ();
+		System.out.println ( "Parameter Point " + P );
+		return context.getFunction ().execute (P);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.Operation#getPrecedence()
+	 */
+	public int getPrecedence () { return 99; }	// must be highest possible
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.Named#getName()
+	 */
+	public String getName () { return context.getFunction ().getName (); }
+	public SymbolType getSymbolType () { return SymbolType.PARAMETERIZED; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.ParameterizedFunction#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+	 */
+	public String markupForDisplay
+	(String operator, String parameters, NodeFormatting using)
+	{ return null; }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.SymbolMap.ParameterizedFunction#getParameterList()
+	 */
+	public String getParameterList () { return null; }
+	public String formatPretty () { return null; }
 
 }
 
