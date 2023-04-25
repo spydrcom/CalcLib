@@ -68,9 +68,13 @@ public class MultivariateCalculus <T> extends VectorOperations <T>
 			 */
 			public GenericValue execute (GenericValue parameter)
 			{
-				System.out.println (parameter); context.dump (parameter);
-				System.out.println ( "DATA " + parameter.getClass ().getCanonicalName () );
-				return context.getFunction ().execute (parameter);
+//				System.out.println (parameter);
+//				System.out.println ( "DATA " + parameter.getClass ().getCanonicalName () );
+
+				context.dump (parameter);
+				context.setEvaluationPoint (parameter);
+				return context.getFunction ().execute
+				( context.getEvaluationPoint () );
 			}
 
 			public String getName () { return context.getFunction ().getName (); }
