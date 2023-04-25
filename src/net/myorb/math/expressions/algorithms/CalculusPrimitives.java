@@ -118,25 +118,13 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getGradAlgorithm (String symbol, int precedence)
 	{
-		return new MultivariateCalculus.VectorOperator (symbol, precedence, GRAD)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, GRAD, environment)
 		{
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-			 */
-			public ValueManager.GenericValue
-			execute (ValueManager.GenericValue parameter) { return calculus.grad ( null ); }
-			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
-			public Environment <T> getEnvironment () { return environment; }
-
-
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 			 */
-			public String markupForDisplay
-			(String operator, String operand, NodeFormatting using)
-			{ return calculus.markupForDisplay ( "", operand, using ); }
-
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{ return new MultivariateCalculus <> (environment).markupForDisplay ( "", operand, using ); }
 		};
 	}
 	static final CalculusMarkers.CalculusMarkerTypes GRAD = CalculusMarkers.CalculusMarkerTypes.VECTOR_GRAD;
@@ -150,25 +138,14 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getDivAlgorithm (String symbol, int precedence)
 	{
-		return new MultivariateCalculus.VectorOperator (symbol, precedence, DIV)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, DIV, environment)
 		{
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-			 */
-			public ValueManager.GenericValue
-				execute (ValueManager.GenericValue parameter) { return calculus.div ( null ); }
-			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
-			public Environment <T> getEnvironment () { return environment; }
-
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 			 */
-			public String markupForDisplay
-			(String operator, String operand, NodeFormatting using)
-			{ return calculus.markupForDisplay ( DOT, operand, using ); }
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{ return new MultivariateCalculus <> (environment).markupForDisplay ( DOT, operand, using ); }
 			static final String DOT = "\u00B7";
-
 		};
 	}
 	static final CalculusMarkers.CalculusMarkerTypes DIV = CalculusMarkers.CalculusMarkerTypes.VECTOR_DIV;
@@ -182,25 +159,14 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 	 */
 	public AbstractUnaryOperator getCurlAlgorithm (String symbol, int precedence)
 	{
-		return new MultivariateCalculus.VectorOperator (symbol, precedence, CURL)
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, CURL, environment)
 		{
-
-			/* (non-Javadoc)
-			 * @see net.myorb.math.expressions.SymbolMap.ExecutableUnaryOperator#execute(net.myorb.math.expressions.ValueManager.GenericValue)
-			 */
-			public ValueManager.GenericValue
-				execute (ValueManager.GenericValue parameter) { return calculus.curl ( null ); }
-			MultivariateCalculus <T> calculus = new MultivariateCalculus <> (environment);
-			public Environment <T> getEnvironment () { return environment; }
-
 			/* (non-Javadoc)
 			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
 			 */
-			public String markupForDisplay
-			(String operator, String operand, NodeFormatting using)
-			{ return calculus.markupForDisplay ( CROSS, operand, using ); }
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{ return new MultivariateCalculus <> (environment).markupForDisplay ( CROSS, operand, using ); }
 			static final String CROSS = "\u00D7";
-
 		};
 	}
 	static final CalculusMarkers.CalculusMarkerTypes CURL = CalculusMarkers.CalculusMarkerTypes.VECTOR_CURL;
