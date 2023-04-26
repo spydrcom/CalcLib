@@ -35,9 +35,13 @@ public class OperationMetadata implements Metadata
 
 
 	public void setEvaluationPoint
-	(FunctionCoordinates.Coordinates evaluationPoint) { this.evaluationPoint = evaluationPoint; }
+	(FunctionCoordinates.Coordinates evaluationPoint)
+	{ this.evaluationPoint = evaluationPoint; this.setParameters (evaluationPoint.size ()); }
 	public FunctionCoordinates.Coordinates getEvaluationPoint () { return evaluationPoint; }
 	private FunctionCoordinates.Coordinates evaluationPoint;
+
+
+	public double getDeltaFor (int dimension) { return 1E-6; }
 
 
 	public int getParameters () { return parameters; }
