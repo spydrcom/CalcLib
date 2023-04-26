@@ -55,6 +55,11 @@ public class OperationContext implements ValueManager.VectorOperation
 	public FunctionCoordinates getFunctionCoordinates ()
 	{ return new FunctionCoordinates (metadata.getOp ().getEnvironment ()); }
 
+	public GenericValue execute (FunctionCoordinates.Coordinates point)
+	{
+		return getFunction ().execute (toGenericValue (point));
+	}
+
 
 	// processing for evaluation point
 
