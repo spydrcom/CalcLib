@@ -4,24 +4,22 @@ package net.myorb.math.computational.multivariate;
 import net.myorb.math.expressions.SymbolMap.Operation;
 import net.myorb.math.expressions.SymbolMap.SymbolType;
 
-import net.myorb.math.expressions.ValueManager.Metadata;
 import net.myorb.math.expressions.ValueManager.GenericValue;
 
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
+import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
 import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 
+import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
-
-import net.myorb.math.Function;
 
 /**
  * implementations of algorithms specific to Multivariate derivative calculus
@@ -34,23 +32,18 @@ public class Gradients <T>
 
 	public Gradients (Environment <T> environment)
 	{
-		this.valueManager = environment.getValueManager ();
-		if (valueManager instanceof ExpressionComponentSpaceManager)
-		{ this.compManager = (ExpressionComponentSpaceManager <T>) manager; }
+		functionCoordinates = new FunctionCoordinates <T> (environment);
 		this.manager = environment.getSpaceManager ();
+		this.valueManager = environment.getValueManager ();
+		if (manager instanceof ExpressionComponentSpaceManager)
+		{ this.compManager = (ExpressionComponentSpaceManager <T>) manager; }
 		this.environment = environment;
 	}
+	FunctionCoordinates <T> functionCoordinates;
 	protected ExpressionComponentSpaceManager <T> compManager = null;
 	protected ExpressionSpaceManager <T> manager = null;
 	protected ValueManager <T> valueManager = null;
 	protected Environment <T> environment = null;
-
-
-	public static class TargetMetadata <T> implements Metadata
-	{
-		Subroutine <T> symbolDescription;
-		Function <T> function;
-	}
 
 
 	public Matrix <T> partialDerivativeComputations (OperationContext context)
@@ -64,8 +57,41 @@ public class Gradients <T>
 	public void partialDerivativeComputations
 		(OperationContext context, Matrix <T> M, int N)
 	{
-		
+		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
+		Coordinates baseVec = eval ( evalPoint, context );
+
+		for (int n = 0; n < N; n++)
+		{
+			double delta = context.metadata.getDeltaFor (n);
+
+			Coordinates	evalAt = eval
+			(
+				evalPoint.plus (delta, n), context
+			);
+
+			partialDerivativeComputation
+			(
+				evalAt, baseVec, delta,
+				M.getColAccess (n+1)
+			);
+		}
 	}
+	public void partialDerivativeComputation
+		(
+			Coordinates evalAt, Coordinates baseVec,
+			double delta, VectorAccess <T> column
+		)
+	{
+		Coordinates dif = evalAt.minus (baseVec);
+
+		for (int n = 0; n < column.size (); n++)
+		{
+			double tan = dif.get (n) / delta;
+			column.set (n+1, manager.convertFromDouble (tan));
+		}
+	}
+	public Coordinates eval (Coordinates parameter, OperationContext context)
+	{ return functionCoordinates.evaluate (context.execute (parameter)); }
 
 
 	/**
@@ -110,7 +136,7 @@ public class Gradients <T>
 		System.out.println ( "Parameter Point " + P );
 		return context.getFunction ().execute (P);
 	}
-	static boolean REGRESSION = true;
+	static boolean REGRESSION = false;
 
 
 }
