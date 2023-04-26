@@ -50,7 +50,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		 */
 		public enum Packaging { COMPONENT, DIMENSIONED, ELEMENTS, INDIVIDUAL }
 		protected Packaging packaging;
-		
+
 		/**
 		 * @return a real value array of the coordinate list
 		 */
@@ -59,6 +59,33 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			double [] array = new double [size ()];
 			for (int n = 0; n < array.length; n++) array[n] = get (n);
 			return array;
+		}
+
+		public Coordinates plus (double offset, int inDimension)
+		{
+			Coordinates sum = dup ();
+			sum.set (inDimension, this.get (inDimension) + offset);
+			return sum;
+		}
+
+		public Coordinates minus (Coordinates other)
+		{
+			Coordinates dif = new Coordinates ();
+			for (int n = 0; n < this.size (); n++)
+			{
+				double thisOne = get (n).doubleValue (),
+					otherOne = other.get (n).doubleValue ();
+				dif.add ( thisOne - otherOne );
+			}
+			return dif;
+		}
+
+		public Coordinates dup ()
+		{
+			Coordinates copy = new Coordinates ();
+			copy.packaging = this.packaging;
+			copy.addAll (this);
+			return copy;
 		}
 
 		//TODO: additional context required to allow points to become parameters
@@ -159,6 +186,12 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 				//  data structures that have component managers
 				return processComponents ( values.get (0) );
 			}
+		}
+
+		// single multiple component value
+		else if ( parameter instanceof ValueManager.DiscreteValue )
+		{
+			return processComponents (parameter);
 		}
 
 		// simple values
@@ -266,6 +299,11 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		{ computed.add (compManager.component (value, n)); }
 		computed.packaging = Coordinates.Packaging.COMPONENT;
 		return computed;
+	}
+	@SuppressWarnings("unchecked")
+	public Coordinates processComponents (ValueManager.GenericValue value)
+	{
+		return processComponents ( ( (ValueManager.DiscreteValue <T>) value ).getValue () );
 	}
 
 
