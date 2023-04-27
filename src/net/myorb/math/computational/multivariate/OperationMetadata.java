@@ -8,7 +8,6 @@ import net.myorb.math.expressions.SymbolMap.Operation;
 
 /**
  * meta-data collected when the operation was invoked
- * @param <T> the data type used by the function
  * @author Michael Druckman
  */
 public class OperationMetadata implements Metadata
@@ -41,7 +40,10 @@ public class OperationMetadata implements Metadata
 	private FunctionCoordinates.Coordinates evaluationPoint;
 
 
+	public void setDeltaValues (int [] values) { this.deltaValues = values; }
 	public double getDeltaFor (int dimension) { return 1E-6; }
+	//TODO: attach list of deltas to function
+	int [] deltaValues;
 
 
 	public int getParameters () { return parameters; }
