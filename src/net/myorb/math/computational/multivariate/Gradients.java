@@ -5,18 +5,13 @@ import net.myorb.math.expressions.SymbolMap.Operation;
 import net.myorb.math.expressions.SymbolMap.SymbolType;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
-
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
 import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
 import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
+
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
-
 import net.myorb.math.expressions.evaluationstates.Environment;
-
-import net.myorb.math.expressions.ExpressionComponentSpaceManager;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
@@ -26,34 +21,46 @@ import net.myorb.math.matrices.Matrix;
  * @param <T> manager for data type
  * @author Michael Druckman
  */
-public class Gradients <T>
+public class Gradients <T> extends DataManagers <T>
 {
 
 
-	public Gradients (Environment <T> environment)
-	{
-		functionCoordinates = new FunctionCoordinates <T> (environment);
-		this.manager = environment.getSpaceManager ();
-		this.valueManager = environment.getValueManager ();
-		if (manager instanceof ExpressionComponentSpaceManager)
-		{ this.compManager = (ExpressionComponentSpaceManager <T>) manager; }
-		this.environment = environment;
-	}
-	FunctionCoordinates <T> functionCoordinates;
-	protected ExpressionComponentSpaceManager <T> compManager = null;
-	protected ExpressionSpaceManager <T> manager = null;
-	protected ValueManager <T> valueManager = null;
-	protected Environment <T> environment = null;
+	public Gradients
+		(VectorOperator vectorOperator)
+	{ this (vectorOperator.getEnvironment ()); }
+
+	public Gradients
+		(Environment <T> environment)
+	{ super (environment); this.connectManagers (); }
 
 
+	/**
+	 * get management objects from environment
+	 */
+	public void connectManagers ()
+	{ this.functionCoordinates = new FunctionCoordinates <T> (environment); }
+	protected FunctionCoordinates <T> functionCoordinates = null;
+
+
+	/**
+	 * compute derivatives for each unit vector function
+	 * @param context the meta-data context collected for the function
+	 * @return the matrix of partial derivatives
+	 */
 	public Matrix <T> partialDerivativeComputations (OperationContext context)
 	{
 		Matrix <T> M; int N = context.metadata.getParameters ();
-		partialDerivativeComputations (context, M = new Matrix <T> (N, N, manager), N);
+		partialDerivativeComputations (context, M = Matrix.square (N, manager), N);
 		return M;
 	}
 
 
+	/**
+	 * compute derivatives for each unit vector function
+	 * @param context the meta-data context collected for the function
+	 * @param M the matrix that will hold the evaluated derivatives
+	 * @param N the number of variables in the function
+	 */
 	public void partialDerivativeComputations
 		(OperationContext context, Matrix <T> M, int N)
 	{
@@ -76,20 +83,45 @@ public class Gradients <T>
 			);
 		}
 	}
+
+
+	/**
+	 * prepare to calculate rise over run
+	 * @param evalAt the evaluation point including the appropriate delta offset
+	 * @param baseVec the evaluation of the full function at the evaluation point
+	 * @param delta the run value to use for the derivative calculations
+	 * @param column the index that identifies the relative variable
+	 */
 	public void partialDerivativeComputation
 		(
 			Coordinates evalAt, Coordinates baseVec,
 			double delta, VectorAccess <T> column
 		)
 	{
-		Coordinates dif = evalAt.minus (baseVec);
-
+		Coordinates
+			rise = evalAt.minus (baseVec);
 		for (int n = 0; n < column.size (); n++)
-		{
-			double tan = dif.get (n) / delta;
-			column.set (n+1, manager.convertFromDouble (tan));
-		}
+		{ column.set (n+1, riseOverRun (rise, delta, n)); }
 	}
+
+
+	/**
+	 * the definitive algorithm for derivatives
+	 * @param rise the offset values minus the base
+	 * @param run the delta value to use as a run in the calculation
+	 * @param n the index that identifies the relative variable
+	 * @return the computed derivative value
+	 */
+	T riseOverRun (Coordinates rise, double run, int n)
+	{ return manager.convertFromDouble (rise.get (n) / run); }
+
+
+	/**
+	 * evaluate the function at a vector of Coordinates
+	 * @param parameter a vector of Coordinates to use as a parameter
+	 * @param context the meta-data for the function being evaluated
+	 * @return Coordinates of the vector returned by the function
+	 */
 	public Coordinates eval (Coordinates parameter, OperationContext context)
 	{ return functionCoordinates.evaluate (context.execute (parameter)); }
 
@@ -105,14 +137,14 @@ public class Gradients <T>
 	{
 		return new VectorOperationProcessor
 		(
-			VO, function, new Gradients <> (VO.getEnvironment ())
+			VO, function, new Gradients <> (VO)
 		);
 	}
 
 
 	/**
 	 * perform processing steps
-	 * @param context the collected Operation Context
+	 * @param context the collected Operation Context meta-data
 	 * @return the calculated result of the Operation
 	 */
 	public GenericValue executeFrom (OperationContext context)
@@ -130,6 +162,13 @@ public class Gradients <T>
 
 		throw new RuntimeException ("Internal error, unreconized operation");
 	}
+
+
+	/**
+	 * display parameter value
+	 * @param context the collected meta-data
+	 * @return the function evaluation of the parameter
+	 */
 	GenericValue regressionTest (OperationContext context)
 	{
 		GenericValue P = context.getEvaluationPoint ();
