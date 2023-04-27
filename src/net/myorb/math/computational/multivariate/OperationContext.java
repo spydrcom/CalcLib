@@ -9,7 +9,6 @@ import net.myorb.math.expressions.ValueManager;
 
 /**
  * the context passed processed by the equation processing
- * @param <T> the data type used in the Operation
  * @author Michael Druckman
  */
 public class OperationContext implements ValueManager.VectorOperation
@@ -66,12 +65,12 @@ public class OperationContext implements ValueManager.VectorOperation
 	public GenericValue getEvaluationPoint ()
 	{ return toGenericValue (metadata.getEvaluationPoint ()); }
 
-	public void setEvaluationPoint (GenericValue point)
-	{ setEvaluationPoint (toVector (point)); }
-
 	public void setEvaluationPoint
 		(FunctionCoordinates.Coordinates evaluationPoint)
 	{ metadata.setEvaluationPoint (evaluationPoint); }
+
+	public void setEvaluationPoint (GenericValue point)
+	{ setEvaluationPoint (toVector (point)); }
 
 
 	// debugging data trace
