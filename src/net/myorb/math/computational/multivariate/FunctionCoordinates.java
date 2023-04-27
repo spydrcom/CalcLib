@@ -1,43 +1,38 @@
 
 package net.myorb.math.computational.multivariate;
 
-import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.ValueManager.GenericValue;
-
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.math.expressions.ExpressionComponentSpaceManager;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-
-import net.myorb.data.abstractions.CommonDataStructures;
-
-import java.util.List;
+import net.myorb.math.expressions.ValueManager.GenericValue;
+import net.myorb.math.expressions.ValueManager;
 
 /**
  * implementations of algorithms specific to treatment of Multivariate data points
  * @param <T> manager for data type
  * @author Michael Druckman
  */
-public class FunctionCoordinates <T> extends CommonDataStructures
+public class FunctionCoordinates <T> extends DataManagers <T>
 {
 
 
-	public FunctionCoordinates (Environment <T> environment)
+	public FunctionCoordinates
+		(Environment <T> environment)
+	{ super (environment); this.connectManagers (); }
+
+
+	/**
+	 * get management objects from environment
+	 */
+	public void connectManagers ()
 	{
-		this.manager = environment.getSpaceManager ();
-		this.valueManager = environment.getValueManager ();
-		if ( manager instanceof ExpressionComponentSpaceManager )
-		{ this.compManager = (ExpressionComponentSpaceManager <T>) manager; }
-		this.multivariateDataType = compManager != null && compManager.getComponentCount () > 1;
-		this.dataTypeDimensions = multivariateDataType ? compManager.getComponentCount () : 0;
-		this.environment = environment;
+		if (compManager != null)
+		{
+			this.dataTypeDimensions = compManager.getComponentCount ();
+			this.multivariateDataType = dataTypeDimensions > 1;
+		}
 	}
-	protected ExpressionComponentSpaceManager <T> compManager = null;
-	protected ExpressionSpaceManager <T> manager = null;
-	protected ValueManager <T> valueManager = null;
-	protected Environment <T> environment = null;
-	protected boolean multivariateDataType;
-	protected int dataTypeDimensions;
+	protected boolean multivariateDataType = false;
+	protected int dataTypeDimensions = 1;
 
 
 	/**
@@ -61,6 +56,12 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			return array;
 		}
 
+		/**
+		 * add offset into one dimension of vector
+		 * @param offset the delta to add into element
+		 * @param inDimension the index of dimension to modify
+		 * @return the sum of vector and delta
+		 */
 		public Coordinates plus (double offset, int inDimension)
 		{
 			Coordinates sum = dup ();
@@ -68,18 +69,27 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			return sum;
 		}
 
+		/**
+		 * compute difference of vector elements
+		 * @param other the Coordinates to subtract from THIS
+		 * @return the computed difference
+		 */
 		public Coordinates minus (Coordinates other)
 		{
+			double thisOne, otherOne;
 			Coordinates dif = new Coordinates ();
 			for (int n = 0; n < this.size (); n++)
 			{
-				double thisOne = get (n).doubleValue (),
-					otherOne = other.get (n).doubleValue ();
+				thisOne = get (n).doubleValue ();
+				otherOne = other.get (n).doubleValue ();
 				dif.add ( thisOne - otherOne );
 			}
 			return dif;
 		}
 
+		/**
+		 * @return a duplicate of THIS vector
+		 */
 		public Coordinates dup ()
 		{
 			Coordinates copy = new Coordinates ();
@@ -88,7 +98,6 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 			return copy;
 		}
 
-		//TODO: additional context required to allow points to become parameters
 		private static final long serialVersionUID = 6909479746233500672L;
 	}
 
@@ -102,16 +111,11 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	{
 		switch (coordinates.packaging)
 		{
-			case COMPONENT:
-				return representComponents (coordinates);
-			case DIMENSIONED:
-				return representDimensioned (coordinates);
-			case ELEMENTS:
-				return representElements (coordinates);
-			case INDIVIDUAL:
-				break;
-			default:
-				break;
+			case INDIVIDUAL:	break;
+			case DIMENSIONED:	return representDimensioned (coordinates);
+			case COMPONENT:		return representComponents (coordinates);
+			case ELEMENTS:		return representElements (coordinates);
+			default:			break;
 		}
 		throw new RuntimeException ("Unable to represent coordinates");
 	}
@@ -136,8 +140,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	 */
 	public ValueManager.GenericValue representElements (Coordinates coordinates)
 	{
-		ValueManager.RawValueList <T> values =
-			new ValueManager.RawValueList <T> ();
+		ValueList values = new ValueList ();
 		for (int n = 0; n < coordinates.size (); n++)
 		{ values.add (manager.convertFromDouble (coordinates.get (n))); }
 		return valueManager.newDimensionedValue (values);
@@ -163,9 +166,9 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	 * @param parameter the parameter called from the execution engine
 	 * @return the parameter value(s) as a Coordinates object
 	 */
-	public Coordinates evaluate (ValueManager.GenericValue parameter)
+	public Coordinates evaluate (GenericValue parameter)
 	{
-		List <T> values;
+		ValueList values;
 
 		// any number of simple values
 		//  will come in as a Dimensioned Value
@@ -199,9 +202,10 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		// show up in value list objects as single items
 		else if ( parameter instanceof ValueManager.ValueList )
 		{
-			ValueManager.ValueList valueList =
-					(ValueManager.ValueList) parameter;
-			return processVectorElements (valueList.getValues ());
+			return processVectorElements
+			(
+				new GenericList ( (ValueManager.ValueList) parameter )
+			);
 		}
 
 		throw new RuntimeException (INVALID);
@@ -209,22 +213,11 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 
 
 	/**
-	 * get list from DimensionedValue
-	 * @param value a parameter passed as DimensionedValue
-	 * @return the RawValueList linked to the DimensionedValue
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	List <T> processList (ValueManager.GenericValue value)
-	{ return ( (ValueManager.DimensionedValue) value ).getValues (); }
-
-
-	/**
 	 * treatment for elements making vector objects
 	 * @param values a list of values to treat as a vector
 	 * @return the equivalent Coordinates object
 	 */
-	public Coordinates processVectorElements
-		(List <GenericValue> values)
+	public Coordinates processVectorElements (GenericList values)
 	{
 		GenericValue V = values.get (0);
 
@@ -247,23 +240,13 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	 * @param values individual values passed as a list
 	 * @return the equivalent Coordinates object
 	 */
-	public Coordinates processIndividualElements
-		(List <GenericValue> values)
+	public Coordinates processIndividualElements (GenericList values)
 	{
-		GenericValue V;
 		dataTypeDimensions = values.size ();
 		Coordinates computed = new Coordinates ();
 
 		for (int n = 0; n < dataTypeDimensions; n++)
-		{
-			if ( (V = values.get (n)) instanceof ValueManager.DiscreteValue )
-			{
-				@SuppressWarnings("unchecked")
-				T value = ( (ValueManager.DiscreteValue <T>) V ).getValue ();
-				computed.add ( manager.convertToDouble (value) );
-			}
-			else throw new RuntimeException (UNRECOGNIZED);
-		}
+		{ computed.add (getDiscreteValueFrom (values.get (n))); }
 
 		computed.packaging = Coordinates.Packaging.INDIVIDUAL;
 		return computed;
@@ -275,7 +258,7 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 	 * @param values a list of data values to treat as a vector
 	 * @return the equivalent Coordinates object
 	 */
-	public Coordinates processVectorElementList (List <T> values)
+	public Coordinates processVectorElementList (ValueList values)
 	{
 		dataTypeDimensions = values.size ();
 		Coordinates computed = new Coordinates ();
@@ -300,17 +283,15 @@ public class FunctionCoordinates <T> extends CommonDataStructures
 		computed.packaging = Coordinates.Packaging.COMPONENT;
 		return computed;
 	}
-	@SuppressWarnings("unchecked")
-	public Coordinates processComponents (ValueManager.GenericValue value)
-	{
-		return processComponents ( ( (ValueManager.DiscreteValue <T>) value ).getValue () );
-	}
 
 
-	// error messages
-	static final String
-	UNRECOGNIZED = "Parameter value is not recognized as a multivariate point",
-	INVALID = "Parameter value is not a multivariate point";
+	/**
+	 * treatment for data objects with multiple components
+	 * @param genericWrapper a multiple component data object wrapped as generic
+	 * @return the equivalent Coordinates object
+	 */
+	public Coordinates processComponents (GenericValue genericWrapper)
+	{ return processComponents ( getValueFrom (genericWrapper) ); }
 
 
 }
