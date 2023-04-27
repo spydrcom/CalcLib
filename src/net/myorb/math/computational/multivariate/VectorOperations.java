@@ -3,7 +3,6 @@ package net.myorb.math.computational.multivariate;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.math.expressions.ValueManager.RawValueList;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.math.matrices.Matrix;
@@ -21,6 +20,20 @@ public class VectorOperations <T> extends Gradients <T>
 	{
 		super (environment);
 	}
+
+
+	public static final // indices used for 3D curl
+	/*
+	 *	 	   matrix of partial derivatives
+	 * 		   -----------------------------
+	 * 
+	 *					 dx		 dy		 dz
+	 *					===		===		===
+	 *			Fx		1,1		1,2		1,3
+	 *			Fy		2,1		2,2		2,3
+	 *			Fz		3,1		3,2		3,3
+	 */
+	int Fx = 1, dx = 1, Fy = 2, dy = 2, Fz = 3, dz = 3;
 
 
 	/**
@@ -87,22 +100,24 @@ public class VectorOperations <T> extends Gradients <T>
 		return valueManager.newDimensionedValue (computeCurl (M));
 	}
 
+
 	/**
 	 * apply equations to compute curl
 	 * @param M the matrix of partial derivatives computed
 	 * @return the computed curl vector
 	 */
-	RawValueList<T> computeCurl (Matrix <T> M)
+	ValueList computeCurl (Matrix <T> M)
 	{
-		RawValueList <T> vector;
-		set ( 2, 2, 1, M, vector = zeroVector () );
+		ValueList vector = zeroVector ();
+
+		set ( 2, Fy, dx, M, vector );	// dFy/dx - dFx/dy
 		// no contribution from 3rd dimension given 2x2 matrix
 
 		if ( M.getEdgeCount () > 2 )
 		{
 			// 3rd dimension is present
-			set ( 1, 1, 3, M, vector );
-			set ( 0, 3, 2, M, vector );
+			set ( 1, Fx, dz, M, vector );	// dFx/dz - dFz/dx
+			set ( 0, Fz, dy, M, vector );	// dFz/dy - dFy/dz
 		}
 
 		return vector;
@@ -112,24 +127,24 @@ public class VectorOperations <T> extends Gradients <T>
 	/**
 	 * set one component of the curl vector
 	 * @param into index of the orthogonal basis being set
-	 * @param V index of the component of the function being processed
+	 * @param F index of the component of the function being processed
 	 * @param d index of the orthogonal basis being referenced
 	 * @param M the matrix of partial derivatives computed
 	 * @param vector the computed curl vector
 	 */
-	void set (int into, int V, int d, Matrix <T> M, RawValueList <T> vector)
+	void set (int into, int F, int d, Matrix <T> M, ValueList vector)
 	{
-		vector.set ( into, manager.add ( M.get (V, d), manager.negate ( M.get (d, V) ) ) );		
+		vector.set ( into, manager.add ( M.get (F, d), manager.negate ( M.get (d, F) ) ) );		
 	}
 
 
 	/**
 	 * @return initialized vector of zero entries
 	 */
-	RawValueList <T> zeroVector ()
+	ValueList zeroVector ()
 	{
 		T Z = manager.getZero ();
-		RawValueList <T> vector = new RawValueList <T> ();
+		ValueList vector = new ValueList ();
 		vector.add (Z); vector.add (Z); vector.add (Z);
 		return vector;
 	}
