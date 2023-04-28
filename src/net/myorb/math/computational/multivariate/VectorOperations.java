@@ -67,7 +67,7 @@ public class VectorOperations <T> extends Gradients <T>
 	 */
 	T computeDivergence (Matrix <T> M)
 	{
-		int N = M.getEdgeCount ();
+		int N = M.rowCount ();
 		T divergence = manager.getZero ();
 
 		for (int row = 1; row <= N; row++)
