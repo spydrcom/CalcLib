@@ -49,8 +49,23 @@ public class Gradients <T> extends DataManagers <T>
 	 */
 	public Matrix <T> partialDerivativeComputations (OperationContext context)
 	{
-		Matrix <T> M; int N = context.metadata.getParameters ();
-		partialDerivativeComputations (context, M = Matrix.square (N, manager), N);
+		Matrix <T> M;
+
+		int functions, derivatives = context.metadata.getParameters ();
+		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
+		Coordinates baseVec = eval ( evalPoint, context );
+
+		if ( ( functions = baseVec.size () ) == 1 )
+		{ M = new Matrix <> (functions, derivatives, manager); }
+		else if ( functions == derivatives ) { M = Matrix.square (functions, manager); }
+		else { throw new RuntimeException ("Function profile cannot be used"); }
+
+		partialDerivativeComputations
+		(
+			context, M, derivatives,
+			evalPoint, baseVec
+		);
+
 		return M;
 	}
 
@@ -60,13 +75,15 @@ public class Gradients <T> extends DataManagers <T>
 	 * @param context the meta-data context collected for the function
 	 * @param M the matrix that will hold the evaluated derivatives
 	 * @param N the number of variables in the function
+	 * @param evalPoint the point of the evaluation
+	 * @param baseVec the function result at point
 	 */
 	public void partialDerivativeComputations
-		(OperationContext context, Matrix <T> M, int N)
+		(
+			OperationContext context, Matrix <T> M, int N,
+			Coordinates evalPoint, Coordinates baseVec
+		)
 	{
-		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
-		Coordinates baseVec = eval ( evalPoint, context );
-
 		for (int n = 0; n < N; n++)
 		{
 			double delta = context.metadata.getDeltaFor (n);
