@@ -97,6 +97,30 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * @param function the function symbol to be plotted
+	 * @param functionName name of the function symbol to be plotted
+	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
+	 * @param edge the length of the edge of each axis
+	 * @param vectorCount displayed vectors each axis
+	 * @param multiplier normalize for integer range
+	 */
+	public void prepareAndShow
+		(
+			Subroutine<T> function, String functionName,
+			Point lowCorner, double edge, double vectorCount,
+			double multiplier
+		)
+	{
+		prepareAndShow
+		(
+			new Plot3DVectorField <T> (function, vectorCount),
+			function, functionName, lowCorner, edge, edge,
+			(int) multiplier
+		);
+	}
+
+
+	/**
 	 * mesh plot for function as 3D surface.
 	 *  Subroutine call per function evaluation.
 	 * @param function the function symbol to be plotted
@@ -244,6 +268,29 @@ public class HighDefinitionPlots<T>
 				lowCorner, edgeX, edgeY
 			);
 		}
+	}
+
+
+	/**
+	 * @param functionSymbol the function symbol to be plotted
+	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
+	 * @param edge the length of the edges of the plot along each of the axis
+	 * @param count count of directional markers to display per edge
+	 * @param multiplier a multiplier for the function values
+	 */
+	public void contourPlotOfVectorField
+		(
+			SymbolMap.Named functionSymbol,
+			Point lowCorner, double edge, double count,
+			double multiplier
+		)
+	{
+		prepareAndShow
+		(
+			Subroutine.cast (functionSymbol),
+			functionSymbol.getName (), lowCorner,
+			edge, count, multiplier
+		);
 	}
 
 
