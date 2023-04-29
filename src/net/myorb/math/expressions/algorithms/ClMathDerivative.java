@@ -223,7 +223,15 @@ class DerivativeParameterManager<T> implements
 		this.parseRun (run.toString (), environment);
 		this.identifyFunction (function.toString ());
 
-		if (symbol != null) this.symbolName = symbol.toString ();
+		if (symbol != null)
+		{
+			this.symbolName = symbol.toString ();
+
+			if (symbolName.charAt (0) == 'P')
+			{
+				this.symbolName = OperatorNomenclature.PARTIAL_RENDER;
+			}
+		}
 		if (order != null) this.order = Integer.parseInt (order.toString ());
 
 		if (syntax != null)
