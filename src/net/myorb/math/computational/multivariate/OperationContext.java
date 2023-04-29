@@ -35,10 +35,23 @@ public class OperationContext implements ValueManager.VectorOperation
 	public Metadata getMetadata () { return metadata; }
 
 
+	/**
+	 * @return identified target as Function
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> AbstractFunction <T> getFunction ()
 	{ return ( AbstractFunction <T> ) metadata.getTarget (); }
 	public String getName () { return name; }
+
+	/**
+	 * get value of delta for partial derivative evaluation
+	 * @param variableIndex the parameter index which identifies the variable
+	 * @return delta for partial derivative evaluation
+	 */
+	public double getDeltaFor (int variableIndex)
+	{
+		return getFunction ().getPartialDerivativeDelta (variableIndex);
+	}
 
 
 	// coordinates conversions
