@@ -40,12 +40,6 @@ public class OperationMetadata implements Metadata
 	private FunctionCoordinates.Coordinates evaluationPoint;
 
 
-	public void setDeltaValues (int [] values) { this.deltaValues = values; }
-	public double getDeltaFor (int dimension) { return 1E-6; }
-	//TODO: attach list of deltas to function
-	int [] deltaValues;
-
-
 	public int getParameters () { return parameters; }
 	public void setParameters (int parameters) { this.parameters = parameters; }
 	private int parameters = 1;
