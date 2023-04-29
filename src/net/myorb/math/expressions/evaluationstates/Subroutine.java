@@ -379,6 +379,25 @@ public class Subroutine<T>
 	}
 
 
+	/**
+	 * delta for partial derivative evaluation
+	 * - for operators processing multivariate vector calculus requests
+	 * @param forVariable the index of the variable being used
+	 * @return the delta for specified variable
+	 */
+	public double getPartialDerivativeDelta (int forVariable)
+	{
+		if (partialDerivativeDeltas == null)
+			return partialDerivativeDeltaDefault;
+		return partialDerivativeDeltas [forVariable];
+	}
+	public double [] getPartialDerivativeDeltas () { return partialDerivativeDeltas; }
+	public void setPartialDerivativeDeltas ( double [] partialDerivativeDeltas )
+	{ this.partialDerivativeDeltas = partialDerivativeDeltas; }
+	protected double partialDerivativeDeltaDefault = 1E-6;
+	protected double partialDerivativeDeltas [] = null;
+
+
 	/*
 	 * parameter processing
 	 */
