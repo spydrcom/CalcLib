@@ -8,6 +8,8 @@ import net.myorb.math.computational.multivariate.VectorOperations;
 
 import net.myorb.math.expressions.symbols.AbstractUnaryOperator;
 import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.expressions.OperatorNomenclature;
 import net.myorb.math.expressions.ValueManager;
 
 /**
@@ -72,7 +74,7 @@ public class MultivariateCalculus <T> extends VectorOperations <T>
 		String op = using.formatOperatorReference (NABLA + operator);
 		return op  + MathMarkupNodes.space ("2") + operand;
 	}
-	static final String NABLA = "\u2207";
+	static final String NABLA = OperatorNomenclature.NABLA_RENDER;
 
 
 }
