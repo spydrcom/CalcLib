@@ -381,6 +381,10 @@ public class OperatorNomenclature
 	CLOSE_CEIL_RENDER			= "\u2309",		// ^|						closing bracket
 	OPEN_FLOOR_RENDER			= "\u230A",		// |_				render characters for floor brackets
 	CLOSE_FLOOR_RENDER			= "\u230B",		// _|						closing bracket
+	CROSS_PRODUCT_RENDER		= "\u00D7",		//					render character for cross product
+	DOT_PRODUCT_RENDER			= "\u00B7",		//					render character for dot product
+	PARTIAL_RENDER				= "\u2202",		//					render character for partial derivative
+	NABLA_RENDER				= "\u2207",		//					render unicode character for NABLA
 	PRIME_RENDER				= "\u00B4"		// f'(x)			render character for prime
 		;
 
