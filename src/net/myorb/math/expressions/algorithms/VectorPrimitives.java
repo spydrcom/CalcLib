@@ -194,6 +194,23 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 
 
 	/**
+	 * vector cross product of two arrays
+	 * @param left left side array reference
+	 * @param right right side array reference
+	 * @return computed dot product
+	 */
+	public ValueManager.GenericValue cross
+	(ValueManager.GenericValue left, ValueManager.GenericValue right)
+	{
+		Vector<T>
+			lParm = conversion.toVector (valueManager.toArray (left)),
+			rParm = conversion.toVector (valueManager.toArray (right));
+		Vector<T> result = vectorOperations.crossProduct (lParm, rParm);
+		return valueManager.newDimensionedValue (result.getElementsList ());
+	}
+
+
+	/**
 	 * dyadic product of vectors
 	 * @param parameters stack constructed parameter object
 	 * @return computed matrix
@@ -680,6 +697,22 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 	}
 
 
+//	/**
+//	 * implement function - CROSS
+//	 * @param symbol the symbol associated with this object
+//	 * @return operation implementation object
+//	 */
+//	public AbstractParameterizedFunction getCrossAlgorithm (String symbol)
+//	{
+//		return new AbstractParameterizedFunction (symbol)
+//		{
+//			public ValueManager.GenericValue
+//			execute (ValueManager.GenericValue parameters)
+//			{ return cross (parameters); }
+//		};
+//	}
+
+
 	/**
 	 * implement function - DOT
 	 * @param symbol the symbol associated with this object
@@ -706,9 +739,54 @@ public class VectorPrimitives<T> extends AlgorithmCore<T>
 	{
 		return new AbstractBinaryOperator (symbol, precedence)
 		{
+			public String markupForDisplay
+				(
+					String operator, String firstOperand, String secondOperand,
+					boolean fenceFirst, boolean fenceSecond, NodeFormatting using
+				)
+			{
+				return using.formatBinaryOperation
+				(
+					firstOperand,
+					OperatorNomenclature.DOT_PRODUCT_RENDER,
+					secondOperand
+				);
+			}
+
 			public ValueManager.GenericValue execute
 			(ValueManager.GenericValue left, ValueManager.GenericValue right)
 			{ return dot (left, right); }
+		};
+	}
+
+
+	/**
+	 * implement operator - CROSS (X)
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getCrossAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public String markupForDisplay
+				(
+					String operator, String firstOperand, String secondOperand,
+					boolean fenceFirst, boolean fenceSecond, NodeFormatting using
+				)
+			{
+				return using.formatBinaryOperation
+				(
+					firstOperand,
+					OperatorNomenclature.CROSS_PRODUCT_RENDER,
+					secondOperand
+				);
+			}
+
+			public ValueManager.GenericValue execute
+			(ValueManager.GenericValue left, ValueManager.GenericValue right)
+			{ return cross (left, right); }
 		};
 	}
 
