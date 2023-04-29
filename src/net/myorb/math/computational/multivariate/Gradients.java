@@ -86,7 +86,7 @@ public class Gradients <T> extends DataManagers <T>
 	{
 		for (int n = 0; n < N; n++)
 		{
-			double delta = context.metadata.getDeltaFor (n);
+			double delta = context.getDeltaFor (n);
 
 			Coordinates	evalAt = eval
 			(
