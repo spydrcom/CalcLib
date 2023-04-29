@@ -11,6 +11,7 @@ import net.myorb.math.expressions.symbols.AbstractCalculusOperator;
 
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
+import net.myorb.math.expressions.OperatorNomenclature;
 
 import net.myorb.math.expressions.ConventionalNotations;
 import net.myorb.math.expressions.ValueManager;
@@ -145,7 +146,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{ return new MultivariateCalculus <> (environment).markupForDisplay ( DOT, operand, using ); }
-			static final String DOT = "\u00B7";
+			static final String DOT = OperatorNomenclature.DOT_PRODUCT_RENDER;
 		};
 	}
 	static final CalculusMarkers.CalculusMarkerTypes DIV = CalculusMarkers.CalculusMarkerTypes.VECTOR_DIV;
@@ -166,7 +167,7 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 			 */
 			public String markupForDisplay (String operator, String operand, NodeFormatting using)
 			{ return new MultivariateCalculus <> (environment).markupForDisplay ( CROSS, operand, using ); }
-			static final String CROSS = "\u00D7";
+			static final String CROSS = OperatorNomenclature.CROSS_PRODUCT_RENDER;
 		};
 	}
 	static final CalculusMarkers.CalculusMarkerTypes CURL = CalculusMarkers.CalculusMarkerTypes.VECTOR_CURL;
