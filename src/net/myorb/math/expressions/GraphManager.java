@@ -285,6 +285,23 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 
 
 	/**
+	 * plot UDF as vector field
+	 * @param functionName name of function to plot
+	 * @param sequence parameters of plot
+	 */
+	public void vectorFieldContourPlot (String functionName, CommandSequence sequence)
+	{
+		DisplayGraph.Point p;
+		int pos = parsePoint (sequence, 0, p = new DisplayGraph.Point ());
+		SymbolMap.Named functionSymbol = environment.getSymbolMap ().lookup (functionName);
+		double edge = valueOf (sequence, pos++), vectorCount = valueOf (sequence, pos++),
+				mul = sequence.size () > pos ? valueOf (sequence, pos) : 1;
+		new HighDefinitionPlots<T> (environment).contourPlotOfVectorField
+				(functionSymbol, p, edge, vectorCount, mul);
+	}
+
+
+	/**
 	 * plot UDF as 3D mesh plot
 	 * @param functionName name of function to plot
 	 * @param sequence parameters of plot
