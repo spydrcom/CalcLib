@@ -1,13 +1,13 @@
 
 package net.myorb.math.expressions.charting;
 
+import net.myorb.gui.components.SimpleScreenIO;
+
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.math.MultiDimensional;
-
-import net.myorb.gui.components.SimpleScreenIO;
 
 /**
  * boiler plate for 3D plot control
@@ -29,7 +29,7 @@ public class Plot3D<T> extends ContourPlotProperties
 	public int evaluate (double x, double y)
 	{
 		@SuppressWarnings("unchecked") double result = multiplier *
-			spaceManager.convertToDouble (equation.f (spaceManager.convertFromDouble (x), spaceManager.convertFromDouble (y)));
+			mgr.convertToDouble (equation.f (mgr.convertFromDouble (x), mgr.convertFromDouble (y)));
 		return (int) (result);
 	}
 
@@ -40,7 +40,7 @@ public class Plot3D<T> extends ContourPlotProperties
 	public double evaluateReal (double x, double y)
 	{
 		@SuppressWarnings("unchecked") double result = multiplier *
-			spaceManager.convertToDouble (equation.f (spaceManager.convertFromDouble (x), spaceManager.convertFromDouble (y)));
+			mgr.convertToDouble (equation.f (mgr.convertFromDouble (x), mgr.convertFromDouble (y)));
 		return result;
 	}
 
@@ -51,12 +51,12 @@ public class Plot3D<T> extends ContourPlotProperties
 	public void setEquation (MultiDimensional.Function<T> equation)
 	{
 		this.equation = equation;
-		this.spaceManager = (ExpressionSpaceManager<T>) equation.getSpaceDescription ();
+		this.mgr = ( ExpressionSpaceManager <T> ) equation.getSpaceDescription ();
 		this.setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
 		this.setEquation (this);
 	}
-	private ExpressionSpaceManager<T> spaceManager;
 	private MultiDimensional.Function<T> equation;
+	protected ExpressionSpaceManager<T> mgr;
 
 
 	/**

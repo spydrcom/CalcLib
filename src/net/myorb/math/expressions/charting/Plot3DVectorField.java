@@ -3,13 +3,10 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.math.expressions.ExpressionSpaceManager;
-
 import net.myorb.charting.DisplayGraphTypes.Point;
-import net.myorb.data.abstractions.ErrorHandling;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.myorb.data.abstractions.CommonDataStructures;
+import net.myorb.data.abstractions.ErrorHandling;
 
 /**
  * 3D plot control for vector field style plots
@@ -18,6 +15,11 @@ import java.util.List;
  */
 public class Plot3DVectorField <T> extends Plot3D <T>
 {
+
+
+	@SuppressWarnings("serial")
+	class Vector extends CommonDataStructures.ItemList <T>
+	{ Vector () {} Vector (java.util.List <T> items) { super (items); } }
 
 
 	/* (non-Javadoc)
@@ -55,7 +57,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 
 	void doCall (double x, double y)
 	{
-		List<T> parameterValues = new ArrayList<T> ();
+		Vector parameterValues = new Vector ();
 		add (x, parameterValues); add (y, parameterValues);
 		equation.copyParameters (parameterValues);
 		equation.run ();
@@ -64,28 +66,32 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 
 	double magnitude (ValueManager.MatrixValue <T> MV)
 	{
-		return sumSQ (MV.getMatrix ().getRow (1).getElementsList ());
+		return sumSQ ( new Vector (MV.getMatrix ().getRow (1).getElementsList ()) );
 	}
 
 
 	double magnitude (ValueManager.DimensionedValue <T> DV)
 	{
-		return sumSQ ( DV.getValues () );
+		return sumSQ ( new Vector ( DV.getValues () ) );
 	}
 
 
-	double sumSQ (List <T> V)
+	double sumSQ (Vector V)
 	{
-		T result = mgr.add (SQ (V.get (0)), SQ (V.get (1)));
-		return mgr.convertToDouble (result);
+		double result = 0.0, v;
+		for (int i = 0; i < V.size (); i++)
+		{
+			v = mgr.convertToDouble (V.get (i));
+			result += v * v;
+		}
+		return result;
 	}
 	
 
-	void add (double value, List<T> parameters)
+	void add (double value, Vector parameters)
 	{ parameters.add (this.mgr.convertFromDouble (value)); }
 	double toDouble (ValueManager.DiscreteValue <T> DV) { return this.cvt ( DV.getValue () ); }
 	double cvt (T value) { return this.mgr.convertToDouble (value); }
-	T SQ (T x) { return mgr.multiply (x, x); }
 
 
 	public Plot3DVectorField
@@ -93,15 +99,13 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 			Subroutine <T> equation, Double vectorCount
 		)
 	{
-		super (); this.setEquation (equation);
-		this.mgr = equation.getExpressionSpaceManager();
+		this.setEquation (equation);
 		this.setEdgeSize (0); this.setAltEdgeSize (0);
 		this.vectorCount = vectorCount.intValue ();
 		this.setLowCorner (new Point ());
 		this.equation = equation;
 	}
 	public Plot3DVectorField () { super (); }
-	protected ExpressionSpaceManager <T> mgr;
 	protected Subroutine <T> equation;
 	protected int vectorCount;
 
