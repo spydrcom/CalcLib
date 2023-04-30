@@ -89,9 +89,9 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	
 
 	void add (double value, Vector parameters)
-	{ parameters.add (this.mgr.convertFromDouble (value)); }
-	double toDouble (ValueManager.DiscreteValue <T> DV) { return this.cvt ( DV.getValue () ); }
-	double cvt (T value) { return this.mgr.convertToDouble (value); }
+	{
+		parameters.add (this.mgr.convertFromDouble (value));
+	}
 
 
 	public Plot3DVectorField

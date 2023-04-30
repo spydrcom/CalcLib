@@ -4,7 +4,7 @@ package net.myorb.math.expressions.charting;
 import net.myorb.gui.components.SimpleScreenIO;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
-
+import net.myorb.math.expressions.ValueManager;
 import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.math.MultiDimensional;
@@ -28,9 +28,7 @@ public class Plot3D<T> extends ContourPlotProperties
 	 */
 	public int evaluate (double x, double y)
 	{
-		@SuppressWarnings("unchecked") double result = multiplier *
-			mgr.convertToDouble (equation.f (mgr.convertFromDouble (x), mgr.convertFromDouble (y)));
-		return (int) (result);
+		return evaluateFunction (x, y).intValue ();
 	}
 
 
@@ -39,10 +37,19 @@ public class Plot3D<T> extends ContourPlotProperties
 	 */
 	public double evaluateReal (double x, double y)
 	{
-		@SuppressWarnings("unchecked") double result = multiplier *
-			mgr.convertToDouble (equation.f (mgr.convertFromDouble (x), mgr.convertFromDouble (y)));
-		return result;
+		return evaluateFunction (x, y);
 	}
+
+
+	@SuppressWarnings("unchecked")
+	public Double evaluateFunction (double x, double y)
+	{ return multiplier * cvt (equation.f (toGeneric (x), toGeneric (y))); }
+
+	protected double cvt (T value) { return this.mgr.convertToDouble (value); }
+	protected T toGeneric (double value) { return this.mgr.convertFromDouble (value); }
+
+	protected double toDouble (ValueManager.DiscreteValue <T> DV)
+	{ return this.cvt ( DV.getValue () ); }
 
 
 	/**
