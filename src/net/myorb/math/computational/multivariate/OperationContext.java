@@ -36,6 +36,8 @@ public class OperationContext implements ValueManager.VectorOperation
 
 
 	/**
+	 * get access to abstract description of function
+	 * @param <T> data type used in the function
 	 * @return identified target as Function
 	 */
 	@SuppressWarnings("unchecked")
