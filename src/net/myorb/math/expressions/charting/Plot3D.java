@@ -41,6 +41,15 @@ public class Plot3D<T> extends ContourPlotProperties
 	}
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
+	 */
+	public double evaluateAngle (double x, double y)
+	{
+		throw new RuntimeException ("Vector field manager needed to evaluate direction");
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public Double evaluateFunction (double x, double y)
 	{ return multiplier * cvt (equation.f (toGeneric (x), toGeneric (y))); }
@@ -57,9 +66,14 @@ public class Plot3D<T> extends ContourPlotProperties
 	 */
 	public void setEquation (MultiDimensional.Function<T> equation)
 	{
+		this.setEquation (equation, PlotComputers.getBruteForcePlotComputer (this));
+	}
+	public void setEquation
+	(MultiDimensional.Function<T> equation, DisplayGraphTypes.PlotComputer computer)
+	{
 		this.equation = equation;
 		this.mgr = ( ExpressionSpaceManager <T> ) equation.getSpaceDescription ();
-		this.setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
+		this.setPlotComputer (computer);
 		this.setEquation (this);
 	}
 	private MultiDimensional.Function<T> equation;
