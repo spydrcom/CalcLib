@@ -30,22 +30,19 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	{
 		Double result = 0.0;
 
-		try  { doCall (x, y); }  catch  (Exception e)
-		{ throw new ErrorHandling.Terminator (e.getMessage (), e); }
+		ValueManager.GenericValue functionResult = getCallResult (x, y);
 
-		ValueManager.GenericValue tos = equation.topOfStack ();
-
-		if ( tos instanceof ValueManager.MatrixValue )
+		if ( functionResult instanceof ValueManager.MatrixValue )
 		{
-			result = magnitude ( (ValueManager.MatrixValue <T>) tos );
+			result = magnitude ( (ValueManager.MatrixValue <T>) functionResult );
 		}
-		else if ( tos instanceof ValueManager.DiscreteValue )
+		else if ( functionResult instanceof ValueManager.DiscreteValue )
 		{
-			result = toDouble ( (ValueManager.DiscreteValue <T>) tos );
+			result = toDouble ( (ValueManager.DiscreteValue <T>) functionResult );
 		}
-		else if ( tos instanceof ValueManager.DimensionedValue )
+		else if ( functionResult instanceof ValueManager.DimensionedValue )
 		{
-			result = magnitude ( (ValueManager.DimensionedValue <T>) tos );
+			result = magnitude ( (ValueManager.DimensionedValue <T>) functionResult );
 		}
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
 
@@ -55,12 +52,41 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	static final String VECTOR_FIELD_ERROR = "No field vector interpretation for function";
 
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
+	 */
+	@SuppressWarnings("unchecked")
+	public double evaluateAngle (double x, double y)
+	{
+		ValueManager.GenericValue
+			functionResult = getCallResult (x, y);
+		if ( functionResult instanceof ValueManager.MatrixValue )
+		{ return angleFrom  ( (ValueManager.MatrixValue <T>) functionResult ); }
+		else throw new RuntimeException (VECTOR_FIELD_ERROR);
+	}
+
+
+	ValueManager.GenericValue getCallResult (double x, double y)
+	{
+		try  { doCall (x, y); }  catch  (Exception e)
+		{ throw new ErrorHandling.Terminator (e.getMessage (), e); }
+		return equation.topOfStack ();
+	}
+
+
 	void doCall (double x, double y)
 	{
 		Vector parameterValues = new Vector ();
 		add (x, parameterValues); add (y, parameterValues);
 		equation.copyParameters (parameterValues);
 		equation.run ();
+	}
+
+
+	double angleFrom (ValueManager.MatrixValue <T> MV)
+	{
+		Vector V = new Vector (MV.getMatrix ().getRow (1).getElementsList ());
+		return Math.atan2 (cvt (V.get (1)), cvt (V.get (0)));
 	}
 
 
@@ -99,15 +125,17 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 			Subroutine <T> equation, Double vectorCount
 		)
 	{
-		this.setEquation (equation);
+		this.setEquation
+		(
+			equation, PlotComputers.getVectorFieldPlotComputer
+				(this, vectorCount.intValue ())
+		);
 		this.setEdgeSize (0); this.setAltEdgeSize (0);
-		this.vectorCount = vectorCount.intValue ();
 		this.setLowCorner (new Point ());
 		this.equation = equation;
 	}
 	public Plot3DVectorField () { super (); }
 	protected Subroutine <T> equation;
-	protected int vectorCount;
 
 
 	/* (non-Javadoc)
