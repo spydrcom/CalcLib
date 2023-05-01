@@ -169,6 +169,10 @@ public class ContourPlotProperties extends HashMap<String,Object>
 	{
 		return equation.evaluateReal (x, y);
 	}
+	public double evaluateAngle (double x, double y)
+	{
+		return equation.evaluateReal (x, y);
+	}
 	public Object evaluateGeneric (double x, double y)
 	{
 		return equation.evaluateGeneric (x, y);
