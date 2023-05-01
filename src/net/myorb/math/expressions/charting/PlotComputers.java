@@ -73,6 +73,39 @@ public class PlotComputers
 
 	/**
 	 * @param proprties a Plot Properties object describing the plot
+	 * @param vectorCount the number of direction displays per axis
+	 * @return a PlotComputer that captures vector direction
+	 */
+	public static PlotComputer getVectorFieldPlotComputer (ContourPlotProperties proprties, int vectorCount)
+	{
+		return new PlotComputer ()
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.charting.DisplayGraph3D.PlotComputer#computeRange(net.myorb.charting.DisplayGraphTypes.ContourPlotDescriptor, int, net.myorb.charting.DisplayGraphTypes.Point[], java.lang.Object[], net.myorb.charting.Histogram)
+			 */
+			public void computeRange
+				(
+					ContourPlotDescriptor descriptor, int pointsPerAxis,
+					Point[] points, Object[] range,
+					Histogram histogram
+				)
+			{
+				new VectorFieldPlotComputer
+					(
+						proprties, vectorCount
+					)
+				.compute
+					(
+						descriptor, pointsPerAxis,
+						points, range, histogram
+					);
+			}
+		};
+	}
+
+
+	/**
+	 * @param proprties a Plot Properties object describing the plot
 	 * @return a PlotComputer that uses vector processing for function calls
 	 */
 	public static PlotComputer getVectorPlotComputer (ContourPlotProperties proprties)
