@@ -111,7 +111,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 			v = mgr.convertToDouble (V.get (i));
 			result += v * v;
 		}
-		return result;
+		return Math.sqrt (result);
 	}
 	
 
