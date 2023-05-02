@@ -11,13 +11,13 @@ import net.myorb.sitstat.RealizationTracking;
 import net.myorb.sitstat.ActivityProperties;
 import net.myorb.sitstat.Activity;
 
-import java.util.HashMap;
+import net.myorb.data.abstractions.CommonDataStructures;
 
 /**
  * collect properties required to construct contour plot
  * @author Michael Druckman
  */
-public class ContourPlotProperties extends HashMap<String,Object>
+public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Object>
 	implements DisplayGraphTypes.ContourPlotDescriptor, RealizationTracking
 {
 
