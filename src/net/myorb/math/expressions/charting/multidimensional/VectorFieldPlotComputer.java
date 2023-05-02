@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.charting.multidimensional;
 
+import net.myorb.math.expressions.charting.Plot3DVectorField;
 import net.myorb.math.expressions.charting.ContourPlotProperties;
 
 import net.myorb.charting.DisplayGraphTypes;
@@ -32,9 +33,12 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 
 		super.compute (descriptor, pointsPerAxis, points, range, histogram);
 
-		DisplayGraphTypes.VectorField.Locations
-			vectorPoints = new DisplayGraphTypes.VectorField.Locations ();
+		DisplayGraphTypes.VectorField.Locations vectorPoints;
+		vectorPoints = new DisplayGraphTypes.VectorField.Locations ();
 		collectVectorPoints (pointsPerAxis, vectorPoints);
+
+		( (Plot3DVectorField <?>) descriptor )
+		.setVectorPoints (vectorPoints);
 	}
 
 
@@ -102,7 +106,7 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 		}
 		catch (Exception e) { e.printStackTrace (); }
 	}
-	boolean TRACE = true;
+	boolean TRACE = false;
 
 
 	/* (non-Javadoc)
