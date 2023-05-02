@@ -1,11 +1,11 @@
 
 package net.myorb.math.expressions.charting;
 
+import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.gui.components.SimpleScreenIO;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
-import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.math.MultiDimensional;
 

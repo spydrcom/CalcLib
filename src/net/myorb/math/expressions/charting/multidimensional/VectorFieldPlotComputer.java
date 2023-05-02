@@ -1,8 +1,8 @@
 
 package net.myorb.math.expressions.charting.multidimensional;
 
-import net.myorb.math.expressions.charting.Plot3DVectorField;
 import net.myorb.math.expressions.charting.ContourPlotProperties;
+import net.myorb.math.expressions.charting.Plot3DVectorField;
 
 import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.Histogram;
