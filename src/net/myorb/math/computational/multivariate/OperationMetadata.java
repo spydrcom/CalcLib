@@ -22,7 +22,6 @@ public class OperationMetadata implements Metadata
 
 
 	public void setOp (MultivariateCalculus.VectorOperator op) { this.op = op; }
-	public MultivariateCalculus.VectorOperator getOperation () { return this.op; }
 	public MultivariateCalculus.VectorOperator getOp () { return op; }
 	private MultivariateCalculus.VectorOperator op;
 
