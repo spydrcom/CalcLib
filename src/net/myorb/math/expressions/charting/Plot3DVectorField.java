@@ -3,6 +3,7 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.DisplayGraphTypes.Point;
 
 import net.myorb.data.abstractions.CommonDataStructures;
@@ -128,14 +129,24 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 		this.setEquation
 		(
 			equation, PlotComputers.getVectorFieldPlotComputer
-				(this, vectorCount.intValue ())
+					( this, vectorCount.intValue () )
 		);
 		this.setEdgeSize (0); this.setAltEdgeSize (0);
-		this.setLowCorner (new Point ());
+		this.setLowCorner ( new Point () );
 		this.equation = equation;
 	}
 	public Plot3DVectorField () { super (); }
 	protected Subroutine <T> equation;
+
+
+	/**
+	 * @return access to collected description of field
+	 */
+	public DisplayGraphTypes.VectorField.Locations
+		getVectorPoints () { return this.vectorPoints; }
+	protected DisplayGraphTypes.VectorField.Locations vectorPoints;
+	public void setVectorPoints (DisplayGraphTypes.VectorField.Locations vectorPoints)
+	{ this.vectorPoints = vectorPoints; }
 
 
 	/* (non-Javadoc)
@@ -147,7 +158,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 		this.setPlotNumber (1000);
 		this.setTransformIdentity (EQUATION_IDENTITY);
 		int ps = DisplayGraph3D.appropriatePointSize (ContourPlotEdgeSize);
-		DisplayGraph3D.plotContour (setScale (ContourPlotEdgeSize, ps), title);
+		DisplayGraph3D.plotVectorField (setScale (ContourPlotEdgeSize, ps), title);
 	}
 	
 	
