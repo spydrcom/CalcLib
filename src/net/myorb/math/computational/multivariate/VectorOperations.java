@@ -67,12 +67,11 @@ public class VectorOperations <T> extends Gradients <T>
 	 */
 	T computeDivergence (Matrix <T> M)
 	{
-		int N = M.rowCount ();
 		T divergence = manager.getZero ();
 
-		for (int row = 1; row <= N; row++)
+		for (int row = 1; row <= M.rowCount (); row++)
 		{
-			for (int col = 1; col <= N; col++)
+			for (int col = 1; col <= M.columnCount (); col++)
 			{
 				divergence = 
 					manager.add
