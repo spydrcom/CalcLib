@@ -3,8 +3,9 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.charting.DisplayGraphTypes;
+
 import net.myorb.charting.DisplayGraphTypes.Point;
+import net.myorb.charting.DisplayGraphTypes;
 
 import net.myorb.data.abstractions.CommonDataStructures;
 import net.myorb.data.abstractions.ErrorHandling;
@@ -18,6 +19,9 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 {
 
 
+	/**
+	 * treat list of values as vector
+	 */
 	@SuppressWarnings("serial")
 	class Vector extends CommonDataStructures.ItemList <T>
 	{ Vector () {} Vector (java.util.List <T> items) { super (items); } }
@@ -67,6 +71,12 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	}
 
 
+	/**
+	 * call 2D function
+	 * @param x the X parameter
+	 * @param y the Y parameter
+	 * @return the function result
+	 */
 	ValueManager.GenericValue getCallResult (double x, double y)
 	{
 		try  { doCall (x, y); }  catch  (Exception e)
@@ -75,6 +85,11 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	}
 
 
+	/**
+	 * execute parameter profile and run
+	 * @param x the X parameter
+	 * @param y the Y parameter
+	 */
 	void doCall (double x, double y)
 	{
 		Vector parameterValues = new Vector ();
@@ -84,26 +99,59 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	}
 
 
+	/**
+	 * extract row of gradient matrix and express as vector
+	 * @param MV the generic wrapper for a gradient matrix
+	 * @return the vector extracted for first matrix row
+	 */
+	Vector getRowVector (ValueManager.MatrixValue <T> MV)
+	{
+		return new Vector ( MV.getMatrix ().getRow (1).getElementsList () );
+	}
+
+
+	/**
+	 * use row of gradient matrix to compute vector direction
+	 * @param MV the generic wrapper for a gradient matrix
+	 * @return the angle formed by the vector values
+	 */
 	double angleFrom (ValueManager.MatrixValue <T> MV)
 	{
-		Vector V = new Vector (MV.getMatrix ().getRow (1).getElementsList ());
-		return Math.atan2 (cvt (V.get (1)), cvt (V.get (0)));
+		Vector V = getRowVector (MV);
+		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
+		return Math.atan2 ( Y, X );
 	}
 
 
+	/**
+	 * use row of gradient matrix to compute vector magnitude
+	 * @param MV the generic wrapper for a gradient matrix
+	 * @return the magnitude of the described vector
+	 */
 	double magnitude (ValueManager.MatrixValue <T> MV)
 	{
-		return sumSQ ( new Vector (MV.getMatrix ().getRow (1).getElementsList ()) );
+		return sumSQ ( getRowVector (MV) );
 	}
 
 
+	/**
+	 * use array of values to compute vector magnitude
+	 * @param DV the generic wrapper for an array of values
+	 * @return the magnitude of the described vector
+	 */
 	double magnitude (ValueManager.DimensionedValue <T> DV)
 	{
 		return sumSQ ( new Vector ( DV.getValues () ) );
 	}
 
 
-	double sumSQ (Vector V)
+	/**
+	 * compute sum of squares of vector components
+	 * - standard Pythagorean algorithm for distance computation
+	 * @param V the vector to evaluate
+	 * @return the magnitude
+	 */
+	double sumSQ ( Vector V )
 	{
 		double result = 0.0, v;
 		for (int i = 0; i < V.size (); i++)
@@ -115,22 +163,28 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	}
 	
 
+	/**
+	 * construct a parameter list for a function call
+	 * @param value the value of the parameter to be included
+	 * @param parameters the vector of parameters being compiled
+	 */
 	void add (double value, Vector parameters)
 	{
 		parameters.add (this.mgr.convertFromDouble (value));
 	}
 
 
+	/**
+	 * @param equation the subroutine describing the function to plot
+	 * @param vectorCount the number of direction indicators to include
+	 */
 	public Plot3DVectorField
 		(
 			Subroutine <T> equation, Double vectorCount
 		)
 	{
 		this.setEquation
-		(
-			equation, PlotComputers.getVectorFieldPlotComputer
-					( this, vectorCount.intValue () )
-		);
+		( equation, identifyFieldPlotComputer (vectorCount) );
 		this.setEdgeSize (0); this.setAltEdgeSize (0);
 		this.setLowCorner ( new Point () );
 		this.equation = equation;
@@ -140,6 +194,21 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 
 
 	/**
+	 * build a plot computer for the field display
+	 * @param vectorCount the number of direction indicators per axis
+	 * @return the plot computer configured for field display
+	 */
+	public DisplayGraphTypes.PlotComputer
+		identifyFieldPlotComputer (Double vectorCount)
+	{
+		return PlotComputers.getVectorFieldPlotComputer
+			( this, vectorCount.intValue () );
+	}
+
+
+	/**
+	 * get the compiled set of vector points in the field
+	 * - this is the set of locations identified for the field path plot
 	 * @return access to collected description of field
 	 */
 	public DisplayGraphTypes.VectorField.Locations
@@ -157,20 +226,19 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 		this.setEquation (this);
 		this.setPlotNumber (1000);
 		this.setTransformIdentity (EQUATION_IDENTITY);
-		int ps = DisplayGraph3D.appropriatePointSize (ContourPlotEdgeSize);
-		DisplayGraph3D.plotVectorField (setScale (ContourPlotEdgeSize, ps), title);
+		int ps = DisplayGraph3D.appropriatePointSize (FIELD_PLOT_EDGE_SIZE);
+		DisplayGraph3D.plotVectorField (setScale (FIELD_PLOT_EDGE_SIZE, ps), title);
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.Plot3D#getPlotEdgeSize()
 	 */
-	public int getPlotEdgeSize () { return ContourPlotEdgeSize; }
-	public static void setContourPlotEdgeSize (int to) { ContourPlotEdgeSize = to; }
-	public static int getContourPlotEdgeSize () { return ContourPlotEdgeSize; }
-	static int ContourPlotEdgeSize = 200;
+	public int getPlotEdgeSize () { return FIELD_PLOT_EDGE_SIZE; }
+	static final int FIELD_PLOT_EDGE_SIZE = 200;
 
 
 	private static final long serialVersionUID = 6489115687060243925L;
 
 }
+
