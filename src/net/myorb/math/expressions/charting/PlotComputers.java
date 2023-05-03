@@ -1,14 +1,11 @@
 
 package net.myorb.math.expressions.charting;
 
-import net.myorb.math.expressions.charting.multidimensional.*;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.charting.DisplayGraphTypes.ContourPlotDescriptor;
-import net.myorb.charting.DisplayGraphTypes.SurfaceDescription3D;
-import net.myorb.charting.DisplayGraphTypes.PlotComputer;
-import net.myorb.charting.DisplayGraphTypes.Point;
+import net.myorb.math.expressions.charting.multidimensional.*;
 
+import net.myorb.charting.DisplayGraphTypes.*;
 import net.myorb.charting.Histogram;
 
 /**
