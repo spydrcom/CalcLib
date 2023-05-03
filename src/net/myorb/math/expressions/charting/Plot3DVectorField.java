@@ -4,11 +4,10 @@ package net.myorb.math.expressions.charting;
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 
+import net.myorb.data.abstractions.CommonDataStructures;
+
 import net.myorb.charting.DisplayGraphTypes.Point;
 import net.myorb.charting.DisplayGraphTypes;
-
-import net.myorb.data.abstractions.CommonDataStructures;
-import net.myorb.data.abstractions.ErrorHandling;
 
 /**
  * 3D plot control for vector field style plots
@@ -24,7 +23,52 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 */
 	@SuppressWarnings("serial")
 	class Vector extends CommonDataStructures.ItemList <T>
-	{ Vector () {} Vector (java.util.List <T> items) { super (items); } }
+	{
+
+		/**
+		 * construct a parameter list for a function call
+		 * @param items the values of the parameter to be included
+		 */
+		Vector (double [] items)
+		{
+			for (double item : items)
+			{
+				this.add ( mgr.convertFromDouble (item) );
+			}
+		}
+
+		/**
+		 * use array of values as vector components
+		 * @param DV the generic wrapper for an array of values
+		 */
+		Vector (ValueManager.DimensionedValue <T> DV) { super ( DV.getValues () ); }
+
+		/**
+		 * extract row of gradient matrix and express as vector
+		 * @param MV the generic wrapper for a gradient matrix
+		 */
+		Vector (ValueManager.MatrixValue <T> MV)
+		{
+			super ( MV.getMatrix ().getRow (1).getElementsList () );
+		}
+
+		/**
+		 * compute sum of squares of vector components
+		 * - standard Pythagorean algorithm for distance computation
+		 * @return the magnitude
+		 */
+		double computeMagnitude ()
+		{
+			double result = 0.0, v;
+			for (int i = 0; i < this.size (); i++)
+			{
+				v = mgr.convertToDouble (this.get (i));
+				result += v * v;
+			}
+			return Math.sqrt (result);
+		}
+
+	}
 
 
 	/* (non-Javadoc)
@@ -35,18 +79,22 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	{
 		Double result = 0.0;
 
-		ValueManager.GenericValue functionResult = getCallResult (x, y);
+		// get the 2D vector function result to use computing magnitude
+		ValueManager.GenericValue functionResult = evaluate2DCall (x, y);
 
 		if ( functionResult instanceof ValueManager.MatrixValue )
 		{
+			// assume the first row is the vector result
 			result = magnitude ( (ValueManager.MatrixValue <T>) functionResult );
 		}
 		else if ( functionResult instanceof ValueManager.DiscreteValue )
 		{
+			// a single value gives magnitude with no direction
 			result = toDouble ( (ValueManager.DiscreteValue <T>) functionResult );
 		}
 		else if ( functionResult instanceof ValueManager.DimensionedValue )
 		{
+			// an array returned is treated as multiple component vector
 			result = magnitude ( (ValueManager.DimensionedValue <T>) functionResult );
 		}
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
@@ -64,7 +112,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	public double evaluateAngle (double x, double y)
 	{
 		ValueManager.GenericValue
-			functionResult = getCallResult (x, y);
+			functionResult = evaluate2DCall (x, y);
 		if ( functionResult instanceof ValueManager.MatrixValue )
 		{ return angleFrom  ( (ValueManager.MatrixValue <T>) functionResult ); }
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
@@ -72,41 +120,18 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 
 
 	/**
-	 * call 2D function
-	 * @param x the X parameter
-	 * @param y the Y parameter
-	 * @return the function result
+	 * call 2D function and return result
+	 * @param x the X-axis component of vector
+	 * @param y the Y-axis component of vector
+	 * @return the function result at the vector
 	 */
-	ValueManager.GenericValue getCallResult (double x, double y)
+	ValueManager.GenericValue evaluate2DCall (double x, double y)
 	{
-		try  { doCall (x, y); }  catch  (Exception e)
-		{ throw new ErrorHandling.Terminator (e.getMessage (), e); }
-		return equation.topOfStack ();
-	}
-
-
-	/**
-	 * execute parameter profile and run
-	 * @param x the X parameter
-	 * @param y the Y parameter
-	 */
-	void doCall (double x, double y)
-	{
-		Vector parameterValues = new Vector ();
-		add (x, parameterValues); add (y, parameterValues);
-		equation.copyParameters (parameterValues);
-		equation.run ();
-	}
-
-
-	/**
-	 * extract row of gradient matrix and express as vector
-	 * @param MV the generic wrapper for a gradient matrix
-	 * @return the vector extracted for first matrix row
-	 */
-	Vector getRowVector (ValueManager.MatrixValue <T> MV)
-	{
-		return new Vector ( MV.getMatrix ().getRow (1).getElementsList () );
+		return equation.evaluateFunctionAt
+		(
+			// values treated as vector
+			new Vector ( new double[]{ x, y } )
+		);
 	}
 
 
@@ -117,7 +142,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 */
 	double angleFrom (ValueManager.MatrixValue <T> MV)
 	{
-		Vector V = getRowVector (MV);
+		Vector V = new Vector (MV);
 		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
 		return Math.atan2 ( Y, X );
 	}
@@ -130,7 +155,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 */
 	double magnitude (ValueManager.MatrixValue <T> MV)
 	{
-		return sumSQ ( getRowVector (MV) );
+		return new Vector (MV).computeMagnitude ();
 	}
 
 
@@ -141,36 +166,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 */
 	double magnitude (ValueManager.DimensionedValue <T> DV)
 	{
-		return sumSQ ( new Vector ( DV.getValues () ) );
-	}
-
-
-	/**
-	 * compute sum of squares of vector components
-	 * - standard Pythagorean algorithm for distance computation
-	 * @param V the vector to evaluate
-	 * @return the magnitude
-	 */
-	double sumSQ ( Vector V )
-	{
-		double result = 0.0, v;
-		for (int i = 0; i < V.size (); i++)
-		{
-			v = mgr.convertToDouble (V.get (i));
-			result += v * v;
-		}
-		return Math.sqrt (result);
-	}
-	
-
-	/**
-	 * construct a parameter list for a function call
-	 * @param value the value of the parameter to be included
-	 * @param parameters the vector of parameters being compiled
-	 */
-	void add (double value, Vector parameters)
-	{
-		parameters.add (this.mgr.convertFromDouble (value));
+		return new Vector ( DV ).computeMagnitude ();
 	}
 
 
