@@ -26,30 +26,23 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 	public void compute
 		(
 			DisplayGraphTypes.ContourPlotDescriptor descriptor, int pointsPerAxis,
-			DisplayGraphTypes.Point[] points, Object[] range, Histogram histogram
+			DisplayGraphTypes.Point [] points, Object [] range, Histogram histogram
 		)
 	{
-		this.angle = new double [pointsPerAxis * pointsPerAxis];
-
+		this.angle = new double [ pointsPerAxis * pointsPerAxis ];
 		super.compute (descriptor, pointsPerAxis, points, range, histogram);
-
-		DisplayGraphTypes.VectorField.Locations vectorPoints;
-		vectorPoints = new DisplayGraphTypes.VectorField.Locations ();
-		collectVectorPoints (pointsPerAxis, vectorPoints);
-
-		( (Plot3DVectorField <?>) descriptor )
-		.setVectorPoints (vectorPoints);
+		( (Plot3DVectorField <?>) descriptor ).setVectorPoints
+				( fieldDescription (pointsPerAxis) );
 	}
-
-
-	/**
-	 * collect necessary data for plot of a vector field
-	 * @param axisSize the pixel count specified as edge size
-	 * @param vectorPoints the point list for display
-	 */
-	void collectVectorPoints
-		(int axisSize, DisplayGraphTypes.VectorField.Locations vectorPoints)
-	{ computeDisplayFactors (axisSize); describeVectorField (vectorPoints); }
+	Plot3DVectorField.VectorFieldPoints fieldDescription (int pointsPerAxis)
+	{
+		Plot3DVectorField.VectorFieldPoints
+			vectorPoints = Plot3DVectorField.pointsList ();
+		// collect necessary data for plot of a vector field
+		computeDisplayFactors (pointsPerAxis);
+		describeVectorField (vectorPoints);
+		return vectorPoints;
+	}
 
 
 	/**

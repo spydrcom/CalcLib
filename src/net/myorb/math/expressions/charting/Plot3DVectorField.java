@@ -19,6 +19,20 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 
 
 	/**
+	 * a local description of the field data
+	 */
+	@SuppressWarnings("serial") public static class VectorFieldPoints
+		extends DisplayGraphTypes.VectorField.Locations {}
+
+	/**
+	 * allocate a new VectorField Location set
+	 * @return a new structure that will hold a field description
+	 */
+	public static VectorFieldPoints pointsList ()
+	{ return new VectorFieldPoints (); }
+
+
+	/**
 	 * treat list of values as vector
 	 */
 	@SuppressWarnings("serial")
@@ -176,7 +190,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 */
 	public Plot3DVectorField
 		(
-			Subroutine <T> equation, Double vectorCount
+			Subroutine <T> equation, Number vectorCount
 		)
 	{
 		this.setEquation
@@ -195,7 +209,7 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 * @return the plot computer configured for field display
 	 */
 	public DisplayGraphTypes.PlotComputer
-		identifyFieldPlotComputer (Double vectorCount)
+		identifyFieldPlotComputer (Number vectorCount)
 	{
 		return PlotComputers.getVectorFieldPlotComputer
 			( this, vectorCount.intValue () );
@@ -207,11 +221,9 @@ public class Plot3DVectorField <T> extends Plot3D <T>
 	 * - this is the set of locations identified for the field path plot
 	 * @return access to collected description of field
 	 */
-	public DisplayGraphTypes.VectorField.Locations
-		getVectorPoints () { return this.vectorPoints; }
-	protected DisplayGraphTypes.VectorField.Locations vectorPoints;
-	public void setVectorPoints (DisplayGraphTypes.VectorField.Locations vectorPoints)
-	{ this.vectorPoints = vectorPoints; }
+	public VectorFieldPoints getVectorPoints () { return this.vectorPoints; }
+	public void setVectorPoints (VectorFieldPoints vectorPoints) { this.vectorPoints = vectorPoints; }
+	protected VectorFieldPoints vectorPoints;
 
 
 	/* (non-Javadoc)
