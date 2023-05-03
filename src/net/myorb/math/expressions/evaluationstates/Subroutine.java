@@ -501,28 +501,35 @@ public class Subroutine<T>
 	 */
 
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.MultiDimensional.Function#getSpaceManager()
+	/**
+	 * multi-dimensional function call protocol
+	 * @param parameters the parameters to be used by the function
+	 * @return the function result
 	 */
-	public SpaceManager<T> getSpaceDescription () { return spaceManager; }
+	public ValueManager.GenericValue evaluateFunctionAt (List <T> parameters)
+	{
+		try  {  doCall (parameters);  }  catch (Exception e)
+		{
+			if (supressingErrorMessages) return null;
+			throw new ErrorHandling.Terminator ( e.getMessage (), e );
+		}
+		return topOfStack ();
+	}
+
+
+	/**
+	 * execute parameter profile and run
+	 * @param parameters the parameters to be used by the function
+	 */
+	public void doCall (List <T> parameters) { copyParameters (parameters); run (); }
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.MultiDimensional.Function#f(java.util.List)
 	 */
-	public T f (List<T> parameterValues)
+	public T f ( List <T> parameterValues )
 	{
-		try
-		{
-			copyParameters (parameterValues); run ();
-			ValueManager.GenericValue tos = topOfStack ();
-			return valueManager.toDiscrete (tos);
-		}
-		catch (Exception e)
-		{
-			if (supressingErrorMessages) return null;
-			else throw new ErrorHandling.Terminator (e.getMessage (), e);
-		}
+		return valueManager.toDiscrete ( evaluateFunctionAt (parameterValues) );
 	}
 
 
@@ -536,6 +543,12 @@ public class Subroutine<T>
 		for (T t : x) list.add (t);
 		return f (list);
 	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.MultiDimensional.Function#getSpaceManager()
+	 */
+	public SpaceManager<T> getSpaceDescription () { return spaceManager; }
 
 
 	/**
