@@ -90,8 +90,9 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	{
 		Vector V = new Vector ( MV );
 		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
-		return Math.atan2 ( Y, X );
+		return Math.atan2 ( Y, X ) + PI_OVER_2;
 	}
+	static final double PI_OVER_2 = Math.PI / 2;
 
 
 	/**
