@@ -14,7 +14,7 @@ import net.myorb.charting.DisplayGraphTypes;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class VectorFieldPrimitives <T> extends Plot3D <T>
+public class VectorFieldPlotDescriptors <T> extends Plot3D <T>
 {
 
 
@@ -38,7 +38,7 @@ public class VectorFieldPrimitives <T> extends Plot3D <T>
 		 * construct a parameter list for a function call
 		 * @param items the values of the parameter to be included
 		 */
-		public Vector (double [] items, SpaceConversion <T> converter) { super (items, converter); }
+		public Vector (Number [] items, SpaceConversion <T> converter) { super (items, converter); }
 
 		/**
 		 * use array of values as vector components
