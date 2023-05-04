@@ -242,10 +242,10 @@ public class DisplayGraph3D extends DisplayGraph
 	public static BufferedImage buildContourImage
 		  (ContourPlotProperties proprties)
 	{
-		int pointsPerAxis = proprties.getPointsPerAxis ();
-
-		Point[] points = new Point[pointsPerAxis * pointsPerAxis];
-		Object[] range = new Object[pointsPerAxis * pointsPerAxis];
+		int pointsPerAxis = proprties.getPointsPerAxis (),
+			pointsInSquarePlot = pointsPerAxis * pointsPerAxis;
+		Point  [] points = new Point  [ pointsInSquarePlot ];
+		Object [] range  = new Object [ pointsInSquarePlot ];
 
 		compute (proprties, pointsPerAxis, points, range);
 
@@ -338,11 +338,11 @@ public class DisplayGraph3D extends DisplayGraph
 	 */
 	public static Point endPoint (Point P, double angle)
 	{
-		double S = VACTOR_DISPLAY_LENGTH * Math.sin (angle),
-			C = VACTOR_DISPLAY_LENGTH * Math.cos (angle);
+		double S = VECTOR_DISPLAY_LENGTH * Math.sin (angle),
+			C = VECTOR_DISPLAY_LENGTH * Math.cos (angle);
 		return new Point (P.x + S, P.y + C);
 	}
-	static int VACTOR_DISPLAY_LENGTH = 10;
+	static int VECTOR_DISPLAY_LENGTH = 10;
 
 	/**
 	 * generate single point with fill operation
