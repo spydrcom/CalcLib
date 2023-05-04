@@ -3,7 +3,7 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
-import net.myorb.math.expressions.charting.multidimensional.VectorFieldPrimitives;
+import net.myorb.math.expressions.charting.multidimensional.VectorFieldPlotDescriptors;
 
 import net.myorb.charting.DisplayGraphTypes.Point;
 import net.myorb.charting.DisplayGraphTypes;
@@ -13,7 +13,7 @@ import net.myorb.charting.DisplayGraphTypes;
  * @param <T> data type for plot
  * @author Michael Druckman
  */
-public class Plot3DVectorField <T> extends VectorFieldPrimitives <T>
+public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 {
 
 
@@ -76,7 +76,7 @@ public class Plot3DVectorField <T> extends VectorFieldPrimitives <T>
 		return equation.evaluateFunctionAt
 		(
 			// values treated as vector
-			new Vector ( new double[]{ x, y }, mgr )
+			new Vector ( new Number[]{ x, y }, mgr )
 		);
 	}
 
