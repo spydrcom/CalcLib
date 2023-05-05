@@ -1,6 +1,7 @@
 
 package net.myorb.math.expressions.charting.multidimensional;
 
+import net.myorb.math.expressions.ValueManager;
 import net.myorb.math.expressions.charting.ContourPlotProperties;
 import net.myorb.math.expressions.charting.Plot3DVectorField;
 
@@ -15,8 +16,10 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 {
 
 
-	public VectorFieldPlotComputer (ContourPlotProperties proprties, int vectorCount)
-	{ super (proprties); this.vectorCount = vectorCount; }
+	public VectorFieldPlotComputer
+	(ContourPlotProperties proprties, int vectorCount, Plot3DVectorField <?> plotter)
+	{ super (proprties); this.vectorCount = vectorCount; this.plotter = plotter; }
+	protected Plot3DVectorField <?> plotter;
 	protected int vectorCount;
 
 
@@ -107,8 +110,12 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 	 */
 	public void processPoint (double x, double y)
 	{
-		angle [k] = descriptor.evaluateAngle (x, y);
-		super.processPoint (x, y);
+		ValueManager.GenericValue
+			functionResult = plotter.evaluate2DCall (x, y);
+		int n = plotter.evaluateMagnitude (functionResult);
+		angle [k] = plotter.evaluateAngle (functionResult);
+		points[k] = new DisplayGraphTypes.Point (x, y);
+		histogram.increase (n); range[k++] = n;
 	}
 	protected double[] angle;
 
