@@ -252,6 +252,12 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 		this.taskMonitorProcessing.setOriginalSize (remaining);
 	}
 
+	/**
+	 * provide allocation of buffers specific to application
+	 * @param size the number of elements to allocate
+	 */
+	public void allocateExtendedBuffer (int size) {}
+
 	private static final long serialVersionUID = -5812958866188128427L;
 
 }
