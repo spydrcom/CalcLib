@@ -70,11 +70,9 @@ public class PlotComputers
 
 	/**
 	 * @param proprties a Plot Properties object describing the plot
-	 * @param vectorCount the number of direction displays per axis
 	 * @return a PlotComputer that captures vector direction
 	 */
-	public static PlotComputer getVectorFieldPlotComputer
-		(ContourPlotProperties proprties, int vectorCount, Plot3DVectorField <?> plotter)
+	public static PlotComputer getVectorFieldPlotComputer (Plot3DVectorField <?> proprties)
 	{
 		return new PlotComputer ()
 		{
@@ -84,13 +82,13 @@ public class PlotComputers
 			public void computeRange
 				(
 					ContourPlotDescriptor descriptor, int pointsPerAxis,
-					Point[] points, Object[] range,
+					Point [] points, Object [] range,
 					Histogram histogram
 				)
 			{
 				new VectorFieldPlotComputer
 					(
-						proprties, vectorCount, plotter
+						proprties
 					)
 				.compute
 					(
