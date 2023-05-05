@@ -1,8 +1,6 @@
 
 package net.myorb.math.expressions.charting.multidimensional;
 
-import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.charting.ContourPlotProperties;
 import net.myorb.math.expressions.charting.Plot3DVectorField;
 
 import net.myorb.charting.DisplayGraphTypes;
@@ -16,10 +14,13 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 {
 
 
-	public VectorFieldPlotComputer
-	(ContourPlotProperties proprties, int vectorCount, Plot3DVectorField <?> plotter)
-	{ super (proprties); this.vectorCount = vectorCount; this.plotter = plotter; }
-	protected Plot3DVectorField <?> plotter;
+	public VectorFieldPlotComputer (Plot3DVectorField <?> proprties)
+	{
+		super (proprties);
+		this.vectorCount = proprties.getVectorCount ();
+		this.vectorFieldProprties = proprties;
+	}
+	protected Plot3DVectorField <?> vectorFieldProprties;
 	protected int vectorCount;
 
 
@@ -32,19 +33,22 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 			DisplayGraphTypes.Point [] points, Object [] range, Histogram histogram
 		)
 	{
-		this.angle = new double [ pointsPerAxis * pointsPerAxis ];
 		super.compute (descriptor, pointsPerAxis, points, range, histogram);
-		( (Plot3DVectorField <?>) descriptor ).setVectorPoints
-				( fieldDescription (pointsPerAxis) );
+		this.evaluateFieldDescription (pointsPerAxis);
 	}
-	Plot3DVectorField.VectorFieldPoints fieldDescription (int pointsPerAxis)
+
+
+	/**
+	 * identify points that are to be plotted as direction indicators
+	 * @param pointsPerAxis the pixel count specified as edge size
+	 */
+	void evaluateFieldDescription (int pointsPerAxis)
 	{
 		Plot3DVectorField.VectorFieldPoints
 			vectorPoints = Plot3DVectorField.pointsList ();
-		// collect necessary data for plot of a vector field
-		computeDisplayFactors (pointsPerAxis);
-		describeVectorField (vectorPoints);
-		return vectorPoints;
+		// collect all necessary data for plot of a vector field
+		computeDisplayFactors (pointsPerAxis); describeVectorField (vectorPoints);
+		( (Plot3DVectorField <?>) descriptor ).setVectorPoints (vectorPoints);
 	}
 
 
@@ -54,9 +58,9 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 	 */
 	void computeDisplayFactors (int axisSize)
 	{
-		this.separation = axisSize / vectorCount;
-		this.blockSize	= axisSize * separation;
-		this.halfBlock	= blockSize / 2;
+		this.separation = axisSize / this.vectorCount;
+		this.blockSize	= axisSize * this.separation;
+		this.halfBlock	= this.blockSize / 2;
 	}
 	protected int separation, blockSize, halfBlock;
 
@@ -72,9 +76,9 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 		{
 			for
 				(
-					int next = halfBlock;
-						next < angle.length;
-						next += blockSize
+					int next  = this.halfBlock ;
+						next  < this.vectorFieldProprties.getPixelBufferSize () ;
+						next += this.blockSize
 				)
 			{
 				DisplayGraphTypes.VectorField.Locations
@@ -83,17 +87,18 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 				for
 					(
 						int P = next + this.separation / 2,
-							n = vectorCount; n > 0; n--
+							n = this.vectorCount ; n > 0 ; n--
 					)
 				{
 					row.add
 					(
 						new DisplayGraphTypes.VectorField
 							(
-								points[P], (Integer)range[P], angle[P]
+								this.points [P], (Integer) this.range [P],
+								this.vectorFieldProprties.getAngleFrom (P)
 							)
 					);
-					P += separation;
+					P += this.separation;
 				}
 
 				if (TRACE) System.out.println ("next=" + next + " : " + row);
@@ -106,18 +111,13 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 
 
 	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.charting.PlotMatrixTraversal#processPoint(double, double)
+	 * @see net.myorb.math.expressions.charting.multidimensional.BruteForcePlotComputer#executeContourEvaluation(double, double)
 	 */
-	public void processPoint (double x, double y)
+	public int executeContourEvaluation (double x, double y)
 	{
-		ValueManager.GenericValue
-			functionResult = plotter.evaluate2DCall (x, y);
-		int n = plotter.evaluateMagnitude (functionResult);
-		angle [k] = plotter.evaluateAngle (functionResult);
-		points[k] = new DisplayGraphTypes.Point (x, y);
-		histogram.increase (n); range[k++] = n;
+		return this.vectorFieldProprties.executeContourEvaluation
+				( x, y, this.getNextEvaluationIndex () );
 	}
-	protected double[] angle;
 
 
 }
