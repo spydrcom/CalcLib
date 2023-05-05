@@ -52,13 +52,12 @@ public class DisplayGraph3D extends DisplayGraph
 	public static void plotMesh
 	(ContourPlotProperties proprties, String description)
 	{
-		describePlot
-		(
-			proprties.getActivityDescriptor (), description
-		);
-		PlotComputers.TransformResultsCollection points =
-				PlotComputers.getSerialCalculationProcessing (proprties).executeTransform ();
-		new SurfacePlotter (description, proprties).plot (points);
+		describePlot ( proprties.getActivityDescriptor (), description );
+		new SurfacePlotter ( description, proprties ).plot ( getPoints (proprties) );
+	}
+	static PlotComputers.TransformResultsCollection getPoints (ContourPlotProperties proprties)
+	{
+		return PlotComputers.getSerialCalculationProcessing (proprties).executeTransform ();
 	}
 	static void describePlot (Activity activity, String description)
 	{
@@ -243,6 +242,8 @@ public class DisplayGraph3D extends DisplayGraph
 	{
 		int pointsPerAxis = proprties.getPointsPerAxis (),
 			pointsInSquarePlot = pointsPerAxis * pointsPerAxis;
+		proprties.allocateExtendedBuffer ( pointsInSquarePlot );
+
 		Point  [] points = new Point  [ pointsInSquarePlot ];
 		Object [] range  = new Object [ pointsInSquarePlot ];
 
