@@ -17,6 +17,23 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 {
 
 
+	// function evaluation
+
+	/**
+	 * call 2D function and return result
+	 * @param x the X-axis component of vector
+	 * @param y the Y-axis component of vector
+	 * @return the function result at the vector
+	 */
+	public ValueManager.GenericValue evaluate2DCall (double x, double y)
+	{
+		return equation.evaluateFunctionAt
+		(
+			// values treated as vector
+			new Vector ( new Number[]{ x, y }, mgr )
+		);
+	}
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.Plot3D#evaluate(double, double)
 	 */
@@ -28,6 +45,26 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	}
 	static final String VECTOR_FIELD_ERROR = "No field vector interpretation for function";
 
+
+	// analysis of function evaluations
+
+	/**
+	 * translate function result
+	 * - capture angle value and return magnitude
+	 * @param x coordinates to domain point (x-axis)
+	 * @param y coordinates to domain point (y-axis)
+	 * @param toEvaluationIndex the linear index in the buffer
+	 * @return the value of the point for the contour plot
+	 */
+	public int executeContourEvaluation (double x, double y, int toEvaluationIndex)
+	{
+		ValueManager.GenericValue functionResult = evaluate2DCall (x, y);
+		angle [ toEvaluationIndex ] = evaluateAngle (functionResult);
+		return evaluateMagnitude (functionResult);
+	}
+
+
+	// computation of vector magnitude
 
 	/**
 	 * compute magnitude of vector
@@ -60,6 +97,28 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 		return result.intValue ();
 	}
 
+	/**
+	 * use row of gradient matrix to compute vector magnitude
+	 * @param MV the generic wrapper for a gradient matrix
+	 * @return the magnitude of the described vector
+	 */
+	public double magnitude (ValueManager.MatrixValue <T> MV)
+	{
+		return new Vector ( MV ).computeMagnitude ( mgr );
+	}
+
+	/**
+	 * use array of values to compute vector magnitude
+	 * @param DV the generic wrapper for an array of values
+	 * @return the magnitude of the described vector
+	 */
+	public double magnitude (ValueManager.DimensionedValue <T> DV)
+	{
+		return new Vector ( DV ).computeMagnitude ( mgr );
+	}
+
+
+	// computation of vector direction
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
@@ -69,6 +128,18 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 		return evaluateAngle (evaluate2DCall ( x, y ));
 	}
 
+	/**
+	 * use row of gradient matrix to compute vector direction
+	 * @param MV the generic wrapper for a gradient matrix
+	 * @return the angle formed by the vector values
+	 */
+	public double angleFrom (ValueManager.MatrixValue <T> MV)
+	{
+		Vector V = new Vector ( MV );
+		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
+		return Math.atan2 ( Y, X ) + PI_OVER_2;
+	}
+	static final double PI_OVER_2 = Math.PI / 2;
 
 	/**
 	 * more efficient version called from plot computer
@@ -84,57 +155,27 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	}
 
 
-	/**
-	 * call 2D function and return result
-	 * @param x the X-axis component of vector
-	 * @param y the Y-axis component of vector
-	 * @return the function result at the vector
-	 */
-	public ValueManager.GenericValue evaluate2DCall (double x, double y)
-	{
-		return equation.evaluateFunctionAt
-		(
-			// values treated as vector
-			new Vector ( new Number[]{ x, y }, mgr )
-		);
-	}
-
+	// buffering of angle captures
 
 	/**
-	 * use row of gradient matrix to compute vector direction
-	 * @param MV the generic wrapper for a gradient matrix
-	 * @return the angle formed by the vector values
+	 * query angle capture at pixel index
+	 * @param index the index of the capture of the angle
+	 * @return the value of the angle at the index
 	 */
-	double angleFrom (ValueManager.MatrixValue <T> MV)
-	{
-		Vector V = new Vector ( MV );
-		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
-		return Math.atan2 ( Y, X ) + PI_OVER_2;
-	}
-	static final double PI_OVER_2 = Math.PI / 2;
+	public double getAngleFrom (int index) { return angle [index]; }
+	public void setAngle (ValueManager.GenericValue forValue, int atIndex)
+	{ angle [ atIndex ] = evaluateAngle (forValue); }
 
-
-	/**
-	 * use row of gradient matrix to compute vector magnitude
-	 * @param MV the generic wrapper for a gradient matrix
-	 * @return the magnitude of the described vector
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#allocateExtendedBuffer(int)
 	 */
-	double magnitude (ValueManager.MatrixValue <T> MV)
-	{
-		return new Vector ( MV ).computeMagnitude ( mgr );
-	}
+	public void allocateExtendedBuffer (int size)
+	{ angle = new double [ this.bufferSize = size ]; }
+	public int getPixelBufferSize () { return this.bufferSize; }
+	protected double [] angle; protected int bufferSize;
 
 
-	/**
-	 * use array of values to compute vector magnitude
-	 * @param DV the generic wrapper for an array of values
-	 * @return the magnitude of the described vector
-	 */
-	double magnitude (ValueManager.DimensionedValue <T> DV)
-	{
-		return new Vector ( DV ).computeMagnitude ( mgr );
-	}
-
+	// constructor for descriptor
 
 	/**
 	 * @param equation the subroutine describing the function to plot
@@ -155,18 +196,28 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	protected Subroutine <T> equation;
 
 
+	// plot computer specific description
+
 	/**
 	 * build a plot computer for the field display
 	 * @param vectorCount the number of direction indicators per axis
 	 * @return the plot computer configured for field display
 	 */
-	public DisplayGraphTypes.PlotComputer
-		identifyFieldPlotComputer (Number vectorCount)
+	public DisplayGraphTypes.PlotComputer identifyFieldPlotComputer
+					( Number vectorCount )
 	{
-		return PlotComputers.getVectorFieldPlotComputer
-			( this, vectorCount.intValue (), this );
+		this.vectorCount = vectorCount.intValue ();
+		return PlotComputers.getVectorFieldPlotComputer (this);
 	}
 
+	/**
+	 * @return the requested number of direction indicators per axis
+	 */
+	public int getVectorCount () { return vectorCount; }
+	protected int vectorCount;
+
+
+	// interface implementations
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
@@ -179,8 +230,7 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 		int ps = DisplayGraph3D.appropriatePointSize (FIELD_PLOT_EDGE_SIZE);
 		DisplayGraph3D.plotVectorField (setScale (FIELD_PLOT_EDGE_SIZE, ps), title);
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.Plot3D#getPlotEdgeSize()
 	 */
