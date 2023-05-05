@@ -21,6 +21,8 @@ public class OperationContext implements ValueManager.VectorOperation
 	protected String name; protected OperationMetadata metadata;
 
 
+	// interface implementations
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.GenericValue#setMetadata(net.myorb.math.expressions.ValueManager.Metadata)
 	 */
@@ -34,6 +36,8 @@ public class OperationContext implements ValueManager.VectorOperation
 	 */
 	public Metadata getMetadata () { return metadata; }
 
+
+	// queries specific to function
 
 	/**
 	 * get access to abstract description of function
