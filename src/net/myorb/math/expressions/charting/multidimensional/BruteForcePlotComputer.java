@@ -62,19 +62,39 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 	protected DisplayGraphTypes.ContourPlotDescriptor descriptor;
 
 
+	/**
+	 * intermediate layer for evaluation
+	 * - easy override allowing auxiliary evaluations
+	 * @param x coordinates to domain point (x-axis)
+	 * @param y coordinates to domain point (y-axis)
+	 * @return function evaluation at coordinates
+	 */
+	public int executeContourEvaluation (double x, double y)
+	{
+		return eval (x, y);
+	}
+
+
+	/**
+	 * @return the index of currently collected value captures
+	 */
+	public int getNextEvaluationIndex () { return nextEvaluationIndex; }
+	private int nextEvaluationIndex = 0;
+
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.PlotMatrixTraversal#processPoint(double, double)
 	 */
 	public void processPoint (double x, double y)
 	{
-		int n = eval (x, y);
-		histogram.increase (n); range[k] = n;
-		points[k++] = new DisplayGraphTypes.Point (x, y);
+		int n = executeContourEvaluation (x, y);
+		points[nextEvaluationIndex] = new DisplayGraphTypes.Point (x, y);
+		histogram.increase (n); range [ nextEvaluationIndex ] = n;
+		nextEvaluationIndex ++ ;
 	}
-	protected DisplayGraphTypes.Point[] points;
+	protected DisplayGraphTypes.Point [] points;
 	protected Histogram histogram;
-	protected Object[] range;
-	protected int k = 0;
+	protected Object [] range;
 
 
 }
