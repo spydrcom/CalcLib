@@ -2,7 +2,6 @@
 package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.charting.PlotComputers;
-import net.myorb.math.expressions.charting.PlotComputers.TransformResultsCollection;
 
 import net.myorb.charting.ColorSelection;
 import net.myorb.charting.DisplayGraphTypes;
@@ -500,7 +499,8 @@ class OffAxisHandler3D extends OffAxisHandler
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.PlotComputers.TransformProcessing#executeTransform()
 	 */
-	public TransformResultsCollection executeTransform ()
+	public PlotComputers.TransformResultsCollection
+				executeTransform ()
 	{
 		return getProcessor ().executeTransform ();
 	}
