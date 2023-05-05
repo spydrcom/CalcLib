@@ -20,45 +20,64 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.Plot3D#evaluate(double, double)
 	 */
-	@SuppressWarnings("unchecked")
 	public int evaluate (double x, double y)
+	{
+		// get the 2D vector function result to use computing magnitude
+		ValueManager.GenericValue functionResult = evaluate2DCall ( x, y );
+		return evaluateMagnitude (functionResult);
+	}
+	static final String VECTOR_FIELD_ERROR = "No field vector interpretation for function";
+
+
+	/**
+	 * compute magnitude of vector
+	 * @param V the vector result of the function
+	 * @return the scalar magnitude
+	 */
+	@SuppressWarnings("unchecked")
+	public int evaluateMagnitude (ValueManager.GenericValue V)
 	{
 		Double result = 0.0;
 
-		// get the 2D vector function result to use computing magnitude
-		ValueManager.GenericValue functionResult = evaluate2DCall ( x, y );
-
-		if ( functionResult instanceof ValueManager.MatrixValue )
+		if ( V instanceof ValueManager.MatrixValue )
 		{
 			// assume the first row is the vector result
-			result = magnitude ( (ValueManager.MatrixValue <T>) functionResult );
+			result = magnitude ( (ValueManager.MatrixValue <T>) V );
 		}
-		else if ( functionResult instanceof ValueManager.DiscreteValue )
+		else if ( V instanceof ValueManager.DiscreteValue )
 		{
 			// a single value gives magnitude with no direction
-			result = toDouble ( (ValueManager.DiscreteValue <T>) functionResult );
+			result = toDouble ( (ValueManager.DiscreteValue <T>) V );
 		}
-		else if ( functionResult instanceof ValueManager.DimensionedValue )
+		else if ( V instanceof ValueManager.DimensionedValue )
 		{
 			// an array returned is treated as multiple component vector
-			result = magnitude ( (ValueManager.DimensionedValue <T>) functionResult );
+			result = magnitude ( (ValueManager.DimensionedValue <T>) V );
 		}
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
 
 		result *= this.getMultiplier ();
 		return result.intValue ();
 	}
-	static final String VECTOR_FIELD_ERROR = "No field vector interpretation for function";
 
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
 	 */
-	@SuppressWarnings("unchecked")
 	public double evaluateAngle (double x, double y)
 	{
-		ValueManager.GenericValue
-			functionResult = evaluate2DCall ( x, y );
+		return evaluateAngle (evaluate2DCall ( x, y ));
+	}
+
+
+	/**
+	 * more efficient version called from plot computer
+	 * @param functionResult the generic returned by evaluate
+	 * @return the computed angle of the vector
+	 */
+	@SuppressWarnings("unchecked")
+	public double evaluateAngle (ValueManager.GenericValue functionResult)
+	{
 		if ( functionResult instanceof ValueManager.MatrixValue )
 		{ return angleFrom  ( (ValueManager.MatrixValue <T>) functionResult ); }
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
@@ -71,7 +90,7 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	 * @param y the Y-axis component of vector
 	 * @return the function result at the vector
 	 */
-	ValueManager.GenericValue evaluate2DCall (double x, double y)
+	public ValueManager.GenericValue evaluate2DCall (double x, double y)
 	{
 		return equation.evaluateFunctionAt
 		(
@@ -145,7 +164,7 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 		identifyFieldPlotComputer (Number vectorCount)
 	{
 		return PlotComputers.getVectorFieldPlotComputer
-			( this, vectorCount.intValue () );
+			( this, vectorCount.intValue (), this );
 	}
 
 
