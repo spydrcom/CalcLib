@@ -13,88 +13,70 @@ import net.myorb.math.MultiDimensional;
  * boiler plate for 3D plot control
  * @author Michael Druckman
  */
-public class Plot3D<T> extends ContourPlotProperties
-	implements PlotComputers.TransformProcessing,
-		DisplayGraphTypes.ContourPlotDescriptor,
-		Runnable
+public class Plot3D <T> extends ContourPlotProperties
+	implements PlotComputers.TransformProcessing, Runnable,
+		DisplayGraphTypes.ContourPlotDescriptor
 {
 
 
 	public Plot3D () { super (-4); }
 
 
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#evaluate(double, double)
-	 */
-	public int evaluate (double x, double y)
-	{
-		return evaluateFunction (x, y).intValue ();
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateReal(double, double)
-	 */
-	public double evaluateReal (double x, double y)
-	{
-		return evaluateFunction (x, y);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
-	 */
-	public double evaluateAngle (double x, double y)
-	{
-		throw new RuntimeException ("Vector field manager needed to evaluate direction");
-	}
-
-
-	@SuppressWarnings("unchecked")
-	public Double evaluateFunction (double x, double y)
-	{ return multiplier * cvt (equation.f (toGeneric (x), toGeneric (y))); }
-
-	protected double cvt (T value) { return this.mgr.convertToDouble (value); }
-	protected T toGeneric (double value) { return this.mgr.convertFromDouble (value); }
-
-	protected double toDouble (ValueManager.DiscreteValue <T> DV)
-	{ return this.cvt ( DV.getValue () ); }
-
+	// collection of equation meta-data
 
 	/**
+	 * identify equation and default plot computer use
 	 * @param equation any implementer of Multi-Dimensional
 	 */
-	public void setEquation (MultiDimensional.Function<T> equation)
+	public void setEquation (MultiDimensional.Function <T> equation)
 	{
 		this.setEquation (equation, PlotComputers.getBruteForcePlotComputer (this));
 	}
+
+	/**
+	 * identify equation and specify plot computer
+	 * @param equation any implementer of Multi-Dimensional
+	 * @param computer the plot computer to use
+	 */
 	public void setEquation
-	(MultiDimensional.Function<T> equation, DisplayGraphTypes.PlotComputer computer)
+		(
+			MultiDimensional.Function <T> equation,
+			DisplayGraphTypes.PlotComputer computer
+		)
 	{
 		this.equation = equation;
 		this.mgr = ( ExpressionSpaceManager <T> ) equation.getSpaceDescription ();
 		this.setPlotComputer (computer);
 		this.setEquation (this);
 	}
-	private MultiDimensional.Function<T> equation;
-	protected ExpressionSpaceManager<T> mgr;
+	private MultiDimensional.Function <T> equation;
+	protected ExpressionSpaceManager <T> mgr;
 
+
+	// specific to vectored transform implementations
 
 	/**
 	 * @param equation a vectored transform
 	 */
-	public void setEquation (MultiDimensionalVectored<T> equation)
+	public void setEquation (MultiDimensionalVectored <T> equation)
 	{
-		this.setPointsPerAxis (equation.pointsPerAxis);
-		this.setPlotComputer (PlotComputers.getVectorPlotComputer (this));
+		this.setPointsPerAxis ( equation.pointsPerAxis );
+		this.setPlotComputer ( PlotComputers.getVectorPlotComputer (this) );
 		this.vectorTransformProcessing = PlotComputers.getVectoredTransformProcessing
-				(this, equation.getEnvironment ());
+				( this, equation.getEnvironment () );
 		this.vectoredEquation = equation;
-		this.setEquation (this);
+		this.setEquation ( this );
 	}
-	public MultiDimensionalVectored<T> getMultiDimensionalVectored () { return vectoredEquation; }
-	private MultiDimensionalVectored<T> vectoredEquation;
 
+	/**
+	 * @return vector enabled function access
+	 */
+	public MultiDimensionalVectored <T>
+		getMultiDimensionalVectored () { return vectoredEquation; }
+	private MultiDimensionalVectored <T> vectoredEquation;
+
+
+	// interface implementations
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.PlotComputers.TransformProcessing#executeTransform()
@@ -105,7 +87,6 @@ public class Plot3D<T> extends ContourPlotProperties
 	}
 	protected PlotComputers.TransformProcessing vectorTransformProcessing;
 
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#setMultiplier(double)
 	 */
@@ -113,12 +94,57 @@ public class Plot3D<T> extends ContourPlotProperties
 	{ super.setMultiplier (multiplier); this.multiplier = multiplier; }
 	private double multiplier;
 
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#evaluate(double, double)
+	 */
+	public int evaluate (double x, double y) { return evaluateFunction (x, y).intValue (); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateReal(double, double)
+	 */
+	public double evaluateReal (double x, double y) { return evaluateFunction (x, y); }
+
+	/* (non-Javadoc)
+	 * @see net.myorb.math.expressions.charting.ContourPlotProperties#evaluateAngle(double, double)
+	 */
+	public double evaluateAngle (double x, double y)
+	{
+		throw new RuntimeException ("Vector field manager needed to evaluate direction");
+	}
+
+
+	// support for implementations of evaluations
+	// - including conversions between application representations
+	// - and machine types
 
 	/**
-	 * @return units along edge in plot
+	 * translate function result value to contour appropriate value
+	 * @param x the X-axis coordinate
+	 * @param y the Y-axis coordinate
+	 * @return contour value
 	 */
-	public int getPlotEdgeSize () { throw new RuntimeException ("Plot edge size not configured"); }
+	@SuppressWarnings("unchecked")
+	public Double evaluateFunction (double x, double y)
+	{ return multiplier * cvt (equation.f ( toGeneric (x), toGeneric (y) )); }
 
+	/**
+	 * application representation of domain type to machine double float
+	 * @param value the application specific discrete value
+	 * @return the equivalent as a double float
+	 */
+	protected double cvt (T value) { return this.mgr.convertToDouble (value); }
+	protected T toGeneric (double value) { return this.mgr.convertFromDouble (value); }
+
+	/**
+	 * application representation discrete to machine double float
+	 * @param DV an application representation of a discrete value
+	 * @return the equivalent as a double float
+	 */
+	protected double toDouble (ValueManager.DiscreteValue <T> DV)
+	{ return this.cvt ( DV.getValue () ); }
+
+
+	// plot scheduled for execution in background
 
 	/**
 	 * display plot with frame titled as specified
@@ -132,6 +158,16 @@ public class Plot3D<T> extends ContourPlotProperties
 	}
 	protected String title;
 
+
+	// key interface points needing implementations
+
+	/**
+	 * @return units along edge in plot
+	 */
+	public int getPlotEdgeSize ()
+	{
+		throw new RuntimeException ("Plot edge size not configured");
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
