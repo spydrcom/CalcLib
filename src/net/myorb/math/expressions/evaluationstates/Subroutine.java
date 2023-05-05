@@ -468,7 +468,7 @@ public class Subroutine<T>
 	 * copy values of parameters into symbol table
 	 * @param parameters the values popped from the expression stack (as dimensioned list)
 	 */
-	public void copyParameters (List<T> parameters)
+	public void copyParameters ( List <T> parameters )
 	{
 		for (int n = 0; n < parameters.size (); n++)
 		{
@@ -485,7 +485,7 @@ public class Subroutine<T>
 	 * copy values of parameters into symbol table
 	 * @param parameters the values popped from the expression stack (as value list)
 	 */
-	public void copyParameters (ValueManager.ValueList parameters)
+	public void copyParameters ( ValueManager.ValueList parameters )
 	{
 		int n = 0;
 		for (ValueManager.GenericValue p : parameters.getValues ())
@@ -506,7 +506,7 @@ public class Subroutine<T>
 	 * @param parameters the parameters to be used by the function
 	 * @return the function result
 	 */
-	public ValueManager.GenericValue evaluateFunctionAt (List <T> parameters)
+	public ValueManager.GenericValue evaluateFunctionAt ( List <T> parameters )
 	{
 		try  {  doCall (parameters);  }  catch (Exception e)
 		{
