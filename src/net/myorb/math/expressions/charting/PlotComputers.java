@@ -73,7 +73,8 @@ public class PlotComputers
 	 * @param vectorCount the number of direction displays per axis
 	 * @return a PlotComputer that captures vector direction
 	 */
-	public static PlotComputer getVectorFieldPlotComputer (ContourPlotProperties proprties, int vectorCount)
+	public static PlotComputer getVectorFieldPlotComputer
+		(ContourPlotProperties proprties, int vectorCount, Plot3DVectorField <?> plotter)
 	{
 		return new PlotComputer ()
 		{
@@ -89,7 +90,7 @@ public class PlotComputers
 			{
 				new VectorFieldPlotComputer
 					(
-						proprties, vectorCount
+						proprties, vectorCount, plotter
 					)
 				.compute
 					(
