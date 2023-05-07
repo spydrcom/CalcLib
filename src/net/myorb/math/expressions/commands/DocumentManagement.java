@@ -36,6 +36,8 @@ public class DocumentManagement<T> extends Utilities<T>
 		RenderingDisplay opsHelp = prepareDocument
 		(environment.getSymbolMap ().getOperatorHelpDocument ());
 		RenderingDisplay cmdHelp = prepareDocument (getKeywordHelpDocument (commands));
+		// easy hook for dumping HTML of displayed help documents
+		//System.out.println (opsHelp.getComponentText ());
 		PrettyPrinter.showHelp (cmdHelp, opsHelp);
 	}
 
