@@ -385,6 +385,7 @@ public class OperatorNomenclature
 	DOT_PRODUCT_RENDER			= "\u00B7",		//					render character for dot product
 	PARTIAL_RENDER				= "\u2202",		//					render character for partial derivative
 	NABLA_RENDER				= "\u2207",		//					render unicode character for NABLA
+	SQUARE_RENDER				= "\u00B2",		//					render character for square
 	PRIME_RENDER				= "\u00B4"		// f'(x)			render character for prime
 		;
 

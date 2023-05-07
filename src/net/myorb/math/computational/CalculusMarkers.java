@@ -17,11 +17,11 @@ public class CalculusMarkers
 	 */
 	public enum CalculusMarkerTypes
 	{
-		INTERVAL,										// interval calculation between domain points
-		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,		// Curtis-Clenshaw and Double Exponential quadrature forms
-		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,	// Trapezoidal rule evaluation and post-sum adjust
-		VECTOR_GRAD, VECTOR_DIV, VECTOR_CURL,			// grad, curl, and div vector operator references
-		DERIVATIVE										// simple function derivative approximation
+		INTERVAL,												// interval calculation between domain points
+		QUADRATURE_CLENSHAW, QUADRATURE_TANH_SINH,				// Curtis-Clenshaw and Double Exponential quadrature forms
+		QUADRATURE_TRAP_EVAL, QUADRATURE_TRAP_ADJUST,			// Trapezoidal rule evaluation and post-sum adjust pseudo operators
+		VECTOR_GRAD, VECTOR_LAPLACE, VECTOR_DIV, VECTOR_CURL,	// grad, curl, div, and laplacian vector operator references
+		DERIVATIVE												// simple function derivative approximation
 	}
 
 

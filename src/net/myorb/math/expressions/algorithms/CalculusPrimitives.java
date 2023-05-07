@@ -132,6 +132,27 @@ public class CalculusPrimitives<T> extends CalculusMarkers
 
 
 	/**
+	 * implement function - LAPLACE
+	 * @param symbol the name of the operator
+	 * @param precedence the precedence to be applied
+	 * @return the operator object
+	 */
+	public AbstractUnaryOperator getLaplaceAlgorithm (String symbol, int precedence)
+	{
+		return new MultivariateCalculus.VectorOperator (symbol, precedence, LAPLACE, environment)
+		{
+			/* (non-Javadoc)
+			 * @see net.myorb.math.expressions.symbols.AbstractUnaryOperator#markupForDisplay(java.lang.String, java.lang.String, net.myorb.math.expressions.gui.rendering.NodeFormatting)
+			 */
+			public String markupForDisplay (String operator, String operand, NodeFormatting using)
+			{ return new MultivariateCalculus <> (environment).markupForDisplay ( SQUARE, operand, using ); }
+			static final String SQUARE = OperatorNomenclature.SQUARE_RENDER;
+		};
+	}
+	static final CalculusMarkers.CalculusMarkerTypes LAPLACE = CalculusMarkers.CalculusMarkerTypes.VECTOR_LAPLACE;
+
+
+	/**
 	 * implement function - DIV
 	 * @param symbol the name of the operator
 	 * @param precedence the precedence to be applied
