@@ -34,6 +34,9 @@ public class VectorOperations <T> extends Gradients <T>
 	int Fx = 1, dx = 1, Fy = 2, dy = 2, Fz = 3, dz = 3;
 
 
+	// gradient
+
+
 	/**
 	 * compute gradient for function at point
 	 * @param context the meta-data holding the context
@@ -43,6 +46,9 @@ public class VectorOperations <T> extends Gradients <T>
 	{
 		return valueManager.newMatrix ( partialDerivativeComputations (context) );
 	}
+
+
+	// divergence
 
 
 	/**
@@ -83,6 +89,31 @@ public class VectorOperations <T> extends Gradients <T>
 	}
 
 
+	// Laplacian
+
+
+	/**
+	 * compute Laplace for function at point
+	 * @param context the meta-data holding the context
+	 * @return the scalar value computed as divergence
+	 */
+	public ValueManager.GenericValue laplace (OperationContext context)
+	{
+		return valueManager.newDiscreteValue (computeLaplacian (context));
+	}
+
+
+	T computeLaplacian (OperationContext context)
+	{
+//		double laplace = 0;
+//		return manager.convertFromDouble (laplace);
+		throw new RuntimeException ("Computation of Laplacian is unimplemented");
+	}
+
+
+	// curl
+
+
 	/**
 	 * compute curl for function at point
 	 * @param context the meta-data holding the context
@@ -119,6 +150,9 @@ public class VectorOperations <T> extends Gradients <T>
 
 		return vector;
 	}
+
+
+	// support methods
 
 
 	/**

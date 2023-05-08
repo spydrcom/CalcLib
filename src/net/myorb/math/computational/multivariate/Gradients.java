@@ -171,10 +171,11 @@ public class Gradients <T> extends DataManagers <T>
 		
 		switch (context.metadata.getOp ().typeOfOperation ())
 		{
-			case VECTOR_DIV:	return  op.div (context);
-			case VECTOR_CURL:	return op.curl (context);
-			case VECTOR_GRAD:	return op.grad (context);
-			default:			break;
+			case VECTOR_DIV:		return op.div		(context);
+			case VECTOR_CURL:		return op.curl		(context);
+			case VECTOR_LAPLACE:	return op.laplace	(context);
+			case VECTOR_GRAD:		return op.grad		(context);
+			default:				break;
 		}
 
 		throw new RuntimeException ("Internal error, unreconized operation");
