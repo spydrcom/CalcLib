@@ -124,7 +124,7 @@ public class DerivativeApproximationMultiDim <T>
 	/**
 	 * @param order the order of derivative
 	 * @param evaluatedAt the point at which to evaluate function
-	 * @param the delta to use for the variable in play
+	 * @param delta the delta to use for the variable in play
 	 * @return the value of the partial derivative
 	 */
 	public T getPartialDerivative
