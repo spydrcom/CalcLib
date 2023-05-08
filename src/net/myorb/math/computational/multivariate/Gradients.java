@@ -13,6 +13,7 @@ import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
+import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
@@ -29,6 +30,7 @@ public class Gradients <T> extends DataManagers <T>
 		(VectorOperator vectorOperator)
 	{ this (vectorOperator.getEnvironment ()); }
 
+
 	public Gradients
 		(Environment <T> environment)
 	{ super (environment); this.connectManagers (); }
@@ -38,8 +40,73 @@ public class Gradients <T> extends DataManagers <T>
 	 * get management objects from environment
 	 */
 	public void connectManagers ()
-	{ this.functionCoordinates = new FunctionCoordinates <T> (environment); }
+	{
+		this.functionCoordinates = new FunctionCoordinates <> (environment);
+		this.MO = new MatrixOperations <> (environment.getSpaceManager ());
+	}
 	protected FunctionCoordinates <T> functionCoordinates = null;
+	protected MatrixOperations <T> MO;
+
+
+	/**
+	 * compute sum of vector components
+	 * @param vector access to vector of elements
+	 * @return the sum of the elements
+	 */
+	T vectorSum (VectorAccess <T> vector)
+	{
+		return MO.getVectorOperations ().sigmaOver ( vector );
+	}
+
+
+	// computation of the Laplacian operator for given function
+	// collect second derivatives for each independent variable
+
+
+	/**
+	 * compute the Laplacian of the function at point in context
+	 * @param context the meta-data context collected for the function
+	 * @return the sum of second derivatives
+	 */
+	T computeLaplacian (OperationContext context)
+	{
+		Matrix <T> M;
+		int functions, derivatives = context.metadata.getParameters ();
+		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
+		Coordinates baseVec = eval ( evalPoint, context );
+
+		if ( ( functions = baseVec.size () ) != 1 )
+		{
+			throw new RuntimeException (MSG);
+		}
+
+		M = new Matrix <> (functions, derivatives, manager);
+		computeLaplacian ( context, M, derivatives, evalPoint, baseVec );
+		return vectorSum ( M.getRowAccess (1) );
+	}
+	static final String MSG = "Laplacian only implemented for functions returning scalars";
+
+
+	/**
+	 * compute second derivatives for each independent variable
+	 * @param context the meta-data context collected for the function
+	 * @param M the matrix that will hold the evaluated derivatives
+	 * @param N the number of variables in the function
+	 * @param evalPoint the point of the evaluation
+	 * @param baseVec the function result at point
+	 */
+	public void computeLaplacian
+		(
+			OperationContext context, Matrix <T> M, int N,
+			Coordinates evalPoint, Coordinates baseVec
+		)
+	{
+		throw new RuntimeException ("Computation of Laplacian is unimplemented");
+	}
+
+
+	// computation of the gradient vector(s) for given function
+	// collect the derivative(s) for each independent variable
 
 
 	/**
@@ -50,7 +117,6 @@ public class Gradients <T> extends DataManagers <T>
 	public Matrix <T> partialDerivativeComputations (OperationContext context)
 	{
 		Matrix <T> M;
-
 		int functions, derivatives = context.metadata.getParameters ();
 		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
 		Coordinates baseVec = eval ( evalPoint, context );
@@ -122,6 +188,9 @@ public class Gradients <T> extends DataManagers <T>
 	}
 
 
+	// function evaluation and rise over run approximations
+
+
 	/**
 	 * the definitive algorithm for derivatives
 	 * @param rise the offset values minus the base
@@ -159,6 +228,9 @@ public class Gradients <T> extends DataManagers <T>
 	}
 
 
+	// computation method selection from meta-data typeOfOperation
+
+
 	/**
 	 * perform processing steps
 	 * @param context the collected Operation Context meta-data
@@ -169,7 +241,7 @@ public class Gradients <T> extends DataManagers <T>
 		if (REGRESSION) return regressionTest (context);
 		VectorOperations <T> op = new VectorOperations <> (environment);
 		
-		switch (context.metadata.getOp ().typeOfOperation ())
+		switch ( context.metadata.getOp ().typeOfOperation () )
 		{
 			case VECTOR_DIV:		return op.div		(context);
 			case VECTOR_CURL:		return op.curl		(context);

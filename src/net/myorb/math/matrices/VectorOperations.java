@@ -111,6 +111,19 @@ public class VectorOperations <T> extends Tolerances <T>
 	}
 
 	/**
+	 * sum of elements
+	 * @param vector access to vector of elements
+	 * @return sum of all elements in accessed vector
+	 */
+	public T sigmaOver (VectorAccess <T> vector)
+	{
+		T sum = manager.getZero ();
+		for (int i = 1; i <= vector.size (); i++)
+		{ sum = manager.add (sum, vector.get (i)); }
+		return sum;
+	}
+
+	/**
 	 * compute dot product of two vectors
 	 * @param left the left side of the product
 	 * @param right the right side of the product

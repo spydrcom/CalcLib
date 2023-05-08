@@ -75,14 +75,10 @@ public class VectorOperations <T> extends Gradients <T>
 
 		for (int row = 1; row <= M.rowCount (); row++)
 		{
-			for (int col = 1; col <= M.columnCount (); col++)
-			{
-				divergence = 
-					manager.add
-					(
-						divergence, M.get (row, col)
-					);
-			}
+			divergence = manager.add
+				(
+					divergence, vectorSum ( M.getRowAccess (row) )
+				);
 		}
 
 		return divergence;
@@ -100,14 +96,6 @@ public class VectorOperations <T> extends Gradients <T>
 	public ValueManager.GenericValue laplace (OperationContext context)
 	{
 		return valueManager.newDiscreteValue (computeLaplacian (context));
-	}
-
-
-	T computeLaplacian (OperationContext context)
-	{
-//		double laplace = 0;
-//		return manager.convertFromDouble (laplace);
-		throw new RuntimeException ("Computation of Laplacian is unimplemented");
 	}
 
 
