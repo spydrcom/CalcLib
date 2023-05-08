@@ -9,6 +9,7 @@ import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
 import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
 import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
+import net.myorb.math.computational.DerivativeApproximationMultiDim;
 
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
 import net.myorb.math.expressions.evaluationstates.Environment;
@@ -101,7 +102,10 @@ public class Gradients <T> extends DataManagers <T>
 			Coordinates evalPoint, Coordinates baseVec
 		)
 	{
-		throw new RuntimeException ("Computation of Laplacian is unimplemented");
+		DerivativeApproximationMultiDim <T> approx =
+			new DerivativeApproximationMultiDim <T> (context.getFunction ());
+		Vector <T> V = new Vector <T> (approx.getPartialDerivatives (2, approx.fromDouble (evalPoint)));
+		for (int n = 1; n < M.columnCount (); n++) { M.set ( 1, n, V.get (n-1) ); }
 	}
 
 
