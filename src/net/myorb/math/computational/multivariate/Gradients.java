@@ -71,19 +71,32 @@ public class Gradients <T> extends DataManagers <T>
 	 */
 	T computeLaplacian (OperationContext context)
 	{
-		Matrix <T> M;
-		int functions, derivatives = context.metadata.getParameters ();
+		Matrix <T> M; int functions = 1;
+		int independentVariables = context.metadata.getParameters ();
 		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
-		Coordinates baseVec = eval ( evalPoint, context );
 
-		if ( ( functions = baseVec.size () ) != 1 )
-		{
-			throw new RuntimeException (MSG);
-		}
+		if ( ! SUPPRESS ) functionResultTest ( evalPoint, context, functions );
 
-		M = new Matrix <> (functions, derivatives, manager);
-		computeLaplacian ( context, M, derivatives, evalPoint, baseVec );
+		M = new Matrix <> ( functions, independentVariables, manager );
+		computeLaplacian ( context, M, independentVariables, evalPoint );
 		return vectorSum ( M.getRowAccess (1) );
+	}
+	static boolean SUPPRESS = true;	// eliminate duplicate call but risk error
+
+
+	/**
+	 * verify function return discrete values
+	 * - vectors or other dimensioned return not allowed
+	 * @param evalPoint the point of the evaluation being executed
+	 * @param context the meta-data context collected for the function
+	 * @param functions the count of axis functions (must remain 1)
+	 */
+	void functionResultTest
+		(Coordinates evalPoint, OperationContext context, int functions)
+	{
+		Coordinates baseVec = eval ( evalPoint, context );
+		if ( ( functions = baseVec.size () ) != 1 )
+		{ throw new RuntimeException (MSG); }			
 	}
 	static final String MSG = "Laplacian only implemented for functions returning scalars";
 
@@ -94,12 +107,11 @@ public class Gradients <T> extends DataManagers <T>
 	 * @param M the matrix that will hold the evaluated derivatives
 	 * @param N the number of variables in the function
 	 * @param evalPoint the point of the evaluation
-	 * @param baseVec the function result at point
 	 */
 	public void computeLaplacian
 		(
-			OperationContext context, Matrix <T> M, int N,
-			Coordinates evalPoint, Coordinates baseVec
+			OperationContext context, Matrix <T> M,
+			int N, Coordinates evalPoint
 		)
 	{
 		DerivativeApproximationMultiDim <T> approx =
@@ -213,7 +225,7 @@ public class Gradients <T> extends DataManagers <T>
 	 * @return Coordinates of the vector returned by the function
 	 */
 	public Coordinates eval (Coordinates parameter, OperationContext context)
-	{ return functionCoordinates.evaluate (context.execute (parameter)); }
+	{ return functionCoordinates.evaluate ( context.execute (parameter) ); }
 
 
 	/**
@@ -267,7 +279,7 @@ public class Gradients <T> extends DataManagers <T>
 	{
 		GenericValue P = context.getEvaluationPoint ();
 		System.out.println ( "Parameter Point " + P );
-		return context.getFunction ().execute (P);
+		return context.getFunction ().execute ( P );
 	}
 	static boolean REGRESSION = false;
 
