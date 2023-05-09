@@ -109,14 +109,14 @@ public class DerivativeApproximationMultiDim <T>
 			Point <T> evaluatedAt
 		)
 	{
-		wrapper.setRelativeVariableIndex (relativeTo);
-		wrapper.setEvaluationPoint (evaluatedAt);
+		wrapper.setRelativeVariableIndex ( relativeTo );
+		wrapper.setEvaluationPoint ( evaluatedAt );
 
 		return getPartialDerivative
 		(
 			order,
 			evaluatedAt.get ( relativeTo ),
-			deltaFor (relativeTo)
+			deltaFor ( relativeTo )
 		);
 	}
 
