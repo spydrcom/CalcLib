@@ -117,7 +117,7 @@ public class Gradients <T> extends DataManagers <T>
 		DerivativeApproximationMultiDim <T> approx =
 			new DerivativeApproximationMultiDim <T> (context.getFunction ());
 		Vector <T> V = new Vector <T> (approx.getPartialDerivatives (2, approx.fromDouble (evalPoint)));
-		for (int n = 1; n < M.columnCount (); n++) { M.set ( 1, n, V.get (n-1) ); }
+		for (int n = 1; n <= M.columnCount (); n++) { M.set ( 1, n, V.get (n-1) ); }
 	}
 
 
