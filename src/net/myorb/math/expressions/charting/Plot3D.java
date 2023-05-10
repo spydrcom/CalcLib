@@ -1,16 +1,17 @@
 
 package net.myorb.math.expressions.charting;
 
-import net.myorb.charting.DisplayGraphTypes;
-import net.myorb.gui.components.SimpleScreenIO;
+import net.myorb.math.MultiDimensional;
 
 import net.myorb.math.expressions.ExpressionSpaceManager;
 import net.myorb.math.expressions.ValueManager;
 
-import net.myorb.math.MultiDimensional;
+import net.myorb.gui.components.SimpleScreenIO;
+import net.myorb.charting.DisplayGraphTypes;
 
 /**
  * boiler plate for 3D plot control
+ * @param <T> manager for data type
  * @author Michael Druckman
  */
 public class Plot3D <T> extends ContourPlotProperties
@@ -154,7 +155,7 @@ public class Plot3D <T> extends ContourPlotProperties
 	{
 		this.title = title;
 		this.getActivityDescriptor ().setTitle (title);
-		SimpleScreenIO.startBackgroundTask (this);
+		SimpleScreenIO.scheduleBackgroundTask (this);
 	}
 	protected String title;
 
