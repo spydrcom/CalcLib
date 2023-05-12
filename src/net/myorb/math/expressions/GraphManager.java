@@ -279,7 +279,7 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 		DisplayGraph.Point p;
 		int pos = parsePoint (sequence, 0, p = new DisplayGraph.Point ());
 		SymbolMap.Named functionSymbol = environment.getSymbolMap ().lookup (functionName);
-		double edge = valueOf (sequence, pos++), mul = sequence.size () > pos ? valueOf (sequence, pos) : 1;
+		double edge = valueOf (sequence, pos++), mul = sequence.size () > pos ? valueOf (sequence, pos) : 1000;
 		new HighDefinitionPlots<T> (environment).contourPlotOf3DValues (functionSymbol, p, edge, mul);
 	}
 
@@ -295,7 +295,7 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 		int pos = parsePoint (sequence, 0, p = new DisplayGraph.Point ());
 		SymbolMap.Named functionSymbol = environment.getSymbolMap ().lookup (functionName);
 		double edge = valueOf (sequence, pos++), vectorCount = valueOf (sequence, pos++),
-				mul = sequence.size () > pos ? valueOf (sequence, pos) : 1;
+				mul = sequence.size () > pos ? valueOf (sequence, pos) : 1000;
 		new HighDefinitionPlots<T> (environment).contourPlotOfVectorField
 				(functionSymbol, p, edge, vectorCount, mul);
 	}
