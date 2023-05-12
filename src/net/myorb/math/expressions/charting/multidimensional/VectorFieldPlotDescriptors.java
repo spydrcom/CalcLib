@@ -4,7 +4,9 @@ package net.myorb.math.expressions.charting.multidimensional;
 import net.myorb.data.abstractions.CommonDataStructures;
 import net.myorb.data.abstractions.SpaceConversion;
 
+import net.myorb.math.expressions.charting.colormappings.TemperatureModelColorScheme;
 import net.myorb.math.expressions.charting.Plot3D;
+
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.charting.DisplayGraphTypes;
@@ -24,6 +26,12 @@ public class VectorFieldPlotDescriptors <T> extends Plot3D <T>
 	public static class VectorFieldPoints
 		extends DisplayGraphTypes.VectorField.Locations
 	{ private static final long serialVersionUID = -955249300987318028L; }
+
+
+	public VectorFieldPlotDescriptors ()
+	{
+		setColorSelectionFactory (TemperatureModelColorScheme.getColorSchemeFactory ());
+	}
 
 
 	/**
@@ -79,6 +87,7 @@ public class VectorFieldPlotDescriptors <T> extends Plot3D <T>
 
 
 	private static final long serialVersionUID = -5736953963357328599L;
+
 
 }
 
