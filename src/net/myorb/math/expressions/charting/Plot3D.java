@@ -1,13 +1,17 @@
 
 package net.myorb.math.expressions.charting;
 
-import net.myorb.math.MultiDimensional;
-
+import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.ExpressionSpaceManager;
+
+import net.myorb.math.expressions.PrettyPrinter;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.gui.components.SimpleScreenIO;
 import net.myorb.charting.DisplayGraphTypes;
+import net.myorb.math.MultiDimensional;
+
+import java.awt.Color;
 
 /**
  * boiler plate for 3D plot control
@@ -158,6 +162,46 @@ public class Plot3D <T> extends ContourPlotProperties
 		SimpleScreenIO.scheduleBackgroundTask (this);
 	}
 	protected String title;
+
+
+	// descriptive content to be burned into plot image
+
+	/**
+	 * a rendered descriptive content image
+	 * @param descriptiveContent a rendered image to add to image
+	 */
+	public void setDescriptiveContentImage
+		(SimpleScreenIO.Image descriptiveContent)
+	{ this.descriptiveContent = descriptiveContent; }
+
+	public void setDescriptiveContent (SimpleScreenIO.Widget descriptiveContent)
+	{ this.setDescriptiveContentImage ( (SimpleScreenIO.Image) descriptiveContent); }
+	public javax.swing.Icon getDescriptiveContentImage () { return descriptiveContent.getContent (); }
+	public SimpleScreenIO.Image getDescriptiveContent () { return descriptiveContent; }
+	protected SimpleScreenIO.Image descriptiveContent = null;
+
+	/**
+	 * stamp a binary image with attached Descriptive Content
+	 * @param g the graphics object to stamp content on
+	 */
+	public void stampDescriptiveContent (java.awt.Graphics g)
+	{
+		if (descriptiveContent == null) return;
+		SimpleScreenIO.Label L = new SimpleScreenIO.Label (Color.WHITE);
+		getDescriptiveContentImage ().paintIcon (L, g, 25, 25);
+	}
+
+	/**
+	 * render function for use as Descriptive Content
+	 * @param s symbol to render
+	 */
+	public void setDescriptiveContentFor
+		(Subroutine <T> s, PrettyPrinter <T> using)
+	{
+		try
+		{ setDescriptiveContent ( using.toRenderedWidget (s) ); }
+		catch (Exception e) { e.printStackTrace (); }
+	}
 
 
 	// key interface points needing implementations
