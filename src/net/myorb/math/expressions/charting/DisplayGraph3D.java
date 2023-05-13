@@ -3,8 +3,8 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.charting.PlotComputers;
 
-import net.myorb.charting.ColorSelection;
 import net.myorb.charting.DisplayGraphTypes;
+import net.myorb.charting.ColorSelection;
 import net.myorb.charting.Histogram;
 
 import net.myorb.rinearn.SurfacePlotter;
@@ -152,8 +152,8 @@ public class DisplayGraph3D extends DisplayGraph
 	public static BufferedImage plotContour
 		(ContourPlotProperties proprties, String description)
 	{
-		BufferedImage image = buildContourImage (proprties);
-		showImageAsComponent (description, proprties, image);
+	    BufferedImage image = buildContourImage (proprties);
+	    showImageAsComponent (description, proprties, image);
 		addTrackingFor (proprties, description);
 		return image;
 	}
@@ -249,11 +249,21 @@ public class DisplayGraph3D extends DisplayGraph
 
 		compute (proprties, pointsPerAxis, points, range);
 
-		return offAxisContourPlot
+		BufferedImage image = offAxisContourPlot
 		(
 			range, points, proprties.getPointsSize (),
 			proprties.getLowCorner (), proprties.getEdgeSize ()
 		);
+
+	    if (proprties instanceof Plot3D)
+		{
+			Graphics2D g;
+			( (Plot3D <?>) proprties ).stampDescriptiveContent
+					( g = image.createGraphics () );
+			g.dispose ();
+		}
+
+	    return image;
 	}
 	public static void addTrackingFor (ContourPlotProperties proprties, String description)
 	{ Tracking.getInstance (false).add (proprties, description, new ContourPlotProperties (proprties)); }
