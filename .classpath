@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="/CalcSpline/bin" sourcepath="/CalcSpline/src"/>
 	<classpathentry kind="lib" path="/Fraculus/bin"/>
 	<classpathentry kind="lib" path="/Mpmath/bin"/>
-	<classpathentry kind="lib" path="lib/jmtex-221114.zip"/>
+	<classpathentry kind="lib" path="lib/jmtex-221114.zip" sourcepath="/JMTeX/be/ugent/caagt/jmathtex/mathml"/>
 	<classpathentry kind="lib" path="/Colt/bin" sourcepath="/Colt/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
