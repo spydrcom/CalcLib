@@ -3,6 +3,7 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.TokenParser;
+import net.myorb.math.expressions.PrettyPrinter;
 import net.myorb.math.expressions.VectorPlotEnabled;
 import net.myorb.math.expressions.charting.PlotComputers;
 
@@ -26,6 +27,20 @@ public class HighDefinitionPlots<T>
 	public HighDefinitionPlots
 	(Environment<T> environment) { this.environment = environment; }
 	protected Environment<T> environment;
+
+
+	/**
+	 * prepare descriptive content for the plot process
+	 * @param P the root plot object for processing
+	 * @param function the Subroutine to describe
+	 * @return the plot object used in chain
+	 */
+	public Plot3D <T> prepare (Plot3D <T> P, Subroutine <T> function)
+	{
+		P.setDescriptiveContentFor
+		( function, new PrettyPrinter <T> (environment) );
+		return P;
+	}
 
 
 	/**
@@ -63,8 +78,8 @@ public class HighDefinitionPlots<T>
 	 */
 	public void prepareAndShow
 		(
-			Plot3D<T> plot,
-			Subroutine<T> function, String functionName,
+			Plot3D <T> plot,
+			Subroutine <T> function, String functionName,
 			Point lowCorner, double edgeX, double edgeY,
 			int multiplier
 		)
@@ -84,14 +99,14 @@ public class HighDefinitionPlots<T>
 	 */
 	public void prepareAndShow
 		(
-			Subroutine<T> function, String functionName,
+			Subroutine <T> function, String functionName,
 			Point lowCorner, double edge, double multiplier
 		)
 	{
 		prepareAndShow
 		(
-			new Plot3DContour<T> (function), function, functionName,
-			lowCorner, edge, edge, (int) multiplier
+			prepare (new Plot3DContour <T> (function), function),
+			function, functionName, lowCorner, edge, edge, (int) multiplier
 		);
 	}
 
@@ -106,16 +121,15 @@ public class HighDefinitionPlots<T>
 	 */
 	public void prepareAndShow
 		(
-			Subroutine<T> function, String functionName,
+			Subroutine <T> function, String functionName,
 			Point lowCorner, double edge, double vectorCount,
 			double multiplier
 		)
 	{
 		prepareAndShow
 		(
-			new Plot3DVectorField <T> (function, vectorCount),
-			function, functionName, lowCorner, edge, edge,
-			(int) multiplier
+			prepare (new Plot3DVectorField <T> (function, vectorCount), function),
+			function, functionName, lowCorner, edge, edge, (int) multiplier
 		);
 	}
 
@@ -218,6 +232,7 @@ public class HighDefinitionPlots<T>
 		plot.setLowCorner (lowCorner); plot.setEdgeSize ((float) edgeX); plot.setAltEdgeSize ((float) edgeY);
 		executeTransform (plot, functionSymbol.getName (), transform.getEnvironment ());
 	}
+
 
 	/**
 	 * @param plot description of the plot from the request
