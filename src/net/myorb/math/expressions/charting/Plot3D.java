@@ -4,7 +4,7 @@ package net.myorb.math.expressions.charting;
 import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.ExpressionSpaceManager;
 
-import net.myorb.math.expressions.PrettyPrinter;
+import net.myorb.math.expressions.ContourRendering;
 import net.myorb.math.expressions.ValueManager;
 
 import net.myorb.gui.components.SimpleScreenIO;
@@ -196,10 +196,10 @@ public class Plot3D <T> extends ContourPlotProperties
 	 * @param s symbol to render
 	 */
 	public void setDescriptiveContentFor
-		(Subroutine <T> s, PrettyPrinter <T> using)
+		(Subroutine <T> s, ContourRendering <T> using)
 	{
 		try
-		{ setDescriptiveContent ( using.toRenderedWidget (s) ); }
+		{ setDescriptiveContent ( using.toRenderedWidget (s, this) ); }
 		catch (Exception e) { e.printStackTrace (); }
 	}
 
