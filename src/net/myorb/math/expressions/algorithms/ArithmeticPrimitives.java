@@ -269,5 +269,57 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore <T>
 	}
 
 
+	/**
+	 * implement operator - INRANGE
+	 * @param symbol the symbol associated with this object
+	 * @param precedence the associated precedence
+	 * @return operation implementation object
+	 */
+	public AbstractBinaryOperator getInrangeAlgorithm (String symbol, int precedence)
+	{
+		return new AbstractBinaryOperator (symbol, precedence)
+		{
+			public ValueManager.GenericValue execute
+				(
+					ValueManager.GenericValue left,
+					ValueManager.GenericValue right
+				)
+			{
+				ValueManager.RawValueList <T> rng =
+					valueManager.toDimensionedValue (right).getValues ();
+				T lo = rng.get (0), hi = rng.get (1), V = valueManager.toDiscrete (left);
+
+				return valueManager.newDiscreteValue
+				(
+					spaceManager.lessThan (V, lo) || spaceManager.lessThan (hi, V) ?
+						spaceManager.getZero () : spaceManager.getOne ()
+				);
+			}
+
+			public String markupForDisplay
+				(
+					String operator, String firstOperand,
+					String secondOperand, boolean lfence,
+					boolean rfence, NodeFormatting using
+				)
+			{
+				int
+				start = secondOperand.indexOf ("\""),
+				 end  = secondOperand.indexOf ("\"", start+1);
+				String range = secondOperand.substring (start+1, end);
+				String ends [] = range.split (","), lo = ends [0], hi = ends [1];
+
+				lo = using.formatNumericReference ( lo.replaceAll (" ", "") );
+				hi = using.formatNumericReference ( hi.replaceAll (" ", "") );
+
+				String loSide = using.formatBinaryOperation (lo, LE, firstOperand);
+				String eqn = using.formatBinaryOperation (loSide, LE, hi);
+				return eqn;
+			}
+			String LE = OperatorNomenclature.LE__OPERATION_RENDER;
+		};
+	}
+
+
 }
 
