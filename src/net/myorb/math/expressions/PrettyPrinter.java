@@ -3,7 +3,6 @@ package net.myorb.math.expressions;
 
 // CalcLib imports
 import net.myorb.math.polynomial.algebra.SeriesExpansion;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
 import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.gui.rendering.MmlDisplayFormatter;
 import net.myorb.math.expressions.symbols.DefinedTransform;
@@ -26,7 +25,7 @@ import java.util.List;
  * @param <T> type on which operations are to be executed
  * @author Michael Druckman
  */
-public class PrettyPrinter<T> extends RenderingDisplay
+public class PrettyPrinter <T> extends RenderingDisplay
 {
 
 
@@ -168,15 +167,6 @@ public class PrettyPrinter<T> extends RenderingDisplay
 
 
 	/**
-	 * @param s Subroutine to be rendered
-	 * @return Widget component holding rendered content
-	 * @throws Exception for any errors
-	 */
-	public Widget toRenderedWidget (Subroutine <T> s) throws Exception
-	{ return toRenderedWidget (s.getFunctionTokens (), s.getParameterNameList ()); }
-
-
-	/**
 	 * @param tokens list of tokens to render
 	 * @param parameterNames list of parameter names for render
 	 * @return Widget component holding rendered content
@@ -189,7 +179,7 @@ public class PrettyPrinter<T> extends RenderingDisplay
 		)
 	throws Exception
 	{
-		return toWidget (formatter.render (tokens, parameterNames));
+		return toWidget ( this.toMML (tokens, parameterNames) );
 	}
 
 
