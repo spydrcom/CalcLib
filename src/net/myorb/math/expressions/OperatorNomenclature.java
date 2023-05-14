@@ -383,6 +383,7 @@ public class OperatorNomenclature
 	CLOSE_FLOOR_RENDER			= "\u230B",		// _|						closing bracket
 	CROSS_PRODUCT_RENDER		= "\u00D7",		//					render character for cross product
 	DOT_PRODUCT_RENDER			= "\u00B7",		//					render character for dot product
+	LE__OPERATION_RENDER		= "\u2264",		//					render character less-equal operator
 	PARTIAL_RENDER				= "\u2202",		//					render character for partial derivative
 	NABLA_RENDER				= "\u2207",		//					render unicode character for NABLA
 	SQUARE_RENDER				= "\u00B2",		//					render character for square
