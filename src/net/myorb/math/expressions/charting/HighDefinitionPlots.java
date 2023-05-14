@@ -3,7 +3,7 @@ package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.SymbolMap;
 import net.myorb.math.expressions.TokenParser;
-import net.myorb.math.expressions.PrettyPrinter;
+import net.myorb.math.expressions.ContourRendering;
 import net.myorb.math.expressions.VectorPlotEnabled;
 import net.myorb.math.expressions.charting.PlotComputers;
 
@@ -38,13 +38,13 @@ public class HighDefinitionPlots<T>
 	public Plot3D <T> prepare (Plot3D <T> P, Subroutine <T> function)
 	{
 		P.setDescriptiveContentFor
-		( function, new PrettyPrinter <T> (environment) );
+		( function, new ContourRendering <T> (environment) );
 		return P;
 	}
 
 
 	/**
-	 * populate contour descriptor
+	 * populate descriptor and show contour 
 	 * @param plot the plot object to be used
 	 * @param functionName name of the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
@@ -59,11 +59,30 @@ public class HighDefinitionPlots<T>
 			int multiplier
 		)
 	{
+		establish (plot, lowCorner, edgeX, edgeY, multiplier);
+		plot.show (functionName);
+	}
+
+
+	/**
+	 * populate contour descriptor
+	 * @param plot the plot object to be used
+	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
+	 * @param edgeX the length of the edge of the X axis
+	 * @param edgeY the length of the edge of the Y axis
+	 * @param multiplier normalize for integer range
+	 */
+	public void establish
+		(
+			Plot3D<T> plot,
+			Point lowCorner, double edgeX, double edgeY,
+			int multiplier
+		)
+	{
 		plot.setLowCorner (lowCorner);
 		plot.setEdgeSize ((float) edgeX);
 		plot.setAltEdgeSize ((float) edgeY);
 		plot.setMultiplier (multiplier);
-		plot.show (functionName);
 	}
 
 
@@ -103,11 +122,9 @@ public class HighDefinitionPlots<T>
 			Point lowCorner, double edge, double multiplier
 		)
 	{
-		prepareAndShow
-		(
-			prepare (new Plot3DContour <T> (function), function),
-			function, functionName, lowCorner, edge, edge, (int) multiplier
-		);
+		Plot3D <T> plot = new Plot3DContour <T> (function);
+		establish (plot, lowCorner, edge, edge, (int) multiplier);
+		prepare (plot, function); plot.show (functionName);
 	}
 
 
@@ -126,11 +143,9 @@ public class HighDefinitionPlots<T>
 			double multiplier
 		)
 	{
-		prepareAndShow
-		(
-			prepare (new Plot3DVectorField <T> (function, vectorCount), function),
-			function, functionName, lowCorner, edge, edge, (int) multiplier
-		);
+		Plot3D <T> plot = new Plot3DVectorField <T> (function, vectorCount);
+		establish (plot, lowCorner, edge, edge, (int) multiplier);
+		prepare (plot, function); plot.show (functionName);
 	}
 
 
