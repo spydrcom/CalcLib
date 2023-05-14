@@ -304,10 +304,10 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore <T>
 				)
 			{
 				int
-				start = secondOperand.indexOf ("\""),
-				 end  = secondOperand.indexOf ("\"", start+1);
+				start = secondOperand.indexOf (Q),
+				 end  = secondOperand.indexOf (Q, start+1);
 				String range = secondOperand.substring (start+1, end);
-				String ends [] = range.split (","), lo = ends [0], hi = ends [1];
+				String ends [] = range.split (C), lo = ends [0], hi = ends [1];
 
 				lo = using.formatNumericReference ( lo.replaceAll (" ", "") );
 				hi = using.formatNumericReference ( hi.replaceAll (" ", "") );
@@ -316,7 +316,8 @@ public class ArithmeticPrimitives<T> extends AlgorithmCore <T>
 				String eqn = using.formatBinaryOperation (loSide, LE, hi);
 				return eqn;
 			}
-			String LE = OperatorNomenclature.LE__OPERATION_RENDER;
+			static final String LE = OperatorNomenclature.LE__OPERATION_RENDER;
+			static final String Q = "\"", C = ",";
 		};
 	}
 
