@@ -23,6 +23,7 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * equation only render
 	 * @param s Subroutine to be rendered
 	 * @return Widget component holding rendered content
 	 * @throws Exception for any errors
@@ -32,6 +33,7 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * describe an equation and domain
 	 * @param s Subroutine to be rendered
 	 * @param properties a description of the plot properties
 	 * @return Widget component holding rendered content
@@ -54,6 +56,7 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * build an MML description of a 2D space
 	 * @param contour the description of the plot
 	 * @return MML text describing the 2D area being displayed
 	 * @throws Exception for any errors
@@ -70,10 +73,11 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * describe the end-points of a domain axis
 	 * @param parameter name of the parameter described
 	 * @param lo the low value for the specified parameter
 	 * @param hi the high value for the specified parameter
-	 * @return MML text with format nodes for descrition
+	 * @return MML text with format nodes for description
 	 * @throws Exception for any errors
 	 */
 	public String spaceDescriptionFor (String parameter, double lo, double hi) throws Exception
@@ -101,6 +105,7 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 
 
 	/**
+	 * MML for 20 units of space
 	 * @return provide an MML spacing node
 	 */
 	public String space () { return MathMarkupNodes.space ("20"); }
