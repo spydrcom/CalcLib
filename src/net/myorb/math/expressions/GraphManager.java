@@ -319,6 +319,7 @@ public class GraphManager<T> extends ExpressionGraphing<T>
 
 
 	/**
+	 * identify plot characteristics
 	 * @param type the type of plot to be done
 	 * @param tos the top of stack value (computed array of points)
 	 */
