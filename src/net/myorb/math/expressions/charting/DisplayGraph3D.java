@@ -257,10 +257,7 @@ public class DisplayGraph3D extends DisplayGraph
 
 	    if (proprties instanceof Plot3D)
 		{
-			Graphics2D g;
-			( (Plot3D <?>) proprties ).stampDescriptiveContent
-					( g = image.createGraphics () );
-			g.dispose ();
+	    	applyStamp ( (Plot3D <?>) proprties, image );
 		}
 
 	    return image;
@@ -299,6 +296,28 @@ public class DisplayGraph3D extends DisplayGraph
 
 
 	// graphics primitives
+
+	/**
+	 * stamp plot with description
+	 * @param plot description of plot
+	 * @param image the plot matrix being constructed
+	 */
+	public static void applyStamp (Plot3D <?> plot, BufferedImage image)
+	{
+		if ( ! plot.hasDescriptiveContent () ) return;
+		applyStamp ( plot, image.createGraphics () );
+	}
+
+	/**
+	 * use plot description to overlay graphics
+	 * @param plot description of plot containing stamp graphics
+	 * @param g the Graphics2D attached to the image being built
+	 */
+	public static void applyStamp (Plot3D <?> plot, Graphics2D g)
+	{
+		plot.stampDescriptiveContent (g);
+		g.dispose ();
+	}
 
 	/**
 	 * plot direction indicator for vector points
