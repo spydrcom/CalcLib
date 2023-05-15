@@ -178,6 +178,7 @@ public class Plot3D <T> extends ContourPlotProperties
 	{ this.setDescriptiveContentImage ( (SimpleScreenIO.Image) descriptiveContent); }
 	public javax.swing.Icon getDescriptiveContentImage () { return descriptiveContent.getContent (); }
 	public SimpleScreenIO.Image getDescriptiveContent () { return descriptiveContent; }
+	public boolean hasDescriptiveContent () { return descriptiveContent != null; }
 	protected SimpleScreenIO.Image descriptiveContent = null;
 
 	/**
@@ -186,7 +187,7 @@ public class Plot3D <T> extends ContourPlotProperties
 	 */
 	public void stampDescriptiveContent (java.awt.Graphics g)
 	{
-		if (descriptiveContent == null) return;
+		if ( ! hasDescriptiveContent () ) return;
 		SimpleScreenIO.Label L = new SimpleScreenIO.Label (Color.WHITE);
 		getDescriptiveContentImage ().paintIcon (L, g, 25, 25);
 	}
