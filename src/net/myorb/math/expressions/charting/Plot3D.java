@@ -194,7 +194,8 @@ public class Plot3D <T> extends ContourPlotProperties
 
 	/**
 	 * render function for use as Descriptive Content
-	 * @param s symbol to render
+	 * @param s symbol with equation to render
+	 * @param using contour support tool
 	 */
 	public void setDescriptiveContentFor
 		(Subroutine <T> s, ContourRendering <T> using)
