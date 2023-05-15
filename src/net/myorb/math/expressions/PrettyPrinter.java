@@ -218,6 +218,7 @@ public class PrettyPrinter <T> extends RenderingDisplay
 
 
 	/**
+	 * apply configuration to rendering engine
 	 * @param renderer the rendering implementation
 	 * @return the renderer with properties applied
 	 */
