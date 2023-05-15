@@ -44,27 +44,6 @@ public class HighDefinitionPlots<T>
 
 
 	/**
-	 * populate descriptor and show contour 
-	 * @param plot the plot object to be used
-	 * @param functionName name of the function symbol to be plotted
-	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
-	 * @param edgeX the length of the edge of the X axis
-	 * @param edgeY the length of the edge of the Y axis
-	 * @param multiplier normalize for integer range
-	 */
-	public void prepareAndShow
-		(
-			Plot3D<T> plot, String functionName,
-			Point lowCorner, double edgeX, double edgeY,
-			int multiplier
-		)
-	{
-		establish (plot, lowCorner, edgeX, edgeY, multiplier);
-		plot.show (functionName);
-	}
-
-
-	/**
 	 * populate contour descriptor
 	 * @param plot the plot object to be used
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
@@ -87,6 +66,28 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * populate descriptor and show contour 
+	 * @param plot the plot object to be used
+	 * @param functionName name of the function symbol to be plotted
+	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
+	 * @param edgeX the length of the edge of the X axis
+	 * @param edgeY the length of the edge of the Y axis
+	 * @param multiplier normalize for integer range
+	 */
+	public void prepareAndShow
+		(
+			Plot3D<T> plot, String functionName,
+			Point lowCorner, double edgeX, double edgeY,
+			int multiplier
+		)
+	{
+		establish (plot, lowCorner, edgeX, edgeY, multiplier);
+		plot.show (functionName);
+	}
+
+
+	/**
+	 * build tracking data prior to show
 	 * @param plot the plot object to be used
 	 * @param function the function symbol to be plotted
 	 * @param functionName name of the function symbol to be plotted
@@ -110,6 +111,7 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * allocate descriptor for 3D contour plot
 	 * @param function the function symbol to be plotted
 	 * @param functionName name of the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
@@ -129,6 +131,7 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * allocate descriptor for 3D vector field plot
 	 * @param function the function symbol to be plotted
 	 * @param functionName name of the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
@@ -250,11 +253,12 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * allocate descriptor for 3D surface plot
 	 * @param plot description of the plot from the request
 	 * @param name the name of the function to be used as a title
 	 * @param environment the system environment object
 	 */
-	void executeTransform (Plot3D<T> plot, String name, Environment<T> environment)
+	void executeTransform (Plot3D <T> plot, String name, Environment<T> environment)
 	{
 		PlotComputers.TransformResultsCollection surfaceDescription =
 			PlotComputers.getVectoredTransformProcessing (plot, environment).executeTransform ();
@@ -269,6 +273,7 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * choose mechanism for 3D plot
 	 * @param functionSymbol the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
 	 * @param edgeX the length of the edge of the X axis
@@ -302,6 +307,7 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * choose mechanism for Vector Field plot
 	 * @param functionSymbol the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
 	 * @param edge the length of the edges of the plot along each of the axis
@@ -325,6 +331,7 @@ public class HighDefinitionPlots<T>
 
 
 	/**
+	 * choose mechanism for contour plot
 	 * @param functionSymbol the function symbol to be plotted
 	 * @param lowCorner (x,y) coordinates of the low left corner of the plot
 	 * @param edge the length of the edges of the plot along each of the axis
