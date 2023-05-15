@@ -143,13 +143,6 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	public void setPlotParent (int parent) { put (PLOT_PARENT, parent); }
 	public static String PLOT_PARENT = "PlotParent";
 
-	/**
-	 * link described plot as parent
-	 * @param descriptor the descriptor of the parent
-	 */
-	public void linkParent (DisplayGraphTypes.ContourPlotDescriptor descriptor)
-	{ setPlotParent (descriptor.getPlotNumber ()); }
-
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.ContourColorScheme#getColorSelector()
 	 */
@@ -158,25 +151,36 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	private static ColorSelection.Factory colorSchemeFactory = LegacyAlternativeAlgorithmColorScheme.getColorSchemeFactory ();
 
 
+	// methods for equation evaluation
+
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#evaluate(double, double)
 	 */
-	public int evaluate (double x, double y)
+	public int evaluate (double x, double y) { return equation.evaluate (x, y); }
+	public double evaluateReal (double x, double y) { return equation.evaluateReal (x, y); }
+	public double evaluateAngle (double x, double y) { return equation.evaluateReal (x, y); }
+	public Object evaluateGeneric (double x, double y) { return equation.evaluateGeneric (x, y); }
+
+
+	// constructors 
+
+	public ContourPlotProperties (int rootIdentifier)
 	{
-		return equation.evaluate (x, y);
+		setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
+		setPlotParent (rootIdentifier);
 	}
-	public double evaluateReal (double x, double y)
+
+	public ContourPlotProperties (ContourPlotProperties p)
 	{
-		return equation.evaluateReal (x, y);
+		setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
+		putAll (p); setPlotParent (0); setEquation (p);
 	}
-	public double evaluateAngle (double x, double y)
-	{
-		return equation.evaluateReal (x, y);
-	}
-	public Object evaluateGeneric (double x, double y)
-	{
-		return equation.evaluateGeneric (x, y);
-	}
+
+
+	/**
+	 * describe an equation from plot description
+	 * @param equation a plot descriptor for the equation
+	 */
 	public void setEquation
 	(DisplayGraphTypes.ContourPlotDescriptor equation) { this.equation = equation; }
 	private DisplayGraphTypes.ContourPlotDescriptor equation = null;
@@ -184,6 +188,15 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 
 
 	/**
+	 * link described plot as parent
+	 * @param descriptor the descriptor of the parent
+	 */
+	public void linkParent (DisplayGraphTypes.ContourPlotDescriptor descriptor)
+	{ setPlotParent (descriptor.getPlotNumber ()); }
+
+
+	/**
+	 * build tag for fractal plot
 	 * @param name type name of fractal
 	 * @param lowCorner the low corner point
 	 * @param edgeSize the units along one edge
@@ -199,19 +212,15 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	}
 
 
-	public ContourPlotProperties
-	(int rootIdentifier)
-	{
-		setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
-		setPlotParent (rootIdentifier);
-	}
+	/**
+	 * provide allocation of buffers specific to application
+	 * - this needs override for layers depending on alternate buffers
+	 * @param size the number of elements to allocate
+	 */
+	public void allocateExtendedBuffer (int size) {}
 
-	public ContourPlotProperties (ContourPlotProperties p)
-	{
-		setPlotComputer (PlotComputers.getBruteForcePlotComputer (this));
-		putAll (p); setPlotParent (0); setEquation (p);
-	}
 
+	// computation for timing estimates
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.PlotComputers.RealizationTracking#getActivityDescriptor()
@@ -252,11 +261,6 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 		this.taskMonitorProcessing.setOriginalSize (remaining);
 	}
 
-	/**
-	 * provide allocation of buffers specific to application
-	 * @param size the number of elements to allocate
-	 */
-	public void allocateExtendedBuffer (int size) {}
 
 	private static final long serialVersionUID = -5812958866188128427L;
 
