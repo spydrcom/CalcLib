@@ -97,7 +97,7 @@ public class Plot3D <T> extends ContourPlotProperties
 	 */
 	public void setMultiplier (double multiplier) 
 	{ super.setMultiplier (multiplier); this.multiplier = multiplier; }
-	private double multiplier;
+	protected double multiplier;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#evaluate(double, double)
