@@ -2,8 +2,10 @@
 package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.ValueManager;
-import net.myorb.math.expressions.evaluationstates.Subroutine;
+import net.myorb.math.expressions.ExpressionComponentSpaceManager;
+
 import net.myorb.math.expressions.charting.multidimensional.VectorFieldPlotDescriptors;
+import net.myorb.math.expressions.evaluationstates.Subroutine;
 
 import net.myorb.charting.DisplayGraphTypes.Point;
 import net.myorb.charting.DisplayGraphTypes;
@@ -125,8 +127,20 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	 */
 	public double evaluateAngle (double x, double y)
 	{
-		return evaluateAngle (evaluate2DCall ( x, y ));
+		return evaluateAngle ( evaluate2DCall ( x, y ) );
 	}
+
+	/**
+	 * compute angle formed by a vector
+	 * @param V a 2D vector holding a discrete reference
+	 * @return the angle formed by the vector values
+	 */
+	public double angleFrom (Vector V)
+	{
+		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
+		return Math.atan2 ( Y, X ) + PI_OVER_2;
+	}
+	static final double PI_OVER_2 = Math.PI / 2;
 
 	/**
 	 * use row of gradient matrix to compute vector direction
@@ -135,11 +149,21 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	 */
 	public double angleFrom (ValueManager.MatrixValue <T> MV)
 	{
-		Vector V = new Vector ( MV );
-		double X = cvt ( V.get (0) ), Y = cvt ( V.get (1) );
-		return Math.atan2 ( Y, X ) + PI_OVER_2;
+		return angleFrom ( new Vector ( MV ) );
 	}
-	static final double PI_OVER_2 = Math.PI / 2;
+
+	/**
+	 * compute angle formed by components of 2D discrete
+	 * @param DV the generic wrapper for a discrete value
+	 * @return the angle formed by the vector components
+	 */
+	public double angleFrom (ValueManager.DiscreteValue <T> DV)
+	{
+		ExpressionComponentSpaceManager <T> mgr;
+		if ( ( mgr = getManager () ).getComponentCount () != 2)
+		{ throw new RuntimeException ("Value must be formed from two components"); }
+		return angleFrom ( new Vector ( DV, mgr ) );
+	}
 
 	/**
 	 * more efficient version called from plot computer
@@ -150,7 +174,15 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	public double evaluateAngle (ValueManager.GenericValue functionResult)
 	{
 		if ( functionResult instanceof ValueManager.MatrixValue )
-		{ return angleFrom  ( (ValueManager.MatrixValue <T>) functionResult ); }
+		{
+			return angleFrom  ( (ValueManager.MatrixValue <T>) functionResult );
+		}
+		else if ( functionResult instanceof ValueManager.DiscreteValue )
+		{
+			// introduced as means of forming polar coordinate plot of complex function
+			// ---  BUT logic should be same for any data type described as having 2 dimensions
+			return angleFrom  ( (ValueManager.DiscreteValue <T>) functionResult );
+		}
 		else throw new RuntimeException (VECTOR_FIELD_ERROR);
 	}
 
@@ -193,6 +225,15 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 		this.equation = equation;
 	}
 	public Plot3DVectorField () { super (); }
+
+
+	// description of equation
+
+	/**
+	 * @return data type manager associated with equation
+	 */
+	public ExpressionComponentSpaceManager <T> getManager ()
+	{ return (ExpressionComponentSpaceManager <T>) equation.getSpaceManager (); }
 	protected Subroutine <T> equation;
 
 
@@ -219,17 +260,23 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 
 	// interface implementations
 
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run ()
 	{
-		this.setEquation (this);
-		this.setPlotNumber (1000);
-		this.setTransformIdentity (EQUATION_IDENTITY);
-		int ps = DisplayGraph3D.appropriatePointSize (FIELD_PLOT_EDGE_SIZE);
-		DisplayGraph3D.plotVectorField (setScale (FIELD_PLOT_EDGE_SIZE, ps), title);
+		this.setEquation (this); this.setPlotNumber (1000); this.setTransformIdentity (EQUATION_IDENTITY);
+		try { generateDisplays (DisplayGraph3D.appropriatePointSize (FIELD_PLOT_EDGE_SIZE)); }
+		catch (Exception e) { e.printStackTrace (); }
 	}
+	void generateDisplays (int ps)
+	{
+		DisplayGraph3D.plotVectorField
+			(setScale (FIELD_PLOT_EDGE_SIZE, ps), title);
+		this.showLegend ();
+	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.Plot3D#getPlotEdgeSize()
