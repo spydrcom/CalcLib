@@ -46,12 +46,14 @@ public class ContourRendering <T> extends PrettyPrinter <T>
 		)
 	throws Exception
 	{
-		String EqnMML = this.toMML
-			( s.getFunctionTokens (), P = s.getParameterNameList () );
+		this.P = s.getParameterNameList ();
+		if (P.size () != 2) throw new RuntimeException (ERROR);
+		String EqnMML = this.toMML ( s.getFunctionTokens (), P );
 		String SpcMML = this.spaceDescriptionFor (properties);
 		String MML = strip (EqnMML) + space () + SpcMML;
 		return toWidget ( wrap (MML) );
 	}
+	static final String ERROR = "Two parameters expected";
 	protected Subroutine.ParameterList P;
 
 
