@@ -3,6 +3,10 @@ package net.myorb.math.expressions.charting.colormappings;
 
 import net.myorb.gui.graphics.ColorAssignment;
 
+import net.myorb.charting.DisplayGraphTypes;
+
+import java.awt.Color;
+
 import net.myorb.charting.ColorSelection;
 
 import net.myorb.charting.Histogram;
@@ -13,6 +17,7 @@ import net.myorb.charting.Histogram;
  * @author Michael Druckman
  */
 public class TemperatureModelColorScheme extends ColorSelection
+		implements DisplayGraphTypes.ScaledColorSelector
 {
 
 
@@ -78,6 +83,15 @@ public class TemperatureModelColorScheme extends ColorSelection
 			 */
 			public ColorSelection newColorSelection () { return new TemperatureModelColorScheme (); }
 		};
+	}
+
+
+	/* (non-Javadoc)
+	 * @see net.myorb.charting.DisplayGraphTypes.ScaledColorSelector#mappedFrom(double)
+	 */
+	public Color mappedFrom (double selectionRangePoint)
+	{
+		return ColorAssignment.getTemperatureColorFor (selectionRangePoint);
 	}
 
 
