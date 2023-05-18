@@ -34,7 +34,6 @@ public class VectorFieldPlotComputer extends BruteForcePlotComputer
 		)
 	{
 		super.compute (descriptor, pointsPerAxis, points, range, histogram);
-		this.vectorFieldProprties.buildLegendWidgetsFor (histogram);
 		this.evaluateFieldDescription (pointsPerAxis);
 	}
 
