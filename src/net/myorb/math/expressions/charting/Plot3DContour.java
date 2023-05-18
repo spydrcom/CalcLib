@@ -30,11 +30,14 @@ public class Plot3DContour<T> extends Plot3D<T>
 	 */
 	public void run ()
 	{
-		this.setEquation (this);
-		this.setPlotNumber (1000);
-		this.setTransformIdentity (EQUATION_IDENTITY);
-		int ps = DisplayGraph3D.appropriatePointSize (ContourPlotEdgeSize);
-		DisplayGraph3D.plotContour (setScale (ContourPlotEdgeSize, ps), title);
+		this.setEquation (this); this.setPlotNumber (1000); this.setTransformIdentity (EQUATION_IDENTITY);
+		try { generateDisplays (DisplayGraph3D.appropriatePointSize (ContourPlotEdgeSize)); }
+		catch (Exception e) { e.printStackTrace (); }
+	}
+	void generateDisplays (int ps)
+	{
+		DisplayGraph3D.plotContour
+			(setScale (ContourPlotEdgeSize, ps), title);
 		this.showLegend ();
 	}
 
