@@ -35,6 +35,7 @@ public class Plot3DContour<T> extends Plot3D<T>
 		this.setTransformIdentity (EQUATION_IDENTITY);
 		int ps = DisplayGraph3D.appropriatePointSize (ContourPlotEdgeSize);
 		DisplayGraph3D.plotContour (setScale (ContourPlotEdgeSize, ps), title);
+		this.showLegend ();
 	}
 
 
