@@ -45,8 +45,17 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 		this.points = points; this.range = range;
 		this.histogram = histogram;
 		traverseMatrix ();
+		buildLegend ();
 	}
 	protected int m = 100;
+
+
+	/**
+	 * use histogram meta-data to construct Legend
+	 */
+	public void buildLegend ()
+	{ descriptor.buildLegendWidgetsFor (histogram); }
+	protected Histogram histogram;
 
 
 	/**
@@ -93,7 +102,6 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 		nextEvaluationIndex ++ ;
 	}
 	protected DisplayGraphTypes.Point [] points;
-	protected Histogram histogram;
 	protected Object [] range;
 
 
