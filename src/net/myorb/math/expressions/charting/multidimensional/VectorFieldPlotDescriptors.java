@@ -53,6 +53,7 @@ public class VectorFieldPlotDescriptors <T> extends Plot3D <T>
 		/**
 		 * use components of discrete value as vector components
 		 * @param DV the generic wrapper for a discrete value
+		 * @param manager a manager for the data type
 		 */
 		public Vector (ValueManager.DiscreteValue <T> DV, ExpressionComponentSpaceManager <T> manager)
 		{

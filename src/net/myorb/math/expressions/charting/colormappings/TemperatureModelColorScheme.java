@@ -5,11 +5,11 @@ import net.myorb.gui.graphics.ColorAssignment;
 
 import net.myorb.charting.DisplayGraphTypes;
 
-import java.awt.Color;
-
 import net.myorb.charting.ColorSelection;
 
 import net.myorb.charting.Histogram;
+
+import java.awt.Color;
 
 /**
  * color selection using temperature color model
@@ -37,7 +37,7 @@ public class TemperatureModelColorScheme extends ColorSelection
 	 * @param value the value to be translated
 	 * @return the Color for the value
 	 */
-	public java.awt.Color colorFor (int value)
+	public Color colorFor (int value)
 	{
 		return ColorAssignment.getTemperatureColorFrom (value, lowest, highest);
 	}
