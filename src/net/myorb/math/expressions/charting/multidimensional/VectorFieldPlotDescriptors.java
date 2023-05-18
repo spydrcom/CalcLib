@@ -1,13 +1,10 @@
 
 package net.myorb.math.expressions.charting.multidimensional;
 
-import net.myorb.charting.Histogram;
-
 import net.myorb.data.abstractions.SpaceConversion;
 import net.myorb.data.abstractions.CommonDataStructures;
 
 import net.myorb.math.expressions.charting.colormappings.TemperatureModelColorScheme;
-import net.myorb.math.expressions.charting.LegendDisplay;
 import net.myorb.math.expressions.charting.Plot3D;
 
 import net.myorb.math.expressions.ExpressionComponentSpaceManager;
@@ -99,25 +96,6 @@ public class VectorFieldPlotDescriptors <T> extends Plot3D <T>
 	 * @return a new structure that will hold a field description
 	 */
 	public static VectorFieldPoints pointsList () { return new VectorFieldPoints (); }
-
-
-	/**
-	 * use meta-data from plot histogram to construct widgets for Legend
-	 * @param histogram the histogram used to collect meta-data for a plot
-	 */
-	public void buildLegendWidgetsFor (Histogram histogram)
-	{
-		DisplayGraphTypes.LegendEntries entries =
-				DisplayGraphTypes.legendEntriesFor (10, histogram);
-		TemperatureModelColorScheme selector = new TemperatureModelColorScheme ();
-		this.legend = DisplayGraphTypes.legendWidgetsFor (entries, multiplier, selector);
-	}
-	DisplayGraphTypes.LegendWidgets legend;
-
-	/**
-	 * use computed histogram meta-data to produce Legend display
-	 */
-	public void showLegend () { LegendDisplay.show (legend); }
 
 
 	private static final long serialVersionUID = -5736953963357328599L;
