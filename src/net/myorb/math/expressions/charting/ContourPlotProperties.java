@@ -2,10 +2,12 @@
 package net.myorb.math.expressions.charting;
 
 import net.myorb.math.expressions.charting.colormappings.LegacyAlternativeAlgorithmColorScheme;
+import net.myorb.math.expressions.charting.colormappings.TemperatureModelColorScheme;
 import net.myorb.sitstat.tasks.CommonTaskProcessing;
 
 import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.ColorSelection;
+import net.myorb.charting.Histogram;
 
 import net.myorb.sitstat.RealizationTracking;
 import net.myorb.sitstat.ActivityProperties;
@@ -218,6 +220,28 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	 * @param size the number of elements to allocate
 	 */
 	public void allocateExtendedBuffer (int size) {}
+
+
+	// Legend processing
+
+	/**
+	 * use meta-data from plot histogram to construct widgets for Legend
+	 * @param histogram the histogram used to collect meta-data for a plot
+	 */
+	public void buildLegendWidgetsFor (Histogram histogram)
+	{
+		double M = getMultiplier ();
+		DisplayGraphTypes.LegendEntries entries =
+				DisplayGraphTypes.legendEntriesFor (10, histogram);
+		TemperatureModelColorScheme selector = new TemperatureModelColorScheme ();
+		this.legend = DisplayGraphTypes.legendWidgetsFor (entries, M, selector);
+	}
+	protected DisplayGraphTypes.LegendWidgets legend;
+
+	/**
+	 * use computed histogram meta-data to produce Legend display
+	 */
+	public void showLegend () { LegendDisplay.show (legend); }
 
 
 	// computation for timing estimates
