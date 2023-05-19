@@ -23,8 +23,22 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	implements DisplayGraphTypes.ContourPlotDescriptor, RealizationTracking
 {
 
+
 	public static String POLAR_IDENTITY = "POLAR";
 	public static String EQUATION_IDENTITY = "EQN";
+
+
+	/**
+	 * @param item name of the value
+	 * @param defaultValue a default if not found
+	 * @return the value found or else the default
+	 */
+	public double getOrDefault (String item, double defaultValue)
+	{
+		if ( ! this.containsKey (item) ) return defaultValue;
+		return Double.parseDouble (get (item).toString ());
+	}
+
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#identifyTransform()
@@ -119,8 +133,10 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.charting.DisplayGraphTypes.Transform3D#getMultiplier()
 	 */
-	public double getMultiplier () { return Double.parseDouble (get (MULTIPLIER).toString ()); }
+	public double getMultiplier ()
+	{ return getOrDefault (MULTIPLIER, DEFAULT_MULTIPLIER_VALUE); }
 	public void setMultiplier (double multiplier)  { put (MULTIPLIER, multiplier); }
+	public static double DEFAULT_MULTIPLIER_VALUE = 1000;
 	public static String MULTIPLIER = "Multiplier";
 
 	/* (non-Javadoc)
