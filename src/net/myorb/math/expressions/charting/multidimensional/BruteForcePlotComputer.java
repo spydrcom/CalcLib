@@ -54,7 +54,7 @@ public class BruteForcePlotComputer extends PlotMatrixTraversal
 	 * use histogram meta-data to construct Legend
 	 */
 	public void buildLegend ()
-	{ descriptor.buildLegendWidgetsFor (histogram); }
+	{ if (histogram != null) descriptor.buildLegendWidgetsFor (histogram); }
 	protected Histogram histogram;
 
 
