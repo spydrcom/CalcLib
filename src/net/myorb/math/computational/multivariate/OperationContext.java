@@ -1,6 +1,8 @@
 
 package net.myorb.math.computational.multivariate;
 
+import net.myorb.math.computational.CalculusMarkers;
+
 import net.myorb.math.expressions.symbols.AbstractFunction;
 
 import net.myorb.math.expressions.ValueManager.GenericValue;
@@ -26,15 +28,33 @@ public class OperationContext implements ValueManager.VectorOperation
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.GenericValue#setMetadata(net.myorb.math.expressions.ValueManager.Metadata)
 	 */
-	public void setMetadata
-		(Metadata metadata) { this.metadata = (OperationMetadata) metadata; }
+	public void setMetadata (Metadata metadata)
+	{
+		this.metadata = (OperationMetadata) metadata;
+		this.connectProcessors ();
+	}
 	public void setName (String name) { this.name = name; }
 
+	/**
+	 * attach application specific processor objects
+	 */
+	public void connectProcessors ()
+	{
+		if ( metadata.getOp ().typeOfOperation () == LAPLACIAN )
+		{ metadata.attachEngineFor ( getFunction () ); }
+	}
+	protected CalculusMarkers.CalculusMarkerTypes
+	LAPLACIAN = CalculusMarkers.CalculusMarkerTypes.VECTOR_LAPLACE;
 
 	/* (non-Javadoc)
 	 * @see net.myorb.math.expressions.ValueManager.GenericValue#getMetadata()
 	 */
 	public Metadata getMetadata () { return metadata; }
+
+	/**
+	 * @return original OperationMetadata object
+	 */
+	public OperationMetadata getOpSpecificMetadata () { return metadata; }
 
 
 	// queries specific to function
@@ -73,6 +93,11 @@ public class OperationContext implements ValueManager.VectorOperation
 	public FunctionCoordinates getFunctionCoordinates ()
 	{ return new FunctionCoordinates (metadata.getOp ().getEnvironment ()); }
 
+	/**
+	 * evaluate function at point
+	 * @param point the coordinates of a point in domain space
+	 * @return the function value at the domain point
+	 */
 	public GenericValue execute (FunctionCoordinates.Coordinates point)
 	{
 		return getFunction ().execute (toGenericValue (point));
