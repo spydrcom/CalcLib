@@ -1,8 +1,10 @@
 
 package net.myorb.math.computational.multivariate;
 
+import net.myorb.math.computational.DerivativeApproximationMultiDim;
 import net.myorb.math.computational.MultivariateCalculus;
 import net.myorb.math.expressions.ValueManager.Metadata;
+import net.myorb.math.expressions.symbols.AbstractFunction;
 import net.myorb.math.expressions.SymbolMap.Operation;
 
 /**
@@ -28,6 +30,17 @@ public class OperationMetadata implements Metadata
 	public void setOp (MultivariateCalculus.VectorOperator op) { this.op = op; }
 	public MultivariateCalculus.VectorOperator getOp () { return op; }
 	private MultivariateCalculus.VectorOperator op;
+
+
+	/**
+	 * attach a Derivative Approximation processor
+	 * @param function the function to be analyzed
+	 */
+	public <T> void attachEngineFor (AbstractFunction <T> function)
+	{  engine  =  new DerivativeApproximationMultiDim <>  (function);  }
+	@SuppressWarnings("unchecked") public <T> DerivativeApproximationMultiDim <T>
+		getEngine () { return (DerivativeApproximationMultiDim <T>) engine; }
+	protected DerivativeApproximationMultiDim <?> engine;
 
 
 	/**
