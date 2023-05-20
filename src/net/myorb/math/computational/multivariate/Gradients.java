@@ -10,7 +10,7 @@ import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
 import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
 import net.myorb.math.computational.DerivativeApproximationMultiDim;
-
+import net.myorb.math.computational.DerivativeApproximationMultiDim.Point;
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
@@ -71,15 +71,11 @@ public class Gradients <T> extends DataManagers <T>
 	 */
 	T computeLaplacian (OperationContext context)
 	{
-		Matrix <T> M; int functions = 1;
+		Coordinates evalPoint =
+				context.metadata.getEvaluationPoint ();
+		if ( ! SUPPRESS ) functionResultTest (evalPoint, context);
 		int independentVariables = context.metadata.getParameters ();
-		Coordinates evalPoint = context.metadata.getEvaluationPoint ();
-
-		if ( ! SUPPRESS ) functionResultTest ( evalPoint, context, functions );
-
-		M = new Matrix <> ( functions, independentVariables, manager );
-		computeLaplacian ( context, M, independentVariables, evalPoint );
-		return vectorSum ( M.getRowAccess (1) );
+		return computeLaplacian ( context, independentVariables, evalPoint );
 	}
 	static boolean SUPPRESS = true;	// eliminate duplicate call but risk error
 
@@ -89,13 +85,11 @@ public class Gradients <T> extends DataManagers <T>
 	 * - vectors or other dimensioned return not allowed
 	 * @param evalPoint the point of the evaluation being executed
 	 * @param context the meta-data context collected for the function
-	 * @param functions the count of axis functions (must remain 1)
 	 */
 	void functionResultTest
-		(Coordinates evalPoint, OperationContext context, int functions)
+		(Coordinates evalPoint, OperationContext context)
 	{
-		Coordinates baseVec = eval ( evalPoint, context );
-		if ( ( functions = baseVec.size () ) != 1 )
+		if ( eval ( evalPoint, context ).size () != 1 )
 		{ throw new RuntimeException (MSG); }			
 	}
 	static final String MSG = "Laplacian only implemented for functions returning scalars";
@@ -104,20 +98,20 @@ public class Gradients <T> extends DataManagers <T>
 	/**
 	 * compute second derivatives for each independent variable
 	 * @param context the meta-data context collected for the function
-	 * @param M the matrix that will hold the evaluated derivatives
 	 * @param N the number of variables in the function
 	 * @param evalPoint the point of the evaluation
+	 * @return the computed Laplacian
 	 */
-	public void computeLaplacian
+	public T computeLaplacian
 		(
-			OperationContext context, Matrix <T> M,
-			int N, Coordinates evalPoint
+			OperationContext context, int N,
+			Coordinates evalPoint
 		)
 	{
-		DerivativeApproximationMultiDim <T> approx =
-			new DerivativeApproximationMultiDim <T> (context.getFunction ());
-		Vector <T> V = new Vector <T> (approx.getPartialDerivatives (2, approx.fromDouble (evalPoint)));
-		for (int n = 1; n <= M.columnCount (); n++) { M.set ( 1, n, V.get (n-1) ); }
+		DerivativeApproximationMultiDim <T>
+			approx = context.getOpSpecificMetadata ().getEngine ();
+		Point <T> P = approx.getPartialDerivatives (2, approx.fromDouble (evalPoint));
+		return P.sumOfElements (manager); // sum of second order derivatives
 	}
 
 
