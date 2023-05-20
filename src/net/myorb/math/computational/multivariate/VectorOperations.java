@@ -1,8 +1,11 @@
 
 package net.myorb.math.computational.multivariate;
 
-import net.myorb.math.expressions.evaluationstates.Environment;
 import net.myorb.math.expressions.ValueManager;
+import net.myorb.math.expressions.evaluationstates.Environment;
+
+import net.myorb.math.matrices.MatrixOperations;
+import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
 /**
@@ -15,9 +18,8 @@ public class VectorOperations <T> extends Gradients <T>
 
 
 	public VectorOperations (Environment <T> environment)
-	{
-		super (environment);
-	}
+	{ super (environment); this.MO = new MatrixOperations <> (manager); }
+	protected MatrixOperations <T> MO;
 
 
 	public static final // indices used for 3D curl
@@ -154,6 +156,17 @@ public class VectorOperations <T> extends Gradients <T>
 	void set (int into, int F, int d, Matrix <T> M, ValueList vector)
 	{
 		vector.set ( into, manager.add ( M.get (F, d), manager.negate ( M.get (d, F) ) ) );		
+	}
+
+
+	/**
+	 * compute sum of vector components
+	 * @param vector access to vector of elements
+	 * @return the sum of the elements
+	 */
+	T vectorSum (VectorAccess <T> vector)
+	{
+		return MO.getVectorOperations ().sigmaOver ( vector );
 	}
 
 
