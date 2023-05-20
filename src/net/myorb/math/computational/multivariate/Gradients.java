@@ -7,14 +7,15 @@ import net.myorb.math.expressions.SymbolMap.SymbolType;
 import net.myorb.math.expressions.ValueManager.GenericValue;
 import net.myorb.math.expressions.gui.rendering.NodeFormatting;
 
-import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
-import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
 import net.myorb.math.computational.DerivativeApproximationMultiDim;
 import net.myorb.math.computational.DerivativeApproximationMultiDim.Point;
+
+import net.myorb.math.computational.multivariate.FunctionCoordinates.Coordinates;
+import net.myorb.math.computational.MultivariateCalculus.VectorOperator;
+
 import net.myorb.math.expressions.SymbolMap.MultivariateOperator;
 import net.myorb.math.expressions.evaluationstates.Environment;
 
-import net.myorb.math.matrices.MatrixOperations;
 import net.myorb.math.matrices.VectorAccess;
 import net.myorb.math.matrices.Matrix;
 
@@ -27,37 +28,19 @@ public class Gradients <T> extends DataManagers <T>
 {
 
 
-	public Gradients
-		(VectorOperator vectorOperator)
-	{ this (vectorOperator.getEnvironment ()); }
-
-
-	public Gradients
-		(Environment <T> environment)
+	public Gradients (Environment <T> environment)
 	{ super (environment); this.connectManagers (); }
+
+	public Gradients (VectorOperator vectorOperator)
+	{ this (vectorOperator.getEnvironment ()); }
 
 
 	/**
 	 * get management objects from environment
 	 */
 	public void connectManagers ()
-	{
-		this.functionCoordinates = new FunctionCoordinates <> (environment);
-		this.MO = new MatrixOperations <> (environment.getSpaceManager ());
-	}
+	{ this.functionCoordinates = new FunctionCoordinates <> (environment); }
 	protected FunctionCoordinates <T> functionCoordinates = null;
-	protected MatrixOperations <T> MO;
-
-
-	/**
-	 * compute sum of vector components
-	 * @param vector access to vector of elements
-	 * @return the sum of the elements
-	 */
-	T vectorSum (VectorAccess <T> vector)
-	{
-		return MO.getVectorOperations ().sigmaOver ( vector );
-	}
 
 
 	// computation of the Laplacian operator for given function
