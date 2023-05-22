@@ -255,6 +255,13 @@ public class ContourPlotProperties extends CommonDataStructures.SymbolicMap <Obj
 	protected DisplayGraphTypes.LegendWidgets legend;
 
 	/**
+	 * connect pop-up to Component for showing Legend
+	 * - ALT RightMouseClick is the convention for the Legend pop-up
+	 * @param C the component to offer the pop up for the legend
+	 */
+	public void attachLegend (java.awt.Component C) { LegendDisplay.attachLegend (C, legend); }
+
+	/**
 	 * use computed histogram meta-data to produce Legend display
 	 */
 	public void showLegend () { LegendDisplay.show (legend); }
