@@ -7,17 +7,21 @@ import net.myorb.gui.components.SimpleScreenIO.Widget;
 import net.myorb.gui.components.SimpleScreenIO.Label;
 import net.myorb.gui.components.SimpleScreenIO.Panel;
 import net.myorb.gui.components.SimpleScreenIO;
+import net.myorb.gui.components.MenuManager;
 
 import net.myorb.charting.DisplayGraphTypes.ScaledColorSelector;
 import net.myorb.charting.DisplayGraphTypes;
 import net.myorb.charting.Histogram;
 
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import javax.swing.ImageIcon;
+
+import java.awt.image.BufferedImage;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.*;
 
 /**
@@ -56,6 +60,30 @@ public class LegendDisplay
 	}
 
 
+	/**
+	 * add pop-up to component that supplies access to Legend
+	 * - ALT RightMouseClick is the convention for the Legend pop-up
+	 * @param to the component to offer the pop up for the legend
+	 * @param legend a compiled legend to be shown
+	 */
+	public static void attachLegend
+	(Component to, final DisplayGraphTypes.LegendWidgets legend)
+	{
+		MenuManager.ActionList items = new MenuManager.ActionList ();
+		items.add
+		(
+			new ActionListener ()
+			{
+				public void actionPerformed
+					(ActionEvent e) { show (widget); }
+				public String toString () { return "Show Legend"; }
+				DisplayGraphTypes.LegendWidgets widget = legend;
+			}
+		);
+		to.addMouseListener (MenuManager.getMenu (items));
+	}
+
+
 	/*
 	 * unit test with static histogram
 	 */
@@ -67,7 +95,15 @@ public class LegendDisplay
 		ScaledColorSelector selector = new TemperatureModelColorScheme ();
 		DisplayGraphTypes.LegendEntries e = DisplayGraphTypes.legendEntriesFor (10, histogram);
 		DisplayGraphTypes.LegendWidgets legend = DisplayGraphTypes.legendWidgetsFor (e, 1, selector);
-		show (legend);
+		SimpleScreenIO.show ( makeTest (legend), "Legend", 200, 200 );
+	}
+	public static Widget makeTest (DisplayGraphTypes.LegendWidgets legend)
+	{
+		Panel P = new Panel ();
+		P.add (new Label ("HELLO"));
+		P.setPreferredSize ( new Dimension ( 60, 400 ) );
+		attachLegend (P, legend);
+		return P;
 	}
 
 
