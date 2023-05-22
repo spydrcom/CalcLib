@@ -36,9 +36,9 @@ public class Plot3DContour<T> extends Plot3D<T>
 	}
 	void generateDisplays (int ps)
 	{
-		DisplayGraph3D.plotContour
+		java.awt.Component C = DisplayGraph3D.plotContour
 			(setScale (ContourPlotEdgeSize, ps), title);
-		this.showLegend ();
+		this.attachLegend (C);
 	}
 
 
