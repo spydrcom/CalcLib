@@ -272,9 +272,9 @@ public class Plot3DVectorField <T> extends VectorFieldPlotDescriptors <T>
 	}
 	void generateDisplays (int ps)
 	{
-		DisplayGraph3D.plotVectorField
+		java.awt.Component C = DisplayGraph3D.plotVectorField
 			(setScale (FIELD_PLOT_EDGE_SIZE, ps), title);
-		this.showLegend ();
+		this.attachLegend (C);
 	}
 
 
