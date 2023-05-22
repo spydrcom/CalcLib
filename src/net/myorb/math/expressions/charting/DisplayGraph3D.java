@@ -74,8 +74,9 @@ public class DisplayGraph3D extends DisplayGraph
 	 * build the plot data as Vector Field
 	 * @param proprties description of the transform
 	 * @param description a description identifying the plot
+	 * @return the component holding the image
 	 */
-	public static void plotVectorField
+	public static JComponent plotVectorField
 		(ContourPlotProperties proprties, String description)
 	{
 		// contour plot shows vector magnitudes
@@ -96,8 +97,9 @@ public class DisplayGraph3D extends DisplayGraph
 		);
 
 		// use common display and tracking layers
-		showImageAsComponent (description, proprties, image);
+		JComponent C = showImageAsComponent (description, proprties, image);
 		addTrackingFor (proprties, description);
+		return C;
 	}
 
 	/**
@@ -147,15 +149,15 @@ public class DisplayGraph3D extends DisplayGraph
 	 * build the plot data as contour
 	 * @param proprties description of the transform
 	 * @param description a description identifying the plot
-	 * @return contour image
+	 * @return Component holding the image
 	 */
-	public static BufferedImage plotContour
+	public static JComponent plotContour
 		(ContourPlotProperties proprties, String description)
 	{
 	    BufferedImage image = buildContourImage (proprties);
-	    showImageAsComponent (description, proprties, image);
+	    JComponent C = showImageAsComponent (description, proprties, image);
 		addTrackingFor (proprties, description);
-		return image;
+		return C;
 	}
 
 	/**
@@ -393,15 +395,16 @@ public class DisplayGraph3D extends DisplayGraph
 	 * @param title a title to display with the image
 	 * @param proprties description of the transform
 	 * @param image the buffered image with the plot
+	 * @return the component holding the image
 	 */
-	public static void showImageAsComponent
+	public static JComponent showImageAsComponent
 		(
 			String title,
 			ContourPlotProperties proprties,
 			BufferedImage image
 		)
 	{
-		showImageAsComponent
+		return showImageAsComponent
 		(
 			image, title,
 
@@ -419,13 +422,15 @@ public class DisplayGraph3D extends DisplayGraph
 	 * @param image the buffered image with the plot
 	 * @param title a title to display with the image
 	 * @param mouse the mouse handler to attach
+	 * @return the component with the image
 	 */
-	public static void showImageAsComponent
+	public static JComponent showImageAsComponent
 	(BufferedImage image, String title, MouseMotionHandler mouse)
 	{
 		JComponent c = showImage (image, title, mouse);
 		mouse.setWidth (image.getWidth ());
 		mouse.set (c);
+		return c;
 	}
 
 
