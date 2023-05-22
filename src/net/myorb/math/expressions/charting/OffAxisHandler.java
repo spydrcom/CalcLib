@@ -162,7 +162,8 @@ public class OffAxisHandler extends MouseMotionHandler
 	 */
 	public void mousePressed (MouseEvent e)
 	{
-		pressedAt = pointOfEvent (e);
+		if ( e.isAltDown () ) pressedAt = null;
+		else pressedAt = pointOfEvent (e);
 	}
 	protected DisplayGraph.Point pressedAt;
 
@@ -174,6 +175,8 @@ public class OffAxisHandler extends MouseMotionHandler
 	{
 		try
 		{
+			if ( pressedAt == null ) return;
+
 			releasedAt = pointOfEvent (e);
 			
 			if (TRACE_ZOOM)
