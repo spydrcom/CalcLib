@@ -35,6 +35,7 @@ public class OperationMetadata implements Metadata
 	/**
 	 * attach a Derivative Approximation processor
 	 * @param function the function to be analyzed
+	 * @param <T> data type for operations
 	 */
 	public <T> void attachEngineFor (AbstractFunction <T> function)
 	{  engine  =  new DerivativeApproximationMultiDim <>  (function);  }
