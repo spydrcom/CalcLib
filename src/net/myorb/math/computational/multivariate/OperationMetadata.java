@@ -1,17 +1,18 @@
 
 package net.myorb.math.computational.multivariate;
 
-import net.myorb.math.computational.DerivativeApproximationMultiDim;
 import net.myorb.math.computational.MultivariateCalculus;
-import net.myorb.math.expressions.ValueManager.Metadata;
+import net.myorb.math.computational.DerivativeApproximationMultiDim;
+
 import net.myorb.math.expressions.symbols.AbstractFunction;
 import net.myorb.math.expressions.SymbolMap.Operation;
+import net.myorb.math.expressions.ValueManager;
 
 /**
  * meta-data collected when the operation was invoked
  * @author Michael Druckman
  */
-public class OperationMetadata implements Metadata
+public class OperationMetadata implements ValueManager.Metadata
 {
 
 

@@ -13,8 +13,6 @@ import net.myorb.math.expressions.ExpressionSpaceManager;
 
 import net.myorb.data.abstractions.CommonDataStructures;
 
-import java.util.List;
-
 /**
  * the data management for elements of vectors
  * @param <T> the data type used in the Operations
@@ -63,7 +61,7 @@ public class DataManagers <T> extends CommonDataStructures
 	@SuppressWarnings("serial")
 	public static class GenericList extends ItemList <GenericValue>
 	{
-		GenericList (List <GenericValue> list) { addAll (list); }
+		GenericList (java.util.List <GenericValue> list) { addAll (list); }
 		GenericList (ValueManager.ValueList list) { this ( list.getValues () ); }
 	}
 
@@ -71,7 +69,7 @@ public class DataManagers <T> extends CommonDataStructures
 	 * a list of managed values
 	 */
 	@SuppressWarnings("serial") public class ValueList extends ItemList <T>
-	{ ValueList () {} ValueList (List <T> list) { addAll (list); } }
+	{ ValueList () {} ValueList (java.util.List <T> list) { addAll (list); } }
 
 
 	// list conversions from generic types

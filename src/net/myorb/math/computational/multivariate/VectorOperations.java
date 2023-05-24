@@ -138,6 +138,9 @@ public class VectorOperations <T> extends Gradients <T>
 			set ( 0, Fz, dy, M, vector );	// dFz/dy - dFy/dz
 		}
 
+		// note that 2x2 matrix produces 3D vector
+		// 2D curl points into third dimension
+		// this is NOT a bug
 		return vector;
 	}
 
