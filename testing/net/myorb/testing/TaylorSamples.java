@@ -11,7 +11,6 @@ import net.myorb.math.SpaceManager;
 
 /**
  * simple test of the Taylor demonstration class
- * @param <T> data type used in Arithmetic operations
  * @author Michael Druckman
  */
 public class TaylorSamples
