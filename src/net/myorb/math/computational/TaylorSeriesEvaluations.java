@@ -94,6 +94,7 @@ class Formatter <T> implements SampleFormatter <T>
 	{
 		this.F = NumberFormat.getNumberInstance ();
 		this.F.setMaximumFractionDigits (3);
+		this.F.setMinimumFractionDigits (1);
 		this.manager = manager;
 	}
 	ExpressionSpaceManager <T> manager;
@@ -104,8 +105,58 @@ class Formatter <T> implements SampleFormatter <T>
 	 */
 	public String format (T sample)
 	{
-		return F.format (manager.convertToDouble (sample)) + "\t";
+		if ( ! AS_SCIENTIFIC ) return F.format (sample) + "\t";
+		double value = manager.convertToDouble (sample);
+		return align (format (value));
 	}
-	
+	boolean AS_SCIENTIFIC = true;
+
+	/**
+	 * force column alignment
+	 * @param display the value to display
+	 * @return the formatted value with constant width
+	 */
+	public String align (String display)
+	{ return display + space.substring (display.length ()); }
+	String space = "             ";
+
+	/**
+	 * format value using scientific format
+	 * @param sample the value to display in format
+	 * @return mantissa and exponent formatted
+	 */
+	public String format (double sample)
+	{
+		if (sample < 0) return "-" + format (-sample);
+		int log10 = (int) Math.floor ( Math.log10 (sample) );
+		Double mantissa = sample / Math.pow (10, log10);
+		return adjust (mantissa, log10);
+	}
+
+	/**
+	 * adjust exponent to conform display
+	 * @param M the mantissa of the value to format
+	 * @param E the exponent of the value to format
+	 * @return properly conformed digit sequence
+	 */
+	public String adjust (Double M, int E)
+	{
+		double characteristic = Math.ceil (M);
+		if (characteristic >= 10) { M /= 10; E += 1; }
+		return scientific (F.format (M), E);
+	}
+
+	/**
+	 * format exponent as required
+	 * @param digits the mantissa of the value to format
+	 * @param E the possibly zero exponent of the value to format
+	 * @return image with non-zero exponent appended
+	 */
+	public String scientific (String digits, int E)
+	{
+		if (E != 0) digits += "E" + E;
+		return digits;
+	}
+
 }
 
