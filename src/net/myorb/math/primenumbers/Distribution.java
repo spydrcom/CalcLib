@@ -337,7 +337,7 @@ public class Distribution extends Fraction<Factorization>
 
 	/**
 	 * reduce a fraction to a Factorization with negative exponents for denominator primes
-	 * @param source the fraction to convert to a flattend Factorization
+	 * @param source the fraction to convert to a flattened Factorization
 	 * @return a Factorization object with flattened result
 	 */
 	public static Factorization flattened (Fraction<Factorization> source)
